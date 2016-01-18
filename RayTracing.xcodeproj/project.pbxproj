@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3425D4411C4D9B41003A74D8 /* Telescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3425D4401C4D9B41003A74D8 /* Telescope.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		34A093A61C4D8D430046A6E0 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* Ray.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		34D976211C4CAC6E0040C7F6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* main.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 /* End PBXBuildFile section */
 
@@ -23,6 +25,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3425D4401C4D9B41003A74D8 /* Telescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Telescope.cpp; sourceTree = "<group>"; };
+		34A093A41C4D8D430046A6E0 /* Ray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
 		34D9761D1C4CAC6E0040C7F6 /* RayTracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracing; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D976201C4CAC6E0040C7F6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +62,8 @@
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* main.cpp */,
+				34A093A41C4D8D430046A6E0 /* Ray.cpp */,
+				3425D4401C4D9B41003A74D8 /* Telescope.cpp */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";
@@ -118,6 +124,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34A093A61C4D8D430046A6E0 /* Ray.cpp in Sources */,
+				3425D4411C4D9B41003A74D8 /* Telescope.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,6 +307,7 @@
 				34D976261C4CAC6E0040C7F6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

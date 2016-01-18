@@ -2,6 +2,7 @@
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 
 #include <iostream>
+#include "Ray.cpp"
 
 using namespace std;
 
