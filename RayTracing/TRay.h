@@ -5,22 +5,19 @@
 #define Ray_h
 
 #include "TVector3.h"
+#include "TPlane3.h"
 
 class TRay {
     
 private:
-    
-    TVector3 position;
-    TVector3 direction;
+    TVector3 fPosition;
+    TVector3 fDirection;
     
 public:
     TRay(TVector3 position, TVector3 direction);
-    
-    void PropagateToPlane(TVector3 planeNorm, Double_t d);
-    
-    void ReflectFromPlane(TVector3 planeNorm);
-    
-    TVector3 getPosition();
+    void PropagateToPlane(TPlane3 plane);
+    void ReflectFromPlane(TPlane3 plane);
+    TVector3 GetPosition();
 };
 
 #endif

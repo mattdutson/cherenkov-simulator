@@ -4,8 +4,6 @@
 #include <iostream>
 #include "TTelescope.h"
 
-using namespace std;
-
 int main(int argc, const char * argv[]) {
     return 0;
 }

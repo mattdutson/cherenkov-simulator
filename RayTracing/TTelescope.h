@@ -5,19 +5,16 @@
 #define TTelescope_h
 
 #include "TVector3.h"
+#include "TPlane3.h"
 
 class TTelescope {
     
 private:
-    TVector3 fFocalPoint;
     TVector3 fCenterOfCurvature;
-    TVector3 fGroundPlaneNorm;
-    Double_t fGroundPlaneScalar;
+    TPlane3 fGroundPlane;
     
 public:
-    
-    TTelescope(TVector3 focalPoint, TVector3 centerOfCurvature, TVector3 groundPlaneNorm, Double_t groundPlaneScalar);
-    
+    TTelescope(TVector3 centerOfCurvature, TPlane3 groundPlane);
     TVector3 RayTrace(TVector3 pixelLocation, TVector3 mirrorImpact);
 };
 
