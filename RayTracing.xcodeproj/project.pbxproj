@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3425D4411C4D9B41003A74D8 /* Telescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3425D4401C4D9B41003A74D8 /* Telescope.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
-		34A093A61C4D8D430046A6E0 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* Ray.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
-		34D976211C4CAC6E0040C7F6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* main.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		3425D4411C4D9B41003A74D8 /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3425D4401C4D9B41003A74D8 /* TTelescope.cpp */; };
+		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
+		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,10 +25,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3425D4401C4D9B41003A74D8 /* Telescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Telescope.cpp; sourceTree = "<group>"; };
-		34A093A41C4D8D430046A6E0 /* Ray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
+		3425D4401C4D9B41003A74D8 /* TTelescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescope.cpp; sourceTree = "<group>"; };
+		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
+		34CB1D751C4DDD6200EBEF85 /* TRay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
+		34CB1D761C4DDD6E00EBEF85 /* TTelescope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TTelescope.h; sourceTree = "<group>"; };
 		34D9761D1C4CAC6E0040C7F6 /* RayTracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracing; sourceTree = BUILT_PRODUCTS_DIR; };
-		34D976201C4CAC6E0040C7F6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		34D976201C4CAC6E0040C7F6 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,9 +63,11 @@
 		34D9761F1C4CAC6E0040C7F6 /* RayTracing */ = {
 			isa = PBXGroup;
 			children = (
-				34D976201C4CAC6E0040C7F6 /* main.cpp */,
-				34A093A41C4D8D430046A6E0 /* Ray.cpp */,
-				3425D4401C4D9B41003A74D8 /* Telescope.cpp */,
+				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
+				34CB1D761C4DDD6E00EBEF85 /* TTelescope.h */,
+				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
+				3425D4401C4D9B41003A74D8 /* TTelescope.cpp */,
+				34CB1D751C4DDD6200EBEF85 /* TRay.h */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";
@@ -124,9 +128,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34A093A61C4D8D430046A6E0 /* Ray.cpp in Sources */,
-				3425D4411C4D9B41003A74D8 /* Telescope.cpp in Sources */,
-				34D976211C4CAC6E0040C7F6 /* main.cpp in Sources */,
+				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
+				3425D4411C4D9B41003A74D8 /* TTelescope.cpp in Sources */,
+				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

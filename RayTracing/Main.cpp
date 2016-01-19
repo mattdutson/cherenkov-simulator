@@ -2,7 +2,7 @@
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 
 #include <iostream>
-#include "Ray.cpp"
+#include "TTelescope.h"
 
 using namespace std;
 
