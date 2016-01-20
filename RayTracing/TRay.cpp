@@ -18,7 +18,7 @@ TRay::TRay(TVector3 position, TVector3 direction) {
 void TRay::PropagateToPlane(TPlane3 plane) {
     
     // This is t in the parametrization of the ray's path as dx = a*dt, dy = b*dt, dz = c*dt
-    Double_t t = plane.GetEquationCoefficient() - plane.GetNormal().Dot(fPosition) / plane.GetNormal().Dot(fDirection);
+    Double_t t = (plane.GetEquationCoefficient() - plane.GetNormal().Dot(fPosition)) / plane.GetNormal().Dot(fDirection);
     
     // Check that the ray actually encounters the plane
     if (t <= 0) {

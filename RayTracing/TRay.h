@@ -37,6 +37,10 @@ public:
      * Reflects the ray across a vector normal to the specified plane.
      */
     void ReflectFromPlane(TPlane3 plane);
+    
+    /*
+     * Returns the current position of the ray.
+     */
     TVector3 GetPosition();
 };
 

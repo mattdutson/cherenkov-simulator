@@ -16,12 +16,12 @@ TTelescope::TTelescope(TVector3 centerOfCurvature, TPlane3 groundPlane) {
 TVector3 TTelescope::RayTrace(TVector3 pixelLocation, TVector3 mirrorImpact) {
     
     // pixelLocation - mirrorImpact is a vector parallel to the ray's current trajectory
-    TRay *ray = new TRay(mirrorImpact, pixelLocation - mirrorImpact);
+    TRay *ray = new TRay(mirrorImpact, mirrorImpact - pixelLocation);
     
     // A plane tangent to the mirror at the point where it was struck by the light ray
     TPlane3 *mirror = new TPlane3(fCenterOfCurvature - mirrorImpact, mirrorImpact);
     
-    // Reflect the ray from the mirror and let it propagate to the ground
+    // Reflect the ray from the mirror and let it propagate to the ground plane
     ray->ReflectFromPlane(*mirror);
     ray->PropagateToPlane(fGroundPlane);
     return ray->GetPosition();
