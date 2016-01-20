@@ -1,5 +1,9 @@
-//  Created by Matthew Dutson on 1/17/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
+/*
+ * Created by Matthew Dutson on 1/18/16.
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * This class is used for testing the functionality of TTelescope, TRay, and TPlane3.
+ */
 
 #include <iostream>
 #include "TTelescope.h"
