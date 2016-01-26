@@ -13,7 +13,7 @@
 
 class TRay {
     
-private:
+protected:
     
     // The current position of the light ray
     TVector3 fPosition;

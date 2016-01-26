@@ -1,36 +1,49 @@
+//
+//  TTelescope.hpp
+//  RayTracing
+//
+//  Created by Matthew Dutson on 1/25/16.
+//  Copyright © 2016 Matthew Dutson. All rights reserved.
+//
+
 #ifndef TTelescope_h
 #define TTelescope_h
 
 #include "TVector3.h"
 #include "TPlane3.h"
 
-/*
- * Created by Matthew Dutson on 1/18/16.
- * Copyright © 2016 Matthew Dutson. All rights reserved.
- *
- * A class representing a telescope. This telescope consists of a spherical mirror oriented with respect to some ground plane.
- */
 class TTelescope {
     
 private:
     
-    // The position vector of the mirror's center of curvature
-    TVector3 fCenterOfCurvature;
+    TPlane3 focalPlane;
     
-    // The plane of the ground
-    TPlane3 fGroundPlane;
+    TPlane3 groundPlane;
+    
+    TPlane3 mirrorBackPlane;
+    
+    TVector3 mirrorNormal;
+    
+    Double_t focalLength;
     
 public:
     
     /*
-     * Initializes the TTelescope given the center of curvature and the plane of the ground.
+     * The detailed constructor.
      */
-    TTelescope(TVector3 centerOfCurvature, TPlane3 groundPlane);
+    TTelescope(Double_t focalLength, Double_t inclinationAngle, Double_t height, Double_t width, Double_t focalPlaneDistance, Double_t groudHeight);
     
-    /*
-     * Traces a ray detected by the telescope back to its source. pixelLocation is the position of the pixel where the ray was viewed, mirrorImpact is the location on the mirror where the ray was reflected.
-     */
-    TVector3 RayTrace(TVector3 pixelLocation, TVector3 mirrorImpact);
+    Double_t getHeight();
+    
+    Double_t getWidth();
+    
+    Double_t getInclination();
+    
+    TVector3 getMirrorAxis();
+    
+    Double_t getRadius();
+    
+    TPlane3 getFocalPlane();
 };
 
-#endif
+#endif /* TTelescope_h */

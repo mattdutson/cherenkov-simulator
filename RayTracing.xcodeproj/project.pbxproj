@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3425D4411C4D9B41003A74D8 /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3425D4401C4D9B41003A74D8 /* TTelescope.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
+		341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescope.cpp */; };
+		341B5EE61C56D9B800B4A61E /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE41C56D9B800B4A61E /* TShower.cpp */; };
 		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
 		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
 		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
@@ -26,10 +27,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3425D4401C4D9B41003A74D8 /* TTelescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescope.cpp; sourceTree = "<group>"; };
+		341B5EE11C56D9A500B4A61E /* TTelescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescope.cpp; sourceTree = "<group>"; };
+		341B5EE21C56D9A500B4A61E /* TTelescope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTelescope.h; sourceTree = "<group>"; };
+		341B5EE41C56D9B800B4A61E /* TShower.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TShower.cpp; sourceTree = "<group>"; };
+		341B5EE51C56D9B800B4A61E /* TShower.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TShower.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
 		34CB1D751C4DDD6200EBEF85 /* TRay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
-		34CB1D761C4DDD6E00EBEF85 /* TTelescope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TTelescope.h; sourceTree = "<group>"; };
 		34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPlane3.cpp; sourceTree = "<group>"; };
 		34CB1D781C4DEDA700EBEF85 /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
 		34D9761D1C4CAC6E0040C7F6 /* RayTracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracing; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,12 +70,14 @@
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
-				34CB1D761C4DDD6E00EBEF85 /* TTelescope.h */,
-				3425D4401C4D9B41003A74D8 /* TTelescope.cpp */,
 				34CB1D751C4DDD6200EBEF85 /* TRay.h */,
 				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
 				34CB1D781C4DEDA700EBEF85 /* TPlane3.h */,
 				34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */,
+				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
+				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
+				341B5EE41C56D9B800B4A61E /* TShower.cpp */,
+				341B5EE51C56D9B800B4A61E /* TShower.h */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";
@@ -134,9 +139,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
-				3425D4411C4D9B41003A74D8 /* TTelescope.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
 				34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */,
+				341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */,
+				341B5EE61C56D9B800B4A61E /* TShower.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

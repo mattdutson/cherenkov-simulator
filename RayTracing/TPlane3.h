@@ -41,6 +41,7 @@ public:
      * Returns the fourth coefficient in the plane equation.
      */
     Double_t GetEquationCoefficient();
+
 };
 
 #endif

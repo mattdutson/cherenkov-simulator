@@ -1,28 +1,28 @@
-/*
- * Created by Matthew Dutson on 1/18/16.
- * Copyright © 2016 Matthew Dutson. All rights reserved.
- *
- * This file contains the implementation of "TTelescope.h". See the header file for method descriptions.
- */
+//
+//  TTelescope.cpp
+//  RayTracing
+//
+//  Created by Matthew Dutson on 1/25/16.
+//  Copyright © 2016 Matthew Dutson. All rights reserved.
+//
 
-#include "TRay.h"
 #include "TTelescope.h"
 
-TTelescope::TTelescope(TVector3 centerOfCurvature, TPlane3 groundPlane) {
-    fCenterOfCurvature = centerOfCurvature;
-    fGroundPlane = groundPlane;
-}
-
-TVector3 TTelescope::RayTrace(TVector3 pixelLocation, TVector3 mirrorImpact) {
+TTelescope::TTelescope(Double_t focalLength, Double_t inclinationAngle, Double_t height, Double_t width, Double_t focalPlaneDistance, Double_t heightAboveGround) {
     
-    // pixelLocation - mirrorImpact is a vector parallel to the ray's current trajectory
-    TRay *ray = new TRay(mirrorImpact, mirrorImpact - pixelLocation);
+    groundPlane = *new TPlane3(*new TVector3(0, 0, 1), *new TVector3(0, 0, -heightAboveGround));
     
-    // A plane tangent to the mirror at the point where it was struck by the light ray
-    TPlane3 *mirror = new TPlane3(fCenterOfCurvature - mirrorImpact, mirrorImpact);
+    TVector3 rotationAxis = *new TVector3(1, 0, 0);
     
-    // Reflect the ray from the mirror and let it propagate to the ground plane
-    ray->ReflectFromPlane(*mirror);
-    ray->PropagateToPlane(fGroundPlane);
-    return ray->GetPosition();
+    TVector3 mirrorAxis = *new TVector3(0, 1, 0);
+    mirrorAxis.Rotate(inclinationAngle, rotationAxis);
+    
+    TVector3 focalPlaneCenter = *new TVector3(0, - 2 * focalLength + focalPlaneDistance, 0);
+    focalPlaneCenter.Rotate(inclinationAngle, rotationAxis);
+    
+    TVector3 mirrorBackCenter = *new TVector3(0, -2 * focalLength, 0);
+    mirrorBackCenter.Rotate(inclinationAngle, rotationAxis);
+    
+    focalPlane = *new TPlane3(mirrorAxis, focalPlaneCenter);
+    mirrorBackPlane = *new TPlane3(mirrorAxis, mirrorBackCenter);
 }
