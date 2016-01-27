@@ -33,6 +33,8 @@ public:
      */
     void PropagateToPlane(TPlane3 plane);
     
+    Double_t distanceToPlane(TPlane3 plane);
+    
     /*
      * Reflects the ray across a vector normal to the specified plane.
      */
@@ -42,6 +44,8 @@ public:
      * Returns the current position of the ray.
      */
     TVector3 GetPosition();
+    
+    void incrementPosition(Double_t time)
 };
 
 #endif

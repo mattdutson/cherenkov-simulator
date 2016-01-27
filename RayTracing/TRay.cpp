@@ -26,7 +26,7 @@ void TRay::PropagateToPlane(TPlane3 plane) {
     }
     
     // Update the ray's position
-    fPosition += (plane.GetEquationCoefficient() - plane.GetNormal().Dot(fPosition)) / plane.GetNormal().Dot(fDirection) * fDirection;
+    fPosition += t * fDirection;
 }
 
 void TRay::ReflectFromPlane(TPlane3 plane) {
@@ -38,4 +38,17 @@ void TRay::ReflectFromPlane(TPlane3 plane) {
 
 TVector3 TRay::GetPosition() {
     return fPosition;
+}
+
+Double_t TRay::distanceToPlane(TPlane3 plane) {
+    // This is t in the parametrization of the ray's path as dx = a*dt, dy = b*dt, dz = c*dt
+    Double_t t = (plane.GetEquationCoefficient() - plane.GetNormal().Dot(fPosition)) / plane.GetNormal().Dot(fDirection);
+    
+    // Check that the ray actually encounters the plane
+    if (t <= 0) {
+        throw new invalid_argument("The ray never reaches the plane");
+    }
+    
+    // Update the ray's position
+    return (t * fDirection).Mag();
 }

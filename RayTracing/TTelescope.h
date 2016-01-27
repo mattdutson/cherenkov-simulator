@@ -11,6 +11,9 @@
 
 #include "TVector3.h"
 #include "TPlane3.h"
+#include "TGraph.h"
+#include "TRandom1.h"
+#include "TRay.h"
 
 class TTelescope {
     
@@ -25,6 +28,14 @@ private:
     TVector3 mirrorNormal;
     
     Double_t focalLength;
+    
+    Double_t height;
+    
+    Double_t width;
+    
+    Double_t inclination;
+    
+    TRandom1* fRandom;
     
 public:
     
@@ -44,6 +55,12 @@ public:
     Double_t getRadius();
     
     TPlane3 getFocalPlane();
+    
+    TPlane3 getGroundPlane();
+    
+    TGraph viewShower(TRay shower, Double_t delayTime);
+
+    TVector3 rayDetectionByMirror(TRay shower);
 };
 
 #endif /* TTelescope_h */
