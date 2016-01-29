@@ -83,4 +83,4 @@ public:
     TVector3 RayDetectionByMirror(TRay shower);
 };
 
-#endif /* TTelescope_h */
+#endif
