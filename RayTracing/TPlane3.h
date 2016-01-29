@@ -18,7 +18,7 @@ private:
     TVector3 fNormal;
     
     // The fourth coefficient in the plane equation (ax + by + cz = d)
-    Double_t fD;
+    Double_t fCoefficient;
     
 public:
     
@@ -41,7 +41,6 @@ public:
      * Returns the fourth coefficient in the plane equation.
      */
     Double_t GetEquationCoefficient();
-
 };
 
 #endif

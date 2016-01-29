@@ -12,43 +12,44 @@ using namespace std;
 
 TRay::TRay(TVector3 position, TVector3 direction) {
     fPosition = position;
-    fDirection = direction;
-}
-
-void TRay::PropagateToPlane(TPlane3 plane) {
-    
-    // This is t in the parametrization of the ray's path as dx = a*dt, dy = b*dt, dz = c*dt
-    Double_t t = (plane.GetEquationCoefficient() - plane.GetNormal().Dot(fPosition)) / plane.GetNormal().Dot(fDirection);
-    
-    // Check that the ray actually encounters the plane
-    if (t <= 0) {
-        throw new invalid_argument("The ray never reaches the plane");
-    }
-    
-    // Update the ray's position
-    fPosition += t * fDirection;
-}
-
-void TRay::ReflectFromPlane(TPlane3 plane) {
-    
-    // Rotate fDirection by pi around the normal vector and reverse it
-    fDirection.Rotate(TMath::Pi(), plane.GetNormal());
-    fDirection = -fDirection;
+    fVelocity = direction.Unit() * fLightSpeed;
 }
 
 TVector3 TRay::GetPosition() {
     return fPosition;
 }
 
-Double_t TRay::distanceToPlane(TPlane3 plane) {
-    // This is t in the parametrization of the ray's path as dx = a*dt, dy = b*dt, dz = c*dt
-    Double_t t = (plane.GetEquationCoefficient() - plane.GetNormal().Dot(fPosition)) / plane.GetNormal().Dot(fDirection);
+TVector3 TRay::GetVelocity() {
+    return fVelocity;
+}
+
+Double_t TRay::TimeToPlane(TPlane3 plane) {
+    TVector3 normal = plane.GetNormal();
+    Double_t coefficient = plane.GetEquationCoefficient();
+    
+    // The time it would take for the ray to reach the plane
+    Double_t time = (coefficient - normal.Dot(fPosition)) / normal.Dot(fVelocity);
     
     // Check that the ray actually encounters the plane
-    if (t <= 0) {
+    if (time <= 0) {
         throw new invalid_argument("The ray never reaches the plane");
     }
     
-    // Update the ray's position
-    return (t * fDirection).Mag();
+    // If the ray reaches the plane, return the time
+    return time;
+}
+
+void TRay::PropagateToPlane(TPlane3 plane) {
+    IncrementPosition(TimeToPlane(plane));
+}
+
+void TRay::ReflectFromPlane(TPlane3 plane) {
+    
+    // Rotate fDirection by pi around the normal vector and reverse it
+    fVelocity.Rotate(TMath::Pi(), plane.GetNormal());
+    fVelocity = -fVelocity;
+}
+
+void TRay::IncrementPosition(Double_t time) {
+    fPosition += fVelocity * time;
 }

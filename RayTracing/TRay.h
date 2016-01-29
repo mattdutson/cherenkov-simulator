@@ -13,13 +13,16 @@
 
 class TRay {
     
-protected:
+private:
+    
+    // A constant representing the speed of light
+    const Double_t fLightSpeed = 3e8;
     
     // The current position of the light ray
     TVector3 fPosition;
     
-    // The current direction of the light ray (this is opposite the direction the ray actually traveled)
-    TVector3 fDirection;
+    // The current velocity of the light ray
+    TVector3 fVelocity;
     
 public:
     
@@ -29,11 +32,24 @@ public:
     TRay(TVector3 position, TVector3 direction);
     
     /*
+     * Returns the current position of the ray.
+     */
+    TVector3 GetPosition();
+    
+    /*
+     * Returns the current velocity of the ray.
+     */
+    TVector3 GetVelocity();
+    
+    /*
+     * Finds the time to the specified plane.
+     */
+    Double_t TimeToPlane(TPlane3 plane);
+    
+    /*
      * Moves the ray in its current direction until it strikes a plane.
      */
     void PropagateToPlane(TPlane3 plane);
-    
-    Double_t distanceToPlane(TPlane3 plane);
     
     /*
      * Reflects the ray across a vector normal to the specified plane.
@@ -41,11 +57,9 @@ public:
     void ReflectFromPlane(TPlane3 plane);
     
     /*
-     * Returns the current position of the ray.
+     * Increments the position of the ray by making it travel in its current direction at the speed of light for the specified time.
      */
-    TVector3 GetPosition();
-    
-    void incrementPosition(Double_t time)
+    void IncrementPosition(Double_t time);
 };
 
 #endif

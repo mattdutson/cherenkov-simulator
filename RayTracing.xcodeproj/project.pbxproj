@@ -71,8 +71,8 @@
 				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
 				34CB1D781C4DEDA700EBEF85 /* TPlane3.h */,
 				34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */,
-				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
 				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
+				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";

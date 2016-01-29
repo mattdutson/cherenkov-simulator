@@ -9,14 +9,14 @@
 
 TPlane3::TPlane3() {
     fNormal = *new TVector3();
-    fD = 0;
+    fCoefficient = 0;
 }
 
 TPlane3::TPlane3(TVector3 normal, TVector3 point) {
     fNormal = normal;
     
-    // fD is calculated by plugging the point into the plane equation
-    fD = normal.Dot(point);
+    // The coefficient is calculated by plugging the point into the plane equation
+    fCoefficient = normal.Dot(point);
 }
 
 TVector3 TPlane3::GetNormal() {
@@ -24,5 +24,5 @@ TVector3 TPlane3::GetNormal() {
 }
 
 Double_t TPlane3::GetEquationCoefficient() {
-    return fD;
+    return fCoefficient;
 }
