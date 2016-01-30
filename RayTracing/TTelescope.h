@@ -18,10 +18,10 @@ class TTelescope {
 private:
     
     // The axis used for rotating the telescope by the inclination angle
-    TVector3 fRotationAxis;
+    TVector3 fRotationAxis = *new TVector3(1, 0, 0);
     
     // A random object used for simulating a random ray striking the mirror
-    TRandom1* fRandom;
+    TRandom1* fRandom = new TRandom1();
     
     // The focal length of the telescope mirror
     Double_t fFocalLength;

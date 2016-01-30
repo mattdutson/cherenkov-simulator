@@ -13,11 +13,11 @@
 using namespace std;
 
 int main(int argc, const char* argv[]) {
-    TFile f("test.root", "RECREATE");
     TTelescope telescope = *new TTelescope(1, 0, 2, 2, 1, 50);
-    TRay shower = *new TRay(*new TVector3(0, 5000, 5000), *new TVector3(0, 0, -1));
-    TGraph graph = telescope.ViewShower(shower, 1e-5);
+    TRay shower = *new TRay(*new TVector3(0, 1000, 200), *new TVector3(0, 0, -1));
+    TGraph graph = telescope.ViewShower(shower, 1e-7);
+    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/output.root", "RECREATE");
     graph.Write("graph");
-    f.Close();
+    file.Close();
     return 1;
 }
