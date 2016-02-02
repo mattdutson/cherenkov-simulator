@@ -13,7 +13,7 @@ TPlane3::TPlane3() {
 }
 
 TPlane3::TPlane3(TVector3 normal, TVector3 point) {
-    fNormal = normal;
+    fNormal = normal.Unit();
     
     // The coefficient is calculated by plugging the point into the plane equation
     fCoefficient = normal.Dot(point);

@@ -12,7 +12,7 @@ using namespace std;
 
 TRay::TRay(TVector3 position, TVector3 direction) {
     fPosition = position;
-    fVelocity = direction.Unit() * fLightSpeed;
+    fVelocity = fLightSpeed * direction.Unit();
 }
 
 TVector3 TRay::GetPosition() {
@@ -31,7 +31,7 @@ Double_t TRay::TimeToPlane(TPlane3 plane) {
     Double_t time = (coefficient - normal.Dot(fPosition)) / normal.Dot(fVelocity);
     
     // Check that the ray actually encounters the plane
-    if (time <= 0) {
+    if (time < 0) {
         throw new invalid_argument("The ray never reaches the plane");
     }
     
@@ -46,8 +46,7 @@ void TRay::PropagateToPlane(TPlane3 plane) {
 void TRay::ReflectFromPlane(TPlane3 plane) {
     
     // Rotate fDirection by pi around the normal vector and reverse it
-    fVelocity.Rotate(TMath::Pi(), plane.GetNormal());
-    fVelocity = -fVelocity;
+    fVelocity = fVelocity - 2 * fVelocity.Dot(plane.GetNormal()) * plane.GetNormal();
 }
 
 void TRay::IncrementPosition(Double_t time) {

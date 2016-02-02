@@ -21,7 +21,7 @@ private:
     TVector3 fRotationAxis = *new TVector3(1, 0, 0);
     
     // A random object used for simulating a random ray striking the mirror
-    TRandom1* fRandom = new TRandom1();
+    TRandom1* fRandom = new TRandom1(12342834, 3);
     
     // The focal length of the telescope mirror
     Double_t fFocalLength;

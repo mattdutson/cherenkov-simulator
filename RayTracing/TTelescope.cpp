@@ -43,7 +43,7 @@ TVector3 TTelescope::RayDetectionByMirror(TRay shower) {
     Double_t xRandom = (fRandom->Rndm() - 0.5) * fWidth;
     
     // Finds where that point is located on the tangent plane
-    TVector3 backPlanePoisition = *new TVector3(xRandom, 0, zRandom);
+    TVector3 backPlanePoisition = *new TVector3(xRandom, -fRadius, zRandom);
     backPlanePoisition.Rotate(fInclination, fRotationAxis);
     
     // Finds the point on the mirror corresponding the back plane position and creates the detected rays
@@ -59,12 +59,12 @@ TVector3 TTelescope::RayDetectionByMirror(TRay shower) {
 TGraph TTelescope::ViewShower(TRay shower, Double_t timeDelay) {
     
     // Creates arrays to store the output data
-    Int_t numberOfPoints = (int) (shower.TimeToPlane(fGroundPlane) / timeDelay) + 2;
+    Int_t numberOfPoints = (Int_t) ((shower.TimeToPlane(fGroundPlane)) / timeDelay) + 2;
     Double_t x[numberOfPoints];
     Double_t z[numberOfPoints];
 
     // Steps the shower along its path and runs the ray detection algorithm at each point
-    for(Int_t i = 0; shower.TimeToPlane(fGroundPlane) > timeDelay; i++) {
+    for(Int_t i = 0; i < numberOfPoints - 2; i++) {
         TVector3 planeDetection = RayDetectionByMirror(shower);
         planeDetection.Rotate(-fInclination, fRotationAxis);
         x[i] = planeDetection.x();
