@@ -44,9 +44,7 @@ void TRay::PropagateToPlane(TPlane3 plane) {
 }
 
 void TRay::ReflectFromPlane(TPlane3 plane) {
-    
-    // Rotate fDirection by pi around the normal vector and reverse it
-    fVelocity = fVelocity - 2 * fVelocity.Dot(plane.GetNormal()) * plane.GetNormal();
+    fVelocity -= 2 * fVelocity.Dot(plane.GetNormal()) * plane.GetNormal();
 }
 
 void TRay::IncrementPosition(Double_t time) {

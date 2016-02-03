@@ -16,15 +16,9 @@
 class TTelescope {
     
 private:
-    
-    // The axis used for rotating the telescope by the inclination angle
-    TVector3 fRotationAxis = *new TVector3(1, 0, 0);
-    
+
     // A random object used for simulating a random ray striking the mirror
     TRandom1* fRandom = new TRandom1(12342834, 3);
-    
-    // The focal length of the telescope mirror
-    Double_t fFocalLength;
     
     // The radius of curvature of the mirror
     Double_t fRadius;
@@ -39,13 +33,10 @@ private:
     Double_t fInclination;
     
     // The plane where the detection apparatus is located
-    TPlane3 fPixelPlane;
+    TPlane3 fFocalPlane;
     
     // The plane of the ground
     TPlane3 fGroundPlane;
-    
-    // The plane tangent to the central point on the mirror
-    TPlane3 fMirrorBackPlane;
     
     // A vector normal to the plane of the mirror
     TVector3 fMirrorAxis;
@@ -55,7 +46,7 @@ public:
     /*
      * This constructor assumes that the ground is flat and that the pixel plane is parallel to the mirror tangent plane.
      */
-    TTelescope(Double_t focalLength, Double_t inclinationAngle, Double_t height, Double_t width, Double_t focalPlaneDistance, Double_t groudHeight);
+    TTelescope(Double_t radius, Double_t focalLength, Double_t inclinationAngle, Double_t height, Double_t width, Double_t groudHeight);
     
     /*
      * Returns a vector normal to the mirror's tangent plane.
