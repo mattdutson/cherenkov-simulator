@@ -52,7 +52,7 @@ TVector3 TTelescope::RayDetectionByMirror(TRay shower) {
 TGraph TTelescope::ViewShower(TRay shower, Double_t timeDelay) {
     
     // Creates arrays to store the output data
-    Int_t numberOfPoints = (Int_t) ((shower.TimeToPlane(fGroundPlane)) / timeDelay) + 2;
+    Int_t numberOfPoints = (Int_t) (((shower.TimeToPlane(fGroundPlane)) / timeDelay) + 2);
     Double_t y[numberOfPoints];
     Double_t z[numberOfPoints];
 
