@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescope.cpp */; };
-		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
-		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
-		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; settings = {COMPILER_FLAGS = "-v"; }; };
+		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
+		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; };
+		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */

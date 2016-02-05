@@ -41,6 +41,11 @@ private:
     // A vector normal to the plane of the mirror
     TVector3 fMirrorAxis;
     
+    /*
+     * Simulates isotropic emission at objectPosition and detection of that radiation by the telescope.
+     */
+    TVector3 RayDetection(TVector3 objectPosition);
+    
 public:
     
     /*
@@ -49,29 +54,15 @@ public:
     TTelescope(Double_t radius, Double_t focalLength, Double_t inclinationAngle, Double_t height, Double_t width, Double_t groudHeight);
     
     /*
-     * Returns a vector normal to the mirror's tangent plane.
-     */
-    TVector3 GetMirrorAxis();
-    
-    /*
-     * Returns the pixel plane of the mirror.
-     */
-    TPlane3 GetPixelPlane();
-    
-    /*
-     * Returns the plane of the ground.
-     */
-    TPlane3 GetGroundPlane();
-    
-    /*
      * Simulates the motion of a cosmic ray shower across the field of view.
      */
-    TGraph ViewShower(TRay shower, Double_t delayTime);
-
+    TGraph ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber);
+    
     /*
-     * Simulates isotropic emission by the shower and detection of that radiation by the detector.
+     * Simulates the detection of a single point which emits isotropically.
      */
-    TVector3 RayDetectionByMirror(TRay shower);
+    TGraph ViewPoint(TVector3 position, Int_t sampleNumber);
+
 };
 
 #endif
