@@ -8,8 +8,6 @@
 #include "TMath.h"
 #include "TRay.h"
 
-using namespace std;
-
 TRay::TRay(TVector3 position, TVector3 direction) {
     fPosition = position;
     fVelocity = fLightSpeed * direction.Unit();
@@ -32,7 +30,7 @@ Double_t TRay::TimeToPlane(TPlane3 plane) {
     
     // Check that the ray actually encounters the plane
     if (time < 0) {
-        throw new invalid_argument("The ray never reaches the plane");
+        throw new std::invalid_argument("The ray never reaches the plane");
     }
     
     // If the ray reaches the plane, return the time

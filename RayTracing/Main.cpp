@@ -36,36 +36,47 @@ void testViewShower() {
     TRay shower4 = *new TRay(*new TVector3(20000, 0, 3000), *new TVector3(0, 0, -1));
     
     // Tests the optical properties of the mirror over the entire shower
-    TGraph shower1_1 = telescope1.ViewShower(shower1, 1e-9, 10);
-    OutputGraph(shower1_1, "Small Telescope with Vertical Nearby Shower", "shower1_1");
+    TArrayD y = *new TArrayD();
+    TArrayD z = *new TArrayD();
+    
+    telescope1.ViewShower(shower1, 1e-9, 10, y, z);
 
-    TGraph shower1_2 = telescope1.ViewShower(shower2, 1e-9, 10);
-    OutputGraph(shower1_2, "Small Telescope with Angled Faraway Shower", "shower1_2");
+    y.Reset();
+    z.Reset();
+    telescope1.ViewShower(shower2, 1e-9, 10, y, z);
 
-    TGraph shower1_3 = telescope1.ViewShower(shower3, 1e-9, 10);
-    OutputGraph(shower1_3, "Small Telescope with Vertical Faraway Shower", "shower1_3");
+    y.Reset();
+    z.Reset();
+    telescope1.ViewShower(shower3, 1e-9, 10, y, z);
     
-    TGraph shower2_1 = telescope2.ViewShower(shower1, 1e-9, 10);
-    OutputGraph(shower2_1, "Large Telescope with Vertical Nearby Shower", "shower2_1");
+    y.Reset();
+    z.Reset();
+    telescope2.ViewShower(shower1, 1e-9, 10, y, z);
     
-    TGraph shower2_2 = telescope2.ViewShower(shower2, 1e-9, 10);
-    OutputGraph(shower2_2, "Large Telescope with Angled Faraway Shower", "shower2_2");
+    y.Reset();
+    z.Reset();
+    telescope2.ViewShower(shower2, 1e-9, 10, y, z);
     
-    TGraph shower2_3 = telescope2.ViewShower(shower3, 1e-9, 10);
-    OutputGraph(shower2_3, "Large Telescope with Vertical Faraway Shower", "shower2_3");
+    y.Reset();
+    z.Reset();
+    telescope2.ViewShower(shower3, 1e-9, 10, y, z);
     
     // Tests the optical properties of the mirror for a single point
-    TGraph point4_1 = telescope3.ViewPoint(*new TVector3(20000, 0, 3000), 200000);
-    OutputGraph(point4_1, "Medium Telescope with Point at High Altitude", "point4_1");
+    y.Reset();
+    z.Reset();
+    telescope3.ViewPoint(*new TVector3(20000, 0, 3000), 200000, y, z);
     
-    TGraph point4_2 = telescope3.ViewPoint(*new TVector3(20000, 0, 2000), 200000);
-    OutputGraph(point4_2, "Medium Telescope with Point at Medium Altitude", "point4_2");
+    y.Reset();
+    z.Reset();
+    telescope3.ViewPoint(*new TVector3(20000, 0, 2000), 200000, y, z);
     
-    TGraph point4_3 = telescope3.ViewPoint(*new TVector3(20000, 0, 1000), 200000);
-    OutputGraph(point4_3, "Medium Telescope with Point at Low Altitude", "point4_3");
+    y.Reset();
+    z.Reset();
+    telescope3.ViewPoint(*new TVector3(20000, 0, 1000), 200000, y, z);
     
-    TGraph point4_4 = telescope3.ViewPoint(*new TVector3(20000, 0, 0), 200000);
-    OutputGraph(point4_4, "Medium Telescope with Point at Zero Altitude", "point4_4");
+    y.Reset();
+    z.Reset();
+    telescope3.ViewPoint(*new TVector3(20000, 0, 0), 200000, y, z);
     
     file.Close();
 }

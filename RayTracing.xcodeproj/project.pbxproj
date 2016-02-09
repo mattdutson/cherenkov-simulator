@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescope.cpp */; };
 		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
+		34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */; };
 		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; };
 		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,8 @@
 		341B5EE11C56D9A500B4A61E /* TTelescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescope.cpp; sourceTree = "<group>"; };
 		341B5EE21C56D9A500B4A61E /* TTelescope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTelescope.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
+		34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
+		34BAC6BA1C6950B400E360D5 /* TAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAnalysis.h; sourceTree = "<group>"; };
 		34CB1D751C4DDD6200EBEF85 /* TRay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
 		34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPlane3.cpp; sourceTree = "<group>"; };
 		34CB1D781C4DEDA700EBEF85 /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
@@ -73,6 +76,8 @@
 				34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */,
 				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
 				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
+				34BAC6BA1C6950B400E360D5 /* TAnalysis.h */,
+				34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";
@@ -134,6 +139,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
+				34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
 				34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */,
 				341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */,
