@@ -27,7 +27,7 @@ private:
     // The radius of curvature of the mirror
     Double_t fRadius;
     
-    // If the mirror is a square, this is the height. If the mirror is a circle, this is the radius.
+    // If the mirror is a square, this is the height. If the mirror is a circle, this is the diameter.
     Double_t fSize;
     
     // The inclination angle of the telescope relative to the horizon
@@ -62,12 +62,12 @@ public:
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.
      */
-    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, TArrayD& yArray, TArrayD& zArray);
+    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, std::vector<Double_t>& yArray, std::vector<Double_t>& zArray);
     
     /*
      * Simulates the detection of a single point which emits isotropically.
      */
-    void ViewPoint(TVector3 position, Int_t sampleNumber, TArrayD& yArray, TArrayD& zArray);
+    void ViewPoint(TVector3 position, Int_t sampleNumber, std::vector<Double_t>& yArray, std::vector<Double_t>& zArray);
 
 };
 

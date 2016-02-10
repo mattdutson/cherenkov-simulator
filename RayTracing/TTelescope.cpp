@@ -50,7 +50,12 @@ TVector3 TTelescope::RayDetection(TVector3 objectPosition) {
     return detectedRay.GetPosition();
 }
 
-void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, TArrayD& yArray, TArrayD& zArray) {
+void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, std::vector<Double_t>& yArray, std::vector<Double_t>& zArray) {
+    
+    if (yArray.size() > 0) {
+        yArray.clear();
+        zArray.clear();
+    }
     
     // Creates arrays to store the output data
     Int_t numberOfSteps = (Int_t) (((shower.TimeToPlane(fGroundPlane)) / timeDelay) + 2);
@@ -63,14 +68,14 @@ void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber,
     
 }
 
-void TTelescope::ViewPoint(TVector3 objectPosition, Int_t sampleNumber, TArrayD& yArray, TArrayD& zArray) {
+void TTelescope::ViewPoint(TVector3 objectPosition, Int_t sampleNumber, std::vector<Double_t>& yArray, std::vector<Double_t>& zArray) {
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < sampleNumber; i++) {
         TVector3 planeDetection = RayDetection(objectPosition);
         planeDetection.RotateY(-fInclination);
-        yArray.AddAt(planeDetection.Y(), yArray.GetSize());
-        zArray.AddAt(planeDetection.Z(), zArray.GetSize());
+        yArray.push_back(planeDetection.Y());
+        zArray.push_back(planeDetection.Z());
     }
 }
 
@@ -85,11 +90,15 @@ TVector3 TTelescope::GetImpactPoint() {
         yRandom = (fRandom->Rndm() - 0.5) * fSize;
         zRandom = (fRandom->Rndm() - 0.5) * fSize;
     }
-    else if (fMirrorType == 0) {
-        Double_t thetaRandom = fRandom -> Rndm() * 2 * TMath::Pi();
-        Double_t rRandom = TMath::Sqrt((fSize / 2) * (fSize / 2) * fRandom->Rndm());
-        yRandom = rRandom * TMath::Cos(thetaRandom);
-        zRandom = rRandom * TMath::Sin(thetaRandom);
+    else if (fMirrorType == 1) {
+        bool iterate = true;
+        while (iterate) {
+            yRandom = (fRandom->Rndm() - 0.5) * fSize;
+            zRandom = (fRandom->Rndm() - 0.5) * fSize;
+            if (yRandom * yRandom + zRandom * zRandom <= fSize * fSize / 4) {
+                iterate = false;
+            }
+        }
     }
     
     // Finds where that point is located on the tangent plane

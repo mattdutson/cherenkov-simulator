@@ -20,17 +20,19 @@ class TAnalysis {
     
 private:
     
-    void VerifyArraySize(TArrayD yArray, TArrayD zArray);
+    static void VerifyArraySize(std::vector<Double_t> yArray, std::vector<Double_t> zArray);
+    
+    static Double_t SumArray(std::vector<Double_t>);
     
 public:
 
-    TH2D MakeDetectionHistogram(TArrayD yArray, TArrayD zArray, TString title, Int_t nXBins, Double_t xMin, Double_t xMax, Int_t nYBins, Double_t yMin, Double_t yMax);
+    static TH2D MakeDetectionHistogram(std::vector<Double_t> yArray, std::vector<Double_t> zArray, TString title, Int_t nXBins, Double_t xMin, Double_t xMax, Int_t nYBins, Double_t yMin, Double_t yMax);
 
-    TGraph MakeGraph(TArrayD yArray, TArrayD zArray);
+    static TGraph MakeGraph(std::vector<Double_t> yArray, std::vector<Double_t> zArray);
 
-    TGraph PlotRMSVAngle(TTelescope telescope, Double_t delayTime, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t xDistance);
+    static TGraph PlotRMSVAngle(TTelescope telescope, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t xDistance);
 
-    Double_t FindRMSFromAverage(TArrayD yArray, TArrayD zArray);
+    static Double_t FindRMSFromAverage(std::vector<Double_t> yArray, std::vector<Double_t> zArray);
 
 };
 
