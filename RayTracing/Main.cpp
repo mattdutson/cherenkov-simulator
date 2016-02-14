@@ -7,15 +7,13 @@
 
 #include "TTelescope.h"
 #include "TAnalysis.h"
-#include "TCanvas.h"
 #include "TFile.h"
-#include "TMath.h"
 #include <iostream>
 
 using namespace std;
 
 int main(int argc, const char* argv[]) {
-    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/view_shower_output.root", "RECREATE");
+    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/output.root", "RECREATE");
     
     // Recommended by Prof. Bergman
     TTelescope telescope1 = *new TTelescope(0, 0, 6, 3, 1);
