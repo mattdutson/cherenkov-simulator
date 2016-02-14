@@ -22,7 +22,7 @@ private:
     // A random object used for simulating a random ray striking the mirror
     TRandom1* fRandom = new TRandom1(12342834, 3);
     
-    // 0 if the mirror is an circle, 1 if the mirror is a squre
+    // 0 if the mirror is an circle, 1 if the mirror is a square
     Short_t fMirrorShape;
     
     // 0 if the mirror is spherical, 1 if the mirror is parabolic
@@ -51,11 +51,6 @@ private:
     
     // A vector normal to the plane of the mirror
     TVector3 fMirrorAxis;
-    
-    /*
-     * An initializer method.
-     */
-    void Init(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane);
     
     /*
      * A private method for viewPoint which does not clear the input array.

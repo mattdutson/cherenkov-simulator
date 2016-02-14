@@ -7,45 +7,6 @@
 
 #include "TTelescope.h"
 
-void TTelescope::Init(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane) {
-    
-    // Set the mirror shape, checking for invalid input
-    if (mirrorShape < 0 || mirrorShape > 1) {
-        throw new std::invalid_argument("The mirror shape must lie in the range [0, 1]");
-    }
-    else {
-        fMirrorShape = mirrorShape;
-    }
-    
-    // Set the mirror type, checking for invalid input
-    if (mirrorType < 0 || mirrorType > 1) {
-        throw new std::invalid_argument("The mirror type must lie in the range [0, 1]");
-    }
-    else {
-        fMirrorType = mirrorType;
-    }
-    
-    // Initialize member variables
-    fRadius = radius;
-    fCrossDiameter = focalLength / fNumber;
-    fCenterOfCurvature = centerOfCurvature;
-    fGroundPlane = groundPlane;
-    
-    // Initialize angles
-    fInclination = inclination;
-    fAzimuth = azimuth;
-    
-    // Initialize the axis of the mirror
-    fMirrorAxis = *new TVector3(0, 0, 1);
-    RotateIn(fMirrorAxis);
-    
-    // Initialize the focal plane
-    TVector3 relativePosition = *new TVector3(0, 0, -fRadius + focalLength);
-    RotateIn(relativePosition);
-    TVector3 focalPlaneCenter = fCenterOfCurvature + relativePosition;
-    fFocalPlane = *new TPlane3(fMirrorAxis, focalPlaneCenter);
-}
-
 void TTelescope::ViewPointPrivate(TVector3 objectPosition, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray) {
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
@@ -147,12 +108,44 @@ void TTelescope::TranslateOut(TVector3& vector) {
     vector -= fCenterOfCurvature;
 }
 
-TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber) {
-    Init(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, *new TVector3(0, 0, 0), *new TPlane3(*new TVector3(1, 0, 0), *new TVector3(0, 0, 0)));
-}
+TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber): TTelescope(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, *new TVector3(0, 0, 0), *new TPlane3(*new TVector3(1, 0, 0), *new TVector3(0, 0, 0))) {}
 
 TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane) {
-    Init(mirrorShape, mirrorType, radius, focalLength, fNumber, inclination, azimuth, centerOfCurvature, groundPlane);
+    // Set the mirror shape, checking for invalid input
+    if (mirrorShape < 0 || mirrorShape > 1) {
+        throw new std::invalid_argument("The mirror shape must lie in the range [0, 1]");
+    }
+    else {
+        fMirrorShape = mirrorShape;
+    }
+    
+    // Set the mirror type, checking for invalid input
+    if (mirrorType < 0 || mirrorType > 1) {
+        throw new std::invalid_argument("The mirror type must lie in the range [0, 1]");
+    }
+    else {
+        fMirrorType = mirrorType;
+    }
+    
+    // Initialize member variables
+    fRadius = radius;
+    fCrossDiameter = focalLength / fNumber;
+    fCenterOfCurvature = centerOfCurvature;
+    fGroundPlane = groundPlane;
+    
+    // Initialize angles
+    fInclination = inclination;
+    fAzimuth = azimuth;
+    
+    // Initialize the axis of the mirror
+    fMirrorAxis = *new TVector3(0, 0, 1);
+    RotateIn(fMirrorAxis);
+    
+    // Initialize the focal plane
+    TVector3 relativePosition = *new TVector3(0, 0, -fRadius + focalLength);
+    RotateIn(relativePosition);
+    TVector3 focalPlaneCenter = fCenterOfCurvature + relativePosition;
+    fFocalPlane = *new TPlane3(fMirrorAxis, focalPlaneCenter);
 }
 
 void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray) {
