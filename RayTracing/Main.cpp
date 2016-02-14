@@ -27,7 +27,7 @@ void testViewShower() {
     TTelescope telescope2 = *new TTelescope(1, 10, 5, 0, 2, 100);
     
     // Recommended by Prof. Bergman
-    TTelescope telescope3 = *new TTelescope(1, 6, 3, 0, 3, 100);
+    TTelescope telescope3 = *new TTelescope(1, 6, 2.8, 0, 3, 100);
     
     TRay shower1 = *new TRay(*new TVector3(1000, 0, 1000), *new TVector3(0, 0, -1));
     TRay shower2 = *new TRay(*new TVector3(10000, 0, 1000), *new TVector3(0, 1, -1));

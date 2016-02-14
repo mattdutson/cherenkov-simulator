@@ -13,6 +13,7 @@
 #include "TGraph.h"
 #include "TRandom1.h"
 #include "TArrayD.h"
+#include "TMath.h"
 
 class TTelescope {
     
@@ -22,16 +23,25 @@ private:
     TRandom1* fRandom = new TRandom1(12342834, 3);
     
     // 0 if the mirror is an circle, 1 if the mirror is a squre
-    Int_t fMirrorType;
+    Short_t fMirrorShape;
+    
+    // 0 if the mirror is spherical, 1 if the mirror is parabolic
+    Short_t fMirrorType;
     
     // The radius of curvature of the mirror
     Double_t fRadius;
     
-    // If the mirror is a square, this is the height. If the mirror is a circle, this is the diameter.
-    Double_t fSize;
+    // If the mirror is a square, this is the length of one side. If the mirror is a circle, this is the diameter
+    Double_t fCrossDiameter;
     
     // The inclination angle of the telescope relative to the horizon
     Double_t fInclination;
+    
+    // The angle of the telescope relative to the positive z axis
+    Double_t fAzimuth;
+    
+    // The location of the mirror's center of curvature
+    TVector3 fCenterOfCurvature;
     
     // The plane where the detection apparatus is located
     TPlane3 fFocalPlane;
@@ -43,31 +53,71 @@ private:
     TVector3 fMirrorAxis;
     
     /*
+     * An initializer method.
+     */
+    void Init(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane);
+    
+    /*
+     * A private method for viewPoint which does not clear the input array.
+     */
+    void ViewPointPrivate(TVector3 position, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray);
+    
+    /*
      * Simulates isotropic emission at objectPosition and detection of that radiation by the telescope.
      */
     TVector3 RayDetection(TVector3 objectPosition);
     
     /*
-     * Chooses a random point on the back of the mirror based on the mirror type and dimensions.
+     * Gets the mirror impact point based on the back plane impact point and the type of mirror (spherical, parabolic).
      */
-    TVector3 GetImpactPoint();
+    TVector3 GetMirrorImpact();
+    
+    /*
+     * Finds a vector normal to the mirror given the point at which the ray hits the mirror.
+     */
+    TVector3 GetMirrorNormal(TVector3 mirrorImpact);
+    
+    /*
+     * Rotates the vector from the telescope frame to the lab frame.
+     */
+    void RotateIn(TVector3& vector);
+    
+    /*
+     * Rotates the vector from the lab frame to the telescope frame.
+     */
+    void RotateOut(TVector3& vector);
+    
+    /*
+     * Translates the vector from the telescope frame to the lab frame.
+     */
+    void TranslateIn(TVector3& vector);
+    
+    /*
+     * Translates the vector from the lab frame into the telescope frame.
+     */
+    void TranslateOut(TVector3& vector);
     
 public:
     
     /*
-     * This constructor assumes that the ground is flat and that the pixel plane is parallel to the mirror tangent plane.
+     * This constructor makes a number of simplifying assumptions.
      */
-    TTelescope(Int_t mirrorType, Double_t radius, Double_t focalLength, Double_t inclinationAngle, Double_t size, Double_t groudHeight);
+    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber);
+    
+    /*
+     * The detailed constructor.
+     */
+    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane);
     
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.
      */
-    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, std::vector<Double_t>& yArray, std::vector<Double_t>& zArray);
+    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray);
     
     /*
      * Simulates the detection of a single point which emits isotropically.
      */
-    void ViewPoint(TVector3 position, Int_t sampleNumber, std::vector<Double_t>& yArray, std::vector<Double_t>& zArray);
+    void ViewPoint(TVector3 position, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray);
 
 };
 

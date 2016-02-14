@@ -9,22 +9,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "RayTracing/TTelescope.cpp"
-            timestampString = "476784747.299143"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "TTelescope::ViewPoint(TVector3 objectPosition, Int_t sampleNumber, std::vector&lt;Double_t&gt;&amp; yArray, std::vector&lt;Double_t&gt;&amp; zArray)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "RayTracing/TAnalysis.cpp"
             timestampString = "476783597.52178"
             startingColumnNumber = "9223372036854775807"
@@ -32,22 +16,6 @@
             startingLineNumber = "61"
             endingLineNumber = "61"
             landmarkName = "TAnalysis::PlotRMSVAngle(TTelescope telescope, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t xDistance)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RayTracing/TTelescope.cpp"
-            timestampString = "476787442.727289"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "TTelescope::GetImpactPoint()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
