@@ -78,7 +78,7 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
         // Compute the RMS deviation at each point and store it in the output array
         Double_t standardDeviation = FindRMSDeviation(xArray, yArray);
         RMS.push_back(standardDeviation);
-        angle.push_back(TMath::PiOver2() - shower.GetPosition().Theta());
+        angle.push_back(shower.GetPosition().Theta());
     }
 }
 
@@ -87,5 +87,13 @@ void TAnalysis::FillHistogram(std::vector<Double_t> xArray, std::vector<Double_t
     Long_t n = xArray.size();
     for (Int_t i = 0; i < n; i++) {
         histogram.Fill(xArray[i], yArray[i]);
+    }
+}
+
+void TAnalysis::FillProfile(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TProfile& profile) {
+    VerifyArraySize(xArray, yArray);
+    Long_t n = xArray.size();
+    for (Int_t i = 0; i < n; i++) {
+        profile.Fill(xArray[i], yArray[i]);
     }
 }

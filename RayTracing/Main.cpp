@@ -12,14 +12,68 @@
 
 using namespace std;
 
+void CollectRMSData();
+
 int main(int argc, const char* argv[]) {
-    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/output.root", "RECREATE");
+    CollectRMSData();
+}
+
+void CollectRMSData() {
+    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/rms-output.root", "RECREATE");
     
-    // Recommended by Prof. Bergman
-    TTelescope telescope1 = *new TTelescope(0, 0, 6, 3, 1);
+    // Sets the dimensions of the TProfile
+    Int_t nBinsX = 500;
+    Double_t xLow = 0;
+    Double_t xUp = TMath::Pi() / 6;
+    Double_t yLow = 0;
+    Double_t yUp = 0.2;
     
-    // Recommended by Prof. Bergman
-    TRay shower1 = *new TRay(*new TVector3(20000, 0, 3000), *new TVector3(0, 0, -1));
+    // Sets the dimensions of the path
+    Double_t zDistance = 20000;
+    Double_t minAngle = 0;
+    Double_t maxAngle = TMath::Pi() / 6;
     
+    // Sets the number of data points collected
+    Double_t timeDelay = 1e-8;
+    Int_t sampleNumber = 100;
+    
+    // Sets the properties of the mirror
+    Double_t radius = 6;
+    Short_t mirrorTypes[] = {0, 1};
+    Double_t fNumbers[] = {0.5, 1.0, 1.5, 2.0};
+    Double_t focalLengths[] = {2.75, 2.8, 2.85, 2.9, 2.95, 3.0};
+    
+    // Run the simulation
+    std::vector<Double_t> RMS = *new std::vector<Double_t>();
+    std::vector<Double_t> angle = *new std::vector<Double_t>();
+    for (Short_t mirrorType: mirrorTypes) {
+        for (Double_t fNumber: fNumbers) {
+            for (Double_t focalLength: focalLengths) {
+                
+                // Generate data points
+                TTelescope telescope = *new TTelescope(0, mirrorType, radius, focalLength, fNumber);
+                TAnalysis::FindRMSVsAngle(RMS, angle, telescope, sampleNumber, timeDelay, minAngle, maxAngle, zDistance);
+                TString name;
+                TString title;
+                
+                // Format the graph title and name
+                if (mirrorType == 0) {
+                    name = Form("sphr-%f-%f", fNumber, focalLength);
+                    title = Form("Spherical Mirror, F-Number: %f, Focal Length: %f", fNumber, focalLength);
+                }
+                else {
+                    name = Form("para-%f-%f", fNumber, focalLength);
+                    title = Form("Parabolic Mirror, F-Number: %f, Focal Length: %f", fNumber, focalLength);
+                }
+                
+                // Create the profile and format the axes
+                TProfile profile = *new TProfile(name, title, nBinsX, xLow, xUp, yLow, yUp);
+                profile.GetXaxis()->SetTitle("Angle (rad)");
+                profile.GetYaxis()->SetTitle("RMS Deviation of Distance (m)");
+                TAnalysis::FillProfile(angle, RMS, profile);
+                profile.Write(name);
+            }
+        }
+    }
     file.Close();
 }

@@ -9,6 +9,7 @@
 #define TAnalysis_h
 
 #include "TH2.h"
+#include "TProfile.h"
 #include "TGraph.h"
 #include "TVector3.h"
 #include "TArrayD.h"
@@ -45,7 +46,11 @@ public:
      * Fills the histogram with the data from the input arrays.
      */
     static void FillHistogram(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TH2D& histogram);
-
+    
+    /*
+     * Fills the profile with the data from the input arrays.
+     */
+    static void FillProfile(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TProfile& profile);
 };
 
 #endif
