@@ -15,9 +15,6 @@ class TRay {
     
 private:
     
-    // A constant representing the speed of light
-    constexpr static const Double_t fLightSpeed = 3e8;
-    
     // The current position of the light ray
     TVector3 fPosition;
     
@@ -25,6 +22,9 @@ private:
     TVector3 fVelocity;
     
 public:
+    
+    // A constant representing the speed of light
+    constexpr static const Double_t fLightSpeed = 3e8;
     
     /*
      * Initializes the TRay given a position and direction.

@@ -1,81 +1,15 @@
-//
-//  TAnalysis.cpp
-//  RayTracing
-//
-//  Created by Matthew Dutson on 2/8/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * Created by Matthew Dutson on 2/8/16.
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * This file contains the implementation of "TAnalysis.h". See the header file for method descriptions.
+ */
 
 #include "TAnalysis.h"
 #include "TMath.h"
 
-Double_t TAnalysis::FindRMSFromAverage(std::vector<Double_t> yArray, std::vector<Double_t> zArray) {
-    VerifyArraySize(yArray, zArray);
-    Long_t n = yArray.size();
-    Double_t yAverage = SumArray(yArray) / n;
-    Double_t zAverage = SumArray(zArray) / n;
-    Double_t variance = 0;
-    for (Int_t i = 0; i < n; i++) {
-        Double_t distanceSquared = TMath::Power(yArray[i] - yAverage, 2) + TMath::Power(zArray[i] - zAverage, 2);
-        variance += distanceSquared;
-    }
-    variance = variance / n;
-    Double_t sigma = TMath::Sqrt(variance);
-    return sigma;
-}
-TH2D TAnalysis::MakeDetectionHistogram(std::vector<Double_t> yArray, std::vector<Double_t> zArray, TString title, Int_t nXBins, Double_t xMin, Double_t xMax, Int_t nYBins, Double_t yMin, Double_t yMax) {
-    VerifyArraySize(yArray, zArray);
-    Long_t n = yArray.size();
-    TH2D histogram = *new TH2D(title, title, nXBins, xMin, xMax, nYBins, yMin, yMax);
-    
-    for (Int_t i = 0; i < n; i++) {
-        histogram.Fill(yArray[i], zArray[i]);
-    }
-    return histogram;
-}
-
-TGraph TAnalysis::MakeGraph(std::vector<Double_t> yArray, std::vector<Double_t> zArray) {
-    VerifyArraySize(yArray, zArray);
-    TGraph graph = *new TGraph((Int_t) yArray.size(), yArray.data(), zArray.data());
-    return graph;
-}
-
-TGraph TAnalysis::PlotRMSVAngle(TTelescope telescope, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t xDistance) {
-    if (minAngle > maxAngle) {
-        Double_t temp = minAngle;
-        minAngle = maxAngle;
-        maxAngle = temp;
-    }
-    else if (minAngle == maxAngle) {
-        throw std::invalid_argument("The minimum and the maximum angles must be different");
-    }
-    
-    std::vector<Double_t> RMS = *new std::vector<Double_t>();
-    std::vector<Double_t> angle = *new std::vector<Double_t>();
-    Double_t startingHeight = xDistance * TMath::Tan(minAngle);
-    Double_t endingHeight = xDistance * TMath::Tan(maxAngle);
-    Int_t nSteps = (Int_t) ((endingHeight - startingHeight) / (timeDelay * 3e8)) + 1;
-    
-    TRay shower = *new TRay(*new TVector3(xDistance, 0, startingHeight), *new TVector3(0, 0, 1));
-    
-    std::vector<Double_t> y = *new std::vector<Double_t>();
-    std::vector<Double_t> z = *new std::vector<Double_t>();
-    
-    for (Int_t i = 0; i < nSteps; i++) {
-        telescope.ViewPoint(shower.GetPosition(), sampleNumber, y, z);
-        Double_t standardDeviation = FindRMSFromAverage(y, z);
-        RMS.push_back(standardDeviation);
-        angle.push_back(TMath::PiOver2() - shower.GetPosition().Theta());
-        shower.IncrementPosition(timeDelay);
-        y.clear();
-        z.clear();
-    }
-    
-    return MakeGraph(angle, RMS);
-}
-
-void TAnalysis::VerifyArraySize(std::vector<Double_t> yArray, std::vector<Double_t> zArray) {
-    if (yArray.size() != zArray.size()) {
+void TAnalysis::VerifyArraySize(std::vector<Double_t> xArray, std::vector<Double_t> yArray) {
+    if (xArray.size() != yArray.size()) {
         throw new std::invalid_argument("Both input arrays must be the same size");
     }
 }
@@ -86,4 +20,72 @@ Double_t TAnalysis::SumArray(std::vector<Double_t> array) {
         sum += d;
     }
     return sum;
+}
+
+Double_t TAnalysis::FindRMSDeviation(std::vector<Double_t> xArray, std::vector<Double_t> yArray) {
+    
+    // Check that both arrays are the same size
+    VerifyArraySize(xArray, yArray);
+    
+    // Compute the average x and y values
+    Long_t n = xArray.size();
+    Double_t xAverage = SumArray(xArray) / n;
+    Double_t yAverage = SumArray(yArray) / n;
+    
+    // Compute the variance by repeatedly adding the distance squaared to the variance and then dividing it by n
+    Double_t variance = 0;
+    for (Int_t i = 0; i < n; i++) {
+        variance += (xArray[i] - xAverage) * (xArray[i] - xAverage) + (yArray[i] - yAverage) * (yArray[i] - yAverage);
+    }
+    variance = variance / n;
+    
+    // Find the RMS deviation from the variance
+    return TMath::Sqrt(variance);
+}
+
+void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>& angle, TTelescope telescope, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t zDistance) {
+    
+    // Make sure the arrays are clear
+    RMS.clear();
+    angle.clear();
+    
+    // Check that the min and max angles are appropriate
+    if (minAngle > maxAngle) {
+        Double_t temp = minAngle;
+        minAngle = maxAngle;
+        maxAngle = temp;
+    }
+    else if (minAngle == maxAngle) {
+        throw std::invalid_argument("The minimum and the maximum angles must be different");
+    }
+
+    // Find the starting height, the ending height, and the number of points where data will be collected
+    Double_t startingHeight = zDistance * TMath::Tan(minAngle);
+    Double_t endingHeight = zDistance * TMath::Tan(maxAngle);
+    Int_t nSteps = (Int_t) ((endingHeight - startingHeight) / (timeDelay * TRay::fLightSpeed)) + 1;
+    TRay shower = *new TRay(*new TVector3(startingHeight, 0, zDistance), *new TVector3(1, 0, 0));
+    
+    // These vectors store the detection data at each point
+    std::vector<Double_t> xArray = *new std::vector<Double_t>();
+    std::vector<Double_t> yArray = *new std::vector<Double_t>();
+    
+    for (Int_t i = 0; i < nSteps; i++) {
+        
+        // Collect data at each point along the ray's path and store it in xArray and yArray
+        telescope.ViewPoint(shower.GetPosition(), sampleNumber, xArray, yArray);
+        shower.IncrementPosition(timeDelay);
+        
+        // Compute the RMS deviation at each point and store it in the output array
+        Double_t standardDeviation = FindRMSDeviation(xArray, yArray);
+        RMS.push_back(standardDeviation);
+        angle.push_back(TMath::PiOver2() - shower.GetPosition().Theta());
+    }
+}
+
+void TAnalysis::FillHistogram(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TH2D& histogram) {
+    VerifyArraySize(xArray, yArray);
+    Long_t n = xArray.size();
+    for (Int_t i = 0; i < n; i++) {
+        histogram.Fill(xArray[i], yArray[i]);
+    }
 }
