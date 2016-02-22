@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RayTracing/Main.cpp"
-            timestampString = "477392728.013633"
+            timestampString = "477792724.707959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
             landmarkName = "CollectRMSData()"
             landmarkType = "7">
          </BreakpointContent>

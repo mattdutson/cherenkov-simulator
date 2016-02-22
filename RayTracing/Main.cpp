@@ -14,8 +14,11 @@ using namespace std;
 
 void CollectRMSData();
 
+void TestPointImage();
+
 int main(int argc, const char* argv[]) {
     CollectRMSData();
+    TestPointImage();
 }
 
 void CollectRMSData() {
@@ -43,7 +46,7 @@ void CollectRMSData() {
     Double_t fNumbers[] = {0.5, 1.0, 1.5, 2.0};
     Double_t focalLengths[] = {2.75, 2.8, 2.85, 2.9, 2.95, 3.0};
     
-    // Run the simulation
+    // Run the simulations
     std::vector<Double_t> RMS = *new std::vector<Double_t>();
     std::vector<Double_t> angle = *new std::vector<Double_t>();
     for (Short_t mirrorType: mirrorTypes) {
@@ -53,10 +56,10 @@ void CollectRMSData() {
                 // Generate data points
                 TTelescope telescope = *new TTelescope(0, mirrorType, radius, focalLength, fNumber);
                 TAnalysis::FindRMSVsAngle(RMS, angle, telescope, sampleNumber, timeDelay, minAngle, maxAngle, zDistance);
-                TString name;
-                TString title;
                 
                 // Format the graph title and name
+                TString name;
+                TString title;
                 if (mirrorType == 0) {
                     name = Form("sphr-%f-%f", fNumber, focalLength);
                     title = Form("Spherical Mirror, F-Number: %f, Focal Length: %f", fNumber, focalLength);
@@ -74,6 +77,53 @@ void CollectRMSData() {
                 profile.Write(name);
             }
         }
+    }
+    file.Close();
+}
+
+void TestPointImage() {
+    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/point-test.root", "RECREATE");
+    
+    // Sets the dimensions of the histogram
+    Int_t nBinsX = 1000;
+    Double_t xLow = -0.1;
+    Double_t xUp = 0.1;
+    Int_t nBinsY = 1000;
+    Double_t yLow = -0.1;
+    Double_t yUp = 0.1;
+    
+    // Sets the points being observed
+    Double_t zDistance = 20000;
+    Double_t heights[] = {0, 1000, 2000, 3000};
+    
+    // Sets the number of data points collected
+    Int_t sampleNumber = 1000;
+    
+    //Sets the properties of the mirror
+    Short_t mirrorType = 0;
+    Double_t radius = 6;
+    Double_t focalLength = 3;
+    Double_t fNumber = 1;
+    
+    // Run the simulations
+    TTelescope telescope = *new TTelescope(0, mirrorType, radius ,focalLength, fNumber);
+    std::vector<Double_t> x = *new std::vector<Double_t>();
+    std::vector<Double_t> y = *new std::vector<Double_t>();
+    for (Double_t height: heights) {
+        
+        // Generate data points
+        telescope.ViewPoint(*new TVector3(height, 0, zDistance), sampleNumber, x, y);
+        
+        // Format the graph title and name
+        TString name = Form("dist-%f-height-%f", zDistance, height);
+        TString title = Form("Image of Point at Distance %f and Height %f", zDistance, height);
+        
+        // Create a histogram and fill it with data points
+        TH2D histogram = *new TH2D(name, title, nBinsX, xLow, xUp, nBinsY, yLow, yUp);
+        histogram.GetXaxis()->SetTitle("x (meters)");
+        histogram.GetYaxis()->SetTitle("y (meters)");
+        TAnalysis::FillHistogram(x, y, histogram);
+        histogram.Write(name);
     }
     file.Close();
 }
