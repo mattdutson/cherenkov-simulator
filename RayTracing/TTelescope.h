@@ -60,17 +60,17 @@ private:
     /*
      * Simulates isotropic emission at objectPosition and detection of that radiation by the telescope.
      */
-    TVector3 RayDetection(TVector3 objectPosition);
+    TVector3* RayDetection(TVector3 objectPosition);
     
     /*
      * Gets the mirror impact point based on the back plane impact point and the type of mirror (spherical, parabolic).
      */
-    TVector3 GetMirrorImpact();
+    TVector3* GetMirrorImpact();
     
     /*
      * Finds a vector normal to the mirror given the point at which the ray hits the mirror.
      */
-    TVector3 GetMirrorNormal(TVector3 mirrorImpact);
+    TVector3* GetMirrorNormal(TVector3 mirrorImpact);
     
     /*
      * Rotates the vector from the telescope frame to the lab frame.

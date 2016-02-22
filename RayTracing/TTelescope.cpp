@@ -11,32 +11,35 @@ void TTelescope::ViewPointPrivate(TVector3 objectPosition, Int_t sampleNumber, s
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < sampleNumber; i++) {
-        TVector3 planeDetection = RayDetection(objectPosition);
+        TVector3* planeDetection = RayDetection(objectPosition);
         
         // Change coordinates to the telescope frame and store data in the array
-        RotateOut(planeDetection);
-        TranslateOut(planeDetection);
-        xArray.push_back(planeDetection.X());
-        yArray.push_back(planeDetection.Y());
+        RotateOut(*planeDetection);
+        TranslateOut(*planeDetection);
+        xArray.push_back(planeDetection->X());
+        yArray.push_back(planeDetection->Y());
+        delete planeDetection;
     }
 }
 
-TVector3 TTelescope::RayDetection(TVector3 objectPosition) {
+TVector3* TTelescope::RayDetection(TVector3 objectPosition) {
 
     // Find where the detected ray hits the mirror and the normal vector at that point
-    TVector3 mirrorImpact = GetMirrorImpact();
-    TVector3 mirrorNormal = GetMirrorNormal(mirrorImpact);
+    TVector3* mirrorImpact = GetMirrorImpact();
+    TVector3* mirrorNormal = GetMirrorNormal(*mirrorImpact);
     
     // Create the detected ray
-    TRay detectedRay = *new TRay(mirrorImpact, mirrorImpact - objectPosition);
+    TRay detectedRay = TRay(*mirrorImpact, *mirrorImpact - objectPosition);
     
     // Reflects the ray from the mirror and propagates it to the pixel plane
-    detectedRay.ReflectFromPlane(*new TPlane3(mirrorNormal, mirrorImpact));
+    detectedRay.ReflectFromPlane(TPlane3(*mirrorNormal, *mirrorImpact));
     detectedRay.PropagateToPlane(fFocalPlane);
-    return detectedRay.GetPosition();
+    delete mirrorImpact;
+    delete mirrorNormal;
+    return new TVector3(detectedRay.GetPosition());
 }
 
-TVector3 TTelescope::GetMirrorImpact() {
+TVector3* TTelescope::GetMirrorImpact() {
     Double_t xRandom = 0;
     Double_t yRandom = 0;
     
@@ -61,18 +64,18 @@ TVector3 TTelescope::GetMirrorImpact() {
     // Find the z-component corresponding to xRandom and yRandom based on the equation of the mirror
     TVector3 relativePosition;
     if (fMirrorType == 0) {
-        relativePosition = *new TVector3(xRandom, yRandom, -fRadius + (fRadius - TMath::Sqrt(fRadius * fRadius - xRandom * xRandom - yRandom * yRandom)));
+        relativePosition = TVector3(xRandom, yRandom, -fRadius + (fRadius - TMath::Sqrt(fRadius * fRadius - xRandom * xRandom - yRandom * yRandom)));
     }
     else if (fMirrorType == 1) {
-        relativePosition = *new TVector3(xRandom, yRandom, -fRadius + ((xRandom * xRandom / (2 * fRadius) + yRandom * yRandom / (2 * fRadius))));
+        relativePosition = TVector3(xRandom, yRandom, -fRadius + ((xRandom * xRandom / (2 * fRadius) + yRandom * yRandom / (2 * fRadius))));
     }
     
     // Rotate and translate the relative position into the correct frame
     RotateIn(relativePosition);
-    return fCenterOfCurvature + relativePosition;
+    return new TVector3(fCenterOfCurvature + relativePosition);
 }
 
-TVector3 TTelescope::GetMirrorNormal(TVector3 mirrorImpact) {
+TVector3* TTelescope::GetMirrorNormal(TVector3 mirrorImpact) {
     TVector3 mirrorNormal;
     
     // For circular mirrors, the normal vector points directly to the center of curvature
@@ -84,10 +87,10 @@ TVector3 TTelescope::GetMirrorNormal(TVector3 mirrorImpact) {
     else if (fMirrorType == 1) {
         mirrorImpact = mirrorImpact - fCenterOfCurvature;
         RotateOut(mirrorImpact);
-        mirrorNormal = *new TVector3(-mirrorImpact.X(), -mirrorImpact.Y(), fRadius);
+        mirrorNormal = TVector3(-mirrorImpact.X(), -mirrorImpact.Y(), fRadius);
         RotateIn(mirrorNormal);
     }
-    return mirrorNormal;
+    return new TVector3(mirrorNormal);
 }
 
 void TTelescope::RotateIn(TVector3& vector) {
@@ -108,7 +111,7 @@ void TTelescope::TranslateOut(TVector3& vector) {
     vector -= fCenterOfCurvature;
 }
 
-TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber): TTelescope(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, *new TVector3(0, 0, 0), *new TPlane3(*new TVector3(1, 0, 0), *new TVector3(0, 0, 0))) {}
+TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber): TTelescope(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, TVector3(0, 0, 0), TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0))) {}
 
 TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane) {
     // Set the mirror shape, checking for invalid input
@@ -138,14 +141,14 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     fAzimuth = azimuth;
     
     // Initialize the axis of the mirror
-    fMirrorAxis = *new TVector3(0, 0, 1);
+    fMirrorAxis = TVector3(0, 0, 1);
     RotateIn(fMirrorAxis);
     
     // Initialize the focal plane
-    TVector3 relativePosition = *new TVector3(0, 0, -fRadius + focalLength);
+    TVector3 relativePosition(0, 0, -fRadius + focalLength);
     RotateIn(relativePosition);
     TVector3 focalPlaneCenter = fCenterOfCurvature + relativePosition;
-    fFocalPlane = *new TPlane3(fMirrorAxis, focalPlaneCenter);
+    fFocalPlane = TPlane3(fMirrorAxis, focalPlaneCenter);
 }
 
 void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray) {

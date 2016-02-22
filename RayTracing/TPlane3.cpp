@@ -8,7 +8,7 @@
 #include "TPlane3.h"
 
 TPlane3::TPlane3() {
-    fNormal = *new TVector3();
+    fNormal = TVector3();
     fCoefficient = 0;
 }
 
