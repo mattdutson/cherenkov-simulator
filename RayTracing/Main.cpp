@@ -84,7 +84,7 @@ void CollectRMSData() {
 }
 
 void TestPointImage() {
-    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/point-test.root", "RECREATE");
+    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/point-images.root", "RECREATE");
     
     // Sets the dimensions of the histogram
     Int_t nBinsX = 200;
