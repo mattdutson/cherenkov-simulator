@@ -40,14 +40,8 @@ TVector3 TTelescope::GetMirrorImpact() {
     Double_t xRandom = 0;
     Double_t yRandom = 0;
     
-    // Select a random point in a square
-    if (fMirrorShape == 0) {
-        xRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
-        yRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
-    }
-    
     // Select a random point in a circle
-    else if (fMirrorShape == 1) {
+    if (fMirrorShape == 0) {
         bool iterate = true;
         while (iterate) {
             xRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
@@ -58,13 +52,19 @@ TVector3 TTelescope::GetMirrorImpact() {
         }
     }
     
+    // Select a random point in a square
+    else if (fMirrorShape == 1) {
+        xRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
+        yRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
+    }
+    
     // Find the z-component corresponding to xRandom and yRandom based on the equation of the mirror
     TVector3 relativePosition;
     if (fMirrorType == 0) {
-        relativePosition = *new TVector3(0, 0, -fRadius + (fRadius - TMath::Sqrt(fRadius * fRadius - xRandom * xRandom - yRandom * yRandom)));
+        relativePosition = *new TVector3(xRandom, yRandom, -fRadius + (fRadius - TMath::Sqrt(fRadius * fRadius - xRandom * xRandom - yRandom * yRandom)));
     }
     else if (fMirrorType == 1) {
-        relativePosition = *new TVector3(0, 0, -fRadius + ((xRandom * xRandom / (2 * fRadius) + yRandom * yRandom / (2 * fRadius))));
+        relativePosition = *new TVector3(xRandom, yRandom, -fRadius + ((xRandom * xRandom / (2 * fRadius) + yRandom * yRandom / (2 * fRadius))));
     }
     
     // Rotate and translate the relative position into the correct frame

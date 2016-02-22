@@ -17,7 +17,7 @@ void CollectRMSData();
 void TestPointImage();
 
 int main(int argc, const char* argv[]) {
-    CollectRMSData();
+//    CollectRMSData();
     TestPointImage();
 }
 
@@ -85,19 +85,19 @@ void TestPointImage() {
     TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/point-test.root", "RECREATE");
     
     // Sets the dimensions of the histogram
-    Int_t nBinsX = 1000;
-    Double_t xLow = -0.1;
-    Double_t xUp = 0.1;
-    Int_t nBinsY = 1000;
-    Double_t yLow = -0.1;
-    Double_t yUp = 0.1;
+    Int_t nBinsX = 200;
+    Double_t xLow = -0.5;
+    Double_t xUp = 0.5;
+    Int_t nBinsY = 200;
+    Double_t yLow = -0.8;
+    Double_t yUp = 0.2;
     
     // Sets the points being observed
     Double_t zDistance = 20000;
     Double_t heights[] = {0, 1000, 2000, 3000};
     
     // Sets the number of data points collected
-    Int_t sampleNumber = 1000;
+    Int_t sampleNumber = 200000;
     
     //Sets the properties of the mirror
     Short_t mirrorType = 0;
@@ -106,7 +106,7 @@ void TestPointImage() {
     Double_t fNumber = 1;
     
     // Run the simulations
-    TTelescope telescope = *new TTelescope(0, mirrorType, radius ,focalLength, fNumber);
+    TTelescope telescope = *new TTelescope(0, mirrorType, radius, focalLength, fNumber);
     std::vector<Double_t> x = *new std::vector<Double_t>();
     std::vector<Double_t> y = *new std::vector<Double_t>();
     for (Double_t height: heights) {
@@ -122,7 +122,7 @@ void TestPointImage() {
         TH2D histogram = *new TH2D(name, title, nBinsX, xLow, xUp, nBinsY, yLow, yUp);
         histogram.GetXaxis()->SetTitle("x (meters)");
         histogram.GetYaxis()->SetTitle("y (meters)");
-        TAnalysis::FillHistogram(x, y, histogram);
+        TAnalysis::FillHistogram(y, x, histogram);
         histogram.Write(name);
     }
     file.Close();
