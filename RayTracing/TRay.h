@@ -15,6 +15,9 @@ class TRay {
     
 private:
     
+    // The current time
+    Double_t fTime;
+    
     // The current position of the light ray
     TVector3 fPosition;
     
@@ -29,7 +32,12 @@ public:
     /*
      * Initializes the TRay given a position and direction.
      */
-    TRay(TVector3 position, TVector3 direction);
+    TRay(Double_t time, TVector3 position, TVector3 direction);
+    
+    /*
+     * Returns the current time.
+     */
+    Double_t GetTime();
     
     /*
      * Returns the current position of the ray.
@@ -50,6 +58,11 @@ public:
      * Moves the ray in its current direction until it strikes a plane.
      */
     void PropagateToPlane(TPlane3 plane);
+    
+    /*
+     * Advances the ray to the given position and advances its time using the distance between the two points.
+     */
+    void PropagateToPoint(TVector3 position);
     
     /*
      * Reflects the ray across a vector normal to the specified plane.

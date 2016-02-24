@@ -14,6 +14,7 @@
 #include "TRandom1.h"
 #include "TArrayD.h"
 #include "TMath.h"
+#include "TDataPoint.h"
 
 class TTelescope {
     
@@ -55,12 +56,12 @@ private:
     /*
      * A private method for viewPoint which does not clear the input array.
      */
-    void ViewPointPrivate(TVector3 position, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray);
+    void ViewPointPrivate(TRay shower, Int_t sampleNumber, std::vector<TDataPoint>& dataArray);
     
     /*
      * Simulates isotropic emission at objectPosition and detection of that radiation by the telescope.
      */
-    TVector3* RayDetection(TVector3 objectPosition);
+    TRay* RayDetection(TRay shower);
     
     /*
      * Gets the mirror impact point based on the back plane impact point and the type of mirror (spherical, parabolic).
@@ -107,12 +108,12 @@ public:
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.
      */
-    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray);
+    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, std::vector<TDataPoint>& dataArray);
     
     /*
      * Simulates the detection of a single point which emits isotropically.
      */
-    void ViewPoint(TVector3 position, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray);
+    void ViewPoint(TRay shower, Int_t sampleNumber, std::vector<TDataPoint>& dataArray);
 
 };
 

@@ -7,36 +7,37 @@
 
 #include "TTelescope.h"
 
-void TTelescope::ViewPointPrivate(TVector3 objectPosition, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray) {
+void TTelescope::ViewPointPrivate(TRay shower, Int_t sampleNumber, std::vector<TDataPoint>& dataArray) {
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < sampleNumber; i++) {
-        TVector3* planeDetection = RayDetection(objectPosition);
+        TRay* planeDetection = RayDetection(shower);
+        TVector3 position =  planeDetection->GetPosition();
         
         // Change coordinates to the telescope frame and store data in the array
-        RotateOut(*planeDetection);
-        TranslateOut(*planeDetection);
-        xArray.push_back(planeDetection->X());
-        yArray.push_back(planeDetection->Y());
+        RotateOut(position);
+        TranslateOut(position);
+        dataArray.push_back(TDataPoint(planeDetection->GetTime(), position.X(), position.Y()));
         delete planeDetection;
     }
 }
 
-TVector3* TTelescope::RayDetection(TVector3 objectPosition) {
+TRay* TTelescope::RayDetection(TRay shower) {
 
     // Find where the detected ray hits the mirror and the normal vector at that point
     TVector3* mirrorImpact = GetMirrorImpact();
     TVector3* mirrorNormal = GetMirrorNormal(*mirrorImpact);
     
     // Create the detected ray
-    TRay detectedRay = TRay(*mirrorImpact, *mirrorImpact - objectPosition);
+    TRay* detectedRay = new TRay(shower.GetTime(), shower.GetPosition(), (*mirrorImpact) - shower.GetPosition());
+    detectedRay->PropagateToPoint(*mirrorImpact);
     
     // Reflects the ray from the mirror and propagates it to the pixel plane
-    detectedRay.ReflectFromPlane(TPlane3(*mirrorNormal, *mirrorImpact));
-    detectedRay.PropagateToPlane(fFocalPlane);
+    detectedRay->ReflectFromPlane(TPlane3(*mirrorNormal, *mirrorImpact));
+    detectedRay->PropagateToPlane(fFocalPlane);
     delete mirrorImpact;
     delete mirrorNormal;
-    return new TVector3(detectedRay.GetPosition());
+    return detectedRay;
 }
 
 TVector3* TTelescope::GetMirrorImpact() {
@@ -151,24 +152,22 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     fFocalPlane = TPlane3(fMirrorAxis, focalPlaneCenter);
 }
 
-void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray) {
+void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, std::vector<TDataPoint>& dataArray) {
     
-    // Clear the arrays before starting.
-    xArray.clear();
-    yArray.clear();
+    // Clear the array before starting.
+    dataArray.clear();
     
     // Creates arrays to store the output data
     Int_t numberOfSteps = (Int_t) (((shower.TimeToPlane(fGroundPlane)) / timeDelay) + 2);
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < numberOfSteps; i++) {
-        ViewPointPrivate(shower.GetPosition(), sampleNumber, xArray, yArray);
+        ViewPointPrivate(shower, sampleNumber, dataArray);
         shower.IncrementPosition(timeDelay);
     }
 }
 
-void TTelescope::ViewPoint(TVector3 position, Int_t sampleNumber, std::vector<Double_t> &xArray, std::vector<Double_t> &yArray) {
-    xArray.clear();
-    yArray.clear();
-    ViewPointPrivate(position, sampleNumber, xArray, yArray);
+void TTelescope::ViewPoint(TRay shower, Int_t sampleNumber, std::vector<TDataPoint>& dataArray) {
+    dataArray.clear();
+    ViewPointPrivate(shower, sampleNumber, dataArray);
 }

@@ -8,9 +8,14 @@
 #include "TMath.h"
 #include "TRay.h"
 
-TRay::TRay(TVector3 position, TVector3 direction) {
+TRay::TRay(Double_t time, TVector3 position, TVector3 direction) {
+    fTime = time;
     fPosition = position;
     fVelocity = fLightSpeed * direction.Unit();
+}
+
+Double_t TRay::GetTime() {
+    return fTime;
 }
 
 TVector3 TRay::GetPosition() {
@@ -38,7 +43,15 @@ Double_t TRay::TimeToPlane(TPlane3 plane) {
 }
 
 void TRay::PropagateToPlane(TPlane3 plane) {
-    IncrementPosition(TimeToPlane(plane));
+    Double_t time = TimeToPlane(plane);
+    IncrementPosition(time);
+    fTime += time;
+}
+
+void TRay::PropagateToPoint(TVector3 position) {
+    Double_t distance = (fPosition - position).Mag();
+    fTime += distance / fLightSpeed;
+    fPosition = position;
 }
 
 void TRay::ReflectFromPlane(TPlane3 plane) {
@@ -47,4 +60,5 @@ void TRay::ReflectFromPlane(TPlane3 plane) {
 
 void TRay::IncrementPosition(Double_t time) {
     fPosition += fVelocity * time;
+    fTime += time;
 }
