@@ -111,10 +111,11 @@ void TestPointImage() {
     TTelescope telescope(0, mirrorType, radius, focalLength, fNumber);
     std::vector<Double_t> x = std::vector<Double_t>();
     std::vector<Double_t> y = std::vector<Double_t>();
+    std::vector<Double_t> time = std::vector<Double_t>();
     for (Double_t height: heights) {
         
         // Generate data points
-        telescope.ViewPoint(TVector3(height, 0, zDistance), sampleNumber, x, y);
+        telescope.ViewPoint(TRay(0, TVector3(height, 0, zDistance), TVector3(0, 0, 0)), sampleNumber, x, y, time);
         
         // Format the graph title and name
         TString name = Form("dist-%f-height-%f", zDistance, height);

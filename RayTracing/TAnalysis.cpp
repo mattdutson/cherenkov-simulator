@@ -63,16 +63,17 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
     Double_t startingHeight = zDistance * TMath::Tan(minAngle);
     Double_t endingHeight = zDistance * TMath::Tan(maxAngle);
     Int_t nSteps = (Int_t) ((endingHeight - startingHeight) / (timeDelay * TRay::fLightSpeed)) + 1;
-    TRay shower = *new TRay(*new TVector3(startingHeight, 0, zDistance), *new TVector3(1, 0, 0));
+    TRay shower = TRay(0, TVector3(startingHeight, 0, zDistance), TVector3(1, 0, 0));
     
     // These vectors store the detection data at each point
-    std::vector<Double_t> xArray = *new std::vector<Double_t>();
-    std::vector<Double_t> yArray = *new std::vector<Double_t>();
+    std::vector<Double_t> xArray = std::vector<Double_t>();
+    std::vector<Double_t> yArray = std::vector<Double_t>();
+    std::vector<Double_t> timeArray = std::vector<Double_t>();
     
     for (Int_t i = 0; i < nSteps; i++) {
         
         // Collect data at each point along the ray's path and store it in xArray and yArray
-        telescope.ViewPoint(shower.GetPosition(), sampleNumber, xArray, yArray);
+        telescope.ViewPoint(shower, sampleNumber, xArray, yArray, timeArray);
         shower.IncrementPosition(timeDelay);
         
         // Compute the RMS deviation at each point and store it in the output array
