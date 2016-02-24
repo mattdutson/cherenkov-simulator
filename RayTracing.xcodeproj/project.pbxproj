@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescope.cpp */; };
+		349851FC1C7D559800D3C9DD /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349851FA1C7D559800D3C9DD /* TCamera.cpp */; };
 		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
 		34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */; };
 		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; };
@@ -29,6 +30,8 @@
 /* Begin PBXFileReference section */
 		341B5EE11C56D9A500B4A61E /* TTelescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescope.cpp; sourceTree = "<group>"; };
 		341B5EE21C56D9A500B4A61E /* TTelescope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTelescope.h; sourceTree = "<group>"; };
+		349851FA1C7D559800D3C9DD /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
+		349851FB1C7D559800D3C9DD /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCamera.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
 		34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
 		34BAC6BA1C6950B400E360D5 /* TAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAnalysis.h; sourceTree = "<group>"; };
@@ -78,6 +81,8 @@
 				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
 				34BAC6BA1C6950B400E360D5 /* TAnalysis.h */,
 				34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */,
+				349851FB1C7D559800D3C9DD /* TCamera.h */,
+				349851FA1C7D559800D3C9DD /* TCamera.cpp */,
 			);
 			path = RayTracing;
 			sourceTree = "<group>";
@@ -141,6 +146,7 @@
 				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
 				34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
+				349851FC1C7D559800D3C9DD /* TCamera.cpp in Sources */,
 				34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */,
 				341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */,
 			);

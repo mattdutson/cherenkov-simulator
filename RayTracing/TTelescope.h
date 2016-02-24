@@ -14,6 +14,7 @@
 #include "TRandom1.h"
 #include "TArrayD.h"
 #include "TMath.h"
+#include "TCamera.h"
 
 class TTelescope {
     
@@ -52,6 +53,9 @@ private:
     // A vector normal to the plane of the mirror
     TVector3 fMirrorAxis;
     
+    // The telescope camera
+    TCamera fCamera;
+    
     /*
      * A private method for viewPoint which does not clear the input array.
      */
@@ -71,6 +75,11 @@ private:
      * Finds a vector normal to the mirror given the point at which the ray hits the mirror.
      */
     TVector3* GetMirrorNormal(TVector3 mirrorImpact);
+    
+    /*
+     * Gets the camera.
+     */
+    TCamera GetCamera();
     
     /*
      * Rotates the vector from the telescope frame to the lab frame.
@@ -97,12 +106,12 @@ public:
     /*
      * This constructor makes a number of simplifying assumptions.
      */
-    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber);
+    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, TCamera camera);
     
     /*
      * The detailed constructor.
      */
-    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane);
+    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane, TCamera camera);
     
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.

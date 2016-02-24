@@ -96,6 +96,10 @@ TVector3* TTelescope::GetMirrorNormal(TVector3 mirrorImpact) {
     return new TVector3(mirrorNormal);
 }
 
+TCamera TTelescope::GetCamera() {
+    return fCamera;
+}
+
 void TTelescope::RotateIn(TVector3& vector) {
     vector.RotateY(fInclination);
     vector.RotateX(fAzimuth);
@@ -114,9 +118,9 @@ void TTelescope::TranslateOut(TVector3& vector) {
     vector -= fCenterOfCurvature;
 }
 
-TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber): TTelescope(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, TVector3(0, 0, 0), TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0))) {}
+TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, TCamera camera): TTelescope(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, TVector3(0, 0, 0), TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0)), camera) {}
 
-TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane) {
+TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane, TCamera camera) {
     // Set the mirror shape, checking for invalid input
     if (mirrorShape < 0 || mirrorShape > 1) {
         throw new std::invalid_argument("The mirror shape must lie in the range [0, 1]");
@@ -134,6 +138,7 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     }
     
     // Initialize member variables
+    fCamera = camera;
     fRadius = radius;
     fCrossDiameter = focalLength / fNumber;
     fCenterOfCurvature = centerOfCurvature;
