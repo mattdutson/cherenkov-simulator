@@ -96,8 +96,8 @@ TVector3* TTelescope::GetMirrorNormal(TVector3 mirrorImpact) {
     return new TVector3(mirrorNormal);
 }
 
-TCamera TTelescope::GetCamera() {
-    return fCamera;
+TCamera* TTelescope::GetCamera() {
+    return &fCamera;
 }
 
 void TTelescope::RotateIn(TVector3& vector) {

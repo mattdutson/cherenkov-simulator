@@ -16,9 +16,12 @@ void CollectRMSData();
 
 void TestPointImage();
 
+void TestCameraFunction();
+
 int main(int argc, const char* argv[]) {
-    CollectRMSData();
-    TestPointImage();
+//    CollectRMSData();
+//    TestPointImage();
+    TestCameraFunction();
 }
 
 void CollectRMSData() {
@@ -45,6 +48,7 @@ void CollectRMSData() {
     Short_t mirrorTypes[] = {0, 1};
     Double_t fNumbers[] = {1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
     Double_t focalPercentages[] = {95, 96, 97, 98, 99, 100};
+    TCamera camera = TCamera(2, 50, 2, 50, 1e-10);
     
     // Run the simulations
     std::vector<Double_t> RMS = std::vector<Double_t>();
@@ -54,7 +58,7 @@ void CollectRMSData() {
             for (Double_t focalPercentage: focalPercentages) {
                 
                 // Generate data points
-                TTelescope telescope(0, mirrorType, radius, radius / 200 * focalPercentage, fNumber);
+                TTelescope telescope(0, mirrorType, radius, radius / 200 * focalPercentage, fNumber, camera);
                 TAnalysis::FindRMSVsAngle(RMS, angle, telescope, sampleNumber, timeDelay, minAngle, maxAngle, zDistance);
                 
                 // Format the graph title and name
@@ -101,14 +105,15 @@ void TestPointImage() {
     // Sets the number of data points collected
     Int_t sampleNumber = 50000;
     
-    //Sets the properties of the mirror
+    // Sets the properties of the mirror
     Short_t mirrorType = 0;
     Double_t radius = 6;
     Double_t focalLength = 3;
     Double_t fNumber = 1;
+    TCamera camera = TCamera(2, 50, 2, 50, 1e-10);
     
     // Run the simulations
-    TTelescope telescope(0, mirrorType, radius, focalLength, fNumber);
+    TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, camera);
     std::vector<Double_t> x = std::vector<Double_t>();
     std::vector<Double_t> y = std::vector<Double_t>();
     std::vector<Double_t> time = std::vector<Double_t>();
@@ -129,4 +134,40 @@ void TestPointImage() {
         histogram.Write(name);
     }
     file.Close();
+}
+
+void TestCameraFunction() {
+    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/shower-path.root", "RECREATE");
+    
+    // Set up the camera
+    TCamera camera = TCamera(2, 50, 2, 50, 1e-8);
+    
+    // Set the properties of the mirror
+    Short_t mirrorType = 0;
+    Double_t radius = 6;
+    Double_t focalLength = 3;
+    Double_t fNumber = 1;
+    
+    // Set the number of points being observed
+    Int_t sampleNumber = 100;
+    Double_t delayTime = 1e-8;
+    
+    // Set up the shower
+    TRay shower = TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0));
+    
+    // Set up the telescope
+    TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, camera);
+    
+    // Arrays to store data
+    std::vector<Double_t> x = std::vector<Double_t>();
+    std::vector<Double_t> y = std::vector<Double_t>();
+    std::vector<Double_t> time = std::vector<Double_t>();
+    
+    telescope.ViewShower(shower, delayTime, sampleNumber, y, x, time);
+    TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);
+    TAnalysis::FillHistogram(x, y, histogram);
+    histogram.Write();
+    file.Close();
+    std::vector<Double_t>*** data = telescope.GetCamera()->ParseData(x, y, time);
+    telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/RayTracing/Output/camera-data.root", data);
 }

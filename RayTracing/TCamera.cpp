@@ -37,14 +37,19 @@ std::vector<Double_t>*** TCamera::ParseData(std::vector<Double_t> xArray, std::v
     for (int i = 0; i < n; i++) {
         Double_t x = xArray[i] + fWidth / 2;
         Double_t y = yArray[i] + fHeight / 2;
-        Int_t xBin = (Int_t) (x / fWidth) * fNumberTubesX;
-        Int_t yBin = (Int_t) (y / fHeight) * fNumberTubesY;
-        data[xBin][yBin]->push_back(timeArray[i]);
-        if (timeArray[i] > fMaxTime) {
-            fMaxTime = timeArray[i];
+        Int_t xBin = x / fWidth * fNumberTubesX;
+        Int_t yBin = y / fHeight * fNumberTubesY;
+        if (xBin >= fNumberTubesX || yBin >= fNumberTubesY) {
+            continue;
         }
-        if (timeArray[i] < fMinTime) {
-            fMinTime = timeArray[i];
+        else {
+            data[xBin][yBin]->push_back(timeArray[i]);
+            if (timeArray[i] > fMaxTime) {
+                fMaxTime = timeArray[i];
+            }
+            if (timeArray[i] < fMinTime) {
+                fMinTime = timeArray[i];
+            }
         }
     }
     return data;
@@ -54,7 +59,8 @@ void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***data) {
     TFile file(filename, "RECREATE");
     for (int i = 0; i < fNumberTubesX; i++) {
         for (int j = 0; j < fNumberTubesY; j++) {
-            TH1D histogram = TH1D(Form("pmt-x%i-y%i", i, j), Form("Photomultiplier Tube at x = %f, y = %f", i * fWidth / (Double_t) fNumberTubesX - fWidth / 2, j * fHeight / (Double_t) fNumberTubesY - fHeight / 2), (fMaxTime - fMinTime) / fPMTResponseTime, fMinTime, fMaxTime);
+            Int_t nBinsx = (fMaxTime - fMinTime) / fPMTResponseTime;
+            TH1D histogram = TH1D(Form("pmt-x%i-y%i", i, j), Form("Photomultiplier Tube at x = %f, y = %f", i * fWidth / (Double_t) fNumberTubesX - fWidth / 2, j * fHeight / (Double_t) fNumberTubesY - fHeight / 2), nBinsx, fMinTime, fMaxTime);
             for (Double_t time: *data[i][j]) {
                 histogram.Fill(time);
             }

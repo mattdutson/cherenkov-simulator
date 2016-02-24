@@ -75,12 +75,7 @@ private:
      * Finds a vector normal to the mirror given the point at which the ray hits the mirror.
      */
     TVector3* GetMirrorNormal(TVector3 mirrorImpact);
-    
-    /*
-     * Gets the camera.
-     */
-    TCamera GetCamera();
-    
+
     /*
      * Rotates the vector from the telescope frame to the lab frame.
      */
@@ -122,6 +117,12 @@ public:
      * Simulates the detection of a single point which emits isotropically.
      */
     void ViewPoint(TRay shower, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    
+    
+    /*
+     * Gets the camera.
+     */
+    TCamera* GetCamera();
 
 };
 
