@@ -69,3 +69,12 @@ void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***data) {
     }
     file.Close();
 }
+
+bool TCamera::CheckCollision(TVector3 position) {
+    if (TMath::Abs(position.X()) > fWidth / 2 || TMath::Abs(position.Y()) > fHeight / 2) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}

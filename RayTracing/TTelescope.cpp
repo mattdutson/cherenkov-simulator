@@ -12,6 +12,13 @@ void TTelescope::ViewPointPrivate(TRay shower, Int_t sampleNumber, std::vector<D
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < sampleNumber; i++) {
         TRay* planeDetection = RayDetection(shower);
+        
+        // If the detected ray hit the camera, skip this iteration
+        if(planeDetection == nullptr) {
+            delete planeDetection;
+            continue;
+        }
+        
         TVector3 position =  planeDetection->GetPosition();
         
         // Change coordinates to the telescope frame and store data in the array
@@ -32,6 +39,18 @@ TRay* TTelescope::RayDetection(TRay shower) {
     
     // Create the detected ray
     TRay* detectedRay = new TRay(shower.GetTime(), shower.GetPosition(), (*mirrorImpact) - shower.GetPosition());
+    
+    // Propagate the detected ray to the focal plane and check whether it collided with the mirror
+    detectedRay->PropagateToPlane(fFocalPlane);
+    TVector3 position = detectedRay->GetPosition();
+    RotateOut(position);
+    TranslateOut(position);
+    
+    if(fCamera.CheckCollision(position)) {
+        return nullptr;
+    }
+    
+    // If the detected ray didn't hit the camera, continue with the simulation
     detectedRay->PropagateToPoint(*mirrorImpact);
     
     // Reflects the ray from the mirror and propagates it to the pixel plane
