@@ -10,6 +10,32 @@
 #include "TFile.h"
 #include "TH1D.h"
 
+Double_t TCamera::GetPMTX(Int_t xIndex) {
+    if (xIndex >= fNumberTubesX) {
+        throw std::invalid_argument("");
+    }
+    else {
+        return xIndex / fNumberTubesX * fWidth - fWidth / 2;
+    }
+}
+
+Double_t TCamera::GetPMTY(Int_t yIndex) {
+    if (yIndex >= fNumberTubesY) {
+        throw std::invalid_argument("");
+    }
+    else {
+        return yIndex / fNumberTubesY * fHeight - fHeight / 2;
+    }
+}
+
+Double_t TCamera::GetXBin(Double_t x) {
+    return (x + fWidth / 2) / fWidth * fNumberTubesX;
+}
+
+Double_t TCamera::GetYBin(Double_t y) {
+    return (y + fHeight / 2) / fHeight * fNumberTubesY;
+}
+
 TCamera::TCamera() {
 }
 
@@ -35,10 +61,8 @@ std::vector<Double_t>*** TCamera::ParseData(std::vector<Double_t> xArray, std::v
     }
     Long_t n = xArray.size();
     for (int i = 0; i < n; i++) {
-        Double_t x = xArray[i] + fWidth / 2;
-        Double_t y = yArray[i] + fHeight / 2;
-        Int_t xBin = x / fWidth * fNumberTubesX;
-        Int_t yBin = y / fHeight * fNumberTubesY;
+        Int_t xBin = GetXBin(xArray[i]);
+        Int_t yBin = GetYBin(yArray[i]);
         if (xBin >= fNumberTubesX || yBin >= fNumberTubesY) {
             continue;
         }
@@ -60,7 +84,7 @@ void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***data) {
     for (int i = 0; i < fNumberTubesX; i++) {
         for (int j = 0; j < fNumberTubesY; j++) {
             Int_t nBinsx = (fMaxTime - fMinTime) / fPMTResponseTime;
-            TH1D histogram = TH1D(Form("pmt-x%i-y%i", i, j), Form("Photomultiplier Tube at x = %f, y = %f", i * fWidth / (Double_t) fNumberTubesX - fWidth / 2, j * fHeight / (Double_t) fNumberTubesY - fHeight / 2), nBinsx, fMinTime, fMaxTime);
+            TH1D histogram = TH1D(Form("pmt-x%i-y%i", i, j), Form("Photomultiplier Tube at x = %f, y = %f", GetPMTX(i), GetPMTY(j)), nBinsx, fMinTime, fMaxTime);
             for (Double_t time: *data[i][j]) {
                 histogram.Fill(time);
             }
@@ -71,10 +95,10 @@ void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***data) {
 }
 
 bool TCamera::CheckCollision(TVector3 position) {
-    if (TMath::Abs(position.X()) > fWidth / 2 || TMath::Abs(position.Y()) > fHeight / 2) {
-        return true;
+    if (TMath::Abs(position.X()) > (fWidth / 2.0) || TMath::Abs(position.Y()) > (fHeight / 2.0)) {
+        return false;
     }
     else {
-        return false;
+        return true;
     }
 }

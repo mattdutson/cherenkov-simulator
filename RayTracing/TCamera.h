@@ -31,6 +31,14 @@ private:
     
     Double_t fMaxTime;
     
+    Double_t GetPMTX(Int_t xIndex);
+    
+    Double_t GetPMTY(Int_t yIndex);
+    
+    Double_t GetXBin(Double_t x);
+    
+    Double_t GetYBin(Double_t y);
+    
 public:
     
     TCamera();

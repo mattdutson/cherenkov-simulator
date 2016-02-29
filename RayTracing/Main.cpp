@@ -20,8 +20,8 @@ void TestCameraFunction();
 
 int main(int argc, const char* argv[]) {
 //    CollectRMSData();
-//    TestPointImage();
-    TestCameraFunction();
+    TestPointImage();
+//    TestCameraFunction();
 }
 
 void CollectRMSData() {
@@ -110,7 +110,7 @@ void TestPointImage() {
     Double_t radius = 6;
     Double_t focalLength = 3;
     Double_t fNumber = 1;
-    TCamera camera = TCamera(2, 50, 2, 50, 1e-10);
+    TCamera camera = TCamera(1.5, 50, 1.5, 50, 1e-10);
     
     // Run the simulations
     TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, camera);
