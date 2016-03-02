@@ -13,7 +13,7 @@
 
 class TRay {
     
-private:
+protected:
     
     // The current time
     Double_t fTime;
