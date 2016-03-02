@@ -20,8 +20,8 @@ void TestPointImage();
 void TestCameraFunction();
 
 int main(int argc, const char* argv[]) {
-    CollectRMSData();
-    TestPointImage();
+//    CollectRMSData();
+//    TestPointImage();
     TestCameraFunction();
 }
 

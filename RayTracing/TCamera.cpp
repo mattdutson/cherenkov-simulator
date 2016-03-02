@@ -15,7 +15,7 @@ Double_t TCamera::GetPMTX(Int_t xIndex) {
         throw std::invalid_argument("");
     }
     else {
-        return xIndex / fNumberTubesX * fWidth - fWidth / 2;
+        return xIndex * fWidth / (Double_t) fNumberTubesX - fWidth / 2.0;
     }
 }
 
@@ -24,7 +24,7 @@ Double_t TCamera::GetPMTY(Int_t yIndex) {
         throw std::invalid_argument("");
     }
     else {
-        return yIndex / fNumberTubesY * fHeight - fHeight / 2;
+        return yIndex * fHeight / (Double_t) fNumberTubesY - fHeight / 2.0;
     }
 }
 
