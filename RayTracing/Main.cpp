@@ -41,8 +41,8 @@ void CollectRMSData() {
     Double_t maxAngle = TMath::Pi() / 6;
     
     // Sets the number of data points collected
-    Double_t timeDelay = 1e-8;
-    Int_t sampleNumber = 100;
+    Double_t timeDelay = 5e-8;
+    Int_t sampleNumber = 300;
     
     // Sets the properties of the mirror
     Double_t radius = 6;
@@ -115,15 +115,13 @@ void TestPointImage() {
     
     // Run the simulations
     TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, camera);
-    std::vector<Double_t> x = std::vector<Double_t>();
-    std::vector<Double_t> y = std::vector<Double_t>();
-    std::vector<Double_t> time = std::vector<Double_t>();
+    TDataCollection data = TDataCollection();
     for (Double_t height: heights) {
         
         // Generate data points
         TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
         TShower shower = TShower(TRay(0, TVector3(height, 0, zDistance), TVector3()), intensityFunction);
-        telescope.ViewPoint(shower, x, y, time);
+        telescope.ViewPoint(shower, data);
         
         // Format the graph title and name
         TString name = Form("dist-%f-height-%f", zDistance, height);
@@ -133,7 +131,7 @@ void TestPointImage() {
         TH2D histogram = TH2D(name, title, nBinsX, xLow, xUp, nBinsY, yLow, yUp);
         histogram.GetXaxis()->SetTitle("x (meters)");
         histogram.GetYaxis()->SetTitle("y (meters)");
-        TAnalysis::FillHistogram(y, x, histogram);
+        TAnalysis::FillHistogram(data.GetYData(), data.GetXData(), histogram);
         histogram.Write(name);
         delete intensityFunction;
     }
@@ -144,7 +142,7 @@ void TestCameraFunction() {
     TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/shower-path.root", "RECREATE");
     
     // Set up the camera
-    TCamera camera = TCamera(2, 50, 2, 50, 1e-8, false);
+    TCamera camera = TCamera(2, 50, 2, 50, 1e-7, false);
     
     // Set the properties of the mirror
     Short_t mirrorType = 0;
@@ -164,16 +162,14 @@ void TestCameraFunction() {
     TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, camera);
     
     // Arrays to store data
-    std::vector<Double_t> x = std::vector<Double_t>();
-    std::vector<Double_t> y = std::vector<Double_t>();
-    std::vector<Double_t> time = std::vector<Double_t>();
+    TDataCollection data = TDataCollection();
     
-    telescope.ViewShower(shower, delayTime, y, x, time);
+    telescope.ViewShower(shower, delayTime, data);
     TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);
-    TAnalysis::FillHistogram(x, y, histogram);
+    TAnalysis::FillHistogram(data.GetYData(), data.GetXData(), histogram);
     histogram.Write();
     file.Close();
-    std::vector<Double_t>*** data = telescope.GetCamera()->ParseData(x, y, time);
-    telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/RayTracing/Output/camera-data.root", data);
+    std::vector<Double_t>*** parsedData = telescope.GetCamera()->ParseData(data);
+    telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/RayTracing/Output/camera-data.root", parsedData);
     delete intensityFunction;
 }

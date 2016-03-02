@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "TMath.h"
 #include "TVector3.h"
+#include "TDataCollection.h"
 
 class TCamera {
     
@@ -47,9 +48,9 @@ public:
     
     TCamera(Double_t fHeight, Int_t numberTubesY, Double_t fWidth, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent);
     
-    std::vector<Double_t>*** ParseData(std::vector<Double_t> x, std::vector<Double_t> y, std::vector<Double_t> time);
+    std::vector<Double_t>*** ParseData(TDataCollection data);
     
-    void WriteDataToFile(TString filename, std::vector<Double_t>*** data);
+    void WriteDataToFile(TString filename, std::vector<Double_t>*** parsedData);
     
     bool CheckCollision(TVector3 position);
     

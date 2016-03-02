@@ -21,11 +21,6 @@ class TAnalysis {
 private:
     
     /*
-     * Verifies that the two arrays passed as input have the same size.
-     */
-    static void VerifyArraySize(std::vector<Double_t> xArray, std::vector<Double_t> yArray);
-    
-    /*
      * Finds the sum of all elements in an array.
      */
     static Double_t SumArray(std::vector<Double_t>);
@@ -33,7 +28,7 @@ private:
     /*
      * Finds the RMS deviation from the average.
      */
-    static Double_t FindRMSDeviation(std::vector<Double_t> xArray, std::vector<Double_t> yArray);
+    static Double_t FindRMSDeviation(TDataCollection data);
     
 public:
 
@@ -45,12 +40,12 @@ public:
     /*
      * Fills the histogram with the data from the input arrays.
      */
-    static void FillHistogram(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TH2D& histogram);
+    static void FillHistogram(std::vector<Double_t> array1, std::vector<Double_t> array2, TH2D& histogram) ;
     
     /*
      * Fills the profile with the data from the input arrays.
      */
-    static void FillProfile(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TProfile& profile);
+    static void FillProfile(std::vector<Double_t> array1, std::vector<Double_t> array2, TProfile& profile);
 };
 
 #endif

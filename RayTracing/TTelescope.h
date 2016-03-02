@@ -16,6 +16,7 @@
 #include "TMath.h"
 #include "TCamera.h"
 #include "TShower.h"
+#include "TDataCollection.h"
 
 class TTelescope {
     
@@ -60,7 +61,7 @@ private:
     /*
      * A private method for viewPoint which does not clear the input array.
      */
-    void ViewPointPrivate(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    void ViewPointPrivate(TShower shower, TDataCollection& data);
     
     /*
      * Simulates isotropic emission at objectPosition and detection of that radiation by the telescope.
@@ -112,12 +113,12 @@ public:
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.
      */
-    void ViewShower(TShower shower, Double_t delayTime, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    void ViewShower(TShower shower, Double_t delayTime, TDataCollection& data);
     
     /*
      * Simulates the detection of a single point which emits isotropically.
      */
-    void ViewPoint(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    void ViewPoint(TShower shower, TDataCollection& data);
     
     
     /*

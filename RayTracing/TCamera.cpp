@@ -50,43 +50,41 @@ TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numb
     fMaxTime = -1e100;
 }
 
-std::vector<Double_t>*** TCamera::ParseData(std::vector<Double_t> xArray, std::vector<Double_t> yArray, std::vector<Double_t> timeArray) {
-    fMinTime = 1e100;
-    fMaxTime = -1e100;
-    std::vector<Double_t>*** data = new std::vector<Double_t>**[fNumberTubesX];
+std::vector<Double_t>*** TCamera::ParseData(TDataCollection data) {
+    std::vector<Double_t>*** parsedData = new std::vector<Double_t>**[fNumberTubesX];
     for (int i = 0; i < fNumberTubesX; i++) {
-        data[i] = new std::vector<Double_t>*[fNumberTubesY];
+        parsedData[i] = new std::vector<Double_t>*[fNumberTubesY];
         for (int j = 0; j < fNumberTubesY; j++) {
-            data[i][j] = new std::vector<Double_t>();
+            parsedData[i][j] = new std::vector<Double_t>();
         }
     }
-    Long_t n = xArray.size();
+    Long_t n = data.Size();
     for (int i = 0; i < n; i++) {
-        Int_t xBin = GetXBin(xArray[i]);
-        Int_t yBin = GetYBin(yArray[i]);
+        Int_t xBin = GetXBin(data.GetX(i));
+        Int_t yBin = GetYBin(data.GetY(i));
         if (xBin >= fNumberTubesX || yBin >= fNumberTubesY) {
             continue;
         }
         else {
-            data[xBin][yBin]->push_back(timeArray[i]);
-            if (timeArray[i] > fMaxTime) {
-                fMaxTime = timeArray[i];
-            }
-            if (timeArray[i] < fMinTime) {
-                fMinTime = timeArray[i];
-            }
+            parsedData[xBin][yBin]->push_back(data.GetT(i));
+        }
+        if (data.GetT(i) > fMaxTime) {
+            fMaxTime = data.GetT(i);
+        }
+        if (data.GetT(i) < fMinTime) {
+            fMinTime = data.GetT(i);
         }
     }
-    return data;
+    return parsedData;
 }
 
-void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***data) {
+void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***parsedData) {
     TFile file(filename, "RECREATE");
     for (int i = 0; i < fNumberTubesX; i++) {
         for (int j = 0; j < fNumberTubesY; j++) {
             Int_t nBinsx = (fMaxTime - fMinTime) / fPMTResponseTime;
             TH1D histogram = TH1D(Form("pmt-x%i-y%i", i, j), Form("Photomultiplier Tube at x = %f, y = %f", GetPMTX(i), GetPMTY(j)), nBinsx, fMinTime, fMaxTime);
-            for (Double_t time: *data[i][j]) {
+            for (Double_t time: *parsedData[j][i]) {
                 histogram.Fill(time);
             }
             histogram.Write();

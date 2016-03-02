@@ -7,7 +7,7 @@
 
 #include "TTelescope.h"
 
-void TTelescope::ViewPointPrivate(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
+void TTelescope::ViewPointPrivate(TShower shower, TDataCollection& data) {
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < shower.GetIntensity(); i++) {
@@ -24,9 +24,7 @@ void TTelescope::ViewPointPrivate(TShower shower, std::vector<Double_t>& xArray,
         // Change coordinates to the telescope frame and store data in the array
         RotateOut(position);
         TranslateOut(position);
-        xArray.push_back(position.X());
-        yArray.push_back(position.Y());
-        timeArray.push_back(shower.GetTime());
+        data.PushBack(position.X(), position.Y(), shower.GetTime());
         delete planeDetection;
     }
 }
@@ -181,26 +179,22 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     fFocalPlane = TPlane3(fMirrorAxis, focalPlaneCenter);
 }
 
-void TTelescope::ViewShower(TShower shower, Double_t timeDelay, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
+void TTelescope::ViewShower(TShower shower, Double_t timeDelay, TDataCollection& data) {
     
     // Clear the array before starting.
-    xArray.clear();
-    yArray.clear();
-    timeArray.clear();
+    data.Clear();
     
     // Creates arrays to store the output data
     Int_t numberOfSteps = (Int_t) (((shower.TimeToPlane(fGroundPlane)) / timeDelay) + 2);
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < numberOfSteps; i++) {
-        ViewPointPrivate(shower, xArray, yArray, timeArray);
+        ViewPointPrivate(shower, data);
         shower.IncrementPosition(timeDelay);
     }
 }
 
-void TTelescope::ViewPoint(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
-    xArray.clear();
-    yArray.clear();
-    timeArray.clear();
-    ViewPointPrivate(shower, xArray, yArray, timeArray);
+void TTelescope::ViewPoint(TShower shower, TDataCollection& data) {
+    data.Clear();
+    ViewPointPrivate(shower, data);
 }

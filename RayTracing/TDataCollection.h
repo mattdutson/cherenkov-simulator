@@ -22,18 +22,6 @@ private:
     
     std::vector<Double_t> fTData;
     
-    Double_t fXMin;
-    
-    Double_t fXMax;
-    
-    Double_t fYMin;
-    
-    Double_t fYMax;
-    
-    Double_t fTMin;
-    
-    Double_t fTMax;
-    
 public:
     
     TDataCollection();
@@ -47,6 +35,14 @@ public:
     std::vector<Double_t> GetYData();
     
     std::vector<Double_t> GetTData();
+    
+    Double_t GetX(Int_t index);
+    
+    Double_t GetY(Int_t index);
+    
+    Double_t GetT(Int_t index);
+    
+    Double_t Size();
     
 };
 
