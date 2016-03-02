@@ -39,7 +39,8 @@ Double_t TCamera::GetYBin(Double_t y) {
 TCamera::TCamera() {
 }
 
-TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numberTubesX, Double_t PMTResponseTime) {
+TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent) {
+    fTransparent = transparent;
     fHeight = height;
     fNumberTubesY = numberTubesY;
     fWidth = width;
@@ -95,7 +96,10 @@ void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***data) {
 }
 
 bool TCamera::CheckCollision(TVector3 position) {
-    if (TMath::Abs(position.X()) > (fWidth / 2.0) || TMath::Abs(position.Y()) > (fHeight / 2.0)) {
+    if (fTransparent) {
+        return false;
+    }
+    else if (TMath::Abs(position.X()) > (fWidth / 2.0) || TMath::Abs(position.Y()) > (fHeight / 2.0)) {
         return false;
     }
     else {

@@ -27,6 +27,8 @@ private:
     
     Double_t fPMTResponseTime;
     
+    bool fTransparent;
+    
     Double_t fMinTime;
     
     Double_t fMaxTime;
@@ -43,7 +45,7 @@ public:
     
     TCamera();
     
-    TCamera(Double_t fHeight, Int_t numberTubesY, Double_t fWidth, Int_t numberTubesX, Double_t PMTResponseTime);
+    TCamera(Double_t fHeight, Int_t numberTubesY, Double_t fWidth, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent);
     
     std::vector<Double_t>*** ParseData(std::vector<Double_t> x, std::vector<Double_t> y, std::vector<Double_t> time);
     
