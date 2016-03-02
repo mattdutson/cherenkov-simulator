@@ -7,6 +7,7 @@
 
 #include "TAnalysis.h"
 #include "TMath.h"
+#include "TConstantIntensity.h"
 
 void TAnalysis::VerifyArraySize(std::vector<Double_t> xArray, std::vector<Double_t> yArray) {
     if (xArray.size() != yArray.size()) {
@@ -63,7 +64,9 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
     Double_t startingHeight = zDistance * TMath::Tan(minAngle);
     Double_t endingHeight = zDistance * TMath::Tan(maxAngle);
     Int_t nSteps = (Int_t) ((endingHeight - startingHeight) / (timeDelay * TRay::fLightSpeed)) + 1;
-    TRay shower = TRay(0, TVector3(startingHeight, 0, zDistance), TVector3(1, 0, 0));
+    TRay showerRay = TRay(0, TVector3(startingHeight, 0, zDistance), TVector3(1, 0, 0));
+    TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
+    TShower shower = TShower(showerRay, intensityFunction);
     
     // These vectors store the detection data at each point
     std::vector<Double_t> xArray = std::vector<Double_t>();
@@ -73,7 +76,7 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
     for (Int_t i = 0; i < nSteps; i++) {
         
         // Collect data at each point along the ray's path and store it in xArray and yArray
-        telescope.ViewPoint(shower, sampleNumber, xArray, yArray, timeArray);
+        telescope.ViewPoint(shower, xArray, yArray, timeArray);
         shower.IncrementPosition(timeDelay);
         
         // Compute the RMS deviation at each point and store it in the output array
@@ -81,6 +84,7 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
         RMS.push_back(standardDeviation);
         angle.push_back(shower.GetPosition().Theta());
     }
+    delete intensityFunction;
 }
 
 void TAnalysis::FillHistogram(std::vector<Double_t> xArray, std::vector<Double_t> yArray, TH2D& histogram) {

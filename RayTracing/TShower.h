@@ -13,16 +13,15 @@
 #include "TRay.h"
 #include "T3DScalarFunction.h"
 
-class TShower: TRay {
+class TShower: public TRay {
     
 private:
     T3DScalarFunction* fScalarFunction;
     
 public:
-    TShower(TRay ray, T3DScalarFunction* scalarFuncgtion);
+    TShower(TRay ray, T3DScalarFunction* scalarFunction);
     
     Int_t GetIntensity();
-    
 };
 
 #endif /* TShower_h */

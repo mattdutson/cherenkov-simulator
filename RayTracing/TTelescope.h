@@ -15,6 +15,7 @@
 #include "TArrayD.h"
 #include "TMath.h"
 #include "TCamera.h"
+#include "TShower.h"
 
 class TTelescope {
     
@@ -59,12 +60,12 @@ private:
     /*
      * A private method for viewPoint which does not clear the input array.
      */
-    void ViewPointPrivate(TRay shower, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    void ViewPointPrivate(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
     
     /*
      * Simulates isotropic emission at objectPosition and detection of that radiation by the telescope.
      */
-    TRay* RayDetection(TRay shower);
+    TRay* RayDetection(TShower shower);
     
     /*
      * Gets the mirror impact point based on the back plane impact point and the type of mirror (spherical, parabolic).
@@ -111,12 +112,12 @@ public:
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.
      */
-    void ViewShower(TRay shower, Double_t delayTime, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    void ViewShower(TShower shower, Double_t delayTime, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
     
     /*
      * Simulates the detection of a single point which emits isotropically.
      */
-    void ViewPoint(TRay shower, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
+    void ViewPoint(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray);
     
     
     /*

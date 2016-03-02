@@ -7,10 +7,10 @@
 
 #include "TTelescope.h"
 
-void TTelescope::ViewPointPrivate(TRay shower, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
+void TTelescope::ViewPointPrivate(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
-    for(Int_t i = 0; i < sampleNumber; i++) {
+    for(Int_t i = 0; i < shower.GetIntensity(); i++) {
         TRay* planeDetection = RayDetection(shower);
         
         // If the detected ray hit the camera, skip this iteration
@@ -31,7 +31,7 @@ void TTelescope::ViewPointPrivate(TRay shower, Int_t sampleNumber, std::vector<D
     }
 }
 
-TRay* TTelescope::RayDetection(TRay shower) {
+TRay* TTelescope::RayDetection(TShower shower) {
 
     // Find where the detected ray hits the mirror and the normal vector at that point
     TVector3* mirrorImpact = GetMirrorImpact();
@@ -47,6 +47,9 @@ TRay* TTelescope::RayDetection(TRay shower) {
     TranslateOut(position);
     
     if(fCamera.CheckCollision(position)) {
+        delete mirrorImpact;
+        delete mirrorNormal;
+        delete detectedRay;
         return nullptr;
     }
     
@@ -178,7 +181,7 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     fFocalPlane = TPlane3(fMirrorAxis, focalPlaneCenter);
 }
 
-void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
+void TTelescope::ViewShower(TShower shower, Double_t timeDelay, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
     
     // Clear the array before starting.
     xArray.clear();
@@ -190,14 +193,14 @@ void TTelescope::ViewShower(TRay shower, Double_t timeDelay, Int_t sampleNumber,
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < numberOfSteps; i++) {
-        ViewPointPrivate(shower, sampleNumber, xArray, yArray, timeArray);
+        ViewPointPrivate(shower, xArray, yArray, timeArray);
         shower.IncrementPosition(timeDelay);
     }
 }
 
-void TTelescope::ViewPoint(TRay shower, Int_t sampleNumber, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
+void TTelescope::ViewPoint(TShower shower, std::vector<Double_t>& xArray, std::vector<Double_t>& yArray, std::vector<Double_t>& timeArray) {
     xArray.clear();
     yArray.clear();
     timeArray.clear();
-    ViewPointPrivate(shower, sampleNumber, xArray, yArray, timeArray);
+    ViewPointPrivate(shower, xArray, yArray, timeArray);
 }
