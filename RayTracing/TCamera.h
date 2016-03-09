@@ -38,7 +38,7 @@ private:
     
     Double_t GetY(Int_t bin);
     
-    Int_t GetBin(Int_t x, Int_t y);
+    Int_t GetBin(Double_t x, Double_t y);
     
     TVector3 GetOutwardDirection(TTelescope telescope, Int_t pixel);
 public:
@@ -54,9 +54,9 @@ public:
     bool CheckCollision(TVector3 position);
     
     /*
-     * Approximates the incoming direction and impact parameter based on the data collected by the camera. The output array contains, in order, the impact parameter, the angle of the shower-detector plane, and the shower's angle in the shower-detector plane.
+     * Approximates the incoming direction and impact parameter based on the data collected by the camera. The output array contains, in order, the impact parameter and the shower's angle in the shower-detector plane.
      */
-    std::vector<Double_t>* ReconstructShower(TSegmentedData data, TTelescope telescope, Double_t t0);
+    std::vector<Double_t>* ReconstructShower(TSegmentedData data, TTelescope telescope);
     /*
      * Estimates the shower plane based on the input data.
      */

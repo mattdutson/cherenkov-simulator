@@ -31,7 +31,7 @@ Double_t TCamera::GetY(Int_t bin) {
     }
 }
 
-Int_t TCamera::GetBin(Int_t x, Int_t y) {
+Int_t TCamera::GetBin(Double_t x, Double_t y) {
     Int_t xBin = (x + fWidth / 2) / fWidth * fNumberTubesX;
     Int_t yBin = (y + fHeight / 2) / fHeight * fNumberTubesY;
     return yBin * fNumberTubesX + xBin;
@@ -100,7 +100,7 @@ bool TCamera::CheckCollision(TVector3 position) {
 /*
  * Use the least squares method on the equation derived for time as a function of angle. To find the angle for each data point, find the angle between its position vector and a vector in both the x-y plane and the shower-detector plane. First project it into the the shower-pixel plane.
  */
-std::vector<Double_t>* TCamera::ReconstructShower(TSegmentedData data, TTelescope telescope, Double_t t0) {
+std::vector<Double_t>* TCamera::ReconstructShower(TSegmentedData data, TTelescope telescope) {
     TPlane3 showerPlane = EstimateShowerPlane(data, telescope);
     TVector3 groundIntersection =  showerPlane.IntersectWithXYPlane();
     std::vector<Double_t> averages = std::vector<Double_t>();
@@ -120,6 +120,14 @@ std::vector<Double_t>* TCamera::ReconstructShower(TSegmentedData data, TTelescop
     for (Double_t impactParam = impactRange[0]; impactParam < impactRange[1]; impactParam += impactStepSize) {
         for (Double_t showerAngle = 0; showerAngle < TMath::Pi(); showerAngle += angleStep) {
             Double_t squareSum = 0;
+            Double_t impactAngle = TMath::Pi() / 2 - showerAngle;
+            Int_t nearestIndex = 0;
+            for (Int_t i = 0; i < angles.size(); i++) {
+                if (TMath::Abs(angles[i] - impactAngle) < TMath::Abs(angles[nearestIndex] - impactAngle)) {
+                    nearestIndex = i;
+                }
+            }
+            double_t t0 = angles[nearestIndex];
             for (Int_t i = 0; i < averages.size(); i++) {
                 squareSum += (t0 + impactParam / TRay::fLightSpeed * TMath::Tan((TMath::Pi() - showerAngle - angles[i]) / 2) - averages[i]) * (t0 + impactParam / TRay::fLightSpeed * TMath::Tan((TMath::Pi() - showerAngle - angles[i]) / 2) - averages[i]);
             }
@@ -153,29 +161,27 @@ TPlane3 TCamera::EstimateShowerPlane(TSegmentedData data, TTelescope telescope) 
     std::vector<TVector3> direction = std::vector<TVector3>();
     std::vector<Long_t> weight = std::vector<Long_t>();
     for (Int_t i = 0; i < data.GetNBins(); i++) {
-        if (data.GetSegment(i)->size() > 0) {
-            direction.push_back(GetOutwardDirection(telescope, i));
-            weight.push_back(data.GetSegment(i)->size());
-        }
+        direction.push_back(GetOutwardDirection(telescope, i));
+        weight.push_back(data.GetSegment(i)->size());
     }
     // Find the coefficients of the equation.
     TVector3 centerOfCurvature = telescope.GetCenterOfCurvature();
-    Double_t range[] = {-100, 100};
-    TPlane3 bestPlane = TPlane3(TVector3(range[0], range[0], range[0]), centerOfCurvature);
-    Double_t stepSize = 1;
+    TPlane3 bestPlane = TPlane3(TVector3(1, 0, 0), centerOfCurvature);
+    Double_t angleStep = 1;
     Double_t bestSquare = 1e100;
-    for (Double_t a = range[0]; a <= range[1]; a += stepSize) {
-        for (Double_t b = range[0]; b <= range[1]; b+= stepSize) {
-            for (Double_t c = range[0]; c <= range[1]; c+= stepSize) {
-                TPlane3 plane = TPlane3(TVector3(a, b, c), centerOfCurvature);
-                Double_t squareSum = 0;
-                for (Int_t i = 0; i < direction.size(); i++) {
-                    squareSum += plane.ShortestDistance(direction[i]) * weight[i];
-                }
-                if (squareSum < bestSquare) {
-                    bestSquare = squareSum;
-                    bestPlane = plane;
-                }
+    for (Double_t theta = 0; theta <= TMath::Pi(); theta += angleStep) {
+        for (Double_t phi = -TMath::Pi(); phi <= TMath::Pi(); phi += angleStep) {
+            Double_t a = TMath::Sin(theta) * TMath::Cos(phi);
+            Double_t b = TMath::Sin(theta) * TMath::Sin(phi);
+            Double_t c = TMath::Cos(theta);
+            TPlane3 plane = TPlane3(TVector3(a, b, c), centerOfCurvature);
+            Double_t squareSum = 0;
+            for (Int_t i = 0; i < direction.size(); i++) {
+                squareSum += plane.ShortestDistance(direction[i]) * weight[i];
+            }
+            if (squareSum < bestSquare) {
+                bestSquare = squareSum;
+                bestPlane = plane;
             }
         }
     }

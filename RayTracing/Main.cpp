@@ -19,10 +19,13 @@ void TestPointImage();
 
 void TestCameraFunction();
 
+void TestShowerReconstruction();
+
 int main(int argc, const char* argv[]) {
 //    CollectRMSData();
 //    TestPointImage();
-    TestCameraFunction();
+//    TestCameraFunction();
+    TestShowerReconstruction();
 }
 
 void CollectRMSData() {
@@ -172,4 +175,36 @@ void TestCameraFunction() {
     TSegmentedData parsedData = telescope.GetCamera()->ParseData(data);
     telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", parsedData);
     delete intensityFunction;
+}
+
+void TestShowerReconstruction() {
+    
+    // Set up the camera
+    TCamera camera = TCamera(2, 50, 2, 50, 1e-7, false);
+    
+    // Set the properties of the mirror
+    Short_t mirrorType = 0;
+    Double_t radius = 6;
+    Double_t focalLength = 3;
+    Double_t fNumber = 1;
+    
+    // Set the number of points being observed
+    Int_t sampleNumber = 100;
+    Double_t delayTime = 1e-8;
+    
+    // Set up the shower
+    TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
+    TShower shower = TShower(TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0)), intensityFunction);
+    
+    // Set up the telescope
+    TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, &camera);
+    
+    // Arrays to store data
+    TRawData data = TRawData();
+    
+    telescope.ViewShower(shower, delayTime, data);
+    TSegmentedData parsedData = telescope.GetCamera()->ParseData(data);
+    std::vector<Double_t> output = *telescope.GetCamera()->ReconstructShower(parsedData, telescope);
+    cout << "Impact Parameter: " << output[0] << endl;
+    cout << "Shower Angle: " << output[1] << endl;
 }
