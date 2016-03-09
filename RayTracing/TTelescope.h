@@ -34,6 +34,8 @@ private:
     // The radius of curvature of the mirror
     Double_t fRadius;
     
+    Double_t fFocalLength;
+    
     // If the mirror is a square, this is the length of one side. If the mirror is a circle, this is the diameter
     Double_t fCrossDiameter;
     
@@ -78,25 +80,7 @@ private:
      */
     TVector3* GetMirrorNormal(TVector3 mirrorImpact);
 
-    /*
-     * Rotates the vector from the telescope frame to the lab frame.
-     */
-    void RotateIn(TVector3& vector);
-    
-    /*
-     * Rotates the vector from the lab frame to the telescope frame.
-     */
-    void RotateOut(TVector3& vector);
-    
-    /*
-     * Translates the vector from the telescope frame to the lab frame.
-     */
-    void TranslateIn(TVector3& vector);
-    
-    /*
-     * Translates the vector from the lab frame into the telescope frame.
-     */
-    void TranslateOut(TVector3& vector);
+
     
 public:
     
@@ -120,12 +104,38 @@ public:
      */
     void ViewPoint(TShower shower, TRawData& data);
     
-    
     /*
      * Gets the camera.
      */
     TCamera* GetCamera();
+    
+    /*
+     * Rotates the vector from the telescope frame to the lab frame.
+     */
+    void RotateIn(TVector3& vector);
+    
+    /*
+     * Rotates the vector from the lab frame to the telescope frame.
+     */
+    void RotateOut(TVector3& vector);
+    
+    /*
+     * Translates the vector from the telescope frame to the lab frame.
+     */
+    void TranslateIn(TVector3& vector);
+    
+    /*
+     * Translates the vector from the lab frame into the telescope frame.
+     */
+    void TranslateOut(TVector3& vector);
+    
+    Double_t GetFocalLength();
+    
+    Double_t GetRadius();
+    
+    TVector3 GetAxis();
 
+    TVector3 GetCenterOfCurvature();
 };
 
 #endif

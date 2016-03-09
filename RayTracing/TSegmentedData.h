@@ -16,6 +16,8 @@ class TSegmentedData {
     
 private:
     
+    Int_t fNBins;
+    
     Double_t fMinTime;
     
     Double_t fMaxTime;
@@ -33,6 +35,8 @@ public:
     Double_t GetMinTime();
     
     std::vector<Double_t>* GetSegment(Int_t bin);
+    
+    Int_t GetNBins();
 };
 
 #endif /* TSegmentedData_h */

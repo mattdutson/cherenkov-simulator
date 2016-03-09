@@ -14,6 +14,7 @@
 #include "TVector3.h"
 #include "TRawData.h"
 #include "TSegmentedData.h"
+#include "TTelescope.h"
 
 class TCamera {
     
@@ -37,6 +38,12 @@ private:
     
     Int_t GetBin(Int_t x, Int_t y);
     
+    Double_t GetPixelElevationAngle(TTelescope telescope, Int_t pixel);
+    
+    Double_t GetPixelAzimuthalAngle(TTelescope telescope, Int_t pixel);
+    
+    TRay GetOutwardDirection(TTelescope telescope, Int_t pixel);
+    
 public:
     
     TCamera();
@@ -48,6 +55,16 @@ public:
     void WriteDataToFile(TString filename, TSegmentedData);
     
     bool CheckCollision(TVector3 position);
+    
+    /*
+     * Approximates the incoming direction and impact parameter based on the data collected by the camera. The output array contains, in order, the impact parameter, the angle of the shower-detector plane, and the shower's angle in the shower-detector plane.
+     */
+    std::vector<Double_t>* ReconstructShower(TSegmentedData data);
+    
+    /*
+     * Estimates the shower plane based on the input data.
+     */
+    TPlane3 EstimateShowerPlane(TSegmentedData data);
     
 };
 

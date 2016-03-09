@@ -160,13 +160,14 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     // Initialize member variables
     fCamera = camera;
     fRadius = radius;
+    fFocalLength = focalLength;
     fCrossDiameter = focalLength / fNumber;
     fCenterOfCurvature = centerOfCurvature;
     fGroundPlane = groundPlane;
     
     // Initialize angles
     fInclination = inclination;
-    fAzimuth = azimuth;
+    fAzimuth = azimuth; 
     
     // Initialize the axis of the mirror
     fMirrorAxis = TVector3(0, 0, 1);
@@ -197,4 +198,20 @@ void TTelescope::ViewShower(TShower shower, Double_t timeDelay, TRawData& data) 
 void TTelescope::ViewPoint(TShower shower, TRawData& data) {
     data.Clear();
     ViewPointPrivate(shower, data);
+}
+
+Double_t TTelescope::GetFocalLength() {
+    return fFocalLength;
+}
+
+Double_t TTelescope::GetRadius() {
+    return fRadius;
+}
+
+TVector3 TTelescope::GetAxis() {
+    return fMirrorAxis;
+}
+
+TVector3 TTelescope::GetCenterOfCurvature() {
+    return fCenterOfCurvature;
 }
