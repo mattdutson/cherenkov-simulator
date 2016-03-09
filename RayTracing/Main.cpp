@@ -26,7 +26,7 @@ int main(int argc, const char* argv[]) {
 }
 
 void CollectRMSData() {
-    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/rms-output.root", "RECREATE");
+    TFile file("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/rms-output.root", "RECREATE");
     
     // Sets the dimensions of the TProfile
     Int_t nBinsX = 100;
@@ -89,7 +89,7 @@ void CollectRMSData() {
 }
 
 void TestPointImage() {
-    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/point-images.root", "RECREATE");
+    TFile file("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/point-images.root", "RECREATE");
     
     // Sets the dimensions of the histogram
     Int_t nBinsX = 200;
@@ -139,7 +139,7 @@ void TestPointImage() {
 }
 
 void TestCameraFunction() {
-    TFile file("/Users/Matthew/Documents/XCode/RayTracing/Output/shower-path.root", "RECREATE");
+    TFile file("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/shower-path.root", "RECREATE");
     
     // Set up the camera
     TCamera camera = TCamera(2, 50, 2, 50, 1e-7, false);
@@ -169,7 +169,7 @@ void TestCameraFunction() {
     TAnalysis::FillHistogram(data.GetYData(), data.GetXData(), histogram);
     histogram.Write();
     file.Close();
-    std::vector<Double_t>*** parsedData = telescope.GetCamera()->ParseData(data);
-    telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/RayTracing/Output/camera-data.root", parsedData);
+    TSegmentedData parsedData = telescope.GetCamera()->ParseData(data);
+    telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", parsedData);
     delete intensityFunction;
 }

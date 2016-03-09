@@ -10,30 +10,30 @@
 #include "TFile.h"
 #include "TH1D.h"
 
-Double_t TCamera::GetPMTX(Int_t xIndex) {
-    if (xIndex >= fNumberTubesX) {
+Double_t TCamera::GetX(Int_t bin) {
+    if (bin >= fNumberTubesX * fNumberTubesY) {
         throw std::invalid_argument("");
     }
     else {
+        Int_t xIndex = bin % fNumberTubesX;
         return xIndex * fWidth / (Double_t) fNumberTubesX - fWidth / 2.0;
     }
 }
 
-Double_t TCamera::GetPMTY(Int_t yIndex) {
-    if (yIndex >= fNumberTubesY) {
+Double_t TCamera::GetY(Int_t bin) {
+    if (bin >= fNumberTubesX * fNumberTubesY) {
         throw std::invalid_argument("");
     }
     else {
+        Int_t yIndex = (bin - bin % fNumberTubesX) / fNumberTubesX;
         return yIndex * fHeight / (Double_t) fNumberTubesY - fHeight / 2.0;
     }
 }
 
-Double_t TCamera::GetXBin(Double_t x) {
-    return (x + fWidth / 2) / fWidth * fNumberTubesX;
-}
-
-Double_t TCamera::GetYBin(Double_t y) {
-    return (y + fHeight / 2) / fHeight * fNumberTubesY;
+Int_t TCamera::GetBin(Int_t x, Int_t y) {
+    Int_t xBin = (x + fWidth / 2) / fWidth * fNumberTubesX;
+    Int_t yBin = (y + fHeight / 2) / fHeight * fNumberTubesY;
+    return yBin * fNumberTubesX + xBin;
 }
 
 TCamera::TCamera() {
@@ -46,49 +46,40 @@ TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numb
     fWidth = width;
     fNumberTubesX = numberTubesX;
     fPMTResponseTime = PMTResponseTime;
-    fMinTime = 1e100;
-    fMaxTime = -1e100;
 }
 
-std::vector<Double_t>*** TCamera::ParseData(TRawData data) {
-    std::vector<Double_t>*** parsedData = new std::vector<Double_t>**[fNumberTubesX];
-    for (int i = 0; i < fNumberTubesX; i++) {
-        parsedData[i] = new std::vector<Double_t>*[fNumberTubesY];
-        for (int j = 0; j < fNumberTubesY; j++) {
-            parsedData[i][j] = new std::vector<Double_t>();
-        }
-    }
-    Long_t n = data.Size();
-    for (int i = 0; i < n; i++) {
-        Int_t xBin = GetXBin(data.GetX(i));
-        Int_t yBin = GetYBin(data.GetY(i));
-        if (xBin >= fNumberTubesX || yBin >= fNumberTubesY) {
+TSegmentedData TCamera::ParseData(TRawData rawData) {
+    TSegmentedData parsedData = TSegmentedData(fNumberTubesX * fNumberTubesY);
+    for (int i = 0; i < rawData.Size(); i++) {
+        Double_t x = rawData.GetX(i);
+        Double_t y = rawData.GetY(i);
+        Double_t t = rawData.GetT(i);
+        if (TMath::Abs(x) > fWidth / 2 || TMath::Abs(y) > fHeight / 2) {
             continue;
         }
         else {
-            parsedData[xBin][yBin]->push_back(data.GetT(i));
-        }
-        if (data.GetT(i) > fMaxTime) {
-            fMaxTime = data.GetT(i);
-        }
-        if (data.GetT(i) < fMinTime) {
-            fMinTime = data.GetT(i);
+            parsedData.AddPoint(t, GetBin(x, y));
         }
     }
     return parsedData;
 }
 
-void TCamera::WriteDataToFile(TString filename, std::vector<Double_t> ***parsedData) {
+void TCamera::WriteDataToFile(TString filename, TSegmentedData parsedData) {
+    Double_t minTime = parsedData.GetMinTime();
+    Double_t maxTime = parsedData.GetMaxTime();
     TFile file(filename, "RECREATE");
-    for (int i = 0; i < fNumberTubesX; i++) {
-        for (int j = 0; j < fNumberTubesY; j++) {
-            Int_t nBinsx = (fMaxTime - fMinTime) / fPMTResponseTime;
-            TH1D histogram = TH1D(Form("pmt-x%i-y%i", i, j), Form("Photomultiplier Tube at x = %f, y = %f", GetPMTX(i), GetPMTY(j)), nBinsx, fMinTime, fMaxTime);
-            for (Double_t time: *parsedData[j][i]) {
-                histogram.Fill(time);
-            }
-            histogram.Write();
+    for (int bin = 0; bin < fNumberTubesX * fNumberTubesY; bin++) {
+        Int_t nBinsx = (maxTime - minTime) / fPMTResponseTime;
+        Double_t x = GetX(bin);
+        Double_t y = GetY(bin);
+        TH1D histogram = TH1D(Form("pmt-x%f-y%f", x, y), Form("Photomultiplier Tube at x = %f, y = %f", x, y), nBinsx, minTime, maxTime);
+        if (parsedData.GetSegment(bin)->size() == 0) {
+            continue;
         }
+        for (Double_t time: *parsedData.GetSegment(bin)) {
+            histogram.Fill(time);
+        }
+        histogram.Write();
     }
     file.Close();
 }

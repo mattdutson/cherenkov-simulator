@@ -13,6 +13,7 @@
 #include "TMath.h"
 #include "TVector3.h"
 #include "TRawData.h"
+#include "TSegmentedData.h"
 
 class TCamera {
     
@@ -30,17 +31,11 @@ private:
     
     bool fTransparent;
     
-    Double_t fMinTime;
+    Double_t GetX(Int_t bin);
     
-    Double_t fMaxTime;
+    Double_t GetY(Int_t bin);
     
-    Double_t GetPMTX(Int_t xIndex);
-    
-    Double_t GetPMTY(Int_t yIndex);
-    
-    Double_t GetXBin(Double_t x);
-    
-    Double_t GetYBin(Double_t y);
+    Int_t GetBin(Int_t x, Int_t y);
     
 public:
     
@@ -48,9 +43,9 @@ public:
     
     TCamera(Double_t fHeight, Int_t numberTubesY, Double_t fWidth, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent);
     
-    std::vector<Double_t>*** ParseData(TRawData data);
+    TSegmentedData ParseData(TRawData data);
     
-    void WriteDataToFile(TString filename, std::vector<Double_t>*** parsedData);
+    void WriteDataToFile(TString filename, TSegmentedData);
     
     bool CheckCollision(TVector3 position);
     
