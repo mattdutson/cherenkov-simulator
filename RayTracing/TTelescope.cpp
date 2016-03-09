@@ -2,12 +2,12 @@
  * Created by Matthew Dutson on 1/29/16.
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This file contains the implementation of "TTelescope.h". See the header file for method descriptions.
+ * This file contains the implementation of "TTelescope.h". See the header file for method descriptions. A left-handed coordinate system is used, with the z-axis pointing along the axis of the telescope and the x-axis oriented parallel to the horizontal.
  */
 
 #include "TTelescope.h"
 
-void TTelescope::ViewPointPrivate(TShower shower, TDataCollection& data) {
+void TTelescope::ViewPointPrivate(TShower shower, TRawData& data) {
     
     // Steps the shower along its path and runs the ray detection algorithm at each point
     for(Int_t i = 0; i < shower.GetIntensity(); i++) {
@@ -179,7 +179,7 @@ TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius,
     fFocalPlane = TPlane3(fMirrorAxis, focalPlaneCenter);
 }
 
-void TTelescope::ViewShower(TShower shower, Double_t timeDelay, TDataCollection& data) {
+void TTelescope::ViewShower(TShower shower, Double_t timeDelay, TRawData& data) {
     
     // Clear the array before starting.
     data.Clear();
@@ -194,7 +194,7 @@ void TTelescope::ViewShower(TShower shower, Double_t timeDelay, TDataCollection&
     }
 }
 
-void TTelescope::ViewPoint(TShower shower, TDataCollection& data) {
+void TTelescope::ViewPoint(TShower shower, TRawData& data) {
     data.Clear();
     ViewPointPrivate(shower, data);
 }

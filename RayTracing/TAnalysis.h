@@ -28,7 +28,7 @@ private:
     /*
      * Finds the RMS deviation from the average.
      */
-    static Double_t FindRMSDeviation(TDataCollection data);
+    static Double_t FindRMSDeviation(TRawData data);
     
 public:
 

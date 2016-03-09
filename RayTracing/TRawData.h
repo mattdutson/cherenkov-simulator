@@ -1,18 +1,18 @@
 //
-//  TDataCollection.hpp
+//  TRawData.hpp
 //  RayTracing
 //
 //  Created by Matthew Dutson on 3/1/16.
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
-#ifndef TDataCollection_h
-#define TDataCollection_h
+#ifndef TRawData_h
+#define TRawData_h
 
 #include <stdio.h>
 #include "TMath.h"
 
-class TDataCollection {
+class TRawData {
     
 private:
     
@@ -24,7 +24,7 @@ private:
     
 public:
     
-    TDataCollection();
+    TRawData();
     
     void PushBack(Double_t x, Double_t y, Double_t t);
     
@@ -46,4 +46,4 @@ public:
     
 };
 
-#endif /* TDataCollection_h */
+#endif /* TRawData_h */

@@ -10,7 +10,7 @@
 		341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescope.cpp */; };
 		3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3436E11B1C83F1AD00E938FB /* TShower.cpp */; };
 		3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */; };
-		3463D06F1C86BA8C00AED492 /* TDataCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06D1C86BA8C00AED492 /* TDataCollection.cpp */; };
+		3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06D1C86BA8C00AED492 /* TRawData.cpp */; };
 		349851FC1C7D559800D3C9DD /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349851FA1C7D559800D3C9DD /* TCamera.cpp */; };
 		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
 		34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */; };
@@ -38,8 +38,8 @@
 		3436E11F1C83F36100E938FB /* T3DScalarFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T3DScalarFunction.h; sourceTree = "<group>"; };
 		3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TConstantIntensity.cpp; sourceTree = "<group>"; };
 		3463D06B1C86938A00AED492 /* TConstantIntensity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TConstantIntensity.h; sourceTree = "<group>"; };
-		3463D06D1C86BA8C00AED492 /* TDataCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TDataCollection.cpp; sourceTree = "<group>"; };
-		3463D06E1C86BA8C00AED492 /* TDataCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDataCollection.h; sourceTree = "<group>"; };
+		3463D06D1C86BA8C00AED492 /* TRawData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRawData.cpp; sourceTree = "<group>"; };
+		3463D06E1C86BA8C00AED492 /* TRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRawData.h; sourceTree = "<group>"; };
 		349851FA1C7D559800D3C9DD /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
 		349851FB1C7D559800D3C9DD /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCamera.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
@@ -98,8 +98,8 @@
 				3436E11F1C83F36100E938FB /* T3DScalarFunction.h */,
 				3463D06B1C86938A00AED492 /* TConstantIntensity.h */,
 				3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */,
-				3463D06E1C86BA8C00AED492 /* TDataCollection.h */,
-				3463D06D1C86BA8C00AED492 /* TDataCollection.cpp */,
+				3463D06E1C86BA8C00AED492 /* TRawData.h */,
+				3463D06D1C86BA8C00AED492 /* TRawData.cpp */,
 			);
 			name = CherenkovSimulator;
 			path = RayTracing;
@@ -168,7 +168,7 @@
 				3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */,
 				3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */,
 				34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */,
-				3463D06F1C86BA8C00AED492 /* TDataCollection.cpp in Sources */,
+				3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */,
 				341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

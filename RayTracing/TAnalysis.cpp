@@ -17,7 +17,7 @@ Double_t TAnalysis::SumArray(std::vector<Double_t> array) {
     return sum;
 }
 
-Double_t TAnalysis::FindRMSDeviation(TDataCollection data) {
+Double_t TAnalysis::FindRMSDeviation(TRawData data) {
     
     // Compute the average x and y values
     Long_t n = data.Size();
@@ -60,7 +60,7 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
     TShower shower = TShower(showerRay, intensityFunction);
     
     // These vectors store the detection data at each point
-    TDataCollection data = TDataCollection();
+    TRawData data = TRawData();
     
     for (Int_t i = 0; i < nSteps; i++) {
         

@@ -115,7 +115,7 @@ void TestPointImage() {
     
     // Run the simulations
     TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, camera);
-    TDataCollection data = TDataCollection();
+    TRawData data = TRawData();
     for (Double_t height: heights) {
         
         // Generate data points
@@ -162,7 +162,7 @@ void TestCameraFunction() {
     TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, camera);
     
     // Arrays to store data
-    TDataCollection data = TDataCollection();
+    TRawData data = TRawData();
     
     telescope.ViewShower(shower, delayTime, data);
     TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);

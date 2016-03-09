@@ -50,7 +50,7 @@ TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numb
     fMaxTime = -1e100;
 }
 
-std::vector<Double_t>*** TCamera::ParseData(TDataCollection data) {
+std::vector<Double_t>*** TCamera::ParseData(TRawData data) {
     std::vector<Double_t>*** parsedData = new std::vector<Double_t>**[fNumberTubesX];
     for (int i = 0; i < fNumberTubesX; i++) {
         parsedData[i] = new std::vector<Double_t>*[fNumberTubesY];

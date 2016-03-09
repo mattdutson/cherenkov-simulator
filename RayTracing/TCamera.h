@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "TMath.h"
 #include "TVector3.h"
-#include "TDataCollection.h"
+#include "TRawData.h"
 
 class TCamera {
     
@@ -48,7 +48,7 @@ public:
     
     TCamera(Double_t fHeight, Int_t numberTubesY, Double_t fWidth, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent);
     
-    std::vector<Double_t>*** ParseData(TDataCollection data);
+    std::vector<Double_t>*** ParseData(TRawData data);
     
     void WriteDataToFile(TString filename, std::vector<Double_t>*** parsedData);
     
