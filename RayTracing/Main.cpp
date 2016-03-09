@@ -59,7 +59,7 @@ void CollectRMSData() {
             for (Double_t focalPercentage: focalPercentages) {
                 
                 // Generate data points
-                TTelescope telescope(0, mirrorType, radius, radius / 200 * focalPercentage, fNumber, camera);
+                TTelescope telescope(0, mirrorType, radius, radius / 200 * focalPercentage, fNumber, &camera);
                 TAnalysis::FindRMSVsAngle(RMS, angle, telescope, sampleNumber, timeDelay, minAngle, maxAngle, zDistance);
                 
                 // Format the graph title and name
@@ -114,7 +114,7 @@ void TestPointImage() {
     TCamera camera = TCamera(1.5, 50, 1.5, 50, 1e-10, false);
     
     // Run the simulations
-    TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, camera);
+    TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, &camera);
     TRawData data = TRawData();
     for (Double_t height: heights) {
         
@@ -159,7 +159,7 @@ void TestCameraFunction() {
     TShower shower = TShower(TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0)), intensityFunction);
     
     // Set up the telescope
-    TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, camera);
+    TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, &camera);
     
     // Arrays to store data
     TRawData data = TRawData();

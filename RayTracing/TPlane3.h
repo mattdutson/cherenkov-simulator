@@ -41,6 +41,12 @@ public:
      * Returns the fourth coefficient in the plane equation.
      */
     Double_t GetEquationCoefficient();
+    
+    Double_t ShortestDistance(TVector3 point);
+    
+    TVector3 IntersectWithXYPlane();
+    
+    TVector3 ProjectOntoPlane(TVector3 point);
 };
 
 #endif

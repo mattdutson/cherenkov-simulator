@@ -5,6 +5,8 @@
  * A class representing a telescope which uses a spherical mirror.
  */
 
+class TCamera;
+
 #ifndef TTelescope_h
 #define TTelescope_h
 
@@ -58,7 +60,7 @@ private:
     TVector3 fMirrorAxis;
     
     // The telescope camera
-    TCamera fCamera;
+    TCamera* fCamera;
     
     /*
      * A private method for viewPoint which does not clear the input array.
@@ -87,12 +89,12 @@ public:
     /*
      * This constructor makes a number of simplifying assumptions.
      */
-    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, TCamera camera);
+    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, TCamera* camera);
     
     /*
      * The detailed constructor.
      */
-    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane, TCamera camera);
+    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane, TCamera* camera);
     
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.

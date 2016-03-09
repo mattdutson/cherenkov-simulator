@@ -21,16 +21,16 @@ class TAnalysis {
 private:
     
     /*
-     * Finds the sum of all elements in an array.
-     */
-    static Double_t SumArray(std::vector<Double_t>);
-    
-    /*
      * Finds the RMS deviation from the average.
      */
     static Double_t FindRMSDeviation(TRawData data);
     
 public:
+    
+    /*
+     * Finds the sum of all elements in an array.
+     */
+    static Double_t SumArray(std::vector<Double_t>);
 
     /*
      * Returns a graph of RMS Deviation vs angle from the mirror axis.

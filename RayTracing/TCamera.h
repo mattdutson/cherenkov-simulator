@@ -6,6 +6,8 @@
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
+class TTelescope;
+
 #ifndef TCamera_h
 #define TCamera_h
 
@@ -38,12 +40,7 @@ private:
     
     Int_t GetBin(Int_t x, Int_t y);
     
-    Double_t GetPixelElevationAngle(TTelescope telescope, Int_t pixel);
-    
-    Double_t GetPixelAzimuthalAngle(TTelescope telescope, Int_t pixel);
-    
-    TRay GetOutwardDirection(TTelescope telescope, Int_t pixel);
-    
+    TVector3 GetOutwardDirection(TTelescope telescope, Int_t pixel);
 public:
     
     TCamera();
@@ -59,13 +56,11 @@ public:
     /*
      * Approximates the incoming direction and impact parameter based on the data collected by the camera. The output array contains, in order, the impact parameter, the angle of the shower-detector plane, and the shower's angle in the shower-detector plane.
      */
-    std::vector<Double_t>* ReconstructShower(TSegmentedData data);
-    
+    std::vector<Double_t>* ReconstructShower(TSegmentedData data, TTelescope telescope, Double_t t0);
     /*
      * Estimates the shower plane based on the input data.
      */
-    TPlane3 EstimateShowerPlane(TSegmentedData data);
-    
+    TPlane3 EstimateShowerPlane(TSegmentedData data, TTelescope telescope);
 };
 
 #endif /* TCamera_h */
