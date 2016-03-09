@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:RayTracing.xcodeproj">
+      location = "self:/Users/Matthew/Documents/Xcode/RayTracing/CherenkovSimulator.xcodeproj">
    </FileRef>
 </Workspace>

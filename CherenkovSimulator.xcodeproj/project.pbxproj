@@ -48,7 +48,7 @@
 		34CB1D751C4DDD6200EBEF85 /* TRay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
 		34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPlane3.cpp; sourceTree = "<group>"; };
 		34CB1D781C4DEDA700EBEF85 /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
-		34D9761D1C4CAC6E0040C7F6 /* RayTracing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracing; sourceTree = BUILT_PRODUCTS_DIR; };
+		34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D976201C4CAC6E0040C7F6 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,7 +66,7 @@
 		34D976141C4CAC6E0040C7F6 = {
 			isa = PBXGroup;
 			children = (
-				34D9761F1C4CAC6E0040C7F6 /* RayTracing */,
+				34D9761F1C4CAC6E0040C7F6 /* CherenkovSimulator */,
 				34D9761E1C4CAC6E0040C7F6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,12 +74,12 @@
 		34D9761E1C4CAC6E0040C7F6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				34D9761D1C4CAC6E0040C7F6 /* RayTracing */,
+				34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		34D9761F1C4CAC6E0040C7F6 /* RayTracing */ = {
+		34D9761F1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
@@ -101,15 +101,16 @@
 				3463D06E1C86BA8C00AED492 /* TDataCollection.h */,
 				3463D06D1C86BA8C00AED492 /* TDataCollection.cpp */,
 			);
+			name = CherenkovSimulator;
 			path = RayTracing;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		34D9761C1C4CAC6E0040C7F6 /* RayTracing */ = {
+		34D9761C1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 34D976241C4CAC6E0040C7F6 /* Build configuration list for PBXNativeTarget "RayTracing" */;
+			buildConfigurationList = 34D976241C4CAC6E0040C7F6 /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */;
 			buildPhases = (
 				34D976191C4CAC6E0040C7F6 /* Sources */,
 				34D9761A1C4CAC6E0040C7F6 /* Frameworks */,
@@ -119,9 +120,9 @@
 			);
 			dependencies = (
 			);
-			name = RayTracing;
+			name = CherenkovSimulator;
 			productName = RayTracing;
-			productReference = 34D9761D1C4CAC6E0040C7F6 /* RayTracing */;
+			productReference = 34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -138,7 +139,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 34D976181C4CAC6E0040C7F6 /* Build configuration list for PBXProject "RayTracing" */;
+			buildConfigurationList = 34D976181C4CAC6E0040C7F6 /* Build configuration list for PBXProject "CherenkovSimulator" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -150,7 +151,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				34D9761C1C4CAC6E0040C7F6 /* RayTracing */,
+				34D9761C1C4CAC6E0040C7F6 /* CherenkovSimulator */,
 			);
 		};
 /* End PBXProject section */
@@ -289,7 +290,7 @@
 					"-lm",
 					"-ldl",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = CherenkovSimulator;
 			};
 			name = Debug;
 		};
@@ -328,14 +329,14 @@
 					"-lm",
 					"-ldl",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = CherenkovSimulator;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		34D976181C4CAC6E0040C7F6 /* Build configuration list for PBXProject "RayTracing" */ = {
+		34D976181C4CAC6E0040C7F6 /* Build configuration list for PBXProject "CherenkovSimulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				34D976221C4CAC6E0040C7F6 /* Debug */,
@@ -344,7 +345,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		34D976241C4CAC6E0040C7F6 /* Build configuration list for PBXNativeTarget "RayTracing" */ = {
+		34D976241C4CAC6E0040C7F6 /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				34D976251C4CAC6E0040C7F6 /* Debug */,
