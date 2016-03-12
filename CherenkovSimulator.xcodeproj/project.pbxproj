@@ -66,6 +66,60 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		349CE13F1C94B31A0006F705 /* DataContainers */ = {
+			isa = PBXGroup;
+			children = (
+				3463D06E1C86BA8C00AED492 /* TRawData.h */,
+				3463D06D1C86BA8C00AED492 /* TRawData.cpp */,
+				34C1A23A1C8FA8E7004FEDF1 /* TSegmentedData.h */,
+				34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */,
+			);
+			name = DataContainers;
+			sourceTree = "<group>";
+		};
+		349CE1401C94B3640006F705 /* Functors */ = {
+			isa = PBXGroup;
+			children = (
+				3436E11F1C83F36100E938FB /* T3DScalarFunction.h */,
+				3463D06B1C86938A00AED492 /* TConstantIntensity.h */,
+				3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */,
+			);
+			name = Functors;
+			sourceTree = "<group>";
+		};
+		349CE1411C94B3780006F705 /* Detector */ = {
+			isa = PBXGroup;
+			children = (
+				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
+				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
+				349851FB1C7D559800D3C9DD /* TCamera.h */,
+				349851FA1C7D559800D3C9DD /* TCamera.cpp */,
+			);
+			name = Detector;
+			sourceTree = "<group>";
+		};
+		349CE1421C94B3980006F705 /* Rays */ = {
+			isa = PBXGroup;
+			children = (
+				34CB1D751C4DDD6200EBEF85 /* TRay.h */,
+				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
+				3436E11C1C83F1AD00E938FB /* TShower.h */,
+				3436E11B1C83F1AD00E938FB /* TShower.cpp */,
+			);
+			name = Rays;
+			sourceTree = "<group>";
+		};
+		349CE1431C94B3D80006F705 /* Miscellaneous */ = {
+			isa = PBXGroup;
+			children = (
+				34BAC6BA1C6950B400E360D5 /* TAnalysis.h */,
+				34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */,
+				34CB1D781C4DEDA700EBEF85 /* TPlane3.h */,
+				34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */,
+			);
+			name = Miscellaneous;
+			sourceTree = "<group>";
+		};
 		34D976141C4CAC6E0040C7F6 = {
 			isa = PBXGroup;
 			children = (
@@ -86,25 +140,11 @@
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
-				34BAC6BA1C6950B400E360D5 /* TAnalysis.h */,
-				34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */,
-				34CB1D751C4DDD6200EBEF85 /* TRay.h */,
-				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
-				34CB1D781C4DEDA700EBEF85 /* TPlane3.h */,
-				34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */,
-				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
-				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
-				349851FB1C7D559800D3C9DD /* TCamera.h */,
-				349851FA1C7D559800D3C9DD /* TCamera.cpp */,
-				3436E11C1C83F1AD00E938FB /* TShower.h */,
-				3436E11B1C83F1AD00E938FB /* TShower.cpp */,
-				3436E11F1C83F36100E938FB /* T3DScalarFunction.h */,
-				3463D06B1C86938A00AED492 /* TConstantIntensity.h */,
-				3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */,
-				3463D06E1C86BA8C00AED492 /* TRawData.h */,
-				3463D06D1C86BA8C00AED492 /* TRawData.cpp */,
-				34C1A23A1C8FA8E7004FEDF1 /* TSegmentedData.h */,
-				34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */,
+				349CE1411C94B3780006F705 /* Detector */,
+				349CE1421C94B3980006F705 /* Rays */,
+				349CE13F1C94B31A0006F705 /* DataContainers */,
+				349CE1401C94B3640006F705 /* Functors */,
+				349CE1431C94B3D80006F705 /* Miscellaneous */,
 			);
 			name = CherenkovSimulator;
 			path = RayTracing;
