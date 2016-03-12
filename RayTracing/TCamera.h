@@ -39,8 +39,7 @@ private:
     Double_t GetY(Int_t bin);
     
     Int_t GetBin(Double_t x, Double_t y);
-    
-    TVector3 GetOutwardDirection(TTelescope telescope, Int_t pixel);
+
 public:
     
     TCamera();

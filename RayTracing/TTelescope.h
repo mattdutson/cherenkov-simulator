@@ -19,51 +19,23 @@ class TCamera;
 #include "TCamera.h"
 #include "TShower.h"
 #include "TRawData.h"
+#include "TMirror.h"
 
-class TTelescope {
+class TTelescope: public TMirror {
     
 private:
-
-    // A random object used for simulating a random ray striking the mirror
-    TRandom1* fRandom = new TRandom1(12342834, 3);
-    
-    // 0 if the mirror is an circle, 1 if the mirror is a square
-    Short_t fMirrorShape;
-    
-    // 0 if the mirror is spherical, 1 if the mirror is parabolic
-    Short_t fMirrorType;
-    
-    // The radius of curvature of the mirror
-    Double_t fRadius;
-    
-    Double_t fFocalLength;
-    
-    // If the mirror is a square, this is the length of one side. If the mirror is a circle, this is the diameter
-    Double_t fCrossDiameter;
-    
-    // The inclination angle of the telescope relative to the horizon
-    Double_t fInclination;
-    
-    // The angle of the telescope relative to the positive z axis
-    Double_t fAzimuth;
-    
-    // The location of the mirror's center of curvature
-    TVector3 fCenterOfCurvature;
-    
+       
     // The plane where the detection apparatus is located
     TPlane3 fFocalPlane;
     
     // The plane of the ground
     TPlane3 fGroundPlane;
     
-    // A vector normal to the plane of the mirror
-    TVector3 fMirrorAxis;
-    
     // The telescope camera
     TCamera* fCamera;
     
     /*
-     * A private method for viewPoint which does not clear the input array.
+     * A private method for viewing a point which does not clear the input array.
      */
     void ViewPointPrivate(TShower shower, TRawData& data);
     
@@ -72,29 +44,19 @@ private:
      */
     TRay* RayDetection(TShower shower);
     
-    /*
-     * Gets the mirror impact point based on the back plane impact point and the type of mirror (spherical, parabolic).
-     */
-    TVector3* GetMirrorImpact();
-    
-    /*
-     * Finds a vector normal to the mirror given the point at which the ray hits the mirror.
-     */
-    TVector3* GetMirrorNormal(TVector3 mirrorImpact);
-
-
+    TVector3 GetOutwardDirection(TTelescope telescope, Int_t pixel);
     
 public:
     
     /*
      * This constructor makes a number of simplifying assumptions.
      */
-    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, TCamera* camera);
+    TTelescope(TCamera* camera, TMirror mirror);
     
     /*
      * The detailed constructor.
      */
-    TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane, TCamera* camera);
+    TTelescope(TPlane3 groundPlane, TCamera* camera, TMirror mirror);
     
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.
@@ -106,38 +68,20 @@ public:
      */
     void ViewPoint(TShower shower, TRawData& data);
     
+    TVector3 GetOutwardDirection(Double_t pixelX, Double_t pixelY);
+    
     /*
      * Gets the camera.
      */
     TCamera* GetCamera();
     
-    /*
-     * Rotates the vector from the telescope frame to the lab frame.
-     */
-    void RotateIn(TVector3& vector);
-    
-    /*
-     * Rotates the vector from the lab frame to the telescope frame.
-     */
-    void RotateOut(TVector3& vector);
-    
-    /*
-     * Translates the vector from the telescope frame to the lab frame.
-     */
-    void TranslateIn(TVector3& vector);
-    
-    /*
-     * Translates the vector from the lab frame into the telescope frame.
-     */
-    void TranslateOut(TVector3& vector);
-    
-    Double_t GetFocalLength();
-    
-    Double_t GetRadius();
-    
-    TVector3 GetAxis();
-
-    TVector3 GetCenterOfCurvature();
+//    Double_t GetFocalLength();
+//    
+//    Double_t GetRadius();
+//    
+//    TVector3 GetAxis();
+//
+//    TVector3 GetCenterOfCurvature();
 };
 
 #endif

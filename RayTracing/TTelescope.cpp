@@ -62,119 +62,20 @@ TRay* TTelescope::RayDetection(TShower shower) {
     return detectedRay;
 }
 
-TVector3* TTelescope::GetMirrorImpact() {
-    Double_t xRandom = 0;
-    Double_t yRandom = 0;
-    
-    // Select a random point in a circle
-    if (fMirrorShape == 0) {
-        bool iterate = true;
-        while (iterate) {
-            xRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
-            yRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
-            if (xRandom * xRandom + yRandom * yRandom <= fCrossDiameter * fCrossDiameter / 4) {
-                iterate = false;
-            }
-        }
-    }
-    
-    // Select a random point in a square
-    else if (fMirrorShape == 1) {
-        xRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
-        yRandom = (fRandom->Rndm() - 0.5) * fCrossDiameter;
-    }
-    
-    // Find the z-component corresponding to xRandom and yRandom based on the equation of the mirror
-    TVector3 relativePosition;
-    if (fMirrorType == 0) {
-        relativePosition = TVector3(xRandom, yRandom, -fRadius + (fRadius - TMath::Sqrt(fRadius * fRadius - xRandom * xRandom - yRandom * yRandom)));
-    }
-    else if (fMirrorType == 1) {
-        relativePosition = TVector3(xRandom, yRandom, -fRadius + ((xRandom * xRandom / (2 * fRadius) + yRandom * yRandom / (2 * fRadius))));
-    }
-    
-    // Rotate and translate the relative position into the correct frame
-    RotateIn(relativePosition);
-    return new TVector3(fCenterOfCurvature + relativePosition);
-}
-
-TVector3* TTelescope::GetMirrorNormal(TVector3 mirrorImpact) {
-    TVector3 mirrorNormal;
-    
-    // For circular mirrors, the normal vector points directly to the center of curvature
-    if (fMirrorType == 0) {
-        mirrorNormal = fCenterOfCurvature - mirrorImpact;
-    }
-
-    // For parabolic mirrors, the normal vector is found from the equation z = x^2 / (2R) + y^2 / (2R)
-    else if (fMirrorType == 1) {
-        mirrorImpact = mirrorImpact - fCenterOfCurvature;
-        RotateOut(mirrorImpact);
-        mirrorNormal = TVector3(-mirrorImpact.X(), -mirrorImpact.Y(), fRadius);
-        RotateIn(mirrorNormal);
-    }
-    return new TVector3(mirrorNormal);
-}
-
 TCamera* TTelescope::GetCamera() {
     return fCamera;
 }
 
-void TTelescope::RotateIn(TVector3& vector) {
-    vector.RotateY(fInclination);
-    vector.RotateX(fAzimuth);
-}
+TTelescope::TTelescope(TCamera* camera, TMirror mirror): TTelescope(TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0)), camera, mirror) {}
 
-void TTelescope::RotateOut(TVector3& vector) {
-    vector.RotateY(-fInclination);
-    vector.RotateX(-fAzimuth);
-}
+TTelescope::TTelescope(TPlane3 groundPlane, TCamera* camera, TMirror mirror): TMirror(mirror) {
 
-void TTelescope::TranslateIn(TVector3& vector) {
-    vector += fCenterOfCurvature;
-}
-
-void TTelescope::TranslateOut(TVector3& vector) {
-    vector -= fCenterOfCurvature;
-}
-
-TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, TCamera* camera): TTelescope(mirrorShape, mirrorType, radius, focalLength, fNumber, 0, 0, TVector3(0, 0, 0), TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0)), camera) {}
-
-TTelescope::TTelescope(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature, TPlane3 groundPlane, TCamera* camera) {
-    // Set the mirror shape, checking for invalid input
-    if (mirrorShape < 0 || mirrorShape > 1) {
-        throw new std::invalid_argument("The mirror shape must lie in the range [0, 1]");
-    }
-    else {
-        fMirrorShape = mirrorShape;
-    }
-    
-    // Set the mirror type, checking for invalid input
-    if (mirrorType < 0 || mirrorType > 1) {
-        throw new std::invalid_argument("The mirror type must lie in the range [0, 1]");
-    }
-    else {
-        fMirrorType = mirrorType;
-    }
-    
     // Initialize member variables
     fCamera = camera;
-    fRadius = radius;
-    fFocalLength = focalLength;
-    fCrossDiameter = focalLength / fNumber;
-    fCenterOfCurvature = centerOfCurvature;
     fGroundPlane = groundPlane;
     
-    // Initialize angles
-    fInclination = inclination;
-    fAzimuth = azimuth; 
-    
-    // Initialize the axis of the mirror
-    fMirrorAxis = TVector3(0, 0, 1);
-    RotateIn(fMirrorAxis);
-    
     // Initialize the focal plane
-    TVector3 relativePosition(0, 0, -fRadius + focalLength);
+    TVector3 relativePosition(0, 0, -fRadius + fFocalLength);
     RotateIn(relativePosition);
     TVector3 focalPlaneCenter = fCenterOfCurvature + relativePosition;
     fFocalPlane = TPlane3(fMirrorAxis, focalPlaneCenter);
@@ -200,18 +101,12 @@ void TTelescope::ViewPoint(TShower shower, TRawData& data) {
     ViewPointPrivate(shower, data);
 }
 
-Double_t TTelescope::GetFocalLength() {
-    return fFocalLength;
-}
-
-Double_t TTelescope::GetRadius() {
-    return fRadius;
-}
-
-TVector3 TTelescope::GetAxis() {
-    return fMirrorAxis;
-}
-
-TVector3 TTelescope::GetCenterOfCurvature() {
-    return fCenterOfCurvature;
+TVector3 TTelescope::GetOutwardDirection(Double_t pixelX, Double_t pixelY) {
+        TVector3 pixelPosition = TVector3(pixelX, pixelY, -fFocalLength);
+        RotateIn(pixelPosition);
+        TranslateIn(pixelPosition);
+        TRay outwardRay = TRay(0, pixelPosition, (fCenterOfCurvature - fMirrorAxis.Unit() * fRadius) - pixelPosition);
+        outwardRay.ReflectFromPlane(TPlane3(fMirrorAxis, TVector3(0, 0, 0)));
+        outwardRay.IncrementPosition(1);
+        return outwardRay.GetPosition();
 }

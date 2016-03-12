@@ -144,16 +144,6 @@ std::vector<Double_t>* TCamera::ReconstructShower(TSegmentedData data, TTelescop
     return output;
 }
 
-TVector3 TCamera::GetOutwardDirection(TTelescope telescope, Int_t pixel) {
-    TVector3 pixelPosition = TVector3(GetX(pixel), GetY(pixel), -telescope.GetRadius() + telescope.GetFocalLength());
-    telescope.RotateIn(pixelPosition);
-    telescope.TranslateIn(pixelPosition);
-    TRay outwardRay = TRay(0, pixelPosition, (telescope.GetCenterOfCurvature() - telescope.GetAxis().Unit() * telescope.GetRadius()) - pixelPosition);
-    outwardRay.ReflectFromPlane(TPlane3(telescope.GetAxis(), TVector3(0, 0, 0)));
-    outwardRay.IncrementPosition(1);
-    return outwardRay.GetPosition();
-}
-
 /*
  * Find values of a, b, and c in the plane equation. Propagate each pixel's direction out to the same amount. For given values of a, b, and c, let d = a * xTelescope + b * yTelescope + c * zTelescope. For this plane equation, use the least squares method on the distance between each point and the plane.  Weight squares by the number of photons observed by the pixel.
  */
