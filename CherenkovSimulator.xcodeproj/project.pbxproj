@@ -11,7 +11,7 @@
 		3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3436E11B1C83F1AD00E938FB /* TShower.cpp */; };
 		3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */; };
 		3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06D1C86BA8C00AED492 /* TRawData.cpp */; };
-		349851FC1C7D559800D3C9DD /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349851FA1C7D559800D3C9DD /* TCamera.cpp */; };
+		349851FC1C7D559800D3C9DD /* TDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349851FA1C7D559800D3C9DD /* TDetector.cpp */; };
 		349CE1461C94B4730006F705 /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349CE1441C94B4730006F705 /* TMirror.cpp */; };
 		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
 		34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */; };
@@ -42,8 +42,8 @@
 		3463D06B1C86938A00AED492 /* TConstantIntensity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TConstantIntensity.h; sourceTree = "<group>"; };
 		3463D06D1C86BA8C00AED492 /* TRawData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRawData.cpp; sourceTree = "<group>"; };
 		3463D06E1C86BA8C00AED492 /* TRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRawData.h; sourceTree = "<group>"; };
-		349851FA1C7D559800D3C9DD /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
-		349851FB1C7D559800D3C9DD /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCamera.h; sourceTree = "<group>"; };
+		349851FA1C7D559800D3C9DD /* TDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TDetector.cpp; sourceTree = "<group>"; };
+		349851FB1C7D559800D3C9DD /* TDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDetector.h; sourceTree = "<group>"; };
 		349CE1441C94B4730006F705 /* TMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirror.cpp; sourceTree = "<group>"; };
 		349CE1451C94B4730006F705 /* TMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMirror.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
@@ -93,8 +93,8 @@
 		349CE1411C94B3780006F705 /* Detector */ = {
 			isa = PBXGroup;
 			children = (
-				349851FB1C7D559800D3C9DD /* TCamera.h */,
-				349851FA1C7D559800D3C9DD /* TCamera.cpp */,
+				349851FB1C7D559800D3C9DD /* TDetector.h */,
+				349851FA1C7D559800D3C9DD /* TDetector.cpp */,
 				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
 				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
 				349CE1451C94B4730006F705 /* TMirror.h */,
@@ -213,7 +213,7 @@
 				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
 				34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
-				349851FC1C7D559800D3C9DD /* TCamera.cpp in Sources */,
+				349851FC1C7D559800D3C9DD /* TDetector.cpp in Sources */,
 				3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */,
 				34C1A23B1C8FA8E7004FEDF1 /* TSegmentedData.cpp in Sources */,
 				3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */,

@@ -24,7 +24,9 @@ class TCamera;
 class TTelescope: public TMirror {
     
 private:
-       
+    
+    Double_t fFocalLength;
+    
     // The plane where the detection apparatus is located
     TPlane3 fFocalPlane;
     
@@ -51,12 +53,12 @@ public:
     /*
      * This constructor makes a number of simplifying assumptions.
      */
-    TTelescope(TCamera* camera, TMirror mirror);
+    TTelescope(TCamera* camera, TMirror mirror, Double_t focalLength);
     
     /*
      * The detailed constructor.
      */
-    TTelescope(TPlane3 groundPlane, TCamera* camera, TMirror mirror);
+    TTelescope(TPlane3 groundPlane, TCamera* camera, TMirror mirror, Double_t focalLength);
     
     /*
      * Simulates the motion of a cosmic ray shower across the field of view.

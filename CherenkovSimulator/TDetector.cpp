@@ -1,17 +1,17 @@
 //
-//  TCamera.cpp
+//  TDetector.cpp
 //  RayTracing
 //
 //  Created by Matthew Dutson on 2/23/16.
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
-#include "TCamera.h"
+#include "TDetector.h"
 #include "TFile.h"
 #include "TH1D.h"
 #include "TAnalysis.h"
 
-Double_t TCamera::GetX(Int_t bin) {
+Double_t TDetector::GetX(Int_t bin) {
     if (bin >= fNumberTubesX * fNumberTubesY) {
         throw std::invalid_argument("");
     }
@@ -21,7 +21,7 @@ Double_t TCamera::GetX(Int_t bin) {
     }
 }
 
-Double_t TCamera::GetY(Int_t bin) {
+Double_t TDetector::GetY(Int_t bin) {
     if (bin >= fNumberTubesX * fNumberTubesY) {
         throw std::invalid_argument("");
     }
@@ -31,16 +31,16 @@ Double_t TCamera::GetY(Int_t bin) {
     }
 }
 
-Int_t TCamera::GetBin(Double_t x, Double_t y) {
+Int_t TDetector::GetBin(Double_t x, Double_t y) {
     Int_t xBin = (x + fWidth / 2) / fWidth * fNumberTubesX;
     Int_t yBin = (y + fHeight / 2) / fHeight * fNumberTubesY;
     return yBin * fNumberTubesX + xBin;
 }
 
-TCamera::TCamera() {
+TDetector::TDetector() {
 }
 
-TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent) {
+TDetector::TDetector(Double_t height, Int_t numberTubesY, Double_t width, Int_t numberTubesX, Double_t PMTResponseTime, bool transparent) {
     fTransparent = transparent;
     fHeight = height;
     fNumberTubesY = numberTubesY;
@@ -49,7 +49,7 @@ TCamera::TCamera(Double_t height, Int_t numberTubesY, Double_t width, Int_t numb
     fPMTResponseTime = PMTResponseTime;
 }
 
-TSegmentedData TCamera::ParseData(TRawData rawData) {
+TSegmentedData TDetector::ParseData(TRawData rawData) {
     TSegmentedData parsedData = TSegmentedData(fNumberTubesX * fNumberTubesY);
     for (int i = 0; i < rawData.Size(); i++) {
         Double_t x = rawData.GetX(i);
@@ -65,7 +65,7 @@ TSegmentedData TCamera::ParseData(TRawData rawData) {
     return parsedData;
 }
 
-void TCamera::WriteDataToFile(TString filename, TSegmentedData parsedData) {
+void TDetector::WriteDataToFile(TString filename, TSegmentedData parsedData) {
     Double_t minTime = parsedData.GetMinTime();
     Double_t maxTime = parsedData.GetMaxTime();
     TFile file(filename, "RECREATE");
@@ -85,7 +85,7 @@ void TCamera::WriteDataToFile(TString filename, TSegmentedData parsedData) {
     file.Close();
 }
 
-bool TCamera::CheckCollision(TVector3 position) {
+bool TDetector::CheckCollision(TVector3 position) {
     if (fTransparent) {
         return false;
     }
@@ -100,7 +100,7 @@ bool TCamera::CheckCollision(TVector3 position) {
 /*
  * Use the least squares method on the equation derived for time as a function of angle. To find the angle for each data point, find the angle between its position vector and a vector in both the x-y plane and the shower-detector plane. First project it into the the shower-pixel plane.
  */
-std::vector<Double_t>* TCamera::ReconstructShower(TSegmentedData data, TTelescope telescope) {
+std::vector<Double_t>* TDetector::ReconstructShower(TSegmentedData data, TTelescope telescope) {
     TPlane3 showerPlane = EstimateShowerPlane(data, telescope);
     TVector3 groundIntersection =  showerPlane.IntersectWithXYPlane();
     std::vector<Double_t> averages = std::vector<Double_t>();
@@ -147,7 +147,7 @@ std::vector<Double_t>* TCamera::ReconstructShower(TSegmentedData data, TTelescop
 /*
  * Find values of a, b, and c in the plane equation. Propagate each pixel's direction out to the same amount. For given values of a, b, and c, let d = a * xTelescope + b * yTelescope + c * zTelescope. For this plane equation, use the least squares method on the distance between each point and the plane.  Weight squares by the number of photons observed by the pixel.
  */
-TPlane3 TCamera::EstimateShowerPlane(TSegmentedData data, TTelescope telescope) {
+TPlane3 TDetector::EstimateShowerPlane(TSegmentedData data, TTelescope telescope) {
     std::vector<TVector3> direction = std::vector<TVector3>();
     std::vector<Long_t> weight = std::vector<Long_t>();
     for (Int_t i = 0; i < data.GetNBins(); i++) {

@@ -8,7 +8,7 @@
 
 #include "TMirror.h"
 
-TMirror::TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature) {
+TMirror::TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t size, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature) {
     // Set the mirror shape, checking for invalid input
     if (mirrorShape < 0 || mirrorShape > 1) {
         throw new std::invalid_argument("The mirror shape must lie in the range [0, 1]");
@@ -26,8 +26,7 @@ TMirror::TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Doubl
     }
     
     fRadius = radius;
-    fFocalLength = focalLength;
-    fCrossDiameter = focalLength / fNumber;
+    fCrossDiameter = size;
     fCenterOfCurvature = centerOfCurvature;
     
     // Initialize angles

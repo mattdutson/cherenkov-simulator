@@ -18,7 +18,7 @@ class TTelescope;
 #include "TSegmentedData.h"
 #include "TTelescope.h"
 
-class TCamera {
+class TDetector: public TTelescope {
     
 private:
     

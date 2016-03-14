@@ -66,11 +66,12 @@ TCamera* TTelescope::GetCamera() {
     return fCamera;
 }
 
-TTelescope::TTelescope(TCamera* camera, TMirror mirror): TTelescope(TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0)), camera, mirror) {}
+TTelescope::TTelescope(TCamera* camera, TMirror mirror, Double_t focalLength): TTelescope(TPlane3(TVector3(1, 0, 0), TVector3(0, 0, 0)), camera, mirror, focalLength) {}
 
-TTelescope::TTelescope(TPlane3 groundPlane, TCamera* camera, TMirror mirror): TMirror(mirror) {
+TTelescope::TTelescope(TPlane3 groundPlane, TCamera* camera, TMirror mirror, Double_t focalLength): TMirror(mirror) {
 
     // Initialize member variables
+    fFocalLength = focalLength;
     fCamera = camera;
     fGroundPlane = groundPlane;
     

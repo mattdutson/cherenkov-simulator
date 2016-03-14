@@ -31,8 +31,6 @@ protected:
     // The radius of curvature of the mirror
     Double_t fRadius;
     
-    Double_t fFocalLength;
-    
     // If the mirror is a square, this is the length of one side. If the mirror is a circle, this is the diameter
     Double_t fCrossDiameter;
     
@@ -50,9 +48,9 @@ protected:
     
 public:
     
-    TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature);
+    TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t size, Double_t inclination, Double_t azimuth, TVector3 centerOfCurvature);
     
-    TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t focalLength, Double_t fNumber);
+    TMirror(Short_t mirrorShape, Short_t mirrorType, Double_t radius, Double_t size);
     
     /*
      * Finds a vector normal to the mirror given the point at which the ray hits the mirror.
