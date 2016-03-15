@@ -7,17 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescope.cpp */; };
+		341B5EE31C56D9A500B4A61E /* TTelescopeOld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 341B5EE11C56D9A500B4A61E /* TTelescopeOld.cpp */; };
 		3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3436E11B1C83F1AD00E938FB /* TShower.cpp */; };
 		3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */; };
 		3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06D1C86BA8C00AED492 /* TRawData.cpp */; };
-		349851FC1C7D559800D3C9DD /* TDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349851FA1C7D559800D3C9DD /* TDetector.cpp */; };
-		349CE1461C94B4730006F705 /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349CE1441C94B4730006F705 /* TMirror.cpp */; };
+		349851FC1C7D559800D3C9DD /* TDetectorOld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349851FA1C7D559800D3C9DD /* TDetectorOld.cpp */; };
+		349CE1461C94B4730006F705 /* TMirrorOld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 349CE1441C94B4730006F705 /* TMirrorOld.cpp */; };
 		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
 		34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */; };
 		34C1A23B1C8FA8E7004FEDF1 /* TSegmentedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */; };
 		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; };
 		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; };
+		34F25B8A1C97A74000680BE3 /* TObservatory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B881C97A74000680BE3 /* TObservatory.cpp */; };
+		34F25B8D1C97A77600680BE3 /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B8B1C97A77600680BE3 /* TMirror.cpp */; };
+		34F25B901C97A78100680BE3 /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B8E1C97A78100680BE3 /* TCamera.cpp */; };
+		34F25B931C97A78E00680BE3 /* TCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B911C97A78E00680BE3 /* TCoordinates.cpp */; };
+		34F25B961C97A79B00680BE3 /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B941C97A79B00680BE3 /* TSurroundings.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,8 +38,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		341B5EE11C56D9A500B4A61E /* TTelescope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescope.cpp; sourceTree = "<group>"; };
-		341B5EE21C56D9A500B4A61E /* TTelescope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTelescope.h; sourceTree = "<group>"; };
+		341B5EE11C56D9A500B4A61E /* TTelescopeOld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TTelescopeOld.cpp; sourceTree = "<group>"; };
+		341B5EE21C56D9A500B4A61E /* TTelescopeOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTelescopeOld.h; sourceTree = "<group>"; };
 		3436E11B1C83F1AD00E938FB /* TShower.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TShower.cpp; sourceTree = "<group>"; };
 		3436E11C1C83F1AD00E938FB /* TShower.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TShower.h; sourceTree = "<group>"; };
 		3436E11F1C83F36100E938FB /* T3DScalarFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T3DScalarFunction.h; sourceTree = "<group>"; };
@@ -42,10 +47,10 @@
 		3463D06B1C86938A00AED492 /* TConstantIntensity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TConstantIntensity.h; sourceTree = "<group>"; };
 		3463D06D1C86BA8C00AED492 /* TRawData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRawData.cpp; sourceTree = "<group>"; };
 		3463D06E1C86BA8C00AED492 /* TRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRawData.h; sourceTree = "<group>"; };
-		349851FA1C7D559800D3C9DD /* TDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TDetector.cpp; sourceTree = "<group>"; };
-		349851FB1C7D559800D3C9DD /* TDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDetector.h; sourceTree = "<group>"; };
-		349CE1441C94B4730006F705 /* TMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirror.cpp; sourceTree = "<group>"; };
-		349CE1451C94B4730006F705 /* TMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMirror.h; sourceTree = "<group>"; };
+		349851FA1C7D559800D3C9DD /* TDetectorOld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TDetectorOld.cpp; sourceTree = "<group>"; };
+		349851FB1C7D559800D3C9DD /* TDetectorOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDetectorOld.h; sourceTree = "<group>"; };
+		349CE1441C94B4730006F705 /* TMirrorOld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirrorOld.cpp; sourceTree = "<group>"; };
+		349CE1451C94B4730006F705 /* TMirrorOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMirrorOld.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
 		34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
 		34BAC6BA1C6950B400E360D5 /* TAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAnalysis.h; sourceTree = "<group>"; };
@@ -56,6 +61,16 @@
 		34CB1D781C4DEDA700EBEF85 /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
 		34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D976201C4CAC6E0040C7F6 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
+		34F25B881C97A74000680BE3 /* TObservatory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TObservatory.cpp; sourceTree = "<group>"; };
+		34F25B891C97A74000680BE3 /* TObservatory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TObservatory.h; sourceTree = "<group>"; };
+		34F25B8B1C97A77600680BE3 /* TMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirror.cpp; sourceTree = "<group>"; };
+		34F25B8C1C97A77600680BE3 /* TMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMirror.h; sourceTree = "<group>"; };
+		34F25B8E1C97A78100680BE3 /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
+		34F25B8F1C97A78100680BE3 /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCamera.h; sourceTree = "<group>"; };
+		34F25B911C97A78E00680BE3 /* TCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCoordinates.cpp; sourceTree = "<group>"; };
+		34F25B921C97A78E00680BE3 /* TCoordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCoordinates.h; sourceTree = "<group>"; };
+		34F25B941C97A79B00680BE3 /* TSurroundings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSurroundings.cpp; sourceTree = "<group>"; };
+		34F25B951C97A79B00680BE3 /* TSurroundings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSurroundings.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,17 +105,17 @@
 			name = Functors;
 			sourceTree = "<group>";
 		};
-		349CE1411C94B3780006F705 /* Detector */ = {
+		349CE1411C94B3780006F705 /* OldDetector */ = {
 			isa = PBXGroup;
 			children = (
-				349851FB1C7D559800D3C9DD /* TDetector.h */,
-				349851FA1C7D559800D3C9DD /* TDetector.cpp */,
-				341B5EE21C56D9A500B4A61E /* TTelescope.h */,
-				341B5EE11C56D9A500B4A61E /* TTelescope.cpp */,
-				349CE1451C94B4730006F705 /* TMirror.h */,
-				349CE1441C94B4730006F705 /* TMirror.cpp */,
+				349851FB1C7D559800D3C9DD /* TDetectorOld.h */,
+				349851FA1C7D559800D3C9DD /* TDetectorOld.cpp */,
+				341B5EE21C56D9A500B4A61E /* TTelescopeOld.h */,
+				341B5EE11C56D9A500B4A61E /* TTelescopeOld.cpp */,
+				349CE1451C94B4730006F705 /* TMirrorOld.h */,
+				349CE1441C94B4730006F705 /* TMirrorOld.cpp */,
 			);
-			name = Detector;
+			name = OldDetector;
 			sourceTree = "<group>";
 		};
 		349CE1421C94B3980006F705 /* Rays */ = {
@@ -145,13 +160,31 @@
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
-				349CE1411C94B3780006F705 /* Detector */,
+				34F25B871C97A72800680BE3 /* NewDetector */,
+				349CE1411C94B3780006F705 /* OldDetector */,
 				349CE1421C94B3980006F705 /* Rays */,
 				349CE13F1C94B31A0006F705 /* DataContainers */,
 				349CE1401C94B3640006F705 /* Functors */,
 				349CE1431C94B3D80006F705 /* Miscellaneous */,
 			);
 			path = CherenkovSimulator;
+			sourceTree = "<group>";
+		};
+		34F25B871C97A72800680BE3 /* NewDetector */ = {
+			isa = PBXGroup;
+			children = (
+				34F25B891C97A74000680BE3 /* TObservatory.h */,
+				34F25B881C97A74000680BE3 /* TObservatory.cpp */,
+				34F25B8C1C97A77600680BE3 /* TMirror.h */,
+				34F25B8B1C97A77600680BE3 /* TMirror.cpp */,
+				34F25B8F1C97A78100680BE3 /* TCamera.h */,
+				34F25B8E1C97A78100680BE3 /* TCamera.cpp */,
+				34F25B921C97A78E00680BE3 /* TCoordinates.h */,
+				34F25B911C97A78E00680BE3 /* TCoordinates.cpp */,
+				34F25B951C97A79B00680BE3 /* TSurroundings.h */,
+				34F25B941C97A79B00680BE3 /* TSurroundings.cpp */,
+			);
+			name = NewDetector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,16 +244,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
+				34F25B901C97A78100680BE3 /* TCamera.cpp in Sources */,
+				34F25B8A1C97A74000680BE3 /* TObservatory.cpp in Sources */,
 				34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
-				349851FC1C7D559800D3C9DD /* TDetector.cpp in Sources */,
+				34F25B931C97A78E00680BE3 /* TCoordinates.cpp in Sources */,
+				34F25B8D1C97A77600680BE3 /* TMirror.cpp in Sources */,
+				349851FC1C7D559800D3C9DD /* TDetectorOld.cpp in Sources */,
 				3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */,
+				34F25B961C97A79B00680BE3 /* TSurroundings.cpp in Sources */,
 				34C1A23B1C8FA8E7004FEDF1 /* TSegmentedData.cpp in Sources */,
 				3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */,
 				34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */,
-				349CE1461C94B4730006F705 /* TMirror.cpp in Sources */,
+				349CE1461C94B4730006F705 /* TMirrorOld.cpp in Sources */,
 				3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */,
-				341B5EE31C56D9A500B4A61E /* TTelescope.cpp in Sources */,
+				341B5EE31C56D9A500B4A61E /* TTelescopeOld.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
