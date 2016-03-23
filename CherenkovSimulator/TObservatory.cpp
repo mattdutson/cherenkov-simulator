@@ -52,7 +52,7 @@ void TObservatory::ViewPointPrivate(TShower shower, TRawData &rawData) {
 
 TPlane3 TObservatory::ApproximateShowerPlane(TSegmentedData data) {
     TVector3 bestNormal = TVector3(0, 0, 1);
-    Double_t angleStep = 1;
+    Double_t angleStep = TMath::Pi() / 180;
     Double_t bestSquare = 1e300;
     for (Double_t theta = 0; theta <= TMath::Pi(); theta += angleStep) {
         for (Double_t phi = -TMath::Pi(); phi <= TMath::Pi(); phi += angleStep) {
@@ -61,7 +61,7 @@ TPlane3 TObservatory::ApproximateShowerPlane(TSegmentedData data) {
             normal.RotateZ(phi);
             Double_t squareSum = 0;
             for (Int_t i = 0; i < data.GetNBins(); i++) {
-                squareSum += normal.Dot(fCamera.GetViewDirection(i)) * data.GetSegment(i)->size();
+                squareSum += normal.Dot(fCamera.GetViewDirection(i)) * normal.Dot(fCamera.GetViewDirection(i)) * data.GetSegment(i)->size();
             }
             if (squareSum < bestSquare) {
                 bestSquare = squareSum;
