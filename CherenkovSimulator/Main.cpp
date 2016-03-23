@@ -24,7 +24,7 @@ void TestShowerReconstruction();
 int main(int argc, const char* argv[]) {
 //    CollectRMSData();
     TestPointImage();
-//    TestCameraFunction();
+    TestCameraFunction();
     TestShowerReconstruction();
 }
 
@@ -178,8 +178,9 @@ void TestCameraFunction() {
     histogram.Write();
     file.Close();
     
-    // This data should be written to a file in order to view.
+    // Parse the data and write it to a file.
     TSegmentedData parsedData = observatory.ParseData(data);
+    observatory.WriteDataToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", parsedData);
     delete intensityFunction;
 }
 

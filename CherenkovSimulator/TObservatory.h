@@ -45,6 +45,8 @@ public:
     TRay ReconstructShower(TSegmentedData data);
     
     TSegmentedData ParseData(TRawData data);
+    
+    void WriteDataToFile(TString filename, TSegmentedData parsedData);
 };
 
 #endif /* TObservatory_h */

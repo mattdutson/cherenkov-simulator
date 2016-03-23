@@ -14,6 +14,8 @@ TSegmentedData::TSegmentedData(Int_t nBins) {
         fSegmentedData[i] = new std::vector<Double_t>();
     }
     fNBins = nBins;
+    fMinTime = 1e100;
+    fMaxTime = 1e-100;
 }
 
 void TSegmentedData::AddPoint(Double_t time, Int_t bin) {

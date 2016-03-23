@@ -117,3 +117,7 @@ TRay TObservatory::ReconstructShower(TSegmentedData data) {
 TSegmentedData TObservatory::ParseData(TRawData data) {
     return fCamera.ParseData(data);
 }
+
+void TObservatory::WriteDataToFile(TString filename, TSegmentedData parsedData) {
+    fCamera.WriteDataToFile(filename, parsedData);
+}

@@ -13,6 +13,8 @@
 #include "TSegmentedData.h"
 #include "TRawData.h"
 #include "TRay.h"
+#include "TFile.h"
+#include "TH1D.h"
 
 class TCamera {
     
@@ -47,6 +49,10 @@ public:
     TSegmentedData ParseData(TRawData data);
     
     TVector3 GetViewDirection(Int_t bin);
+    
+    TVector2 GetPixelPosition(Int_t bin);
+    
+    void WriteDataToFile(TString filename, TSegmentedData parsedData);
 };
 
 #endif /* TCamera_h */
