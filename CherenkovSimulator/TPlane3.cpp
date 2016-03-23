@@ -31,8 +31,8 @@ Double_t TPlane3::ShortestDistance(TVector3 point) {
     return (fNormal.Dot(point) - fCoefficient);
 }
 
-TVector3 TPlane3::IntersectWithXYPlane() {
-    return TVector3((fCoefficient - fNormal.Y()) / fNormal.X(), 1, 0).Unit();
+TVector3 TPlane3::IntersectWithXZPlane() {
+    return TVector3((fCoefficient - fNormal.Z()) / fNormal.X(), 0, 1).Unit();
 }
 
 TVector3 TPlane3::ProjectOntoPlane(TVector3 point) {

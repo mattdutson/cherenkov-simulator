@@ -44,7 +44,7 @@ public:
     
     Double_t ShortestDistance(TVector3 point);
     
-    TVector3 IntersectWithXYPlane();
+    TVector3 IntersectWithXZPlane();
     
     TVector3 ProjectOntoPlane(TVector3 point);
 };

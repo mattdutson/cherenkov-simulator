@@ -23,8 +23,8 @@ void TestShowerReconstruction();
 
 int main(int argc, const char* argv[]) {
 //    CollectRMSData();
-    TestPointImage();
-    TestCameraFunction();
+//    TestPointImage();
+//    TestCameraFunction();
     TestShowerReconstruction();
 }
 
@@ -207,7 +207,23 @@ void TestShowerReconstruction() {
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
-    TRawData data = observatory.ViewShower(shower, delayTime);
-    TSegmentedData parsedData = observatory.ParseData(data);
-    TRay output = observatory.ReconstructShower(parsedData);
+    TRawData data1 = observatory.ViewShower(shower, delayTime);
+    TSegmentedData parsedData1 = observatory.ParseData(data1);
+    TRay output = observatory.ReconstructShower(parsedData1);
+    std::cout << "Velocity:" << endl;
+    output.GetVelocity().Print();
+    std::cout << endl;
+    std::cout << "Closest Position: " << endl;
+    output.GetPosition().Print();
+    std::cout << endl;
+    
+    shower = TShower(TRay(0, TVector3(0, 3000, 20000), TVector3(1, -1, 0)), intensityFunction);
+    TRawData data2 = observatory.ViewShower(shower, delayTime);
+    TSegmentedData parsedData2 = observatory.ParseData(data2);
+    output = observatory.ReconstructShower(parsedData2);
+    std::cout << "Velocity:" << endl;
+    output.GetVelocity().Print();
+    std::cout << endl;
+    std::cout << "Closest Position: " << endl;
+    output.GetPosition().Print();
 }

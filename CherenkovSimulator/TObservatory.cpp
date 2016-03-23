@@ -75,43 +75,63 @@ TPlane3 TObservatory::ApproximateShowerPlane(TSegmentedData data) {
 TRay TObservatory::ReconstructShower(TSegmentedData data) {
     Int_t nBins = data.GetNBins();
     TPlane3 showerPlane = ApproximateShowerPlane(data);
-    TVector3 groundIntersection =  showerPlane.IntersectWithXYPlane();
-    Double_t averages[nBins], angles[nBins];
+    TVector3 groundIntersection =  showerPlane.IntersectWithXZPlane();
+    std::vector<Double_t> averages, angles;
+    averages.resize(nBins);
+    angles.resize(nBins);
+    Int_t defaultNearIndex = 0;
     for (Int_t i = 0; i < nBins; i++) {
         averages[i] = TUtility::SumArray(*data.GetSegment(i)) / data.GetSegment(i)->size();
-        angles[i] = fCamera.GetViewDirection(i).Angle(groundIntersection);
+        angles[i] = (fCamera.GetViewDirection(i) - showerPlane.GetNormal() * fCamera.GetViewDirection(i).Dot(showerPlane.GetNormal())).Angle(groundIntersection);
+        if (data.GetSegment(i)->size() > 0) {
+            defaultNearIndex = i;
+        }
     }
     Double_t bestImpactParam = 0;
-    Double_t impactRange[] = {0, 100000};
-    Double_t impactStepSize = 100;
+    Double_t impactRange[] = {1000, 100000};
+    Double_t impactStepSize = 1000;
     Double_t bestShowerAngle = 0;
-    Double_t angleStep = 1;
+    Double_t angleStep = TMath::Pi() / 180;
     Double_t bestSquare = 1e300;
+    Double_t bestT0 = 0;
     for (Double_t impactParam = impactRange[0]; impactParam < impactRange[1]; impactParam += impactStepSize) {
         for (Double_t showerAngle = 0; showerAngle < TMath::Pi(); showerAngle += angleStep) {
             Double_t squareSum = 0;
             Double_t impactAngle = TMath::Pi() / 2 - showerAngle;
-            Int_t nearestIndex = 0;
+            Int_t nearestIndex = defaultNearIndex;
             for (Int_t i = 0; i < nBins; i++) {
-                if (TMath::Abs(angles[i] - impactAngle) < TMath::Abs(angles[nearestIndex] - impactAngle)) {
+                if (data.GetSegment(i)->size() == 0) {
+                    continue;
+                }
+                else if (TMath::Abs(angles[i] - impactAngle) < TMath::Abs(angles[nearestIndex] - impactAngle)) {
                     nearestIndex = i;
                 }
             }
-            double_t t0 = averages[nearestIndex];
+            double_t t0 = averages[nearestIndex] - impactParam / TRay::fLightSpeed;
             for (Int_t i = 0; i < nBins; i++) {
-                squareSum += (t0 + impactParam / TRay::fLightSpeed * TMath::Tan((TMath::Pi() - showerAngle - angles[i]) / 2) - averages[i]) * (t0 + impactParam / TRay::fLightSpeed * TMath::Tan((TMath::Pi() - showerAngle - angles[i]) / 2) - averages[i]);
+                if (data.GetSegment(i)->size() == 0) {
+                    continue;
+                }
+                else {
+                    Double_t expectedTime = t0 + impactParam / TRay::fLightSpeed * TMath::Tan((TMath::Pi() - showerAngle - angles[i]) / 2);
+                    squareSum += (expectedTime - averages[i]) * (expectedTime - averages[i]) * data.GetSegment(i)->size();
+                }
             }
             if (squareSum < bestSquare) {
                 bestImpactParam = impactParam;
                 bestShowerAngle = showerAngle;
                 bestSquare = squareSum;
+                bestT0 = t0;
             }
         }
     }
-    std::vector<Double_t>* output = new std::vector<Double_t>();
-    output->push_back(bestImpactParam);
-    output->push_back(bestShowerAngle);
-    return TRay(0, TVector3(0, 0, 0), TVector3(0, 0, 0));
+    TVector3 direction = groundIntersection;
+    direction.Rotate(bestShowerAngle, showerPlane.GetNormal());
+    TVector3 closestPosition = -showerPlane.GetNormal().Cross(direction).Unit() * bestImpactParam;
+    if (closestPosition.Z() < 0) {
+        closestPosition = -closestPosition;
+    }
+    return TRay(bestT0, closestPosition, direction);
 }
 
 TSegmentedData TObservatory::ParseData(TRawData data) {

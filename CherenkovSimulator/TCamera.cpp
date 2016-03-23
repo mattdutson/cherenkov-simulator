@@ -39,6 +39,9 @@ bool TCamera::CheckCollision(TVector3 position) {
 TSegmentedData TCamera::ParseData(TRawData rawData) {
     TSegmentedData parsedData = TSegmentedData(fNumberTubesX * fNumberTubesY);
     for (Int_t i = 0; i < rawData.Size(); i++) {
+        if (TMath::Abs(rawData.GetX(i)) > fWidth / 2 || TMath::Abs(rawData.GetY(i)) > fHeight / 2) {
+            continue;
+        }
         parsedData.AddPoint(rawData.GetT(i), GetBin(TVector3(rawData.GetX(i), rawData.GetY(i), 0)));
     }
     return parsedData;
@@ -51,18 +54,15 @@ Int_t TCamera::GetBin(TVector3 position) {
 }
 
 TVector3 TCamera::GetViewDirection(Int_t bin) {
-    Double_t x;
-    Double_t y;
+    TVector2 position;
     if (bin >= fNumberTubesX * fNumberTubesY) {
         throw std::invalid_argument("");
     }
     else {
-        Int_t xBin = bin % fNumberTubesX;
-        Int_t yBin = (bin - bin % fNumberTubesX) / fNumberTubesX;
-        y = yBin * fHeight / (Double_t) fNumberTubesY - fHeight / 2.0;
-        x = xBin * fWidth / (Double_t) fNumberTubesX - fWidth / 2.0;
+        TVector2 position = GetPixelPosition(bin);
+        return TVector3(-position.X(), -position.Y(), fFocalLength).Unit();
     }
-    return TVector3(-x, -y, fFocalLength).Unit();
+    return TVector3();
 }
 
 TVector2 TCamera::GetPixelPosition(Int_t bin) {
