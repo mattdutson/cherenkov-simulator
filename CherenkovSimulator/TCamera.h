@@ -30,13 +30,15 @@ private:
     
     Double_t fPMTResolution;
     
+    Bool_t fCheckBackCollision = false;
+    
     Int_t GetBin(TVector3 position);
     
 public:
     
     TCamera();
     
-    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution);
+    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, Bool_t checkBackCollision);
     
     Double_t FocalLength();
     

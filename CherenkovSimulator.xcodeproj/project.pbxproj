@@ -143,7 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
-				34F25B871C97A72800680BE3 /* NewDetector */,
+				34F25B871C97A72800680BE3 /* Detector */,
 				349CE1421C94B3980006F705 /* Rays */,
 				349CE13F1C94B31A0006F705 /* DataContainers */,
 				349CE1401C94B3640006F705 /* Functors */,
@@ -152,7 +152,7 @@
 			path = CherenkovSimulator;
 			sourceTree = "<group>";
 		};
-		34F25B871C97A72800680BE3 /* NewDetector */ = {
+		34F25B871C97A72800680BE3 /* Detector */ = {
 			isa = PBXGroup;
 			children = (
 				34F25B891C97A74000680BE3 /* TObservatory.h */,
@@ -166,7 +166,7 @@
 				34F25B951C97A79B00680BE3 /* TSurroundings.h */,
 				34F25B941C97A79B00680BE3 /* TSurroundings.cpp */,
 			);
-			name = NewDetector;
+			name = Detector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

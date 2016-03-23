@@ -10,12 +10,13 @@
 
 TCamera::TCamera() {}
 
-TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution) {
+TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, Bool_t checkBackCollision) {
     fFocalLength = focalLength;
     fWidth = width;
     fNumberTubesX = numberTubesX;
     fHeight = height;
     fNumberTubesY = numberTubesY;
+    fCheckBackCollision = checkBackCollision;
 }
 
 Double_t TCamera::FocalLength() {
@@ -23,7 +24,10 @@ Double_t TCamera::FocalLength() {
 }
 
 bool TCamera::CheckCollision(TVector3 position) {
-    if (TMath::Abs(position.X()) > (fWidth / 2.0) || TMath::Abs(position.Y()) > (fHeight / 2.0)) {
+    if (!fCheckBackCollision) {
+        return false;
+    }
+    else if (TMath::Abs(position.X()) > (fWidth / 2.0) || TMath::Abs(position.Y()) > (fHeight / 2.0)) {
         return false;
     }
     else {

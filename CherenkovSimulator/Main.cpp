@@ -62,7 +62,7 @@ void CollectRMSData() {
                 
                 TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
                 TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8);
+                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8, true);
                 TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
                 
                 // Generate data points
@@ -122,7 +122,7 @@ void TestPointImage() {
     // Run the simulations
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     
     TObservatory observatory(mirror, camera, coordinates, surroundings);
@@ -168,7 +168,7 @@ void TestCameraFunction() {
     // Set up the telescope
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
@@ -202,7 +202,7 @@ void TestShowerReconstruction() {
     // Set up the observatory
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     

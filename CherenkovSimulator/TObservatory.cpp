@@ -36,8 +36,8 @@ void TObservatory::ViewPointPrivate(TShower shower, TRawData &rawData) {
         TVector3 mirrorImpact = fMirror.GetMirrorImpact();
         TVector3 mirrorNormal = fMirror.GetMirrorNormal(mirrorImpact);
         TVector3 transformedPosition = shower.GetPosition();
-        TPlane3 focalPlane = TPlane3(TVector3(0, 0, 1), TVector3(0, 0, -fMirror.Radius() + fCamera.FocalLength()));
         fCoordinates.PositionToObservatoryFrame(transformedPosition);
+        TPlane3 focalPlane = TPlane3(TVector3(0, 0, 1), TVector3(0, 0, -fMirror.Radius() + fCamera.FocalLength()));
         TRay detectedRay = TRay(shower.GetTime(), transformedPosition, mirrorImpact - transformedPosition);
         detectedRay.PropagateToPlane(focalPlane);
         if (fCamera.CheckCollision(detectedRay.GetPosition())) {
@@ -46,10 +46,7 @@ void TObservatory::ViewPointPrivate(TShower shower, TRawData &rawData) {
         detectedRay.PropagateToPoint(mirrorImpact);
         detectedRay.ReflectFromPlane(TPlane3(mirrorNormal, mirrorImpact));
         detectedRay.PropagateToPlane(focalPlane);
-        if (!fCamera.CheckCollision(detectedRay.GetPosition())) {
-            continue;
-        }
-        rawData.PushBack(shower.GetPosition().X(), shower.GetPosition().Y(), shower.GetTime());
+        rawData.PushBack(detectedRay.GetPosition().X(), detectedRay.GetPosition().Y(), detectedRay.GetTime());
     }
 }
 
