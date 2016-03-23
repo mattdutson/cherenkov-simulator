@@ -5,7 +5,7 @@
  * This class is used for testing the functionality of TTelescope, TRay, and TPlane3.
  */
 
-#include "TTelescope.h"
+#include "TObservatory.h"
 #include "TAnalysis.h"
 #include "TFile.h"
 #include "TConstantIntensity.h"
@@ -23,9 +23,9 @@ void TestShowerReconstruction();
 
 int main(int argc, const char* argv[]) {
 //    CollectRMSData();
-//    TestPointImage();
+    TestPointImage();
 //    TestCameraFunction();
-    TestShowerReconstruction();
+//    TestShowerReconstruction();
 }
 
 void CollectRMSData() {
@@ -52,7 +52,6 @@ void CollectRMSData() {
     Short_t mirrorTypes[] = {0, 1};
     Double_t fNumbers[] = {1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
     Double_t focalPercentages[] = {95, 96, 97, 98, 99, 100};
-    TCamera camera = TCamera(2, 50, 2, 50, 1e-10, false);
     
     // Run the simulations
     std::vector<Double_t> RMS = std::vector<Double_t>();
@@ -61,9 +60,14 @@ void CollectRMSData() {
         for (Double_t fNumber: fNumbers) {
             for (Double_t focalPercentage: focalPercentages) {
                 
+                TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
+                TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
+                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8);
+                TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
+                
                 // Generate data points
-                TTelescope telescope(0, mirrorType, radius, radius / 200 * focalPercentage, fNumber, &camera);
-                TAnalysis::FindRMSVsAngle(RMS, angle, telescope, sampleNumber, timeDelay, minAngle, maxAngle, zDistance);
+                TObservatory observatory(mirror, camera, coordinates, surroundings);
+                TAnalysis::FindRMSVsAngle(RMS, angle, observatory, sampleNumber, timeDelay, minAngle, maxAngle, zDistance);
                 
                 // Format the graph title and name
                 TString name;
@@ -114,17 +118,20 @@ void TestPointImage() {
     Double_t radius = 6;
     Double_t focalLength = 3;
     Double_t fNumber = 1;
-    TCamera camera = TCamera(1.5, 50, 1.5, 50, 1e-10, false);
     
     // Run the simulations
-    TTelescope telescope(0, mirrorType, radius, focalLength, fNumber, &camera);
-    TRawData data = TRawData();
+    TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
+    TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8);
+    TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
+    
+    TObservatory observatory(mirror, camera, coordinates, surroundings);
     for (Double_t height: heights) {
         
         // Generate data points
         TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
         TShower shower = TShower(TRay(0, TVector3(height, 0, zDistance), TVector3()), intensityFunction);
-        telescope.ViewPoint(shower, data);
+        TRawData data = observatory.ViewPoint(shower);
         
         // Format the graph title and name
         TString name = Form("dist-%f-height-%f", zDistance, height);
@@ -144,9 +151,6 @@ void TestPointImage() {
 void TestCameraFunction() {
     TFile file("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/shower-path.root", "RECREATE");
     
-    // Set up the camera
-    TCamera camera = TCamera(2, 50, 2, 50, 1e-7, false);
-    
     // Set the properties of the mirror
     Short_t mirrorType = 0;
     Double_t radius = 6;
@@ -162,26 +166,25 @@ void TestCameraFunction() {
     TShower shower = TShower(TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0)), intensityFunction);
     
     // Set up the telescope
-    TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, &camera);
+    TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
+    TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8);
+    TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
+    TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
-    // Arrays to store data
-    TRawData data = TRawData();
-    
-    telescope.ViewShower(shower, delayTime, data);
+    TRawData data = observatory.ViewShower(shower, delayTime);
     TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);
     TAnalysis::FillHistogram(data.GetYData(), data.GetXData(), histogram);
     histogram.Write();
     file.Close();
-    TSegmentedData parsedData = telescope.GetCamera()->ParseData(data);
-    telescope.GetCamera()->WriteDataToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", parsedData);
+    
+    // This data should be written to a file in order to view.
+    TSegmentedData parsedData = observatory.ParseData(data);
     delete intensityFunction;
 }
 
 void TestShowerReconstruction() {
     
-    // Set up the camera
-    TCamera camera = TCamera(2, 50, 2, 50, 1e-7, false);
-    
     // Set the properties of the mirror
     Short_t mirrorType = 0;
     Double_t radius = 6;
@@ -196,15 +199,14 @@ void TestShowerReconstruction() {
     TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
     TShower shower = TShower(TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0)), intensityFunction);
     
-    // Set up the telescope
-    TTelescope telescope = TTelescope(0, mirrorType, radius, focalLength, fNumber, &camera);
+    // Set up the observatory
+    TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
+    TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8);
+    TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
+    TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
-    // Arrays to store data
-    TRawData data = TRawData();
-    
-    telescope.ViewShower(shower, delayTime, data);
-    TSegmentedData parsedData = telescope.GetCamera()->ParseData(data);
-    std::vector<Double_t> output = *telescope.GetCamera()->ReconstructShower(parsedData, telescope);
-    cout << "Impact Parameter: " << output[0] << endl;
-    cout << "Shower Angle: " << output[1] << endl;
+    TRawData data = observatory.ViewShower(shower, delayTime);
+    TSegmentedData parsedData = observatory.ParseData(data);
+    TRay output = observatory.ReconstructShower(parsedData);
 }

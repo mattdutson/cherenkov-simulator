@@ -10,12 +10,13 @@
 #define TObservatory_h
 
 #include "TMirror.h"
-#include "TCamera.h"
 #include "TCoordinates.h"
 #include "TSurroundings.h"
 #include "TRawData.h"
 #include "TSegmentedData.h"
-#include "TShower.H"
+#include "TShower.h"
+#include "TCamera.h"
+#include "TUtility.h"
 
 class TObservatory {
     
@@ -41,7 +42,7 @@ public:
     
     TRawData ViewShower(TShower shower, Double_t timeDelay);
     
-    TShower ReconstructShower(TSegmentedData data);
+    TRay ReconstructShower(TSegmentedData data);
     
     TSegmentedData ParseData(TRawData data);
 };

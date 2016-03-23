@@ -15,7 +15,6 @@ TObservatory::TObservatory(TMirror mirror, TCamera camera, TCoordinates coordina
     fSurroundings = surroundings;
 }
 
-
 TRawData TObservatory::ViewPoint(TShower shower) {
     TRawData outputData = TRawData();
     ViewPointPrivate(shower, outputData);
@@ -37,15 +36,16 @@ void TObservatory::ViewPointPrivate(TShower shower, TRawData &rawData) {
         TVector3 mirrorImpact = fMirror.GetMirrorImpact();
         TVector3 mirrorNormal = fMirror.GetMirrorNormal(mirrorImpact);
         TVector3 transformedPosition = shower.GetPosition();
+        TPlane3 focalPlane = TPlane3(TVector3(0, 0, 1), TVector3(0, 0, -fMirror.Radius() + fCamera.FocalLength()));
         fCoordinates.PositionToObservatoryFrame(transformedPosition);
         TRay detectedRay = TRay(shower.GetTime(), transformedPosition, mirrorImpact - transformedPosition);
-        detectedRay.PropagateToPlane(fCamera.FocalPlane());
+        detectedRay.PropagateToPlane(focalPlane);
         if (fCamera.CheckCollision(detectedRay.GetPosition())) {
             continue;
         }
         detectedRay.PropagateToPoint(mirrorImpact);
         detectedRay.ReflectFromPlane(TPlane3(mirrorNormal, mirrorImpact));
-        detectedRay.PropagateToPlane(fCamera.FocalPlane());
+        detectedRay.PropagateToPlane(focalPlane);
         if (!fCamera.CheckCollision(detectedRay.GetPosition())) {
             continue;
         }
@@ -75,13 +75,13 @@ TPlane3 TObservatory::ApproximateShowerPlane(TSegmentedData data) {
     return TPlane3(bestNormal, TVector3(0, 0, 0));
 }
 
-TShower TObservatory::ReconstructShower(TSegmentedData data) {
+TRay TObservatory::ReconstructShower(TSegmentedData data) {
     Int_t nBins = data.GetNBins();
     TPlane3 showerPlane = ApproximateShowerPlane(data);
     TVector3 groundIntersection =  showerPlane.IntersectWithXYPlane();
     Double_t averages[nBins], angles[nBins];
     for (Int_t i = 0; i < nBins; i++) {
-        averages[i] = TAnalysis::SumArray(*data.GetSegment(i)) / data.GetSegment(i)->size();
+        averages[i] = TUtility::SumArray(*data.GetSegment(i)) / data.GetSegment(i)->size();
         angles[i] = fCamera.GetViewDirection(i).Angle(groundIntersection);
     }
     Double_t bestImpactParam = 0;
@@ -114,5 +114,9 @@ TShower TObservatory::ReconstructShower(TSegmentedData data) {
     std::vector<Double_t>* output = new std::vector<Double_t>();
     output->push_back(bestImpactParam);
     output->push_back(bestShowerAngle);
-    return TShower(0, TVector3(0, 0, 0), TVector3(0, 0, 0));
+    return TRay(0, TVector3(0, 0, 0), TVector3(0, 0, 0));
+}
+
+TSegmentedData TObservatory::ParseData(TRawData data) {
+    return fCamera.ParseData(data);
 }

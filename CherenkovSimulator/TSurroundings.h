@@ -19,6 +19,10 @@ private:
     
 public:
     
+    TSurroundings();
+    
+    TSurroundings(TPlane3 groundPlane);
+    
     TPlane3 GroundPlane();
 };
 

@@ -8,12 +8,12 @@
 #ifndef TAnalysis_h
 #define TAnalysis_h
 
+#include "TObservatory.h"
 #include "TH2.h"
 #include "TProfile.h"
 #include "TGraph.h"
 #include "TVector3.h"
 #include "TArrayD.h"
-#include "TTelescope.h"
 #include <stdio.h>
 
 class TAnalysis {
@@ -26,16 +26,11 @@ private:
     static Double_t FindRMSDeviation(TRawData data);
     
 public:
-    
-    /*
-     * Finds the sum of all elements in an array.
-     */
-    static Double_t SumArray(std::vector<Double_t>);
 
     /*
      * Returns a graph of RMS Deviation vs angle from the mirror axis.
      */
-    static void FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>& angle, TTelescope telescope, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t zDistance);
+    static void FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>& angle, TObservatory observatory, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t zDistance);
     
     /*
      * Fills the histogram with the data from the input arrays.

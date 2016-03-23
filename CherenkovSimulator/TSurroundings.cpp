@@ -8,6 +8,12 @@
 
 #include "TSurroundings.h"
 
+TSurroundings::TSurroundings() {}
+
+TSurroundings::TSurroundings(TPlane3 groundPlane) {
+    fGroundPlane = groundPlane;
+}
+
 TPlane3 TSurroundings::GroundPlane() {
     return fGroundPlane;
 }

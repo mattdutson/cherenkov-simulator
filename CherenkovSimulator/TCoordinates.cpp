@@ -8,6 +8,14 @@
 
 #include "TCoordinates.h"
 
+TCoordinates::TCoordinates() {}
+
+TCoordinates::TCoordinates(Double_t azimuth, Double_t elevation, TVector3 centerOfCurvature) {
+    fAzimuth = azimuth;
+    fElevation = elevation;
+    fCenterOfCurvature = centerOfCurvature;
+}
+
 void TCoordinates::PositionToObservatoryFrame(TVector3& position) {
     position -= fCenterOfCurvature;
     DirectionToObservatoryFrame(position);

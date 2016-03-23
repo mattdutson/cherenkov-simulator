@@ -8,21 +8,14 @@
 #include "TAnalysis.h"
 #include "TMath.h"
 #include "TConstantIntensity.h"
-
-Double_t TAnalysis::SumArray(std::vector<Double_t> array) {
-    Double_t sum = 0;
-    for (Double_t d: array) {
-        sum += d;
-    }
-    return sum;
-}
+#include "TUtility.h"
 
 Double_t TAnalysis::FindRMSDeviation(TRawData data) {
     
     // Compute the average x and y values
     Long_t n = data.Size();
-    Double_t xAverage = SumArray(data.GetXData()) / n;
-    Double_t yAverage = SumArray(data.GetYData()) / n;
+    Double_t xAverage = TUtility::SumArray(data.GetXData()) / n;
+    Double_t yAverage = TUtility::SumArray(data.GetYData()) / n;
     
     // Compute the variance by repeatedly adding the distance squaared to the variance and then dividing it by n
     Double_t variance = 0;
@@ -35,7 +28,7 @@ Double_t TAnalysis::FindRMSDeviation(TRawData data) {
     return TMath::Sqrt(variance);
 }
 
-void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>& angle, TTelescope telescope, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t zDistance) {
+void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>& angle, TObservatory observatory, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t zDistance) {
     
     // Make sure the arrays are clear
     RMS.clear();
@@ -59,13 +52,10 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
     TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
     TShower shower = TShower(showerRay, intensityFunction);
     
-    // These vectors store the detection data at each point
-    TRawData data = TRawData();
-    
     for (Int_t i = 0; i < nSteps; i++) {
         
         // Collect data at each point along the ray's path and store it in xArray and yArray
-        telescope.ViewPoint(shower, data);
+        TRawData data = observatory.ViewPoint(shower);
         shower.IncrementPosition(timeDelay);
         
         // Compute the RMS deviation at each point and store it in the output array

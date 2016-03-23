@@ -23,6 +23,10 @@ private:
     
 public:
     
+    TCoordinates();
+    
+    TCoordinates(Double_t azimuth, Double_t elevation, TVector3 centerOfCurvature);
+    
     void PositionToObservatoryFrame(TVector3& position);
     
     void PositionToExternalFrame(TVector3& position);

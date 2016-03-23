@@ -13,15 +13,12 @@
 #include "TSegmentedData.h"
 #include "TRawData.h"
 #include "TRay.h"
-#include "TAnalysis.h"
 
 class TCamera {
     
 private:
     
     Double_t fFocalLength;
-    
-    TPlane3 fFocalPlane;
     
     Double_t fHeight;
     
@@ -31,13 +28,17 @@ private:
     
     Int_t fNumberTubesX;
     
-    Double_t fPMTResponseTime;
+    Double_t fPMTResolution;
     
     Int_t GetBin(TVector3 position);
     
 public:
     
-    TPlane3 FocalPlane();
+    TCamera();
+    
+    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution);
+    
+    Double_t FocalLength();
     
     Bool_t CheckCollision(TVector3 position);
     
@@ -46,4 +47,4 @@ public:
     TVector3 GetViewDirection(Int_t bin);
 };
 
-#endif /* TCamera_hpp */
+#endif /* TCamera_h */

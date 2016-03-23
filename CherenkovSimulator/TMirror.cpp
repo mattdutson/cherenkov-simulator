@@ -9,11 +9,17 @@
 #include "TMirror.h"
 #include "TMath.h"
 
+TMirror::TMirror() {}
+
 TMirror::TMirror(Int_t type, Int_t shape, Double_t radius, Double_t size) {
     fType = type;
     fShape = shape;
     fRadius = radius;
     fSize = size;
+}
+
+Double_t TMirror::Radius() {
+    return fRadius;
 }
 
 TVector3 TMirror::GetMirrorImpact() {

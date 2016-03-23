@@ -32,6 +32,8 @@ public:
     
     TMirror(Int_t type, Int_t shape, Double_t radius, Double_t size);
     
+    Double_t Radius();
+    
     TVector3 GetMirrorImpact();
     
     TVector3 GetMirrorNormal(TVector3 impact);

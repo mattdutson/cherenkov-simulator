@@ -8,8 +8,18 @@
 
 #include "TCamera.h"
 
-TPlane3 TCamera::FocalPlane() {
-    return fFocalPlane;
+TCamera::TCamera() {}
+
+TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution) {
+    fFocalLength = focalLength;
+    fWidth = width;
+    fNumberTubesX = numberTubesX;
+    fHeight = height;
+    fNumberTubesY = numberTubesY;
+}
+
+Double_t TCamera::FocalLength() {
+    return fFocalLength;
 }
 
 bool TCamera::CheckCollision(TVector3 position) {
