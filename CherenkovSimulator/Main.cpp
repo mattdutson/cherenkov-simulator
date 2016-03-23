@@ -25,7 +25,7 @@ int main(int argc, const char* argv[]) {
 //    CollectRMSData();
     TestPointImage();
 //    TestCameraFunction();
-//    TestShowerReconstruction();
+    TestShowerReconstruction();
 }
 
 void CollectRMSData() {
@@ -130,7 +130,7 @@ void TestPointImage() {
         
         // Generate data points
         TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
-        TShower shower = TShower(TRay(0, TVector3(height, 0, zDistance), TVector3()), intensityFunction);
+        TShower shower = TShower(TRay(0, TVector3(0, height, zDistance), TVector3(0, -1, 0)), intensityFunction);
         TRawData data = observatory.ViewPoint(shower);
         
         // Format the graph title and name
@@ -141,7 +141,7 @@ void TestPointImage() {
         TH2D histogram = TH2D(name, title, nBinsX, xLow, xUp, nBinsY, yLow, yUp);
         histogram.GetXaxis()->SetTitle("x (meters)");
         histogram.GetYaxis()->SetTitle("y (meters)");
-        TAnalysis::FillHistogram(data.GetYData(), data.GetXData(), histogram);
+        TAnalysis::FillHistogram(data.GetXData(), data.GetYData(), histogram);
         histogram.Write(name);
         delete intensityFunction;
     }
@@ -163,7 +163,7 @@ void TestCameraFunction() {
     
     // Set up the shower
     TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
-    TShower shower = TShower(TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0)), intensityFunction);
+    TShower shower = TShower(TRay(0, TVector3(0, 3000, 20000), TVector3(0, -1, 0)), intensityFunction);
     
     // Set up the telescope
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
@@ -174,7 +174,7 @@ void TestCameraFunction() {
     
     TRawData data = observatory.ViewShower(shower, delayTime);
     TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);
-    TAnalysis::FillHistogram(data.GetYData(), data.GetXData(), histogram);
+    TAnalysis::FillHistogram(data.GetXData(), data.GetYData(), histogram);
     histogram.Write();
     file.Close();
     
@@ -197,7 +197,7 @@ void TestShowerReconstruction() {
     
     // Set up the shower
     TConstantIntensity* intensityFunction = new TConstantIntensity(sampleNumber);
-    TShower shower = TShower(TRay(0, TVector3(3000, 0, 20000), TVector3(-1, 0, 0)), intensityFunction);
+    TShower shower = TShower(TRay(0, TVector3(0, 3000, 20000), TVector3(0, -1, 0)), intensityFunction);
     
     // Set up the observatory
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);

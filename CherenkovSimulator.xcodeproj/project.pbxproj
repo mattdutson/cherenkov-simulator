@@ -45,12 +45,12 @@
 		3463D06E1C86BA8C00AED492 /* TRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRawData.h; sourceTree = "<group>"; };
 		348C596D1CA26314001710EA /* TUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TUtility.cpp; sourceTree = "<group>"; };
 		348C596E1CA26314001710EA /* TUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUtility.h; sourceTree = "<group>"; };
+		348C59701CA26D95001710EA /* TRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
 		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
 		34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
 		34BAC6BA1C6950B400E360D5 /* TAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAnalysis.h; sourceTree = "<group>"; };
 		34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSegmentedData.cpp; sourceTree = "<group>"; };
 		34C1A23A1C8FA8E7004FEDF1 /* TSegmentedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSegmentedData.h; sourceTree = "<group>"; };
-		34CB1D751C4DDD6200EBEF85 /* TRay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
 		34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPlane3.cpp; sourceTree = "<group>"; };
 		34CB1D781C4DEDA700EBEF85 /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
 		34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,7 +102,7 @@
 		349CE1421C94B3980006F705 /* Rays */ = {
 			isa = PBXGroup;
 			children = (
-				34CB1D751C4DDD6200EBEF85 /* TRay.cpp */,
+				348C59701CA26D95001710EA /* TRay.h */,
 				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
 				3436E11C1C83F1AD00E938FB /* TShower.h */,
 				3436E11B1C83F1AD00E938FB /* TShower.cpp */,
