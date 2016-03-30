@@ -11,6 +11,7 @@
 
 #include "TPlane3.h"
 #include "TSegmentedData.h"
+#include "TPixelHistograms.h"
 #include "TRawData.h"
 #include "TRay.h"
 #include "TFile.h"
@@ -46,7 +47,9 @@ public:
     
     Bool_t CheckCollision(TVector3 position);
     
-    TSegmentedData ParseData(TRawData data);
+    TSegmentedData SegmentedData(TRawData data);
+    
+    TPixelHistograms PixelHistograms(TSegmentedData data);
     
     TVector3 GetViewDirection(Int_t bin);
     

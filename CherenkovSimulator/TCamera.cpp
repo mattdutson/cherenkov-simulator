@@ -36,7 +36,7 @@ bool TCamera::CheckCollision(TVector3 position) {
     }
 }
 
-TSegmentedData TCamera::ParseData(TRawData rawData) {
+TSegmentedData TCamera::SegmentedData(TRawData rawData) {
     TSegmentedData parsedData = TSegmentedData(fNumberTubesX * fNumberTubesY);
     for (Int_t i = 0; i < rawData.Size(); i++) {
         if (TMath::Abs(rawData.GetX(i)) > fWidth / 2 || TMath::Abs(rawData.GetY(i)) > fHeight / 2) {
@@ -45,6 +45,24 @@ TSegmentedData TCamera::ParseData(TRawData rawData) {
         parsedData.AddPoint(rawData.GetT(i), GetBin(TVector3(rawData.GetX(i), rawData.GetY(i), 0)));
     }
     return parsedData;
+}
+
+TPixelHistograms TCamera::PixelHistograms(TSegmentedData parsedData) {
+    TPixelHistograms pixelHistograms = TPixelHistograms(parsedData.GetNBins());
+    Double_t minTime = parsedData.GetMinTime();
+    Double_t maxTime = parsedData.GetMaxTime();
+    Int_t nHistoBins = (maxTime - minTime) / fPMTResolution;
+    for (Int_t bin = 0; bin < parsedData.GetNBins(); bin++) {
+        TVector2 position = GetPixelPosition(bin);
+        Double_t x = position.X();
+        Double_t y = position.Y();
+        TH1D histogram = TH1D(Form("pmt-x%f-y%f", x, y), Form("Photomultiplier Tube at x = %f, y = %f", x, y), nHistoBins, minTime, maxTime);
+        for (Double_t time: *parsedData.GetSegment(bin)) {
+            histogram.Fill(time);
+        }
+        pixelHistograms.SetHistogram(bin, histogram);
+    }
+    return pixelHistograms;
 }
 
 Int_t TCamera::GetBin(TVector3 position) {
@@ -71,25 +89,4 @@ TVector2 TCamera::GetPixelPosition(Int_t bin) {
     Double_t y = yBin * fHeight / (Double_t) fNumberTubesY - fHeight / 2.0;
     Double_t x = xBin * fWidth / (Double_t) fNumberTubesX - fWidth / 2.0;
     return TVector2(x, y);
-}
-
-void TCamera::WriteDataToFile(TString filename, TSegmentedData parsedData) {
-    Double_t minTime = parsedData.GetMinTime();
-    Double_t maxTime = parsedData.GetMaxTime();
-    TFile file(filename, "RECREATE");
-    for (int bin = 0; bin < fNumberTubesX * fNumberTubesY; bin++) {
-        Int_t nBinsx = (maxTime - minTime) / fPMTResolution;
-        TVector2 position = GetPixelPosition(bin);
-        Double_t x = position.X();
-        Double_t y = position.Y();
-        TH1D histogram = TH1D(Form("pmt-x%f-y%f", x, y), Form("Photomultiplier Tube at x = %f, y = %f", x, y), nBinsx, minTime, maxTime);
-        if (parsedData.GetSegment(bin)->size() == 0) {
-            continue;
-        }
-        for (Double_t time: *parsedData.GetSegment(bin)) {
-            histogram.Fill(time);
-        }
-        histogram.Write();
-    }
-    file.Close();
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3410E8C31CAB922800295543 /* TPixelHistograms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3410E8C11CAB922800295543 /* TPixelHistograms.cpp */; };
+		3410E8C61CAB923E00295543 /* TVoltageOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3410E8C41CAB923E00295543 /* TVoltageOutput.cpp */; };
 		3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3436E11B1C83F1AD00E938FB /* TShower.cpp */; };
 		3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */; };
 		3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06D1C86BA8C00AED492 /* TRawData.cpp */; };
@@ -36,6 +38,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3410E8BF1CAB904000295543 /* FourierTransformTutorial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FourierTransformTutorial.cpp; sourceTree = "<group>"; };
+		3410E8C11CAB922800295543 /* TPixelHistograms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelHistograms.cpp; sourceTree = "<group>"; };
+		3410E8C21CAB922800295543 /* TPixelHistograms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPixelHistograms.h; sourceTree = "<group>"; };
+		3410E8C41CAB923E00295543 /* TVoltageOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TVoltageOutput.cpp; sourceTree = "<group>"; };
+		3410E8C51CAB923E00295543 /* TVoltageOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVoltageOutput.h; sourceTree = "<group>"; };
 		3436E11B1C83F1AD00E938FB /* TShower.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TShower.cpp; sourceTree = "<group>"; };
 		3436E11C1C83F1AD00E938FB /* TShower.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TShower.h; sourceTree = "<group>"; };
 		3436E11F1C83F36100E938FB /* T3DScalarFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T3DScalarFunction.h; sourceTree = "<group>"; };
@@ -85,6 +92,10 @@
 				3463D06D1C86BA8C00AED492 /* TRawData.cpp */,
 				34C1A23A1C8FA8E7004FEDF1 /* TSegmentedData.h */,
 				34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */,
+				3410E8C21CAB922800295543 /* TPixelHistograms.h */,
+				3410E8C11CAB922800295543 /* TPixelHistograms.cpp */,
+				3410E8C51CAB923E00295543 /* TVoltageOutput.h */,
+				3410E8C41CAB923E00295543 /* TVoltageOutput.cpp */,
 			);
 			name = DataContainers;
 			sourceTree = "<group>";
@@ -143,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
+				3410E8BF1CAB904000295543 /* FourierTransformTutorial.cpp */,
 				34F25B871C97A72800680BE3 /* Detector */,
 				349CE1421C94B3980006F705 /* Rays */,
 				349CE13F1C94B31A0006F705 /* DataContainers */,
@@ -229,11 +241,13 @@
 				34F25B901C97A78100680BE3 /* TCamera.cpp in Sources */,
 				34F25B8A1C97A74000680BE3 /* TObservatory.cpp in Sources */,
 				34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */,
+				3410E8C31CAB922800295543 /* TPixelHistograms.cpp in Sources */,
 				348C596F1CA26314001710EA /* TUtility.cpp in Sources */,
 				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
 				34F25B931C97A78E00680BE3 /* TCoordinates.cpp in Sources */,
 				34F25B8D1C97A77600680BE3 /* TMirror.cpp in Sources */,
 				3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */,
+				3410E8C61CAB923E00295543 /* TVoltageOutput.cpp in Sources */,
 				34F25B961C97A79B00680BE3 /* TSurroundings.cpp in Sources */,
 				34C1A23B1C8FA8E7004FEDF1 /* TSegmentedData.cpp in Sources */,
 				3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */,

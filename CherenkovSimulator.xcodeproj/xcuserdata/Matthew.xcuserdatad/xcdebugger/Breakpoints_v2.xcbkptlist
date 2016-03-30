@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "45"
             endingLineNumber = "45"
-            landmarkName = "TCamera::ParseData(TRawData rawData)"
+            landmarkName = "TCamera::SegmentedData(TRawData rawData)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
