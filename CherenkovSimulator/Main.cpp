@@ -9,7 +9,6 @@
 #include "TAnalysis.h"
 #include "TFile.h"
 #include "TConstantIntensity.h"
-#include "FourierTransformTutorial.cpp"
 #include <iostream>
 
 using namespace std;
@@ -27,7 +26,6 @@ int main(int argc, const char* argv[]) {
 //    TestPointImage();
 //    TestCameraFunction();
 //    TestShowerReconstruction();
-    FFT();
 }
 
 void CollectRMSData() {

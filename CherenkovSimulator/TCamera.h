@@ -11,11 +11,12 @@
 
 #include "TPlane3.h"
 #include "TSegmentedData.h"
-#include "TPixelHistograms.h"
+#include "THistogramArray.h"
 #include "TRawData.h"
 #include "TRay.h"
 #include "TFile.h"
 #include "TH1D.h"
+#include "TF1.h"
 
 class TCamera {
     
@@ -33,6 +34,8 @@ private:
     
     Double_t fPMTResolution;
     
+    TF1 fResponseFunction;
+    
     Bool_t fCheckBackCollision = false;
     
     Int_t GetBin(TVector3 position);
@@ -41,7 +44,7 @@ public:
     
     TCamera();
     
-    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, Bool_t checkBackCollision);
+    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TF1 responseFunction, Bool_t checkBackCollision);
     
     Double_t FocalLength();
     
@@ -49,7 +52,9 @@ public:
     
     TSegmentedData SegmentedData(TRawData data);
     
-    TPixelHistograms PixelHistograms(TSegmentedData data);
+    THistogramArray PixelHistograms(TSegmentedData data);
+    
+    THistogramArray VoltageOutput(THistogramArray histograms);
     
     TVector3 GetViewDirection(Int_t bin);
     

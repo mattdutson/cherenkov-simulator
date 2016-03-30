@@ -6,14 +6,14 @@
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
-#ifndef TPixelHistograms_h
-#define TPixelHistograms_h
+#ifndef THistogramArray_h
+#define THistogramArray_h
 
 #include "TH1D.h"
 #include "TSegmentedData.h"
 #include <stdio.h>
 
-class TPixelHistograms {
+class THistogramArray {
 private:
     
     Int_t fNBins;
@@ -26,10 +26,14 @@ private:
     
 public:
     
-    TPixelHistograms(Int_t nBins);
+    THistogramArray(Int_t nBins);
     
     void SetHistogram(Int_t bin, TH1D histogram);
     
+    TH1D GetHistogram(Int_t bin);
+    
+    Int_t GetNBins();
+    
 };
 
-#endif /* TPixelHistograms_h */
+#endif /* THistogramArray.h */

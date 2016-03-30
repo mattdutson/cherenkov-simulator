@@ -6,9 +6,9 @@
 //  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
-#include "TPixelHistograms.h"
+#include "THistogramArray.h"
 
-TPixelHistograms::TPixelHistograms(Int_t nBins) {
+THistogramArray::THistogramArray(Int_t nBins) {
     fHistograms = new TH1D*[nBins];
     for (Int_t i = 0; i < nBins; i++) {
         fHistograms[i] = new TH1D();
@@ -18,6 +18,14 @@ TPixelHistograms::TPixelHistograms(Int_t nBins) {
     fMaxTime = -1e100;
 }
 
-void TPixelHistograms::SetHistogram(Int_t bin, TH1D histogram) {
+void THistogramArray::SetHistogram(Int_t bin, TH1D histogram) {
     fHistograms[bin] = &histogram;
+}
+
+Int_t THistogramArray::GetNBins() {
+    return fNBins;
+}
+
+TH1D THistogramArray::GetHistogram(Int_t bin) {
+    return *fHistograms[bin];
 }

@@ -10,7 +10,7 @@
 
 TCamera::TCamera() {}
 
-TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, Bool_t checkBackCollision) {
+TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TF1 responseFunction, Bool_t checkBackCollision) {
     fFocalLength = focalLength;
     fWidth = width;
     fNumberTubesX = numberTubesX;
@@ -18,6 +18,7 @@ TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Doubl
     fNumberTubesY = numberTubesY;
     fCheckBackCollision = checkBackCollision;
     fPMTResolution = PMTResolution;
+    fResponseFunction = responseFunction;
 }
 
 Double_t TCamera::FocalLength() {
@@ -47,8 +48,8 @@ TSegmentedData TCamera::SegmentedData(TRawData rawData) {
     return parsedData;
 }
 
-TPixelHistograms TCamera::PixelHistograms(TSegmentedData parsedData) {
-    TPixelHistograms pixelHistograms = TPixelHistograms(parsedData.GetNBins());
+THistogramArray TCamera::PixelHistograms(TSegmentedData parsedData) {
+    THistogramArray pixelHistograms = THistogramArray(parsedData.GetNBins());
     Double_t minTime = parsedData.GetMinTime();
     Double_t maxTime = parsedData.GetMaxTime();
     Int_t nHistoBins = (maxTime - minTime) / fPMTResolution;
@@ -63,6 +64,20 @@ TPixelHistograms TCamera::PixelHistograms(TSegmentedData parsedData) {
         pixelHistograms.SetHistogram(bin, histogram);
     }
     return pixelHistograms;
+}
+
+THistogramArray TCamera::VoltageOutput(THistogramArray histograms) {
+    THistogramArray voltageOutput = THistogramArray(histograms.GetNBins());
+    //
+    
+    // Convolve the response function with the photon flux.
+    for (Int_t bin = 0; bin < histograms.GetNBins(); bin++) {
+        TH1* tFluxReal = histograms.GetHistogram(bin).FFT(nullptr, "RE R2C M");
+        TH1* tFluxComp = histograms.GetHistogram(bin).FFT(nullptr, "IM R2C M");
+        TH1 tProductReal = TH1D();
+        TH1 tProductComp = TH1D();
+    }
+    return voltageOutput;
 }
 
 Int_t TCamera::GetBin(TVector3 position) {
