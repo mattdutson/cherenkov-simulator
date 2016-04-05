@@ -23,6 +23,8 @@ private:
     
 public:
     
+    TResponseFunction();
+    
     TResponseFunction(Double_t responseTime, TF1 responseFunction);
     
     TH1D ResponseHistogram(Double_t sampleTime);

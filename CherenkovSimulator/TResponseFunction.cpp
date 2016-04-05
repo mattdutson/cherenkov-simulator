@@ -8,6 +8,11 @@
 
 #include "TResponseFunction.h"
 
+TResponseFunction::TResponseFunction() {
+    fResponseTime = 0;
+    fResponseFucntion = TF1();
+}
+
 TResponseFunction::TResponseFunction(Double_t responseTime, TF1 responseFunction) {
     fResponseTime = responseTime;
     fResponseFucntion = responseFunction;

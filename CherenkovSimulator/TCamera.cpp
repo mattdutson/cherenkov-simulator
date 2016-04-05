@@ -10,7 +10,7 @@
 
 TCamera::TCamera() {}
 
-TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TF1 responseFunction, Bool_t checkBackCollision) {
+TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TResponseFunction responseFunction, Bool_t checkBackCollision) {
     fFocalLength = focalLength;
     fWidth = width;
     fNumberTubesX = numberTubesX;
@@ -66,16 +66,28 @@ THistogramArray TCamera::PixelHistograms(TSegmentedData parsedData) {
     return pixelHistograms;
 }
 
-THistogramArray TCamera::VoltageOutput(THistogramArray histograms) {
+THistogramArray TCamera::VoltageOutput(THistogramArray histograms, Int_t nFrequencyBins) {
     THistogramArray voltageOutput = THistogramArray(histograms.GetNBins());
+    TH1D responseHistogram = fResponseFunction.ResponseHistogram(fPMTResolution);
     //
     
     // Convolve the response function with the photon flux.
     for (Int_t bin = 0; bin < histograms.GetNBins(); bin++) {
-        TH1* tFluxReal = histograms.GetHistogram(bin).FFT(nullptr, "RE R2C M");
-        TH1* tFluxComp = histograms.GetHistogram(bin).FFT(nullptr, "IM R2C M");
-        TH1 tProductReal = TH1D();
-        TH1 tProductComp = TH1D();
+        TH1* tFluxReal = new TH1D("", "", nFrequencyBins, - 1 / (2 * fPMTResolution), 1 / (2 * fPMTResolution));
+        TH1* tFluxComp = new TH1D("", "", nFrequencyBins, - 1 / (2 * fPMTResolution), 1 / (2 * fPMTResolution));
+        TH1* tResponseReal = new TH1D("", "", nFrequencyBins, - 1 / (2 * fPMTResolution), 1 / (2 * fPMTResolution));
+        TH1* tResponseComp = new TH1D("", "", nFrequencyBins, - 1 / (2 * fPMTResolution), 1 / (2 * fPMTResolution));
+        histograms.GetHistogram(bin).FFT(tFluxReal, "RE R2C M");
+        histograms.GetHistogram(bin).FFT(tFluxComp, "IM R2C M");
+        responseHistogram.FFT(tResponseReal, "RE R2C M");
+        responseHistogram.FFT(tResponseComp, "IM R2C M");
+        TH1 tProductReal = TH1D("", "", nFrequencyBins, - 1 / (2 * fPMTResolution), 1 / (2 * fPMTResolution));
+        TH1 tProductComp = TH1D("", "", nFrequencyBins, - 1 / (2 * fPMTResolution), 1 / (2 * fPMTResolution));
+        
+        for (Int_t i = 0; i < nFrequencyBins; i++) {
+            tProductReal.SetBinContent(i, tFluxReal->GetBinContent(i) * tResponseReal->GetBinContent(i) - tFluxComp->GetBinContent(i) * tResponseComp->GetBinContent(i));
+            tProductComp.SetBinContent(i, tFluxReal->GetBinContent(i) * tResponseComp->GetBinContent(i) + tFluxComp->GetBinContent(i) * tResponseReal->GetBinContent(i));
+        }
     }
     return voltageOutput;
 }

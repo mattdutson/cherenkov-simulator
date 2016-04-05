@@ -17,6 +17,7 @@
 #include "TFile.h"
 #include "TH1D.h"
 #include "TF1.h"
+#include "TResponseFunction.h"
 
 class TCamera {
     
@@ -34,7 +35,7 @@ private:
     
     Double_t fPMTResolution;
     
-    TF1 fResponseFunction;
+    TResponseFunction fResponseFunction;
     
     Bool_t fCheckBackCollision = false;
     
@@ -44,7 +45,7 @@ public:
     
     TCamera();
     
-    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TF1 responseFunction, Bool_t checkBackCollision);
+    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TResponseFunction responseFunction, Bool_t checkBackCollision);
     
     Double_t FocalLength();
     
@@ -54,7 +55,7 @@ public:
     
     THistogramArray PixelHistograms(TSegmentedData data);
     
-    THistogramArray VoltageOutput(THistogramArray histograms);
+    THistogramArray VoltageOutput(THistogramArray histograms, Int_t nFrequencyBins);
     
     TVector3 GetViewDirection(Int_t bin);
     
