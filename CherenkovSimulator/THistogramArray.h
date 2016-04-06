@@ -22,15 +22,15 @@ private:
     
     Double_t fMaxTime;
     
-    TH1D** fHistograms;
+    TH1** fHistograms;
     
 public:
     
     THistogramArray(Int_t nBins);
     
-    void SetHistogram(Int_t bin, TH1D histogram);
+    void SetHistogram(Int_t bin, TH1* histogram);
     
-    TH1D GetHistogram(Int_t bin);
+    TH1* GetHistogram(Int_t bin);
     
     Int_t GetNBins();
     

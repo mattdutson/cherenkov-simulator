@@ -139,5 +139,10 @@ TSegmentedData TObservatory::ParseData(TRawData data) {
 }
 
 void TObservatory::WriteDataToFile(TString filename, TSegmentedData parsedData) {
-    fCamera.WriteDataToFile(filename, parsedData);
+    THistogramArray histograms = fCamera.PixelHistograms(parsedData);
+    TFile file(filename);
+    for (Int_t i = 0; i < parsedData.GetNBins(); i++) {
+        histograms.GetHistogram(i)->Write();
+    }
+    file.Close();
 }

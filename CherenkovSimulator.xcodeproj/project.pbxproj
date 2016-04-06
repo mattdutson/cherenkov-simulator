@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3410E8C31CAB922800295543 /* THistogramArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3410E8C11CAB922800295543 /* THistogramArray.cpp */; };
-		3417B9EC1CB44CF000FE0EB1 /* TResponseFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3417B9EA1CB44CF000FE0EB1 /* TResponseFunction.cpp */; };
-		3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3436E11B1C83F1AD00E938FB /* TShower.cpp */; };
-		3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */; };
-		3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3463D06D1C86BA8C00AED492 /* TRawData.cpp */; };
-		348C596F1CA26314001710EA /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 348C596D1CA26314001710EA /* TUtility.cpp */; };
-		34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A093A41C4D8D430046A6E0 /* TRay.cpp */; };
-		34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */; };
-		34C1A23B1C8FA8E7004FEDF1 /* TSegmentedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */; };
-		34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */; };
-		34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D976201C4CAC6E0040C7F6 /* Main.cpp */; };
-		34F25B8A1C97A74000680BE3 /* TObservatory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B881C97A74000680BE3 /* TObservatory.cpp */; };
-		34F25B8D1C97A77600680BE3 /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B8B1C97A77600680BE3 /* TMirror.cpp */; };
-		34F25B901C97A78100680BE3 /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B8E1C97A78100680BE3 /* TCamera.cpp */; };
-		34F25B931C97A78E00680BE3 /* TCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B911C97A78E00680BE3 /* TCoordinates.cpp */; };
-		34F25B961C97A79B00680BE3 /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F25B941C97A79B00680BE3 /* TSurroundings.cpp */; };
+		342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D71CB4E8DB000184BC /* Main.cpp */; };
+		342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */; };
+		342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DD1CB4E8DB000184BC /* TCamera.cpp */; };
+		342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */; };
+		342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */; };
+		342DD5FF1CB4E8DB000184BC /* THistogramArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E31CB4E8DB000184BC /* THistogramArray.cpp */; };
+		342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E51CB4E8DB000184BC /* TMirror.cpp */; };
+		342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E71CB4E8DB000184BC /* TObservatory.cpp */; };
+		342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E91CB4E8DB000184BC /* TPlane3.cpp */; };
+		342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5EB1CB4E8DB000184BC /* TRawData.cpp */; };
+		342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5ED1CB4E8DB000184BC /* TRay.cpp */; };
+		342DD6051CB4E8DB000184BC /* TResponseFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5EF1CB4E8DB000184BC /* TResponseFunction.cpp */; };
+		342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F11CB4E8DB000184BC /* TSegmentedData.cpp */; };
+		342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F31CB4E8DB000184BC /* TShower.cpp */; };
+		342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */; };
+		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		34D9761B1C4CAC6E0040C7F6 /* CopyFiles */ = {
+		342DD5CB1CB4E814000184BC /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -38,43 +38,43 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3410E8C11CAB922800295543 /* THistogramArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = THistogramArray.cpp; sourceTree = "<group>"; };
-		3410E8C21CAB922800295543 /* THistogramArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THistogramArray.h; sourceTree = "<group>"; };
-		3417B9EA1CB44CF000FE0EB1 /* TResponseFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TResponseFunction.cpp; sourceTree = "<group>"; };
-		3417B9EB1CB44CF000FE0EB1 /* TResponseFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TResponseFunction.h; sourceTree = "<group>"; };
-		3436E11B1C83F1AD00E938FB /* TShower.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TShower.cpp; sourceTree = "<group>"; };
-		3436E11C1C83F1AD00E938FB /* TShower.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TShower.h; sourceTree = "<group>"; };
-		3436E11F1C83F36100E938FB /* T3DScalarFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T3DScalarFunction.h; sourceTree = "<group>"; };
-		3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TConstantIntensity.cpp; sourceTree = "<group>"; };
-		3463D06B1C86938A00AED492 /* TConstantIntensity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TConstantIntensity.h; sourceTree = "<group>"; };
-		3463D06D1C86BA8C00AED492 /* TRawData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRawData.cpp; sourceTree = "<group>"; };
-		3463D06E1C86BA8C00AED492 /* TRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRawData.h; sourceTree = "<group>"; };
-		348C596D1CA26314001710EA /* TUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TUtility.cpp; sourceTree = "<group>"; };
-		348C596E1CA26314001710EA /* TUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUtility.h; sourceTree = "<group>"; };
-		348C59701CA26D95001710EA /* TRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
-		34A093A41C4D8D430046A6E0 /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
-		34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
-		34BAC6BA1C6950B400E360D5 /* TAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAnalysis.h; sourceTree = "<group>"; };
-		34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSegmentedData.cpp; sourceTree = "<group>"; };
-		34C1A23A1C8FA8E7004FEDF1 /* TSegmentedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSegmentedData.h; sourceTree = "<group>"; };
-		34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPlane3.cpp; sourceTree = "<group>"; };
-		34CB1D781C4DEDA700EBEF85 /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
-		34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
-		34D976201C4CAC6E0040C7F6 /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
-		34F25B881C97A74000680BE3 /* TObservatory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TObservatory.cpp; sourceTree = "<group>"; };
-		34F25B891C97A74000680BE3 /* TObservatory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TObservatory.h; sourceTree = "<group>"; };
-		34F25B8B1C97A77600680BE3 /* TMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirror.cpp; sourceTree = "<group>"; };
-		34F25B8C1C97A77600680BE3 /* TMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMirror.h; sourceTree = "<group>"; };
-		34F25B8E1C97A78100680BE3 /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
-		34F25B8F1C97A78100680BE3 /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCamera.h; sourceTree = "<group>"; };
-		34F25B911C97A78E00680BE3 /* TCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCoordinates.cpp; sourceTree = "<group>"; };
-		34F25B921C97A78E00680BE3 /* TCoordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCoordinates.h; sourceTree = "<group>"; };
-		34F25B941C97A79B00680BE3 /* TSurroundings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSurroundings.cpp; sourceTree = "<group>"; };
-		34F25B951C97A79B00680BE3 /* TSurroundings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSurroundings.h; sourceTree = "<group>"; };
+		342DD5CD1CB4E814000184BC /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
+		342DD5D71CB4E8DB000184BC /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
+		342DD5D81CB4E8DB000184BC /* T3DScalarFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = T3DScalarFunction.h; sourceTree = "<group>"; };
+		342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
+		342DD5DA1CB4E8DB000184BC /* TAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAnalysis.h; sourceTree = "<group>"; };
+		342DD5DD1CB4E8DB000184BC /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
+		342DD5DE1CB4E8DB000184BC /* TCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCamera.h; sourceTree = "<group>"; };
+		342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TConstantIntensity.cpp; sourceTree = "<group>"; };
+		342DD5E01CB4E8DB000184BC /* TConstantIntensity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TConstantIntensity.h; sourceTree = "<group>"; };
+		342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCoordinates.cpp; sourceTree = "<group>"; };
+		342DD5E21CB4E8DB000184BC /* TCoordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCoordinates.h; sourceTree = "<group>"; };
+		342DD5E31CB4E8DB000184BC /* THistogramArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = THistogramArray.cpp; sourceTree = "<group>"; };
+		342DD5E41CB4E8DB000184BC /* THistogramArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THistogramArray.h; sourceTree = "<group>"; };
+		342DD5E51CB4E8DB000184BC /* TMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirror.cpp; sourceTree = "<group>"; };
+		342DD5E61CB4E8DB000184BC /* TMirror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMirror.h; sourceTree = "<group>"; };
+		342DD5E71CB4E8DB000184BC /* TObservatory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TObservatory.cpp; sourceTree = "<group>"; };
+		342DD5E81CB4E8DB000184BC /* TObservatory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TObservatory.h; sourceTree = "<group>"; };
+		342DD5E91CB4E8DB000184BC /* TPlane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPlane3.cpp; sourceTree = "<group>"; };
+		342DD5EA1CB4E8DB000184BC /* TPlane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPlane3.h; sourceTree = "<group>"; };
+		342DD5EB1CB4E8DB000184BC /* TRawData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRawData.cpp; sourceTree = "<group>"; };
+		342DD5EC1CB4E8DB000184BC /* TRawData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRawData.h; sourceTree = "<group>"; };
+		342DD5ED1CB4E8DB000184BC /* TRay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRay.cpp; sourceTree = "<group>"; };
+		342DD5EE1CB4E8DB000184BC /* TRay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRay.h; sourceTree = "<group>"; };
+		342DD5EF1CB4E8DB000184BC /* TResponseFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TResponseFunction.cpp; sourceTree = "<group>"; };
+		342DD5F01CB4E8DB000184BC /* TResponseFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TResponseFunction.h; sourceTree = "<group>"; };
+		342DD5F11CB4E8DB000184BC /* TSegmentedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSegmentedData.cpp; sourceTree = "<group>"; };
+		342DD5F21CB4E8DB000184BC /* TSegmentedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSegmentedData.h; sourceTree = "<group>"; };
+		342DD5F31CB4E8DB000184BC /* TShower.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TShower.cpp; sourceTree = "<group>"; };
+		342DD5F41CB4E8DB000184BC /* TShower.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TShower.h; sourceTree = "<group>"; };
+		342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TSurroundings.cpp; sourceTree = "<group>"; };
+		342DD5F61CB4E8DB000184BC /* TSurroundings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSurroundings.h; sourceTree = "<group>"; };
+		342DD5F71CB4E8DB000184BC /* TUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TUtility.cpp; sourceTree = "<group>"; };
+		342DD5F81CB4E8DB000184BC /* TUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUtility.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		34D9761A1C4CAC6E0040C7F6 /* Frameworks */ = {
+		342DD5CA1CB4E814000184BC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -84,183 +84,184 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		349CE13F1C94B31A0006F705 /* DataContainers */ = {
+		342DD5C41CB4E813000184BC = {
 			isa = PBXGroup;
 			children = (
-				3463D06E1C86BA8C00AED492 /* TRawData.h */,
-				3463D06D1C86BA8C00AED492 /* TRawData.cpp */,
-				34C1A23A1C8FA8E7004FEDF1 /* TSegmentedData.h */,
-				34C1A2391C8FA8E7004FEDF1 /* TSegmentedData.cpp */,
-				3410E8C21CAB922800295543 /* THistogramArray.h */,
-				3410E8C11CAB922800295543 /* THistogramArray.cpp */,
-			);
-			name = DataContainers;
-			sourceTree = "<group>";
-		};
-		349CE1401C94B3640006F705 /* Functors */ = {
-			isa = PBXGroup;
-			children = (
-				3436E11F1C83F36100E938FB /* T3DScalarFunction.h */,
-				3463D06B1C86938A00AED492 /* TConstantIntensity.h */,
-				3463D06A1C86938A00AED492 /* TConstantIntensity.cpp */,
-				3417B9EB1CB44CF000FE0EB1 /* TResponseFunction.h */,
-				3417B9EA1CB44CF000FE0EB1 /* TResponseFunction.cpp */,
-			);
-			name = Functors;
-			sourceTree = "<group>";
-		};
-		349CE1421C94B3980006F705 /* Rays */ = {
-			isa = PBXGroup;
-			children = (
-				348C59701CA26D95001710EA /* TRay.h */,
-				34A093A41C4D8D430046A6E0 /* TRay.cpp */,
-				3436E11C1C83F1AD00E938FB /* TShower.h */,
-				3436E11B1C83F1AD00E938FB /* TShower.cpp */,
-			);
-			name = Rays;
-			sourceTree = "<group>";
-		};
-		349CE1431C94B3D80006F705 /* Miscellaneous */ = {
-			isa = PBXGroup;
-			children = (
-				34BAC6BA1C6950B400E360D5 /* TAnalysis.h */,
-				34BAC6B91C6950B400E360D5 /* TAnalysis.cpp */,
-				34CB1D781C4DEDA700EBEF85 /* TPlane3.h */,
-				34CB1D771C4DEDA700EBEF85 /* TPlane3.cpp */,
-				348C596E1CA26314001710EA /* TUtility.h */,
-				348C596D1CA26314001710EA /* TUtility.cpp */,
-			);
-			name = Miscellaneous;
-			sourceTree = "<group>";
-		};
-		34D976141C4CAC6E0040C7F6 = {
-			isa = PBXGroup;
-			children = (
-				34D9761F1C4CAC6E0040C7F6 /* CherenkovSimulator */,
-				34D9761E1C4CAC6E0040C7F6 /* Products */,
+				342DD5CF1CB4E814000184BC /* CherenkovSimulator */,
+				342DD5CE1CB4E814000184BC /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		34D9761E1C4CAC6E0040C7F6 /* Products */ = {
+		342DD5CE1CB4E814000184BC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */,
+				342DD5CD1CB4E814000184BC /* CherenkovSimulator */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		34D9761F1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {
+		342DD5CF1CB4E814000184BC /* CherenkovSimulator */ = {
 			isa = PBXGroup;
 			children = (
-				34D976201C4CAC6E0040C7F6 /* Main.cpp */,
-				34F25B871C97A72800680BE3 /* Detector */,
-				349CE1421C94B3980006F705 /* Rays */,
-				349CE13F1C94B31A0006F705 /* DataContainers */,
-				349CE1401C94B3640006F705 /* Functors */,
-				349CE1431C94B3D80006F705 /* Miscellaneous */,
+				342DD5D71CB4E8DB000184BC /* Main.cpp */,
+				342DD60A1CB4E935000184BC /* Detector */,
+				342DD60D1CB4E974000184BC /* GeometricObjects */,
+				342DD60C1CB4E965000184BC /* DataContainers */,
+				342DD60B1CB4E943000184BC /* Functors */,
+				342DD60E1CB4E9B3000184BC /* Miscellaneous */,
 			);
 			path = CherenkovSimulator;
 			sourceTree = "<group>";
 		};
-		34F25B871C97A72800680BE3 /* Detector */ = {
+		342DD60A1CB4E935000184BC /* Detector */ = {
 			isa = PBXGroup;
 			children = (
-				34F25B891C97A74000680BE3 /* TObservatory.h */,
-				34F25B881C97A74000680BE3 /* TObservatory.cpp */,
-				34F25B8C1C97A77600680BE3 /* TMirror.h */,
-				34F25B8B1C97A77600680BE3 /* TMirror.cpp */,
-				34F25B8F1C97A78100680BE3 /* TCamera.h */,
-				34F25B8E1C97A78100680BE3 /* TCamera.cpp */,
-				34F25B921C97A78E00680BE3 /* TCoordinates.h */,
-				34F25B911C97A78E00680BE3 /* TCoordinates.cpp */,
-				34F25B951C97A79B00680BE3 /* TSurroundings.h */,
-				34F25B941C97A79B00680BE3 /* TSurroundings.cpp */,
+				342DD5E81CB4E8DB000184BC /* TObservatory.h */,
+				342DD5E71CB4E8DB000184BC /* TObservatory.cpp */,
+				342DD5DE1CB4E8DB000184BC /* TCamera.h */,
+				342DD5DD1CB4E8DB000184BC /* TCamera.cpp */,
+				342DD5E61CB4E8DB000184BC /* TMirror.h */,
+				342DD5E51CB4E8DB000184BC /* TMirror.cpp */,
+				342DD5F61CB4E8DB000184BC /* TSurroundings.h */,
+				342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */,
+				342DD5E21CB4E8DB000184BC /* TCoordinates.h */,
+				342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */,
 			);
 			name = Detector;
+			sourceTree = "<group>";
+		};
+		342DD60B1CB4E943000184BC /* Functors */ = {
+			isa = PBXGroup;
+			children = (
+				342DD5D81CB4E8DB000184BC /* T3DScalarFunction.h */,
+				342DD5E01CB4E8DB000184BC /* TConstantIntensity.h */,
+				342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */,
+				342DD5F01CB4E8DB000184BC /* TResponseFunction.h */,
+				342DD5EF1CB4E8DB000184BC /* TResponseFunction.cpp */,
+			);
+			name = Functors;
+			sourceTree = "<group>";
+		};
+		342DD60C1CB4E965000184BC /* DataContainers */ = {
+			isa = PBXGroup;
+			children = (
+				342DD5EC1CB4E8DB000184BC /* TRawData.h */,
+				342DD5EB1CB4E8DB000184BC /* TRawData.cpp */,
+				342DD5F21CB4E8DB000184BC /* TSegmentedData.h */,
+				342DD5F11CB4E8DB000184BC /* TSegmentedData.cpp */,
+				342DD5E41CB4E8DB000184BC /* THistogramArray.h */,
+				342DD5E31CB4E8DB000184BC /* THistogramArray.cpp */,
+			);
+			name = DataContainers;
+			sourceTree = "<group>";
+		};
+		342DD60D1CB4E974000184BC /* GeometricObjects */ = {
+			isa = PBXGroup;
+			children = (
+				342DD5EE1CB4E8DB000184BC /* TRay.h */,
+				342DD5ED1CB4E8DB000184BC /* TRay.cpp */,
+				342DD5F41CB4E8DB000184BC /* TShower.h */,
+				342DD5F31CB4E8DB000184BC /* TShower.cpp */,
+				342DD5EA1CB4E8DB000184BC /* TPlane3.h */,
+				342DD5E91CB4E8DB000184BC /* TPlane3.cpp */,
+			);
+			name = GeometricObjects;
+			sourceTree = "<group>";
+		};
+		342DD60E1CB4E9B3000184BC /* Miscellaneous */ = {
+			isa = PBXGroup;
+			children = (
+				342DD5DA1CB4E8DB000184BC /* TAnalysis.h */,
+				342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */,
+				342DD5F81CB4E8DB000184BC /* TUtility.h */,
+				342DD5F71CB4E8DB000184BC /* TUtility.cpp */,
+			);
+			name = Miscellaneous;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		34D9761C1C4CAC6E0040C7F6 /* CherenkovSimulator */ = {
+		342DD5CC1CB4E814000184BC /* CherenkovSimulator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 34D976241C4CAC6E0040C7F6 /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */;
+			buildConfigurationList = 342DD5D41CB4E814000184BC /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */;
 			buildPhases = (
-				34D976191C4CAC6E0040C7F6 /* Sources */,
-				34D9761A1C4CAC6E0040C7F6 /* Frameworks */,
-				34D9761B1C4CAC6E0040C7F6 /* CopyFiles */,
+				342DD5C91CB4E814000184BC /* Sources */,
+				342DD5CA1CB4E814000184BC /* Frameworks */,
+				342DD5CB1CB4E814000184BC /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = CherenkovSimulator;
-			productName = RayTracing;
-			productReference = 34D9761D1C4CAC6E0040C7F6 /* CherenkovSimulator */;
+			productName = CherenkovSimulator;
+			productReference = 342DD5CD1CB4E814000184BC /* CherenkovSimulator */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		34D976151C4CAC6E0040C7F6 /* Project object */ = {
+		342DD5C51CB4E813000184BC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Matthew Dutson";
 				TargetAttributes = {
-					34D9761C1C4CAC6E0040C7F6 = {
-						CreatedOnToolsVersion = 7.2;
+					342DD5CC1CB4E814000184BC = {
+						CreatedOnToolsVersion = 7.3;
 					};
 				};
 			};
-			buildConfigurationList = 34D976181C4CAC6E0040C7F6 /* Build configuration list for PBXProject "CherenkovSimulator" */;
+			buildConfigurationList = 342DD5C81CB4E813000184BC /* Build configuration list for PBXProject "CherenkovSimulator" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 34D976141C4CAC6E0040C7F6;
-			productRefGroup = 34D9761E1C4CAC6E0040C7F6 /* Products */;
+			mainGroup = 342DD5C41CB4E813000184BC;
+			productRefGroup = 342DD5CE1CB4E814000184BC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				34D9761C1C4CAC6E0040C7F6 /* CherenkovSimulator */,
+				342DD5CC1CB4E814000184BC /* CherenkovSimulator */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		34D976191C4CAC6E0040C7F6 /* Sources */ = {
+		342DD5C91CB4E814000184BC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34A093A61C4D8D430046A6E0 /* TRay.cpp in Sources */,
-				34F25B901C97A78100680BE3 /* TCamera.cpp in Sources */,
-				34F25B8A1C97A74000680BE3 /* TObservatory.cpp in Sources */,
-				34BAC6BB1C6950B400E360D5 /* TAnalysis.cpp in Sources */,
-				3410E8C31CAB922800295543 /* THistogramArray.cpp in Sources */,
-				348C596F1CA26314001710EA /* TUtility.cpp in Sources */,
-				34D976211C4CAC6E0040C7F6 /* Main.cpp in Sources */,
-				34F25B931C97A78E00680BE3 /* TCoordinates.cpp in Sources */,
-				34F25B8D1C97A77600680BE3 /* TMirror.cpp in Sources */,
-				3463D06C1C86938A00AED492 /* TConstantIntensity.cpp in Sources */,
-				34F25B961C97A79B00680BE3 /* TSurroundings.cpp in Sources */,
-				34C1A23B1C8FA8E7004FEDF1 /* TSegmentedData.cpp in Sources */,
-				3436E11D1C83F1AD00E938FB /* TShower.cpp in Sources */,
-				34CB1D791C4DEDA700EBEF85 /* TPlane3.cpp in Sources */,
-				3463D06F1C86BA8C00AED492 /* TRawData.cpp in Sources */,
-				3417B9EC1CB44CF000FE0EB1 /* TResponseFunction.cpp in Sources */,
+				342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */,
+				342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */,
+				342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */,
+				342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */,
+				342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */,
+				342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */,
+				342DD6051CB4E8DB000184BC /* TResponseFunction.cpp in Sources */,
+				342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */,
+				342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */,
+				342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */,
+				342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */,
+				342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */,
+				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
+				342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */,
+				342DD5FF1CB4E8DB000184BC /* THistogramArray.cpp in Sources */,
+				342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		34D976221C4CAC6E0040C7F6 /* Debug */ = {
+		342DD5D21CB4E814000184BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -300,10 +301,11 @@
 			};
 			name = Debug;
 		};
-		34D976231C4CAC6E0040C7F6 /* Release */ = {
+		342DD5D31CB4E814000184BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -336,23 +338,22 @@
 			};
 			name = Release;
 		};
-		34D976251C4CAC6E0040C7F6 /* Debug */ = {
+		342DD5D51CB4E814000184BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
-				HEADER_SEARCH_PATHS = /usr/local/Cellar/root/5.34.34/include/root;
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/root/5.34.34/lib/root;
+				HEADER_SEARCH_PATHS = /usr/local/root/include/root;
+				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-pthread",
 					"-stdlib=libc++",
+					"-std=c++11",
 					"-m64",
-					"-I/usr/local/Cellar/root/5.34.34/include/root",
+					"-I/usr/local/root/include/root",
 				);
 				OTHER_LDFLAGS = (
-					"-L/usr/local/Cellar/root/5.34.34/lib/root",
+					"-L/usr/local/root/lib",
 					"-lCore",
-					"-lCint",
 					"-lRIO",
 					"-lNet",
 					"-lHist",
@@ -371,27 +372,26 @@
 					"-lm",
 					"-ldl",
 				);
-				PRODUCT_NAME = CherenkovSimulator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		34D976261C4CAC6E0040C7F6 /* Release */ = {
+		342DD5D61CB4E814000184BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
-				HEADER_SEARCH_PATHS = /usr/local/Cellar/root/5.34.34/include/root;
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/root/5.34.34/lib/root;
+				HEADER_SEARCH_PATHS = /usr/local/root/include/root;
+				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-pthread",
 					"-stdlib=libc++",
+					"-std=c++11",
 					"-m64",
-					"-I/usr/local/Cellar/root/5.34.34/include/root",
+					"-I/usr/local/root/include/root",
 				);
 				OTHER_LDFLAGS = (
-					"-L/usr/local/Cellar/root/5.34.34/lib/root",
+					"-L/usr/local/root/lib",
 					"-lCore",
-					"-lCint",
 					"-lRIO",
 					"-lNet",
 					"-lHist",
@@ -410,32 +410,31 @@
 					"-lm",
 					"-ldl",
 				);
-				PRODUCT_NAME = CherenkovSimulator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		34D976181C4CAC6E0040C7F6 /* Build configuration list for PBXProject "CherenkovSimulator" */ = {
+		342DD5C81CB4E813000184BC /* Build configuration list for PBXProject "CherenkovSimulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				34D976221C4CAC6E0040C7F6 /* Debug */,
-				34D976231C4CAC6E0040C7F6 /* Release */,
+				342DD5D21CB4E814000184BC /* Debug */,
+				342DD5D31CB4E814000184BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		34D976241C4CAC6E0040C7F6 /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */ = {
+		342DD5D41CB4E814000184BC /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				34D976251C4CAC6E0040C7F6 /* Debug */,
-				34D976261C4CAC6E0040C7F6 /* Release */,
+				342DD5D51CB4E814000184BC /* Debug */,
+				342DD5D61CB4E814000184BC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 34D976151C4CAC6E0040C7F6 /* Project object */;
+	rootObject = 342DD5C51CB4E813000184BC /* Project object */;
 }

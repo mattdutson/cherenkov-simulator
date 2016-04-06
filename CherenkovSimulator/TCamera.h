@@ -60,8 +60,7 @@ public:
     TVector3 GetViewDirection(Int_t bin);
     
     TVector2 GetPixelPosition(Int_t bin);
-    
-    void WriteDataToFile(TString filename, TSegmentedData parsedData);
+
 };
 
 #endif /* TCamera_h */

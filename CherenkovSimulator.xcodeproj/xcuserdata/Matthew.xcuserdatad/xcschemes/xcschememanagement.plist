@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>RayTracing.xcscheme</key>
+		<key>CherenkovSimulator.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>34D9761C1C4CAC6E0040C7F6</key>
+		<key>342DD5CC1CB4E814000184BC</key>
 		<dict>
 			<key>primary</key>
 			<true/>

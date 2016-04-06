@@ -5,7 +5,7 @@
  * This file contains the implementation of "TRay.h". See the header file for method descriptions.
  */
 
-#include "TMath.h"
+#include "TVector3.h"
 #include "TRay.h"
 
 TRay::TRay(Double_t time, TVector3 position, TVector3 direction) {
