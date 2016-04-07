@@ -15,3 +15,11 @@ Double_t TUtility::SumArray(std::vector<Double_t> array) {
     }
     return sum;
 }
+
+void TUtility::WriteHistogramFile(TString filename, THistogramArray histograms) {
+    TFile file(filename, "RECREATE");
+    for (std::list<TPixelData>::iterator iter = histograms.Begin(); iter != histograms.End(); iter++) {
+        (*iter).Write();
+    }
+    file.Close();
+}

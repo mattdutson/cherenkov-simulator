@@ -35,31 +35,29 @@ private:
     
     Double_t fPMTResolution;
     
-    TResponseFunction fResponseFunction;
+    TResponseFunction* fResponseFunction;
     
     Bool_t fCheckBackCollision = false;
     
-    Int_t GetBin(TVector3 position);
-    
 public:
     
-    TCamera();
-    
-    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TResponseFunction responseFunction, Bool_t checkBackCollision);
+    TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TResponseFunction* responseFunction, Bool_t checkBackCollision);
     
     Double_t FocalLength();
     
     Bool_t CheckCollision(TVector3 position);
     
-    TSegmentedData SegmentedData(TRawData data);
-    
-    THistogramArray PixelHistograms(TSegmentedData data);
-    
-    THistogramArray VoltageOutput(THistogramArray histograms, Int_t nFrequencyBins);
-    
     TVector3 GetViewDirection(Int_t bin);
     
     TVector2 GetPixelPosition(Int_t bin);
+    
+    Int_t GetBin(TVector2 pixelPosition);
+    
+    TSegmentedData SegmentedData(TRawData data);
+    
+    THistogramArray PhotonHistograms(TSegmentedData data);
+    
+    THistogramArray VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins);
 
 };
 

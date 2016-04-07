@@ -14,8 +14,7 @@ THistogramArray::THistogramArray() {
 }
 
 void THistogramArray::AddHistogram(Double_t x, Double_t y, TH1D histogram) {
-    TPixelData pixelData = TPixelData();
-    pixelData.SetPosition(x, y);
+    TPixelData pixelData = TPixelData(x, y, histogram);
     fHistograms.push_back(pixelData);
 }
 
@@ -23,8 +22,12 @@ Int_t THistogramArray::GetNBins() {
     return fNBins;
 }
 
-std::list<TPixelData>::iterator THistogramArray::GetHistogram(Int_t bin) {
+std::list<TPixelData>::iterator THistogramArray::Begin() {
     return fHistograms.begin();
+}
+
+std::list<TPixelData>::iterator THistogramArray::End() {
+    return fHistograms.end();
 }
 
 void THistogramArray::WriteToFile(TString filename) {
@@ -34,9 +37,4 @@ void THistogramArray::WriteToFile(TString filename) {
         (*iter).Write();
     }
     file.Close();
-}
-
-void TPixelData::SetPosition(Double_t x, Double_t y) {
-    fX = x;
-    fY = y;
 }

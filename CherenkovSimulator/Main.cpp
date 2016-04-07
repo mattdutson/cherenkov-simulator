@@ -9,6 +9,7 @@
 #include "TAnalysis.h"
 #include "TFile.h"
 #include "TConstantIntensity.h"
+#include "FFT.h"
 #include <iostream>
 
 using namespace std;
@@ -26,6 +27,7 @@ int main(int argc, const char* argv[]) {
 //    TestPointImage();
     TestCameraFunction();
 //    TestShowerReconstruction();
+//    FFT();
 }
 
 void CollectRMSData() {
@@ -62,7 +64,7 @@ void CollectRMSData() {
                 
                 TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
                 TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8, TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), true);
+                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), true);
                 TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
                 
                 // Generate data points
@@ -122,7 +124,7 @@ void TestPointImage() {
     // Run the simulations
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     
     TObservatory observatory(mirror, camera, coordinates, surroundings);
@@ -168,22 +170,24 @@ void TestCameraFunction() {
     // Set up the telescope
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), kFALSE);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
-    TRawData data = observatory.ViewShower(shower, delayTime);
+    TRawData rawData = observatory.ViewShower(shower, delayTime);
     TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);
-    TAnalysis::FillHistogram(data.GetXData(), data.GetYData(), histogram);
+    TAnalysis::FillHistogram(rawData.GetXData(), rawData.GetYData(), histogram);
     histogram.Write();
     file.Close();
     
     // Parse the data and write it to a file.
-    TSegmentedData parsedData = observatory.ParseData(data);
-    observatory.WriteDataToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", parsedData);
+    TSegmentedData segmentedData = observatory.SegmentedData(rawData);
+    THistogramArray photonHistograms = observatory.PhotonHistograms(segmentedData);
+    
+    TUtility::WriteHistogramFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", photonHistograms);
     delete intensityFunction;
     
-    THistogramArray voltageData = camera.VoltageOutput(camera.PixelHistograms(parsedData), 1000);
+    THistogramArray voltageData = observatory.VoltageHistograms(photonHistograms, 100);
     
     voltageData.WriteToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/voltage-data.root");
 }
@@ -207,13 +211,13 @@ void TestShowerReconstruction() {
     // Set up the observatory
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
-    TRawData data1 = observatory.ViewShower(shower, delayTime);
-    TSegmentedData parsedData1 = observatory.ParseData(data1);
-    TRay output = observatory.ReconstructShower(parsedData1);
+    TRawData rawData1 = observatory.ViewShower(shower, delayTime);
+    TSegmentedData segmentedData1 = observatory.SegmentedData(rawData1);
+    TRay output = observatory.ReconstructShower(segmentedData1);
     std::cout << "Velocity:" << endl;
     output.GetVelocity().Print();
     std::cout << endl;
@@ -222,9 +226,9 @@ void TestShowerReconstruction() {
     std::cout << endl;
     
     shower = TShower(TRay(0, TVector3(0, 3000, 20000), TVector3(1, -1, 0)), intensityFunction);
-    TRawData data2 = observatory.ViewShower(shower, delayTime);
-    TSegmentedData parsedData2 = observatory.ParseData(data2);
-    output = observatory.ReconstructShower(parsedData2);
+    TRawData rawData2 = observatory.ViewShower(shower, delayTime);
+    TSegmentedData segmentedData2 = observatory.SegmentedData(rawData2);
+    output = observatory.ReconstructShower(segmentedData2);
     std::cout << "Velocity:" << endl;
     output.GetVelocity().Print();
     std::cout << endl;

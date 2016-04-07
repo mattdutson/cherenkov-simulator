@@ -12,21 +12,9 @@
 #include "TH1D.h"
 #include "TSegmentedData.h"
 #include "TFile.h"
+#include "TPixelData.h"
 #include <stdio.h>
 #include <list>
-
-class TPixelData: public TH1D {
-    
-private:
-    
-    Double_t fX;
-    
-    Double_t fY;
-    
-public:
-    
-    void SetPosition(Double_t x, Double_t y);
-};
 
 class THistogramArray {
     
@@ -42,7 +30,9 @@ public:
     
     void AddHistogram(Double_t x, Double_t y, TH1D histogram);
     
-    std::list<TPixelData>::iterator GetHistogram(Int_t bin);
+    std::list<TPixelData>::iterator Begin();
+    
+    std::list<TPixelData>::iterator End();
     
     Int_t GetNBins();
     

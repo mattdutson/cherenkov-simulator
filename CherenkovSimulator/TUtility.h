@@ -10,11 +10,14 @@
 #define TUtility_h
 
 #include "TVector3.h"
+#include "THistogramArray.h"
 
 class TUtility {
 public:
     
     static Double_t SumArray(std::vector<Double_t> array);
+    
+    static void WriteHistogramFile(TString filename, THistogramArray histograms);
 };
 
 #endif /* TUtility_h */

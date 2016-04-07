@@ -13,13 +13,11 @@
 #include "TF1.h"
 #include "TH1D.h"
 
-class TResponseFunction {
+class TResponseFunction: public TF1 {
     
 private:
     
     Double_t fResponseTime;
-    
-    TF1 fResponseFucntion;
     
 public:
     
@@ -28,6 +26,8 @@ public:
     TResponseFunction(Double_t responseTime, TF1 responseFunction);
     
     TH1D ResponseHistogram(Double_t sampleTime);
+    
+    Double_t ResponseTime();
     
 };
 

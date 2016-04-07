@@ -8,9 +8,8 @@
 
 #include "TObservatory.h"
 
-TObservatory::TObservatory(TMirror mirror, TCamera camera, TCoordinates coordinates, TSurroundings surroundings) {
+TObservatory::TObservatory(TMirror mirror, TCamera camera, TCoordinates coordinates, TSurroundings surroundings): TCamera(camera) {
     fMirror = mirror;
-    fCamera = camera;
     fCoordinates = coordinates;
     fSurroundings = surroundings;
 }
@@ -37,10 +36,10 @@ void TObservatory::ViewPointPrivate(TShower shower, TRawData &rawData) {
         TVector3 mirrorNormal = fMirror.GetMirrorNormal(mirrorImpact);
         TVector3 transformedPosition = shower.GetPosition();
         fCoordinates.PositionToObservatoryFrame(transformedPosition);
-        TPlane3 focalPlane = TPlane3(TVector3(0, 0, 1), TVector3(0, 0, -fMirror.Radius() + fCamera.FocalLength()));
+        TPlane3 focalPlane = TPlane3(TVector3(0, 0, 1), TVector3(0, 0, -fMirror.Radius() + FocalLength()));
         TRay detectedRay = TRay(shower.GetTime(), transformedPosition, mirrorImpact - transformedPosition);
         detectedRay.PropagateToPlane(focalPlane);
-        if (fCamera.CheckCollision(detectedRay.GetPosition())) {
+        if (CheckCollision(detectedRay.GetPosition())) {
             continue;
         }
         detectedRay.PropagateToPoint(mirrorImpact);
@@ -61,7 +60,7 @@ TPlane3 TObservatory::ApproximateShowerPlane(TSegmentedData data) {
             normal.RotateZ(phi);
             Double_t squareSum = 0;
             for (Int_t i = 0; i < data.GetNBins(); i++) {
-                squareSum += normal.Dot(fCamera.GetViewDirection(i)) * normal.Dot(fCamera.GetViewDirection(i)) * data.GetSegment(i)->size();
+                squareSum += normal.Dot(GetViewDirection(i)) * normal.Dot(GetViewDirection(i)) * data.GetSegment(i)->size();
             }
             if (squareSum < bestSquare) {
                 bestSquare = squareSum;
@@ -82,7 +81,7 @@ TRay TObservatory::ReconstructShower(TSegmentedData data) {
     Int_t defaultNearIndex = 0;
     for (Int_t i = 0; i < nBins; i++) {
         averages[i] = TUtility::SumArray(*data.GetSegment(i)) / data.GetSegment(i)->size();
-        angles[i] = (fCamera.GetViewDirection(i) - showerPlane.GetNormal() * fCamera.GetViewDirection(i).Dot(showerPlane.GetNormal())).Angle(groundIntersection);
+        angles[i] = (GetViewDirection(i) - showerPlane.GetNormal() * GetViewDirection(i).Dot(showerPlane.GetNormal())).Angle(groundIntersection);
         if (data.GetSegment(i)->size() > 0) {
             defaultNearIndex = i;
         }
@@ -132,17 +131,4 @@ TRay TObservatory::ReconstructShower(TSegmentedData data) {
         closestPosition = -closestPosition;
     }
     return TRay(bestT0, closestPosition, direction);
-}
-
-TSegmentedData TObservatory::ParseData(TRawData data) {
-    return fCamera.SegmentedData(data);
-}
-
-void TObservatory::WriteDataToFile(TString filename, TSegmentedData parsedData) {
-    THistogramArray histograms = fCamera.PixelHistograms(parsedData);
-    TFile file(filename, "RECREATE");
-    for (Int_t i = 0; i < parsedData.GetNBins(); i++) {
-        histograms.GetHistogram(i)->Write();
-    }
-    file.Close();
 }

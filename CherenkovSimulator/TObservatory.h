@@ -18,13 +18,11 @@
 #include "TCamera.h"
 #include "TUtility.h"
 
-class TObservatory {
+class TObservatory: public TCamera {
     
 private:
     
     TMirror fMirror;
-    
-    TCamera fCamera;
     
     TCoordinates fCoordinates;
     
@@ -44,9 +42,6 @@ public:
     
     TRay ReconstructShower(TSegmentedData data);
     
-    TSegmentedData ParseData(TRawData data);
-    
-    void WriteDataToFile(TString filename, TSegmentedData parsedData);
 };
 
 #endif /* TObservatory_h */
