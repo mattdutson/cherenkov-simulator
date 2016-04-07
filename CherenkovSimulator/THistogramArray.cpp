@@ -8,21 +8,35 @@
 
 #include "THistogramArray.h"
 
-THistogramArray::THistogramArray(Int_t nBins) {
-    fHistograms = new TH1*[nBins];
-    fNBins = nBins;
-    fMinTime = 1e100;
-    fMaxTime = -1e100;
+THistogramArray::THistogramArray() {
+    fHistograms = std::list<TPixelData>();
+    fNBins = 0;
 }
 
-void THistogramArray::SetHistogram(Int_t bin, TH1* histogram) {
-    fHistograms[bin] = histogram;
+void THistogramArray::AddHistogram(Double_t x, Double_t y, TH1D histogram) {
+    TPixelData pixelData = TPixelData();
+    pixelData.SetPosition(x, y);
+    fHistograms.push_back(pixelData);
 }
 
 Int_t THistogramArray::GetNBins() {
     return fNBins;
 }
 
-TH1* THistogramArray::GetHistogram(Int_t bin) {
-    return fHistograms[bin];
+std::list<TPixelData>::iterator THistogramArray::GetHistogram(Int_t bin) {
+    return fHistograms.begin();
+}
+
+void THistogramArray::WriteToFile(TString filename) {
+    TFile file(filename, "RECREATE");
+    std::list<TPixelData>::iterator iter;
+    for (iter = fHistograms.begin(); iter != fHistograms.end(); iter++) {
+        (*iter).Write();
+    }
+    file.Close();
+}
+
+void TPixelData::SetPosition(Double_t x, Double_t y) {
+    fX = x;
+    fY = y;
 }

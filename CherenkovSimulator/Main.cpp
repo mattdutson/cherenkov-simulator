@@ -184,6 +184,8 @@ void TestCameraFunction() {
     delete intensityFunction;
     
     THistogramArray voltageData = camera.VoltageOutput(camera.PixelHistograms(parsedData), 1000);
+    
+    voltageData.WriteToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/voltage-data.root");
 }
 
 void TestShowerReconstruction() {

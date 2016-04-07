@@ -11,29 +11,42 @@
 
 #include "TH1D.h"
 #include "TSegmentedData.h"
+#include "TFile.h"
 #include <stdio.h>
+#include <list>
+
+class TPixelData: public TH1D {
+    
+private:
+    
+    Double_t fX;
+    
+    Double_t fY;
+    
+public:
+    
+    void SetPosition(Double_t x, Double_t y);
+};
 
 class THistogramArray {
+    
 private:
     
     Int_t fNBins;
     
-    Double_t fMinTime;
-    
-    Double_t fMaxTime;
-    
-    TH1** fHistograms;
-    
+    std::list<TPixelData> fHistograms;
+
 public:
     
-    THistogramArray(Int_t nBins);
+    THistogramArray();
     
-    void SetHistogram(Int_t bin, TH1* histogram);
+    void AddHistogram(Double_t x, Double_t y, TH1D histogram);
     
-    TH1* GetHistogram(Int_t bin);
+    std::list<TPixelData>::iterator GetHistogram(Int_t bin);
     
     Int_t GetNBins();
     
+    void WriteToFile(TString filename);
 };
 
 #endif /* THistogramArray.h */
