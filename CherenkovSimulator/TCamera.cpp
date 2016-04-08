@@ -70,46 +70,80 @@ THistogramArray TCamera::PhotonHistograms(TSegmentedData parsedData) {
 
 THistogramArray TCamera::VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins) {
     THistogramArray voltageOutput = THistogramArray();
+    
     for (std::list<TPixelData>::iterator iter = photonHistograms.Begin(); iter != photonHistograms.End(); iter++) {
-        Double_t test = fResponseFunction->ResponseTime();
+        TH1D photonHistogram = *iter;
+        TH1D responseHistogram = fResponseFunction->ResponseHistogram(fPMTResolution);
         
-        std::cout << &fResponseFunction << std::endl;
+        Int_t nSamplePoints = photonHistogram.GetNbinsX();
+        Int_t nResponsePoints = responseHistogram.GetNbinsX();
         
-        TH1* tFluxHisto = 0;
-        TH1D fluxHisto = *iter;
-        tFluxHisto = fluxHisto.FFT(tFluxHisto, "MAG");
-        Double_t tFluxReal[nFrequencyBins];
-        Double_t tFluxComp[nFrequencyBins];
+        // This should be modified later to make the number of points some power of 2
+        Int_t nPointsMin = nSamplePoints + nResponsePoints;
+        Int_t nextPowerOfTwo = ((Int_t) TMath::Log2(nPointsMin)) + 1;
+        Int_t powerOfTwo = TMath::Power(2, nextPowerOfTwo);
+        Double_t photonData[powerOfTwo];
+        Double_t responseData[powerOfTwo];
         
-        std::cout << &fResponseFunction << std::endl;
-        
-        // There is some problem with this line.
-        TVirtualFFT::GetCurrentTransform()->GetPointsComplex(tFluxReal, tFluxComp);
-
-        TH1* tResponseHisto = 0;
-        TH1D responseHistogram;
-        std::cout << &fResponseFunction << std::endl;
-        Double_t responseTime = fResponseFunction->ResponseTime();
-        responseHistogram = fResponseFunction->ResponseHistogram(fPMTResolution);
-        tResponseHisto = responseHistogram.FFT(tResponseHisto, "MAG");
-        Double_t tResponseReal[nFrequencyBins];
-        Double_t tResponseComp[nFrequencyBins];
-        TVirtualFFT::GetCurrentTransform()->GetPointsComplex(tResponseReal, tResponseComp);
-        Double_t tProductReal[nFrequencyBins];
-        Double_t tProductComp[nFrequencyBins];
-        for (Int_t i = 0; i < nFrequencyBins; i++) {
-//            tProductReal[i] = tFluxReal[i] * tProductReal[i] - tFluxComp[i] * tProductComp[i];
-//            tProductComp[i] = tFluxReal[i] * tProductComp[i] + tFluxComp[i] * tProductReal[i];
+        // Create the arrays and pad them with zeros.
+        for(Int_t i = 0; i < powerOfTwo; i++) {
+            if (i < nSamplePoints) {
+                photonData[i] = photonHistogram.GetBinContent(i);
+            }
+            else {
+                photonData[i] = 0;
+            }
+            if (i < nResponsePoints) {
+                responseData[i] = responseHistogram.GetBinContent(i);
+            }
+            else {
+                responseData[i] = 0;
+            }
         }
-        TVirtualFFT *reverseTransform = TVirtualFFT::FFT(1, &nFrequencyBins, "C2R M");
-        reverseTransform->SetPointsComplex(tProductReal, tProductComp);
-        reverseTransform->Transform();
-        TH1D* result = 0;
-        TH1::TransformHisto(reverseTransform, result, "Re");
-        voltageOutput.AddHistogram((*iter).X(), (*iter).Y(), *result);
         
-        delete tFluxHisto;
-        delete tResponseHisto;
+        Int_t nTransformPoints = powerOfTwo + 1;
+        
+        // Create an FFT object and transform photon data
+        TVirtualFFT* photonFFT = TVirtualFFT::FFT(1, &powerOfTwo, "R2C M K");
+        photonFFT->SetPoints(photonData);
+        photonFFT->Transform();
+        Double_t photonFrequenciesRe[nTransformPoints];
+        Double_t photonFrequenciesIm[nTransformPoints];
+        photonFFT->GetPointsComplex(photonFrequenciesRe, photonFrequenciesIm);
+
+        // Create an FFT object and transform response data
+        TVirtualFFT* responseFFT = TVirtualFFT::FFT(1, &powerOfTwo, "R2C M K");
+        responseFFT->SetPoints(responseData);
+        responseFFT->Transform();
+        Double_t responseFrequenciesRe[nTransformPoints];
+        Double_t responseFrequenciesIm[nTransformPoints];
+        responseFFT->GetPointsComplex(responseFrequenciesRe, responseFrequenciesIm);
+        
+        // Create the arrays for the product
+        Double_t productRe[nTransformPoints];
+        Double_t productIm[nTransformPoints];
+        
+        // Compute the product of photon and response frequencies
+        for (Int_t i = 0; i < nTransformPoints; i++) {
+            productRe[i] = photonFrequenciesRe[i] * responseFrequenciesRe[i] - photonFrequenciesIm[i] * responseFrequenciesIm[i];
+            productIm[i] = photonFrequenciesRe[i] * responseFrequenciesIm[i] + photonFrequenciesIm[i] * responseFrequenciesRe[i];
+        }
+        
+        // Take the reverse FFT
+        TVirtualFFT *reverseTransform = TVirtualFFT::FFT(1, &nTransformPoints, "C2R M K");
+        reverseTransform->SetPointsComplex(productRe, productIm);
+        reverseTransform->Transform();
+        Double_t outputSignal[powerOfTwo];
+        reverseTransform->GetPoints(outputSignal);
+        
+        // Make a histogram from the signal data
+        TH1D result = TH1D(Form("Signal at x=%f, y=%f", iter->X(), iter->Y()), "Signal", nPointsMin, photonHistogram.GetXaxis()->GetXmin(), photonHistogram.GetXaxis()->GetXmin() +fPMTResolution * nPointsMin);
+        for (Int_t i = 0; i < nPointsMin; i++) {
+            result.SetBinContent(i, outputSignal[i]);
+        }
+        
+        // Add the resulting histogram to the output
+        voltageOutput.AddHistogram((*iter).X(), (*iter).Y(), result);
     }
     return voltageOutput;
 }

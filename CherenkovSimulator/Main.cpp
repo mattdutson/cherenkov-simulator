@@ -64,7 +64,7 @@ void CollectRMSData() {
                 
                 TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
                 TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), true);
+                TCamera camera = TCamera(radius / 200 * focalPercentage, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))/((10e-9)^2)")), true);
                 TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
                 
                 // Generate data points
@@ -124,7 +124,7 @@ void TestPointImage() {
     // Run the simulations
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))/((10e-9)^2)")), false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     
     TObservatory observatory(mirror, camera, coordinates, surroundings);
@@ -170,7 +170,7 @@ void TestCameraFunction() {
     // Set up the telescope
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), kFALSE);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(1000e-9, TF1("responnse", "x*x*e^(-x/(20e-9))/((20e-9)^2)")), kFALSE);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     
@@ -211,7 +211,7 @@ void TestShowerReconstruction() {
     // Set up the observatory
     TMirror mirror = TMirror(mirrorType, 0, radius, radius / 2 / fNumber);
     TCoordinates coordinates = TCoordinates(0, 0, TVector3(0, 0, 0));
-    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))")), false);
+    TCamera camera = TCamera(focalLength, 5, 100, 5, 100, 1e-8, new TResponseFunction(100e-9, TF1("responnse", "x*x*e^(-x/(10e-9))/((10e-9)^2)")), false);
     TSurroundings surroundings = TSurroundings(TPlane3(TVector3(0, 1, 0), TVector3(0, 0, 0)));
     TObservatory observatory = TObservatory(mirror, camera, coordinates, surroundings);
     

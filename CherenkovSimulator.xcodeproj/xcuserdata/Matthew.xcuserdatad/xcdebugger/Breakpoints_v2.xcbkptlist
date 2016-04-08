@@ -41,38 +41,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CherenkovSimulator/TCamera.cpp"
-            timestampString = "481704424.711946"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "TCamera::VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CherenkovSimulator/TCamera.cpp"
-            timestampString = "481704424.711946"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
-            landmarkName = "TCamera::VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "CherenkovSimulator/Main.cpp"
             timestampString = "481702779.396337"
             startingColumnNumber = "9223372036854775807"
@@ -122,12 +90,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CherenkovSimulator/TCamera.cpp"
-            timestampString = "481704050.026078"
+            timestampString = "481839658.338813"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "80"
-            endingLineNumber = "80"
-            landmarkName = "TCamera::VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins)"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "TCamera::GetBin(TVector2 position)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CherenkovSimulator/TCamera.cpp"
+            timestampString = "481839658.338813"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "TCamera::GetBin(TVector2 position)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
