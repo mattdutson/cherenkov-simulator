@@ -23,6 +23,7 @@
 		342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F31CB4E8DB000184BC /* TShower.cpp */; };
 		342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */; };
 		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
+		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
 		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
 		34F2EECF1CB62D640003A939 /* FFT.h in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECE1CB62D640003A939 /* FFT.h */; };
 /* End PBXBuildFile section */
@@ -73,6 +74,8 @@
 		342DD5F61CB4E8DB000184BC /* TSurroundings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSurroundings.h; sourceTree = "<group>"; };
 		342DD5F71CB4E8DB000184BC /* TUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TUtility.cpp; sourceTree = "<group>"; };
 		342DD5F81CB4E8DB000184BC /* TUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUtility.h; sourceTree = "<group>"; };
+		345983881CBEACCF0001612D /* TPoissonDistribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPoissonDistribution.cpp; sourceTree = "<group>"; };
+		345983891CBEACCF0001612D /* TPoissonDistribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPoissonDistribution.hpp; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
 		34F2EECC1CB60FDF0003A939 /* TPixelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPixelData.h; sourceTree = "<group>"; };
 		34F2EECE1CB62D640003A939 /* FFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFT.h; sourceTree = "<group>"; };
@@ -144,6 +147,8 @@
 				342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */,
 				342DD5F01CB4E8DB000184BC /* TResponseFunction.h */,
 				342DD5EF1CB4E8DB000184BC /* TResponseFunction.cpp */,
+				345983891CBEACCF0001612D /* TPoissonDistribution.hpp */,
+				345983881CBEACCF0001612D /* TPoissonDistribution.cpp */,
 			);
 			name = Functors;
 			sourceTree = "<group>";
@@ -258,6 +263,7 @@
 				342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */,
 				342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */,
 				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
+				3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */,
 				342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */,
 				342DD5FF1CB4E8DB000184BC /* THistogramArray.cpp in Sources */,
 				342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */,
