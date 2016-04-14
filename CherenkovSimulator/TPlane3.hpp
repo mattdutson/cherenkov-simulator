@@ -3,11 +3,11 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Represents a three-dimensional plane. This is used both in ray tracing (plane reflection) and in shower reconstruction (shower-detector plane).
  */
 
-#ifndef TPlane3_h
-#define TPlane3_h
+#ifndef TPlane3_hpp
+#define TPlane3_hpp
 
 #include "TVector3.h"
 

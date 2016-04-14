@@ -1,10 +1,10 @@
-//
-//  TPoissonDistribution.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/13/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TPoissonDistribution.
+ */
 
 #include "TPoissonDistribution.hpp"
 

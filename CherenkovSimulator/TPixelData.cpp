@@ -1,12 +1,12 @@
-//
-//  TPixelData.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/6/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TPixelData.
+ */
 
-#include "TPixelData.h"
+#include "TPixelData.hpp"
 
 TPixelData::TPixelData(Double_t x, Double_t y, TH1D histogram): TH1D(histogram) {
     fX = x;

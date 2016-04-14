@@ -9,7 +9,7 @@
 #ifndef TSurroundings_hpp
 #define TSurroundings_hpp
 
-#include "TPlane3.h"
+#include "TPlane3.hpp"
 
 class TSurroundings {
     

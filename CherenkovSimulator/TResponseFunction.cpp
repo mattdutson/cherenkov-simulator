@@ -1,12 +1,12 @@
-//
-//  TResponseFunction.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/5/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TResponseFunction.
+ */
 
-#include "TResponseFunction.h"
+#include "TResponseFunction.hpp"
 
 TResponseFunction::TResponseFunction(): TF1("default", "1") {
     fResponseTime = 1;

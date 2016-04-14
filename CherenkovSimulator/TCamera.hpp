@@ -9,15 +9,18 @@
 #ifndef TCamera_hpp
 #define TCamera_hpp
 
-#include "TPlane3.h"
-#include "TSegmentedData.h"
-#include "THistogramArray.h"
-#include "TRawData.h"
-#include "TRay.h"
+#include "TPlane3.hpp"
+#include "TSegmentedData.hpp"
+#include "THistogramList.cpp"
+#include "TRawData.hpp"
+#include "TRay.hpp"
+#include "TResponseFunction.hpp"
+
 #include "TFile.h"
 #include "TH1D.h"
 #include "TF1.h"
-#include "TResponseFunction.h"
+#include "TVirtualFFT.h"
+#include <iostream>
 
 class TCamera {
     
@@ -55,9 +58,9 @@ public:
     
     TSegmentedData SegmentedData(TRawData data);
     
-    THistogramArray PhotonHistograms(TSegmentedData data);
+    THistogramList PhotonHistograms(TSegmentedData data);
     
-    THistogramArray VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins);
+    THistogramList VoltageHistograms(THistogramList photonHistograms, Int_t nFrequencyBins);
 
 };
 

@@ -12,7 +12,7 @@
 		342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DD1CB4E8DB000184BC /* TCamera.cpp */; };
 		342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */; };
 		342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */; };
-		342DD5FF1CB4E8DB000184BC /* THistogramArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E31CB4E8DB000184BC /* THistogramArray.cpp */; };
+		342DD5FF1CB4E8DB000184BC /* THistogramList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E31CB4E8DB000184BC /* THistogramList.cpp */; };
 		342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E51CB4E8DB000184BC /* TMirror.cpp */; };
 		342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E71CB4E8DB000184BC /* TObservatory.cpp */; };
 		342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E91CB4E8DB000184BC /* TPlane3.cpp */; };
@@ -43,7 +43,7 @@
 /* Begin PBXFileReference section */
 		342DD5CD1CB4E814000184BC /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
 		342DD5D71CB4E8DB000184BC /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
-		342DD5D81CB4E8DB000184BC /* TScalarFunction3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TScalarFunction3.hpp; sourceTree = "<group>"; };
+		342DD5D81CB4E8DB000184BC /* TScalarFunction4.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TScalarFunction4.hpp; sourceTree = "<group>"; };
 		342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
 		342DD5DA1CB4E8DB000184BC /* TAnalysis.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TAnalysis.hpp; sourceTree = "<group>"; };
 		342DD5DD1CB4E8DB000184BC /* TCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCamera.cpp; sourceTree = "<group>"; };
@@ -52,8 +52,8 @@
 		342DD5E01CB4E8DB000184BC /* TConstantIntensity.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TConstantIntensity.hpp; sourceTree = "<group>"; };
 		342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCoordinates.cpp; sourceTree = "<group>"; };
 		342DD5E21CB4E8DB000184BC /* TCoordinates.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TCoordinates.hpp; sourceTree = "<group>"; };
-		342DD5E31CB4E8DB000184BC /* THistogramArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = THistogramArray.cpp; sourceTree = "<group>"; };
-		342DD5E41CB4E8DB000184BC /* THistogramArray.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = THistogramArray.hpp; sourceTree = "<group>"; };
+		342DD5E31CB4E8DB000184BC /* THistogramList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = THistogramList.cpp; sourceTree = "<group>"; };
+		342DD5E41CB4E8DB000184BC /* THistogramList.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = THistogramList.hpp; sourceTree = "<group>"; };
 		342DD5E51CB4E8DB000184BC /* TMirror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TMirror.cpp; sourceTree = "<group>"; };
 		342DD5E61CB4E8DB000184BC /* TMirror.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TMirror.hpp; sourceTree = "<group>"; };
 		342DD5E71CB4E8DB000184BC /* TObservatory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TObservatory.cpp; sourceTree = "<group>"; };
@@ -142,7 +142,7 @@
 		342DD60B1CB4E943000184BC /* Functors */ = {
 			isa = PBXGroup;
 			children = (
-				342DD5D81CB4E8DB000184BC /* TScalarFunction3.hpp */,
+				342DD5D81CB4E8DB000184BC /* TScalarFunction4.hpp */,
 				342DD5E01CB4E8DB000184BC /* TConstantIntensity.hpp */,
 				342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */,
 				342DD5F01CB4E8DB000184BC /* TResponseFunction.hpp */,
@@ -160,8 +160,8 @@
 				342DD5EB1CB4E8DB000184BC /* TRawData.cpp */,
 				342DD5F21CB4E8DB000184BC /* TSegmentedData.hpp */,
 				342DD5F11CB4E8DB000184BC /* TSegmentedData.cpp */,
-				342DD5E41CB4E8DB000184BC /* THistogramArray.hpp */,
-				342DD5E31CB4E8DB000184BC /* THistogramArray.cpp */,
+				342DD5E41CB4E8DB000184BC /* THistogramList.hpp */,
+				342DD5E31CB4E8DB000184BC /* THistogramList.cpp */,
 				34F2EECC1CB60FDF0003A939 /* TPixelData.hpp */,
 				34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */,
 			);
@@ -265,7 +265,7 @@
 				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
 				3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */,
 				342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */,
-				342DD5FF1CB4E8DB000184BC /* THistogramArray.cpp in Sources */,
+				342DD5FF1CB4E8DB000184BC /* THistogramList.cpp in Sources */,
 				342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

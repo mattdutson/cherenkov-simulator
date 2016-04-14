@@ -3,11 +3,11 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * An extension of a histogram which also includes some x and y position. This is used to associate the data from some photomultipler tube with its position.
  */
 
-#ifndef TPixelData_h
-#define TPixelData_h
+#ifndef TPixelData_hpp
+#define TPixelData_hpp
 
 #include <stdio.h>
 #include "TH1D.h"

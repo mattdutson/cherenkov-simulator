@@ -1,11 +1,12 @@
 /*
- * Created by Matthew Dutson on 1/18/16.
+ * CherenkovSimulator - TCoordinates.cpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This file contains the implementation of "TPlane3.h". See the header file for method descriptions.
+ * Contains the implementation of TPlane3.
  */
 
-#include "TPlane3.h"
+#include "TPlane3.hpp"
 
 TPlane3::TPlane3() {
     fNormal = TVector3();

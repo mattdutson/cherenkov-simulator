@@ -1,12 +1,12 @@
 /*
- * Created by Matthew Dutson on 1/18/16.
+ * CherenkovSimulator - TCoordinates.cpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This file contains the implementation of "TRay.h". See the header file for method descriptions.
+ * Contains the implementation of TRay.
  */
 
-#include "TVector3.h"
-#include "TRay.h"
+#include "TRay.hpp"
 
 TRay::TRay(Double_t time, TVector3 position, TVector3 direction) {
     fTime = time;

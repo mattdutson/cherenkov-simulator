@@ -3,11 +3,11 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Contains data points, each of which represents the time, x position, and y position of a photon hitting the focal plane. This data has not yet been separated between photomultipler tubes.
  */
 
-#ifndef TRawData_h
-#define TRawData_h
+#ifndef TRawData_hpp
+#define TRawData_hpp
 
 #include <stdio.h>
 #include "TMath.h"

@@ -3,14 +3,15 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Represents a four-dimensional scalar function which is constant over all space and time.
  */
 
-#ifndef TConstantIntensity_h
-#define TConstantIntensity_h
+#ifndef TConstantIntensity_hpp
+#define TConstantIntensity_hpp
+
+#include "TScalarFunction4.hpp"
 
 #include <stdio.h>
-#include "T3DScalarFunction.h"
 
 class TConstantIntensity: public T3DScalarFunction {
     

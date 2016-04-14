@@ -3,7 +3,7 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This is the overarching class which represents a cosmic ray observatory. It is capable of simulating the motion and detection of a shower, and then of reconstructing that shower. See "TObservatory.cpp" for implementation details.
+ * This is the overarching class which represents a cosmic ray observatory. It is capable of simulating the motion and detection of a shower, and then of reconstructing that shower.
  */
 
 #ifndef TObservatory_hpp
@@ -12,11 +12,11 @@
 #include "TMirror.hpp"
 #include "TCoordinates.hpp"
 #include "TSurroundings.hpp"
-#include "TRawData.h"
-#include "TSegmentedData.h"
-#include "TShower.h"
+#include "TRawData.hpp"
+#include "TSegmentedData.hpp"
+#include "TShower.hpp"
 #include "TCamera.hpp"
-#include "TUtility.h"
+#include "TUtility.hpp"
 
 class TObservatory: public TCamera {
     

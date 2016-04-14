@@ -1,11 +1,12 @@
 /*
- * Created by Matthew Dutson on 1/18/16.
+ * CherenkovSimulator - TCoordinates.cpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This class is used for testing the functionality of TTelescope, TRay, and TPlane3.
+ * Contains the implementation of TShower.
  */
 
-#include "TShower.h"
+#include "TShower.hpp"
 
 TShower::TShower(TRay ray, T3DScalarFunction* scalarFunction): TRay(ray) {
     fScalarFunction = scalarFunction;

@@ -1,22 +1,23 @@
 /*
- * CherenkovSimulator - THistogram.hpp
+ * CherenkovSimulator - THistogramList.hpp
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Contains a linked list of histograms which is intented for traversal in order. This is mostly used for output voltage data.
  */
 
-#ifndef THistogramArray_h
-#define THistogramArray_h
+#ifndef THistogramList_hpp
+#define THistogramList_hpp
+
+#include "TSegmentedData.hpp"
+#include "TPixelData.hpp"
 
 #include "TH1D.h"
-#include "TSegmentedData.h"
 #include "TFile.h"
-#include "TPixelData.h"
 #include <stdio.h>
 #include <list>
 
-class THistogramArray {
+class THistogramList {
     
 private:
     
@@ -26,7 +27,7 @@ private:
 
 public:
     
-    THistogramArray();
+    THistogramList();
     
     void AddHistogram(Double_t x, Double_t y, TH1D histogram);
     
@@ -39,4 +40,4 @@ public:
     void WriteToFile(TString filename);
 };
 
-#endif /* THistogramArray.h */
+#endif

@@ -3,11 +3,11 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Contains raw data which has been separated into bins according to the locations of photomultipler tubes.
  */
 
-#ifndef TSegmentedData_h
-#define TSegmentedData_h
+#ifndef TSegmentedData_hpp
+#define TSegmentedData_hpp
 
 #include <stdio.h>
 #include "TVector3.h"

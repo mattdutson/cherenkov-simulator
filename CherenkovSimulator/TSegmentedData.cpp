@@ -1,12 +1,12 @@
-//
-//  TSegmentedData.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/8/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TSegmentedData.
+ */
 
-#include "TSegmentedData.h"
+#include "TSegmentedData.hpp"
 
 TSegmentedData::TSegmentedData(Int_t nBins) {
     fSegmentedData = new std::vector<Double_t>*[nBins];

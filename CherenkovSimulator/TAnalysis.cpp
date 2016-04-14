@@ -1,14 +1,12 @@
 /*
- * Created by Matthew Dutson on 2/8/16.
+ * CherenkovSimulator - TCoordinates.cpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This file contains the implementation of "TAnalysis.h". See the header file for method descriptions.
+ * Contains the implementation of TAnalysis.
  */
 
-#include "TAnalysis.h"
-#include "TMath.h"
-#include "TConstantIntensity.h"
-#include "TUtility.h"
+#include "TAnalysis.hpp"
 
 Double_t TAnalysis::FindRMSDeviation(TRawData data) {
     
@@ -64,18 +62,4 @@ void TAnalysis::FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>
         angle.push_back(shower.GetPosition().Theta());
     }
     delete intensityFunction;
-}
-
-void TAnalysis::FillHistogram(std::vector<Double_t> array1, std::vector<Double_t> array2, TH2D& histogram) {
-    Long_t n = array1.size();
-    for (Int_t i = 0; i < n; i++) {
-        histogram.Fill(array1[i], array2[i]);
-    }
-}
-
-void TAnalysis::FillProfile(std::vector<Double_t> array1, std::vector<Double_t> array2, TProfile& profile) {
-    Long_t n = array1.size();
-    for (Int_t i = 0; i < n; i++) {
-        profile.Fill(array1[i], array2[i]);
-    }
 }

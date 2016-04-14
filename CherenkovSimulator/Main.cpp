@@ -7,9 +7,10 @@
  */
 
 #include "TObservatory.hpp"
-#include "TAnalysis.h"
+#include "TAnalysis.hpp"
+#include "TConstantIntensity.hpp"
+
 #include "TFile.h"
-#include "TConstantIntensity.h"
 #include "FFT.h"
 #include <iostream>
 
@@ -90,7 +91,7 @@ void CollectRMSData() {
                 profile.GetXaxis()->SetRangeUser(xLow, xUp);
                 profile.GetYaxis()->SetTitle("RMS Deviation of Distance (m)");
                 profile.GetYaxis()->SetRangeUser(yLow, yUp);
-                TAnalysis::FillProfile(angle, RMS, profile);
+                TUtility::FillProfile(angle, RMS, profile);
                 profile.Write(name);
             }
         }
@@ -144,7 +145,7 @@ void TestPointImage() {
         TH2D histogram = TH2D(name, title, nBinsX, xLow, xUp, nBinsY, yLow, yUp);
         histogram.GetXaxis()->SetTitle("x (meters)");
         histogram.GetYaxis()->SetTitle("y (meters)");
-        TAnalysis::FillHistogram(data.GetXData(), data.GetYData(), histogram);
+        TUtility::FillHistogram(data.GetXData(), data.GetYData(), histogram);
         histogram.Write(name);
         delete intensityFunction;
     }
@@ -177,18 +178,18 @@ void TestCameraFunction() {
     
     TRawData rawData = observatory.ViewShower(shower, delayTime);
     TH2D histogram = TH2D("shower-path", "Shower Path (Height: 3000 m)", 50, -1, 1, 50, -1, 1);
-    TAnalysis::FillHistogram(rawData.GetXData(), rawData.GetYData(), histogram);
+    TUtility::FillHistogram(rawData.GetXData(), rawData.GetYData(), histogram);
     histogram.Write();
     file.Close();
     
     // Parse the data and write it to a file.
     TSegmentedData segmentedData = observatory.SegmentedData(rawData);
-    THistogramArray photonHistograms = observatory.PhotonHistograms(segmentedData);
+    THistogramList photonHistograms = observatory.PhotonHistograms(segmentedData);
     
     TUtility::WriteHistogramFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/camera-data.root", photonHistograms);
     delete intensityFunction;
     
-    THistogramArray voltageData = observatory.VoltageHistograms(photonHistograms, 100);
+    THistogramList voltageData = observatory.VoltageHistograms(photonHistograms, 100);
     
     voltageData.WriteToFile("/Users/Matthew/Documents/XCode/CherenkovSimulator/Output/voltage-data.root");
 }

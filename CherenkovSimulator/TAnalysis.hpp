@@ -3,18 +3,18 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Contains static methods for doing statistical tests. Currently, it is used to find the spread of raw data points over the focal plane at various angles off-axis.
  */
 
-#ifndef TAnalysis_h
-#define TAnalysis_h
+#ifndef TAnalysis_hpp
+#define TAnalysis_hpp
 
 #include "TObservatory.hpp"
-#include "TH2.h"
-#include "TProfile.h"
-#include "TGraph.h"
+#include "TConstantIntensity.hpp"
+#include "TUtility.hpp"
+
+#include "TMath.h"
 #include "TVector3.h"
-#include "TArrayD.h"
 #include <stdio.h>
 
 class TAnalysis {
@@ -33,15 +33,7 @@ public:
      */
     static void FindRMSVsAngle(std::vector<Double_t>& RMS, std::vector<Double_t>& angle, TObservatory observatory, Int_t sampleNumber, Double_t timeDelay, Double_t minAngle, Double_t maxAngle, Double_t zDistance);
     
-    /*
-     * Fills the histogram with the data from the input arrays.
-     */
-    static void FillHistogram(std::vector<Double_t> array1, std::vector<Double_t> array2, TH2D& histogram) ;
-    
-    /*
-     * Fills the profile with the data from the input arrays.
-     */
-    static void FillProfile(std::vector<Double_t> array1, std::vector<Double_t> array2, TProfile& profile);
+
 };
 
 #endif

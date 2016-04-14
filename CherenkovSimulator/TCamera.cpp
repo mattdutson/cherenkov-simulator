@@ -7,8 +7,6 @@
  */
 
 #include "TCamera.hpp"
-#include "TVirtualFFT.h"
-#include <iostream>
 
 TCamera::TCamera(Double_t focalLength, Double_t width, Int_t numberTubesX, Double_t height, Int_t numberTubesY, Double_t PMTResolution, TResponseFunction* responseFunction, Bool_t checkBackCollision) {
     fFocalLength = focalLength;
@@ -48,8 +46,8 @@ TSegmentedData TCamera::SegmentedData(TRawData rawData) {
     return segmentedData;
 }
 
-THistogramArray TCamera::PhotonHistograms(TSegmentedData parsedData) {
-    THistogramArray photonHistograms = THistogramArray();
+THistogramList TCamera::PhotonHistograms(TSegmentedData parsedData) {
+    THistogramList photonHistograms = THistogramList();
     Double_t minTime = parsedData.GetMinTime();
     Double_t maxTime = parsedData.GetMaxTime();
     Int_t nHistoBins = (maxTime - minTime) / fPMTResolution;
@@ -68,8 +66,8 @@ THistogramArray TCamera::PhotonHistograms(TSegmentedData parsedData) {
     return photonHistograms;
 }
 
-THistogramArray TCamera::VoltageHistograms(THistogramArray photonHistograms, Int_t nFrequencyBins) {
-    THistogramArray voltageOutput = THistogramArray();
+THistogramList TCamera::VoltageHistograms(THistogramList photonHistograms, Int_t nFrequencyBins) {
+    THistogramList voltageOutput = THistogramList();
     
     for (std::list<TPixelData>::iterator iter = photonHistograms.Begin(); iter != photonHistograms.End(); iter++) {
         TH1D photonHistogram = *iter;

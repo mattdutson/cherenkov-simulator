@@ -3,7 +3,7 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Represents a particular Poisson distribution. The methods contained in this class can be used to generate a random ingteger which conforms to the distribution.
  */
 
 #ifndef TPoissonDistribution_hpp

@@ -3,14 +3,15 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * Represents a three-dimensional light ray
+ * Represents a three-dimensional light ray. These rays can be propagated to objects and reflected from planes.
  */
 
-#ifndef Ray_h
-#define Ray_h
+#ifndef Ray_hpp
+#define Ray_hpp
+
+#include "TPlane3.hpp"
 
 #include "TVector3.h"
-#include "TPlane3.h"
 
 class TRay {
     

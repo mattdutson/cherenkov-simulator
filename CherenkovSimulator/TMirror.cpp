@@ -7,7 +7,6 @@
  */
 
 #include "TMirror.hpp"
-#include "TMath.h"
 
 TMirror::TMirror() {}
 

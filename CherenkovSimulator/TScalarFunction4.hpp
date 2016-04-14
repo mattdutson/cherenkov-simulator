@@ -3,11 +3,11 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * An abstract class which defines the behavior of a three-dimensional scalar function. This class may be replaced with a built-in Root class.
  */
 
-#ifndef T3DScalarFunction_h
-#define T3DScalarFunction_h
+#ifndef TScalarFunction4_hpp
+#define TScalarFunction4_hpp
 
 #include <stdio.h>
 #include "TVector3.h"
@@ -20,4 +20,4 @@ public:
     
 };
 
-#endif /* T3DScalarFunction_h */
+#endif

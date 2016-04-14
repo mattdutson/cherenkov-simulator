@@ -3,15 +3,14 @@
  *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- *
+ * Represents a cosmic ray shower. Identical to a TRay, but with the addition of an intensity function which determines the number of photons emitted by the shower.
  */
 
-#ifndef TShower_h
-#define TShower_h
+#ifndef TShower_hpp
+#define TShower_hpp
 
-#include <stdio.h>
-#include "TRay.h"
-#include "T3DScalarFunction.h"
+#include "TRay.hpp"
+#include "TScalarFunction4.hpp"
 
 class TShower: public TRay {
     

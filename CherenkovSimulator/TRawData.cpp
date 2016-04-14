@@ -1,12 +1,12 @@
-//
-//  TRawData.cpp
-//  RayTracing
-//
-//  Created by Matthew Dutson on 3/1/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TRawData.
+ */
 
-#include "TRawData.h"
+#include "TRawData.hpp"
 
 TRawData::TRawData() {
     fXData = std::vector<Double_t>();
