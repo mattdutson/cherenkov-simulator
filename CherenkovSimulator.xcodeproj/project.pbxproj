@@ -25,7 +25,6 @@
 		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
 		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
 		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
-		34F2EECF1CB62D640003A939 /* FFT.h in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECE1CB62D640003A939 /* FFT.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -78,7 +77,6 @@
 		345983891CBEACCF0001612D /* TPoissonDistribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPoissonDistribution.hpp; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
 		34F2EECC1CB60FDF0003A939 /* TPixelData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPixelData.hpp; sourceTree = "<group>"; };
-		34F2EECE1CB62D640003A939 /* FFT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFT.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				342DD5D71CB4E8DB000184BC /* Main.cpp */,
-				34F2EECE1CB62D640003A939 /* FFT.h */,
 				342DD60A1CB4E935000184BC /* Detector */,
 				342DD60D1CB4E974000184BC /* GeometricObjects */,
 				342DD60C1CB4E965000184BC /* DataContainers */,
@@ -254,7 +251,6 @@
 				342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */,
 				342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */,
 				342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */,
-				34F2EECF1CB62D640003A939 /* FFT.h in Sources */,
 				34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */,
 				342DD6051CB4E8DB000184BC /* TResponseFunction.cpp in Sources */,
 				342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */,

@@ -11,7 +11,7 @@
 
 #include "TPlane3.hpp"
 #include "TSegmentedData.hpp"
-#include "THistogramList.cpp"
+#include "THistogramList.hpp"
 #include "TRawData.hpp"
 #include "TRay.hpp"
 #include "TResponseFunction.hpp"

@@ -11,7 +11,6 @@
 #include "TConstantIntensity.hpp"
 
 #include "TFile.h"
-#include "FFT.h"
 #include <iostream>
 
 using namespace std;
@@ -29,7 +28,6 @@ int main(int argc, const char* argv[]) {
 //    TestPointImage();
     TestCameraFunction();
 //    TestShowerReconstruction();
-//    FFT();
 }
 
 void CollectRMSData() {
