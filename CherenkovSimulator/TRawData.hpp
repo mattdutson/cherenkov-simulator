@@ -1,10 +1,10 @@
-//
-//  TRawData.hpp
-//  RayTracing
-//
-//  Created by Matthew Dutson on 3/1/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TRawData.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TRawData_h
 #define TRawData_h

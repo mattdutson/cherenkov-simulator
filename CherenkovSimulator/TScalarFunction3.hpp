@@ -1,10 +1,10 @@
-//
-//  T3DScalarFunction.hpp
-//  RayTracing
-//
-//  Created by Matthew Dutson on 2/28/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TScalarFunction3.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef T3DScalarFunction_h
 #define T3DScalarFunction_h

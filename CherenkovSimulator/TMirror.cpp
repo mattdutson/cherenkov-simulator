@@ -1,12 +1,12 @@
-//
-//  TMirror.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TMirror.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TMirror.
+ */
 
-#include "TMirror.h"
+#include "TMirror.hpp"
 #include "TMath.h"
 
 TMirror::TMirror() {}

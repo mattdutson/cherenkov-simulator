@@ -1,13 +1,13 @@
-//
-//  TCamera.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCamera.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Represents the detection apparatus of the cosmic ray observatory. The detection apparatus consists of a rectangular array of photomultiplier tubes. This class is publicly extended by TObservatory.
+ */
 
-#ifndef TCamera_h
-#define TCamera_h
+#ifndef TCamera_hpp
+#define TCamera_hpp
 
 #include "TPlane3.h"
 #include "TSegmentedData.h"
@@ -61,4 +61,4 @@ public:
 
 };
 
-#endif /* TCamera_h */
+#endif

@@ -1,21 +1,21 @@
-//
-//  TObservatory.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TObservatory.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * This is the overarching class which represents a cosmic ray observatory. It is capable of simulating the motion and detection of a shower, and then of reconstructing that shower. See "TObservatory.cpp" for implementation details.
+ */
 
-#ifndef TObservatory_h
-#define TObservatory_h
+#ifndef TObservatory_hpp
+#define TObservatory_hpp
 
-#include "TMirror.h"
-#include "TCoordinates.h"
-#include "TSurroundings.h"
+#include "TMirror.hpp"
+#include "TCoordinates.hpp"
+#include "TSurroundings.hpp"
 #include "TRawData.h"
 #include "TSegmentedData.h"
 #include "TShower.h"
-#include "TCamera.h"
+#include "TCamera.hpp"
 #include "TUtility.h"
 
 class TObservatory: public TCamera {
@@ -44,4 +44,4 @@ public:
     
 };
 
-#endif /* TObservatory_h */
+#endif

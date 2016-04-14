@@ -1,11 +1,3 @@
-//
-//  FFT.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/6/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
-
 #include <stdio.h>
 #include "TH1D.h"
 #include "TVirtualFFT.h"

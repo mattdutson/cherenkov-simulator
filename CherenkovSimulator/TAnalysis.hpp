@@ -1,14 +1,15 @@
 /*
- * Created by Matthew Dutson on 2/8/16.
+ * CherenkovSimulator - TAnalysis.hpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This class contains static methods which can be used to analyze the optical properties of a telescope.
+ *
  */
 
 #ifndef TAnalysis_h
 #define TAnalysis_h
 
-#include "TObservatory.h"
+#include "TObservatory.hpp"
 #include "TH2.h"
 #include "TProfile.h"
 #include "TGraph.h"

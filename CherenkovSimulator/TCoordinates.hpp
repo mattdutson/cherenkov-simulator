@@ -1,13 +1,13 @@
-//
-//  TOrientation.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains information about the telescope/observatory's orientation and offset with respect to some external frame. The methods in this class can be used to switch between reference frames.
+ */
 
-#ifndef TOrientation_h
-#define TOrientation_h
+#ifndef TCoordiantes_hpp
+#define TCoordiantes_hpp
 
 #include "TVector3.h"
 
@@ -36,4 +36,4 @@ public:
     void DirectionToExternalFrame(TVector3& direction);
 };
 
-#endif /* TOrientation_h */
+#endif

@@ -1,12 +1,12 @@
-//
-//  TSurroundings.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TSurroundings.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TSurroundings.
+ */
 
-#include "TSurroundings.h"
+#include "TSurroundings.hpp"
 
 TSurroundings::TSurroundings() {}
 

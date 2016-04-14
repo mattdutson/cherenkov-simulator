@@ -1,10 +1,10 @@
-//
-//  TResponseFunction.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/5/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TResponseFunction.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TResponseFunction_h
 #define TResponseFunction_h

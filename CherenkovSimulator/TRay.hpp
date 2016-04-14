@@ -1,8 +1,9 @@
 /*
- * Created by Matthew Dutson on 1/18/16.
+ * CherenkovSimulator - TRay.hpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * A class representing a light ray. This ray can be reflected from or propagated to planes.
+ * Represents a three-dimensional light ray
  */
 
 #ifndef Ray_h

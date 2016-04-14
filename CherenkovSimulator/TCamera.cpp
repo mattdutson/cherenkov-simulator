@@ -1,12 +1,12 @@
-//
-//  TCamera.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCamera.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TCamera.
+ */
 
-#include "TCamera.h"
+#include "TCamera.hpp"
 #include "TVirtualFFT.h"
 #include <iostream>
 

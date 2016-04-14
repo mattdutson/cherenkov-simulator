@@ -1,10 +1,10 @@
-//
-//  TUtility.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/22/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TUtility.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TUtility_h
 #define TUtility_h

@@ -1,10 +1,10 @@
-//
-//  TShower.hpp
-//  RayTracing
-//
-//  Created by Matthew Dutson on 2/28/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TShower.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TShower_h
 #define TShower_h

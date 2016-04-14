@@ -1,10 +1,10 @@
-//
-//  TPixelData.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/6/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TPixelData.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TPixelData_h
 #define TPixelData_h

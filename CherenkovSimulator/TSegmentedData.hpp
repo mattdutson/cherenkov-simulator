@@ -1,10 +1,10 @@
-//
-//  TSegmentedData.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/8/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TSegmentedData.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TSegmentedData_h
 #define TSegmentedData_h

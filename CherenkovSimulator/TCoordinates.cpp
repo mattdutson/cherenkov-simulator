@@ -1,12 +1,12 @@
-//
-//  TCoordinates.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TCoordinates.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TCoordinates.
+ */
 
-#include "TCoordinates.h"
+#include "TCoordinates.hpp"
 
 TCoordinates::TCoordinates() {}
 

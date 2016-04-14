@@ -1,10 +1,10 @@
-//
-//  TPoissonDistribution.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 4/13/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TPoissonDistribution.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TPoissonDistribution_hpp
 #define TPoissonDistribution_hpp

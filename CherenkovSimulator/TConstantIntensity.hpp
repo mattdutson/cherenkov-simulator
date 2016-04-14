@@ -1,10 +1,10 @@
-//
-//  TConstantIntensity.hpp
-//  RayTracing
-//
-//  Created by Matthew Dutson on 3/1/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TConstantIntensity.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ *
+ */
 
 #ifndef TConstantIntensity_h
 #define TConstantIntensity_h

@@ -1,13 +1,13 @@
-//
-//  TMirror.hpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TMirror.hpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the optical properties of the observatory mirror. The distance where the camera is located is specified by TCamera. A TMirror instance is contained within TObservatory.
+ */
 
-#ifndef TMirror_h
-#define TMirror_h
+#ifndef TMirror_hpp
+#define TMirror_hpp
 
 #include "TVector3.h"
 #include "TRandom1.h"
@@ -40,4 +40,4 @@ public:
     
 };
 
-#endif /* TMirror_hpp */
+#endif

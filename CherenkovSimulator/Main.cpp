@@ -1,11 +1,12 @@
 /*
- * Created by Matthew Dutson on 1/18/16.
+ * CherenkovSimulator - Main.cpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * This class is used for testing the functionality of TTelescope, TRay, and TPlane3.
+ * The methods defined here are used for testing core functionality.
  */
 
-#include "TObservatory.h"
+#include "TObservatory.hpp"
 #include "TAnalysis.h"
 #include "TFile.h"
 #include "TConstantIntensity.h"

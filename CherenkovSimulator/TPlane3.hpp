@@ -1,8 +1,9 @@
 /*
- * Created by Matthew Dutson on 1/18/16.
+ * CherenkovSimulator - TPlane3.hpp
+ *
  * Copyright © 2016 Matthew Dutson. All rights reserved.
  *
- * A class representing a three-dimensional plane. This class is designed to be used in conjunction with the TRay and TTelescope classes.
+ *
  */
 
 #ifndef TPlane3_h

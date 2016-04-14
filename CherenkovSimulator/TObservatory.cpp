@@ -1,12 +1,12 @@
-//
-//  TObservatory.cpp
-//  CherenkovSimulator
-//
-//  Created by Matthew Dutson on 3/14/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
-//
+/*
+ * CherenkovSimulator - TObservatory.cpp
+ *
+ * Copyright © 2016 Matthew Dutson. All rights reserved.
+ *
+ * Contains the implementation of TObservatory.
+ */
 
-#include "TObservatory.h"
+#include "TObservatory.hpp"
 
 TObservatory::TObservatory(TMirror mirror, TCamera camera, TCoordinates coordinates, TSurroundings surroundings): TCamera(camera) {
     fMirror = mirror;
