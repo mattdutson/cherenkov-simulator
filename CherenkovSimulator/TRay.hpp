@@ -75,6 +75,11 @@ public:
      * Increments the position of the ray by making it travel in its current direction at the speed of light for the specified time.
      */
     void IncrementPosition(Double_t time);
+    
+    /*
+     * Increments the position of the ray by making it travel in its current direction over the specified distance.
+     */
+    void IncrementPositionByDistance(Double_t distance);
 };
 
 #endif

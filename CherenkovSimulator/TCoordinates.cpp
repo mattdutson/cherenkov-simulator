@@ -35,3 +35,13 @@ void TCoordinates::DirectionToExternalFrame(TVector3& direction) {
     direction.RotateX(fElevation);
     direction.RotateY(fAzimuth);
 }
+
+TVector3 TCoordinates::GetMirrorAxis() {
+    TVector3 output = TVector3(0, 0, 1);
+    DirectionToExternalFrame(output);
+    return output;
+}
+
+TVector3 TCoordinates::GetCenterOfCurvature() {
+    return fCenterOfCurvature;
+}

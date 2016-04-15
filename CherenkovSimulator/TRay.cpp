@@ -62,3 +62,8 @@ void TRay::IncrementPosition(Double_t time) {
     fPosition += fVelocity * time;
     fTime += time;
 }
+
+void TRay::IncrementPositionByDistance(Double_t distance) {
+    Double_t time = distance / fLightSpeed;
+    IncrementPosition(time);
+}

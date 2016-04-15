@@ -12,10 +12,13 @@
 #include <stdio.h>
 #include "TVector3.h"
 
-class T3DScalarFunction {
+class TScalarFunction4 {
     
 public:
     
+    /*
+     * This intensity function gives the number of photons emitted per second by some cosmic ray shower. These photons are asummed to be emitted isotropically.
+     */
     virtual Int_t GetIntensity(TVector3 position, Double_t time) = 0;
     
 };

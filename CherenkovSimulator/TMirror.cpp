@@ -58,3 +58,15 @@ TVector3 TMirror::GetMirrorNormal(TVector3 impact) {
     }
     return normal;
 }
+
+Double_t TMirror::GetArea() {
+    if (fShape == 0) {
+        return fSize * fSize;
+    }
+    else if (fShape == 1) {
+        return TMath::Pi() * fSize * fSize / 4;
+    }
+    else {
+        return fSize * fSize;
+    }
+}

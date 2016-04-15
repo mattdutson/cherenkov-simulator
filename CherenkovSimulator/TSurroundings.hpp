@@ -10,6 +10,9 @@
 #define TSurroundings_hpp
 
 #include "TPlane3.hpp"
+#include "TScalarFunction4.hpp"
+#include "TRay.hpp"
+#include "TShower.hpp"
 
 class TSurroundings {
     
@@ -17,13 +20,19 @@ private:
     
     TPlane3 fGroundPlane;
     
+    TScalarFunction4* fAbsorptionCoefficients;
+    
+    Double_t fSpatialIntegrationStep;
+    
 public:
     
     TSurroundings();
     
-    TSurroundings(TPlane3 groundPlane);
+    TSurroundings(TPlane3 groundPlane, TScalarFunction4* fAbsorptionCoefficients, Double_t spatialIntegrationStep);
     
     TPlane3 GroundPlane();
+    
+    Double_t GetDimmingPercentage(TShower shower, TVector3 endingPoint);
 };
 
 #endif

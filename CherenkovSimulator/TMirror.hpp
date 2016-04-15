@@ -39,6 +39,8 @@ public:
     
     TVector3 GetMirrorNormal(TVector3 impact);
     
+    Double_t GetArea();
+    
 };
 
 #endif

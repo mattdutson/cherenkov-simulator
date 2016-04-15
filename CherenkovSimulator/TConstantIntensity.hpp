@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 
-class TConstantIntensity: public T3DScalarFunction {
+class TConstantIntensity: public TScalarFunction4 {
     
 private:
     

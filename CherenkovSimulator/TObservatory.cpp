@@ -31,7 +31,8 @@ TRawData TObservatory::ViewShower(TShower shower, Double_t timeDelay) {
 }
 
 void TObservatory::ViewPointPrivate(TShower shower, TRawData &rawData) {
-    for (Int_t i = 0; i < shower.GetIntensity(); i++) {
+    Int_t numberOfPhotons = NumberOfPhotonsViewed(shower);
+    for (Int_t i = 0; i < numberOfPhotons; i++) {
         TVector3 mirrorImpact = fMirror.GetMirrorImpact();
         TVector3 mirrorNormal = fMirror.GetMirrorNormal(mirrorImpact);
         TVector3 transformedPosition = shower.GetPosition();
@@ -131,4 +132,19 @@ TRay TObservatory::ReconstructShower(TSegmentedData data) {
         closestPosition = -closestPosition;
     }
     return TRay(bestT0, closestPosition, direction);
+}
+
+Int_t TObservatory::NumberOfPhotonsViewed(TShower shower) {
+    Int_t numberOfPhotonsEmitted = shower.GetIntensity();
+    Double_t mirrorArea = fMirror.GetArea();
+    TVector3 centerOfCurvature = fCoordinates.GetCenterOfCurvature();
+    TVector3 mirrorAxis = fCoordinates.GetMirrorAxis();
+    Double_t mirrorRadius = fMirror.Radius();
+    TVector3 showerDisplacement = shower.GetPosition() - centerOfCurvature + mirrorAxis * mirrorRadius;
+    Double_t cosine = showerDisplacement.Dot(mirrorAxis) / (showerDisplacement.Mag() * mirrorAxis.Mag());
+    mirrorArea *= cosine;
+    Double_t solidAngleFraction = mirrorArea / (4 * TMath::Pi() * showerDisplacement.Mag() * showerDisplacement.Mag());
+    Int_t numberInMirrorDirection = (Int_t) ((Double_t) numberOfPhotonsEmitted * solidAngleFraction);
+    Int_t numberCaptured = numberInMirrorDirection * fSurroundings.GetDimmingPercentage(shower.GetPosition(), centerOfCurvature);
+    return numberCaptured;
 }

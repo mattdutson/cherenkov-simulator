@@ -32,6 +32,8 @@ private:
     
     TPlane3 ApproximateShowerPlane(TSegmentedData data);
     
+    Int_t NumberOfPhotonsViewed(TShower shower);
+    
 public:
     
     TObservatory(TMirror mirror, TCamera camera, TCoordinates coordinates, TSurroundings surroundings);

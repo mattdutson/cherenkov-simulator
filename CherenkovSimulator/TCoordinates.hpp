@@ -34,6 +34,10 @@ public:
     void DirectionToObservatoryFrame(TVector3& direction);
     
     void DirectionToExternalFrame(TVector3& direction);
+    
+    TVector3 GetMirrorAxis();
+    
+    TVector3 GetCenterOfCurvature();
 };
 
 #endif
