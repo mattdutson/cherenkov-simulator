@@ -50,6 +50,8 @@ void CollectRMSData() {
     Int_t sampleNumber = 300;
     
     // Sets the properties of the mirror
+    // It was reccomended that the f-number be varied 1.0 to 2.0 and that the focal length be varied from 95% to 100%.
+    // f-number represents focal length divided by the diameter of the entrance pupil.
     Double_t radius = 6;
     Short_t mirrorTypes[] = {0, 1};
     Double_t fNumbers[] = {1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
