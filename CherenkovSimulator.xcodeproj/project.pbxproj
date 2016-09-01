@@ -353,7 +353,10 @@
 		342DD5D51CB4E814000184BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/root/include/root;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/root/include/root,
+					/usr/local/boost_1_61_0/boost,
+				);
 				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -391,7 +394,10 @@
 		342DD5D61CB4E814000184BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/root/include/root;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/root/include/root,
+					/usr/local/boost_1_61_0/boost,
+				);
 				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
