@@ -77,6 +77,8 @@
 		345983891CBEACCF0001612D /* TPoissonDistribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPoissonDistribution.hpp; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
 		34F2EECC1CB60FDF0003A939 /* TPixelData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPixelData.hpp; sourceTree = "<group>"; };
+		34FD8B4D1D77FA0800F0016E /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
+		34FD8B4E1D77FB4900F0016E /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,8 @@
 			isa = PBXGroup;
 			children = (
 				342DD5D71CB4E8DB000184BC /* Main.cpp */,
+				34FD8B4D1D77FA0800F0016E /* Prefix.pch */,
+				34FD8B4E1D77FB4900F0016E /* Common.h */,
 				342DD60A1CB4E935000184BC /* Detector */,
 				342DD60D1CB4E974000184BC /* GeometricObjects */,
 				342DD60C1CB4E965000184BC /* DataContainers */,
@@ -353,6 +357,8 @@
 		342DD5D51CB4E814000184BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CherenkovSimulator/Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/root/include/root,
 					/usr/local/boost_1_61_0/boost,
@@ -394,6 +400,8 @@
 		342DD5D61CB4E814000184BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = CherenkovSimulator/Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/root/include/root,
 					/usr/local/boost_1_61_0/boost,
