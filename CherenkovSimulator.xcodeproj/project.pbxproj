@@ -24,6 +24,7 @@
 		342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */; };
 		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
 		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
+		34CA570E1D81DB55003EF1EC /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA570D1D81DB55003EF1EC /* Common.cpp */; };
 		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
 /* End PBXBuildFile section */
 
@@ -75,6 +76,8 @@
 		342DD5F81CB4E8DB000184BC /* TUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TUtility.hpp; sourceTree = "<group>"; };
 		345983881CBEACCF0001612D /* TPoissonDistribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPoissonDistribution.cpp; sourceTree = "<group>"; };
 		345983891CBEACCF0001612D /* TPoissonDistribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPoissonDistribution.hpp; sourceTree = "<group>"; };
+		34CA570D1D81DB55003EF1EC /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
+		34CA570F1D81DF2A003EF1EC /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
 		34F2EECC1CB60FDF0003A939 /* TPixelData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPixelData.hpp; sourceTree = "<group>"; };
 		34FD8B4D1D77FA0800F0016E /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
@@ -114,6 +117,8 @@
 				342DD5D71CB4E8DB000184BC /* Main.cpp */,
 				34FD8B4D1D77FA0800F0016E /* Prefix.pch */,
 				34FD8B4E1D77FB4900F0016E /* Common.h */,
+				34CA570D1D81DB55003EF1EC /* Common.cpp */,
+				34CA570F1D81DF2A003EF1EC /* config.txt */,
 				342DD60A1CB4E935000184BC /* Detector */,
 				342DD60D1CB4E974000184BC /* GeometricObjects */,
 				342DD60C1CB4E965000184BC /* DataContainers */,
@@ -252,6 +257,7 @@
 				342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */,
 				342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */,
 				342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */,
+				34CA570E1D81DB55003EF1EC /* Common.cpp in Sources */,
 				342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */,
 				342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */,
 				342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */,
@@ -361,7 +367,7 @@
 				GCC_PREFIX_HEADER = CherenkovSimulator/Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/root/include/root,
-					/usr/local/boost_1_61_0/boost,
+					/usr/local/boost_1_61_0,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -404,7 +410,7 @@
 				GCC_PREFIX_HEADER = CherenkovSimulator/Prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/root/include/root,
-					/usr/local/boost_1_61_0/boost,
+					/usr/local/boost_1_61_0,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
 				OTHER_CPLUSPLUSFLAGS = (

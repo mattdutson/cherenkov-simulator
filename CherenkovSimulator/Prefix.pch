@@ -9,5 +9,12 @@
 #ifndef Precompiled_h
 #define Precompiled_h
 
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/parsers.hpp>
 
-#endif /* Precompiled_h */
+#include <fstream>
+#include <string>
+#include <iostream>
+
+#endif
