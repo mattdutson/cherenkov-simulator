@@ -3,7 +3,7 @@
 //
 // Created by Matthew Dutson on 9/8/16.
 //
-//
+// Contains a configuration manager and globally useful methods
 
 #ifndef Common_h
 #define Common_h
