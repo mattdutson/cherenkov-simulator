@@ -1,9 +1,8 @@
+// prefix.pch
+// cherenkov_simulator
 //
-//  Precompiled.h
-//  CherenkovSimulator
+// Created by Matthew Dutson on 9/8/16.
 //
-//  Created by Matthew Dutson on 8/31/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
 #ifndef Precompiled_h

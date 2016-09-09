@@ -1,21 +1,22 @@
-/*
- * Reconstruction.h
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// reconstruction.h
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#ifndef Reconstruction_h
-#define Reconstruction_h
+#ifndef reconstruction_h
+#define reconstruction_h
 
-#include "DataContainers.h"
-#include "GeometricObjects.h"
+#include "data_containers.h"
+#include "geometric_objects.h"
 
-namespace reconstruction {
+namespace cherenkov_simulator {
     
-    Shower ReconstructShower(SignalData dat);
+    namespace reconstruction {
+        
+        Shower ReconstructShower(SignalData dat);
+    }
 }
 
 #endif

@@ -1,10 +1,12 @@
-/*
- * Reconstruction.cpp
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// reconstruction.cpp
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#include "Reconstruction.h"
+#include "reconstruction.h"
+
+namespace cherenkov_simulator {
+    
+}

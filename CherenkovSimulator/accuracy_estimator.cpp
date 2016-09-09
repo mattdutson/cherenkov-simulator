@@ -1,10 +1,12 @@
-/*
- * AccuracyEstimator.cpp
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// accuracy_estimator.cpp
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#include "AccuracyEstimator.h"
+#include "accuracy_estimator.h"
+
+namespace cherenkov_simulator {
+    
+}

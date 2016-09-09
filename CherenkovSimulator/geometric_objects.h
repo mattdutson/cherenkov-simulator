@@ -1,25 +1,26 @@
-/*
- * GeometricObjects.h
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// geometric_objects.h
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#ifndef GeometricObjects_h
-#define GeometricObjects_h
+#ifndef geometric_objects_h
+#define geometric_objects_h
 
-class Ray {
-    
-};
+namespace cherenkov_simulator {
 
-class Shower: public Ray {
-    
-};
+    class Ray {
+        
+    };
 
-class Plane {
-    
-};
+    class Shower: public Ray {
+        
+    };
+
+    class Plane {
+        
+    };
+}
 
 #endif

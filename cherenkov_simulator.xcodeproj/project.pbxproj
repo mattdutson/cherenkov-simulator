@@ -129,26 +129,26 @@
 		342DD5CF1CB4E814000184BC /* cherenkov_simulator */ = {
 			isa = PBXGroup;
 			children = (
-				342DD5D71CB4E8DB000184BC /* main.cpp */,
 				34FD8B4D1D77FA0800F0016E /* prefix.pch */,
+				342DD5D71CB4E8DB000184BC /* main.cpp */,
 				34FD8B4E1D77FB4900F0016E /* common.h */,
 				34CA570D1D81DB55003EF1EC /* common.cpp */,
+				34810FDC1D826B1300F3F222 /* data_containers.h */,
+				34810FDB1D826B1300F3F222 /* data_containers.cpp */,
+				34810FDF1D826B3B00F3F222 /* geometric_objects.h */,
+				34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */,
+				34810FE41D826D9000F3F222 /* shower_simulator.h */,
+				34810FE31D826D9000F3F222 /* shower_simulator.cpp */,
+				34810FE71D826E9D00F3F222 /* reconstruction.h */,
+				34810FE61D826E9D00F3F222 /* reconstruction.cpp */,
+				34810FEA1D826FFC00F3F222 /* accuracy_estimator.h */,
+				34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */,
 				34CA570F1D81DF2A003EF1EC /* config.txt */,
 				34810FE11D826B6600F3F222 /* DataContainersOld */,
 				34810FE21D826B7A00F3F222 /* GeometricObjectsOld */,
 				342DD60A1CB4E935000184BC /* DetectorOld */,
 				342DD60B1CB4E943000184BC /* FunctorsOld */,
 				342DD60E1CB4E9B3000184BC /* MiscellaneousOld */,
-				34810FDB1D826B1300F3F222 /* data_containers.cpp */,
-				34810FDC1D826B1300F3F222 /* data_containers.h */,
-				34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */,
-				34810FDF1D826B3B00F3F222 /* geometric_objects.h */,
-				34810FE31D826D9000F3F222 /* shower_simulator.cpp */,
-				34810FE41D826D9000F3F222 /* shower_simulator.h */,
-				34810FE61D826E9D00F3F222 /* reconstruction.cpp */,
-				34810FE71D826E9D00F3F222 /* reconstruction.h */,
-				34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */,
-				34810FEA1D826FFC00F3F222 /* accuracy_estimator.h */,
 			);
 			name = cherenkov_simulator;
 			path = CherenkovSimulator;

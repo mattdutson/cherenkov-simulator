@@ -1,9 +1,8 @@
+// common.cpp
+// cherenkov_simulator
 //
-//  Common.cpp
-//  CherenkovSimulator
+// Created by Matthew Dutson on 9/8/16.
 //
-//  Created by Matthew Dutson on 9/8/16.
-//  Copyright © 2016 Matthew Dutson. All rights reserved.
 //
 
 #include "Common.h"
@@ -11,35 +10,38 @@
 using namespace boost::program_options;
 using namespace std;
 
-ConfigManager::ConfigManager(): commandLine("Command Line Options"), fileOptions("Configuration File Options") {
-    commandLine.add_options()
+namespace cherenkov_simulator {
+    
+    ConfigManager::ConfigManager(): command_line_("Command Line Options"), file_options_("Configuration File Options") {
+        command_line_.add_options()
         ("config_file", value<std::string>()->default_value("config.txt"), "The path to the configuration file")
         ("help", "Show help message");
-    
-    fileOptions.add_options()
+        
+        file_options_.add_options()
         ("mirror_radius", value<double>(), "The radius of curvature of the telescope mirror");
-    
-    options_description sharedOptions;
-    sharedOptions.add_options()
-    ("test", value<std::string>(), "The test to be performed");
-    fileOptions.add(sharedOptions);
-    commandLine.add(sharedOptions);
-}
+        
+        options_description sharedOptions;
+        sharedOptions.add_options()
+        ("test", value<std::string>(), "The test to be performed");
+        file_options_.add(sharedOptions);
+        command_line_.add(sharedOptions);
+    }
 
-void ConfigManager::ParseCommandLine(int argc, const char* argv[]) {
-    store(parse_command_line(argc, argv, commandLine), optionMap);
-    notify(optionMap);
-}
+    void ConfigManager::ParseCommandLine(int argc, const char* argv[]) {
+        store(parse_command_line(argc, argv, command_line_), option_map_);
+        notify(option_map_);
+    }
 
-void ConfigManager::ParseOptionsFile() {
-    string filename = Get<string>("config_file");
-    ifstream file(filename.c_str());
-    store(parse_config_file(file, fileOptions), optionMap);
-    notify(optionMap);
-}
+    void ConfigManager::ParseOptionsFile() {
+        string filename = Get<string>("config_file");
+        ifstream file(filename.c_str());
+        store(parse_config_file(file, file_options_), option_map_);
+        notify(option_map_);
+    }
 
-void ConfigManager::HelpMessage() {
-    cout << commandLine << endl;
+    void ConfigManager::HelpMessage() {
+        cout << command_line_ << endl;
+    }
+        
+    ConfigManager globalConfig;
 }
-
-ConfigManager globalConfig;

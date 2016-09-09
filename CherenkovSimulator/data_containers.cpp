@@ -1,10 +1,12 @@
-/*
- * DataContainers.cpp
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// data_containers.cpp
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#include "DataContainers.h"
+#include "data_containers.h"
+
+namespace cherenkov_simulator {
+    
+}

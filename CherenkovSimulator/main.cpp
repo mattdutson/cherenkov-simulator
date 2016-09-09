@@ -1,10 +1,9 @@
-/*
- * CherenkovSimulator - Main.cpp
- *
- * Copyright © 2016 Matthew Dutson. All rights reserved.
- *
- * The methods defined here are used for testing core functionality.
- */
+// main.cpp
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
 using namespace std;
 

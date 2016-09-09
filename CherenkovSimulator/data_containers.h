@@ -1,21 +1,22 @@
-/*
- * DataContainers.h
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// data_containers.h
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#ifndef DataContainers_h
-#define DataContainers_h
+#ifndef data_containers_h
+#define data_containers_h
 
-class RawData {
-    
-};
+namespace cherenkov_simulator {
 
-class SignalData {
-    
-};
+    class RawData {
+        
+    };
+
+    class SignalData {
+        
+    };
+}
 
 #endif

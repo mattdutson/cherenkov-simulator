@@ -1,10 +1,12 @@
-/*
- * GeometricObjects.cpp
- * CherenkovSimulator
- *
- * Created by Matthew Dutson on 9/8/16.
- *
- *
- */
+// geometric_objects.cpp
+// cherenkov_simulator
+//
+// Created by Matthew Dutson on 9/8/16.
+//
+//
 
-#include "GeometricObjects.h"
+#include "geometric_objects.h"
+
+namespace cherenkov_simulator {
+    
+}
