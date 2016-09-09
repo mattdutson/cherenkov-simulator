@@ -26,6 +26,8 @@
 		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
 		34810FDD1D826B1300F3F222 /* DataContainers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDB1D826B1300F3F222 /* DataContainers.cpp */; };
 		34810FE01D826B3B00F3F222 /* GeometricObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */; };
+		34810FE51D826D9000F3F222 /* ShowerSimulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE31D826D9000F3F222 /* ShowerSimulator.cpp */; };
+		34810FE81D826E9D00F3F222 /* Reconstruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE61D826E9D00F3F222 /* Reconstruction.cpp */; };
 		34CA570E1D81DB55003EF1EC /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA570D1D81DB55003EF1EC /* Common.cpp */; };
 		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
 /* End PBXBuildFile section */
@@ -82,6 +84,10 @@
 		34810FDC1D826B1300F3F222 /* DataContainers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataContainers.h; sourceTree = "<group>"; };
 		34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometricObjects.cpp; sourceTree = "<group>"; };
 		34810FDF1D826B3B00F3F222 /* GeometricObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometricObjects.h; sourceTree = "<group>"; };
+		34810FE31D826D9000F3F222 /* ShowerSimulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShowerSimulator.cpp; sourceTree = "<group>"; };
+		34810FE41D826D9000F3F222 /* ShowerSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowerSimulator.h; sourceTree = "<group>"; };
+		34810FE61D826E9D00F3F222 /* Reconstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reconstruction.cpp; sourceTree = "<group>"; };
+		34810FE71D826E9D00F3F222 /* Reconstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reconstruction.h; sourceTree = "<group>"; };
 		34CA570D1D81DB55003EF1EC /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
 		34CA570F1D81DF2A003EF1EC /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
@@ -134,6 +140,10 @@
 				34810FDC1D826B1300F3F222 /* DataContainers.h */,
 				34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */,
 				34810FDF1D826B3B00F3F222 /* GeometricObjects.h */,
+				34810FE31D826D9000F3F222 /* ShowerSimulator.cpp */,
+				34810FE41D826D9000F3F222 /* ShowerSimulator.h */,
+				34810FE61D826E9D00F3F222 /* Reconstruction.cpp */,
+				34810FE71D826E9D00F3F222 /* Reconstruction.h */,
 			);
 			path = CherenkovSimulator;
 			sourceTree = "<group>";
@@ -276,6 +286,8 @@
 				342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */,
 				342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */,
 				342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */,
+				34810FE81D826E9D00F3F222 /* Reconstruction.cpp in Sources */,
+				34810FE51D826D9000F3F222 /* ShowerSimulator.cpp in Sources */,
 				342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */,
 				342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */,
 				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
