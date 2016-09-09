@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D71CB4E8DB000184BC /* Main.cpp */; };
+		342DD5F91CB4E8DB000184BC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D71CB4E8DB000184BC /* main.cpp */; };
 		342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */; };
 		342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DD1CB4E8DB000184BC /* TCamera.cpp */; };
 		342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */; };
@@ -24,11 +24,12 @@
 		342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */; };
 		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
 		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
-		34810FDD1D826B1300F3F222 /* DataContainers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDB1D826B1300F3F222 /* DataContainers.cpp */; };
-		34810FE01D826B3B00F3F222 /* GeometricObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */; };
-		34810FE51D826D9000F3F222 /* ShowerSimulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE31D826D9000F3F222 /* ShowerSimulator.cpp */; };
-		34810FE81D826E9D00F3F222 /* Reconstruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE61D826E9D00F3F222 /* Reconstruction.cpp */; };
-		34CA570E1D81DB55003EF1EC /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA570D1D81DB55003EF1EC /* Common.cpp */; };
+		34810FDD1D826B1300F3F222 /* data_containers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDB1D826B1300F3F222 /* data_containers.cpp */; };
+		34810FE01D826B3B00F3F222 /* geometric_objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */; };
+		34810FE51D826D9000F3F222 /* shower_simulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE31D826D9000F3F222 /* shower_simulator.cpp */; };
+		34810FE81D826E9D00F3F222 /* reconstruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE61D826E9D00F3F222 /* reconstruction.cpp */; };
+		34810FEB1D826FFC00F3F222 /* accuracy_estimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */; };
+		34CA570E1D81DB55003EF1EC /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA570D1D81DB55003EF1EC /* common.cpp */; };
 		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
 /* End PBXBuildFile section */
 
@@ -45,8 +46,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		342DD5CD1CB4E814000184BC /* CherenkovSimulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CherenkovSimulator; sourceTree = BUILT_PRODUCTS_DIR; };
-		342DD5D71CB4E8DB000184BC /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
+		342DD5CD1CB4E814000184BC /* cherenkov_simulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cherenkov_simulator; sourceTree = BUILT_PRODUCTS_DIR; };
+		342DD5D71CB4E8DB000184BC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		342DD5D81CB4E8DB000184BC /* TScalarFunction4.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TScalarFunction4.hpp; sourceTree = "<group>"; };
 		342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TAnalysis.cpp; sourceTree = "<group>"; };
 		342DD5DA1CB4E8DB000184BC /* TAnalysis.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TAnalysis.hpp; sourceTree = "<group>"; };
@@ -80,20 +81,22 @@
 		342DD5F81CB4E8DB000184BC /* TUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TUtility.hpp; sourceTree = "<group>"; };
 		345983881CBEACCF0001612D /* TPoissonDistribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPoissonDistribution.cpp; sourceTree = "<group>"; };
 		345983891CBEACCF0001612D /* TPoissonDistribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPoissonDistribution.hpp; sourceTree = "<group>"; };
-		34810FDB1D826B1300F3F222 /* DataContainers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataContainers.cpp; sourceTree = "<group>"; };
-		34810FDC1D826B1300F3F222 /* DataContainers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataContainers.h; sourceTree = "<group>"; };
-		34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometricObjects.cpp; sourceTree = "<group>"; };
-		34810FDF1D826B3B00F3F222 /* GeometricObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometricObjects.h; sourceTree = "<group>"; };
-		34810FE31D826D9000F3F222 /* ShowerSimulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShowerSimulator.cpp; sourceTree = "<group>"; };
-		34810FE41D826D9000F3F222 /* ShowerSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowerSimulator.h; sourceTree = "<group>"; };
-		34810FE61D826E9D00F3F222 /* Reconstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reconstruction.cpp; sourceTree = "<group>"; };
-		34810FE71D826E9D00F3F222 /* Reconstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reconstruction.h; sourceTree = "<group>"; };
-		34CA570D1D81DB55003EF1EC /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
+		34810FDB1D826B1300F3F222 /* data_containers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = data_containers.cpp; sourceTree = "<group>"; };
+		34810FDC1D826B1300F3F222 /* data_containers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_containers.h; sourceTree = "<group>"; };
+		34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometric_objects.cpp; sourceTree = "<group>"; };
+		34810FDF1D826B3B00F3F222 /* geometric_objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = geometric_objects.h; sourceTree = "<group>"; };
+		34810FE31D826D9000F3F222 /* shower_simulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shower_simulator.cpp; sourceTree = "<group>"; };
+		34810FE41D826D9000F3F222 /* shower_simulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shower_simulator.h; sourceTree = "<group>"; };
+		34810FE61D826E9D00F3F222 /* reconstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reconstruction.cpp; sourceTree = "<group>"; };
+		34810FE71D826E9D00F3F222 /* reconstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reconstruction.h; sourceTree = "<group>"; };
+		34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = accuracy_estimator.cpp; sourceTree = "<group>"; };
+		34810FEA1D826FFC00F3F222 /* accuracy_estimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = accuracy_estimator.h; sourceTree = "<group>"; };
+		34CA570D1D81DB55003EF1EC /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		34CA570F1D81DF2A003EF1EC /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
 		34F2EECC1CB60FDF0003A939 /* TPixelData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPixelData.hpp; sourceTree = "<group>"; };
-		34FD8B4D1D77FA0800F0016E /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		34FD8B4E1D77FB4900F0016E /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		34FD8B4D1D77FA0800F0016E /* prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefix.pch; sourceTree = "<group>"; };
+		34FD8B4E1D77FB4900F0016E /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +113,7 @@
 		342DD5C41CB4E813000184BC = {
 			isa = PBXGroup;
 			children = (
-				342DD5CF1CB4E814000184BC /* CherenkovSimulator */,
+				342DD5CF1CB4E814000184BC /* cherenkov_simulator */,
 				342DD5CE1CB4E814000184BC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -118,33 +121,36 @@
 		342DD5CE1CB4E814000184BC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				342DD5CD1CB4E814000184BC /* CherenkovSimulator */,
+				342DD5CD1CB4E814000184BC /* cherenkov_simulator */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		342DD5CF1CB4E814000184BC /* CherenkovSimulator */ = {
+		342DD5CF1CB4E814000184BC /* cherenkov_simulator */ = {
 			isa = PBXGroup;
 			children = (
-				342DD5D71CB4E8DB000184BC /* Main.cpp */,
-				34FD8B4D1D77FA0800F0016E /* Prefix.pch */,
-				34FD8B4E1D77FB4900F0016E /* Common.h */,
-				34CA570D1D81DB55003EF1EC /* Common.cpp */,
+				342DD5D71CB4E8DB000184BC /* main.cpp */,
+				34FD8B4D1D77FA0800F0016E /* prefix.pch */,
+				34FD8B4E1D77FB4900F0016E /* common.h */,
+				34CA570D1D81DB55003EF1EC /* common.cpp */,
 				34CA570F1D81DF2A003EF1EC /* config.txt */,
 				34810FE11D826B6600F3F222 /* DataContainersOld */,
 				34810FE21D826B7A00F3F222 /* GeometricObjectsOld */,
 				342DD60A1CB4E935000184BC /* DetectorOld */,
 				342DD60B1CB4E943000184BC /* FunctorsOld */,
 				342DD60E1CB4E9B3000184BC /* MiscellaneousOld */,
-				34810FDB1D826B1300F3F222 /* DataContainers.cpp */,
-				34810FDC1D826B1300F3F222 /* DataContainers.h */,
-				34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */,
-				34810FDF1D826B3B00F3F222 /* GeometricObjects.h */,
-				34810FE31D826D9000F3F222 /* ShowerSimulator.cpp */,
-				34810FE41D826D9000F3F222 /* ShowerSimulator.h */,
-				34810FE61D826E9D00F3F222 /* Reconstruction.cpp */,
-				34810FE71D826E9D00F3F222 /* Reconstruction.h */,
+				34810FDB1D826B1300F3F222 /* data_containers.cpp */,
+				34810FDC1D826B1300F3F222 /* data_containers.h */,
+				34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */,
+				34810FDF1D826B3B00F3F222 /* geometric_objects.h */,
+				34810FE31D826D9000F3F222 /* shower_simulator.cpp */,
+				34810FE41D826D9000F3F222 /* shower_simulator.h */,
+				34810FE61D826E9D00F3F222 /* reconstruction.cpp */,
+				34810FE71D826E9D00F3F222 /* reconstruction.h */,
+				34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */,
+				34810FEA1D826FFC00F3F222 /* accuracy_estimator.h */,
 			);
+			name = cherenkov_simulator;
 			path = CherenkovSimulator;
 			sourceTree = "<group>";
 		};
@@ -221,9 +227,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		342DD5CC1CB4E814000184BC /* CherenkovSimulator */ = {
+		342DD5CC1CB4E814000184BC /* cherenkov_simulator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 342DD5D41CB4E814000184BC /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */;
+			buildConfigurationList = 342DD5D41CB4E814000184BC /* Build configuration list for PBXNativeTarget "cherenkov_simulator" */;
 			buildPhases = (
 				342DD5C91CB4E814000184BC /* Sources */,
 				342DD5CA1CB4E814000184BC /* Frameworks */,
@@ -233,9 +239,9 @@
 			);
 			dependencies = (
 			);
-			name = CherenkovSimulator;
+			name = cherenkov_simulator;
 			productName = CherenkovSimulator;
-			productReference = 342DD5CD1CB4E814000184BC /* CherenkovSimulator */;
+			productReference = 342DD5CD1CB4E814000184BC /* cherenkov_simulator */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -252,7 +258,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 342DD5C81CB4E813000184BC /* Build configuration list for PBXProject "CherenkovSimulator" */;
+			buildConfigurationList = 342DD5C81CB4E813000184BC /* Build configuration list for PBXProject "cherenkov_simulator" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -264,7 +270,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				342DD5CC1CB4E814000184BC /* CherenkovSimulator */,
+				342DD5CC1CB4E814000184BC /* cherenkov_simulator */,
 			);
 		};
 /* End PBXProject section */
@@ -275,9 +281,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */,
+				34810FEB1D826FFC00F3F222 /* accuracy_estimator.cpp in Sources */,
 				342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */,
 				342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */,
-				34CA570E1D81DB55003EF1EC /* Common.cpp in Sources */,
+				34CA570E1D81DB55003EF1EC /* common.cpp in Sources */,
 				342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */,
 				342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */,
 				342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */,
@@ -286,15 +293,15 @@
 				342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */,
 				342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */,
 				342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */,
-				34810FE81D826E9D00F3F222 /* Reconstruction.cpp in Sources */,
-				34810FE51D826D9000F3F222 /* ShowerSimulator.cpp in Sources */,
+				34810FE81D826E9D00F3F222 /* reconstruction.cpp in Sources */,
+				34810FE51D826D9000F3F222 /* shower_simulator.cpp in Sources */,
 				342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */,
-				342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */,
+				342DD5F91CB4E8DB000184BC /* main.cpp in Sources */,
 				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
-				34810FDD1D826B1300F3F222 /* DataContainers.cpp in Sources */,
+				34810FDD1D826B1300F3F222 /* data_containers.cpp in Sources */,
 				3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */,
 				342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */,
-				34810FE01D826B3B00F3F222 /* GeometricObjects.cpp in Sources */,
+				34810FE01D826B3B00F3F222 /* geometric_objects.cpp in Sources */,
 				342DD5FF1CB4E8DB000184BC /* THistogramList.cpp in Sources */,
 				342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */,
 			);
@@ -388,7 +395,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = CherenkovSimulator/Prefix.pch;
+				GCC_PREFIX_HEADER = CherenkovSimulator/prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/root/include/root,
 					/usr/local/boost_1_61_0,
@@ -423,7 +430,7 @@
 					"-lm",
 					"-ldl",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = cherenkov_simulator;
 			};
 			name = Debug;
 		};
@@ -431,7 +438,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = CherenkovSimulator/Prefix.pch;
+				GCC_PREFIX_HEADER = CherenkovSimulator/prefix.pch;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/root/include/root,
 					/usr/local/boost_1_61_0,
@@ -466,14 +473,14 @@
 					"-lm",
 					"-ldl",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = cherenkov_simulator;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		342DD5C81CB4E813000184BC /* Build configuration list for PBXProject "CherenkovSimulator" */ = {
+		342DD5C81CB4E813000184BC /* Build configuration list for PBXProject "cherenkov_simulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				342DD5D21CB4E814000184BC /* Debug */,
@@ -482,7 +489,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		342DD5D41CB4E814000184BC /* Build configuration list for PBXNativeTarget "CherenkovSimulator" */ = {
+		342DD5D41CB4E814000184BC /* Build configuration list for PBXNativeTarget "cherenkov_simulator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				342DD5D51CB4E814000184BC /* Debug */,

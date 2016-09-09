@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "342DD5CC1CB4E814000184BC"
-               BuildableName = "CherenkovSimulator"
-               BlueprintName = "CherenkovSimulator"
-               ReferencedContainer = "container:CherenkovSimulator.xcodeproj">
+               BuildableName = "cherenkov_simulator"
+               BlueprintName = "cherenkov_simulator"
+               ReferencedContainer = "container:cherenkov_simulator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "342DD5CC1CB4E814000184BC"
-            BuildableName = "CherenkovSimulator"
-            BlueprintName = "CherenkovSimulator"
-            ReferencedContainer = "container:CherenkovSimulator.xcodeproj">
+            BuildableName = "cherenkov_simulator"
+            BlueprintName = "cherenkov_simulator"
+            ReferencedContainer = "container:cherenkov_simulator.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "342DD5CC1CB4E814000184BC"
-            BuildableName = "CherenkovSimulator"
-            BlueprintName = "CherenkovSimulator"
-            ReferencedContainer = "container:CherenkovSimulator.xcodeproj">
+            BuildableName = "cherenkov_simulator"
+            BlueprintName = "cherenkov_simulator"
+            ReferencedContainer = "container:cherenkov_simulator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "342DD5CC1CB4E814000184BC"
-            BuildableName = "CherenkovSimulator"
-            BlueprintName = "CherenkovSimulator"
-            ReferencedContainer = "container:CherenkovSimulator.xcodeproj">
+            BuildableName = "cherenkov_simulator"
+            BlueprintName = "cherenkov_simulator"
+            ReferencedContainer = "container:cherenkov_simulator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

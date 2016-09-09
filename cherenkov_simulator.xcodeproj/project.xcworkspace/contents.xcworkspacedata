@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:CherenkovSimulator.xcodeproj">
+      location = "self:/Users/Matthew/Documents/Xcode/CherenkovSimulator/cherenkov_simulator.xcodeproj">
    </FileRef>
 </Workspace>
