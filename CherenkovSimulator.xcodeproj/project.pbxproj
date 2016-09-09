@@ -24,6 +24,8 @@
 		342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */; };
 		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
 		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
+		34810FDD1D826B1300F3F222 /* DataContainers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDB1D826B1300F3F222 /* DataContainers.cpp */; };
+		34810FE01D826B3B00F3F222 /* GeometricObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */; };
 		34CA570E1D81DB55003EF1EC /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA570D1D81DB55003EF1EC /* Common.cpp */; };
 		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
 /* End PBXBuildFile section */
@@ -76,6 +78,10 @@
 		342DD5F81CB4E8DB000184BC /* TUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TUtility.hpp; sourceTree = "<group>"; };
 		345983881CBEACCF0001612D /* TPoissonDistribution.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPoissonDistribution.cpp; sourceTree = "<group>"; };
 		345983891CBEACCF0001612D /* TPoissonDistribution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TPoissonDistribution.hpp; sourceTree = "<group>"; };
+		34810FDB1D826B1300F3F222 /* DataContainers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataContainers.cpp; sourceTree = "<group>"; };
+		34810FDC1D826B1300F3F222 /* DataContainers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataContainers.h; sourceTree = "<group>"; };
+		34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometricObjects.cpp; sourceTree = "<group>"; };
+		34810FDF1D826B3B00F3F222 /* GeometricObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeometricObjects.h; sourceTree = "<group>"; };
 		34CA570D1D81DB55003EF1EC /* Common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Common.cpp; sourceTree = "<group>"; };
 		34CA570F1D81DF2A003EF1EC /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
@@ -119,16 +125,20 @@
 				34FD8B4E1D77FB4900F0016E /* Common.h */,
 				34CA570D1D81DB55003EF1EC /* Common.cpp */,
 				34CA570F1D81DF2A003EF1EC /* config.txt */,
-				342DD60A1CB4E935000184BC /* Detector */,
-				342DD60D1CB4E974000184BC /* GeometricObjects */,
-				342DD60C1CB4E965000184BC /* DataContainers */,
-				342DD60B1CB4E943000184BC /* Functors */,
-				342DD60E1CB4E9B3000184BC /* Miscellaneous */,
+				34810FE11D826B6600F3F222 /* DataContainersOld */,
+				34810FE21D826B7A00F3F222 /* GeometricObjectsOld */,
+				342DD60A1CB4E935000184BC /* DetectorOld */,
+				342DD60B1CB4E943000184BC /* FunctorsOld */,
+				342DD60E1CB4E9B3000184BC /* MiscellaneousOld */,
+				34810FDB1D826B1300F3F222 /* DataContainers.cpp */,
+				34810FDC1D826B1300F3F222 /* DataContainers.h */,
+				34810FDE1D826B3B00F3F222 /* GeometricObjects.cpp */,
+				34810FDF1D826B3B00F3F222 /* GeometricObjects.h */,
 			);
 			path = CherenkovSimulator;
 			sourceTree = "<group>";
 		};
-		342DD60A1CB4E935000184BC /* Detector */ = {
+		342DD60A1CB4E935000184BC /* DetectorOld */ = {
 			isa = PBXGroup;
 			children = (
 				342DD5E81CB4E8DB000184BC /* TObservatory.hpp */,
@@ -142,10 +152,10 @@
 				342DD5E21CB4E8DB000184BC /* TCoordinates.hpp */,
 				342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */,
 			);
-			name = Detector;
+			name = DetectorOld;
 			sourceTree = "<group>";
 		};
-		342DD60B1CB4E943000184BC /* Functors */ = {
+		342DD60B1CB4E943000184BC /* FunctorsOld */ = {
 			isa = PBXGroup;
 			children = (
 				342DD5D81CB4E8DB000184BC /* TScalarFunction4.hpp */,
@@ -156,10 +166,21 @@
 				345983891CBEACCF0001612D /* TPoissonDistribution.hpp */,
 				345983881CBEACCF0001612D /* TPoissonDistribution.cpp */,
 			);
-			name = Functors;
+			name = FunctorsOld;
 			sourceTree = "<group>";
 		};
-		342DD60C1CB4E965000184BC /* DataContainers */ = {
+		342DD60E1CB4E9B3000184BC /* MiscellaneousOld */ = {
+			isa = PBXGroup;
+			children = (
+				342DD5DA1CB4E8DB000184BC /* TAnalysis.hpp */,
+				342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */,
+				342DD5F81CB4E8DB000184BC /* TUtility.hpp */,
+				342DD5F71CB4E8DB000184BC /* TUtility.cpp */,
+			);
+			name = MiscellaneousOld;
+			sourceTree = "<group>";
+		};
+		34810FE11D826B6600F3F222 /* DataContainersOld */ = {
 			isa = PBXGroup;
 			children = (
 				342DD5EC1CB4E8DB000184BC /* TRawData.hpp */,
@@ -171,10 +192,10 @@
 				34F2EECC1CB60FDF0003A939 /* TPixelData.hpp */,
 				34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */,
 			);
-			name = DataContainers;
+			name = DataContainersOld;
 			sourceTree = "<group>";
 		};
-		342DD60D1CB4E974000184BC /* GeometricObjects */ = {
+		34810FE21D826B7A00F3F222 /* GeometricObjectsOld */ = {
 			isa = PBXGroup;
 			children = (
 				342DD5EE1CB4E8DB000184BC /* TRay.hpp */,
@@ -184,18 +205,7 @@
 				342DD5EA1CB4E8DB000184BC /* TPlane3.hpp */,
 				342DD5E91CB4E8DB000184BC /* TPlane3.cpp */,
 			);
-			name = GeometricObjects;
-			sourceTree = "<group>";
-		};
-		342DD60E1CB4E9B3000184BC /* Miscellaneous */ = {
-			isa = PBXGroup;
-			children = (
-				342DD5DA1CB4E8DB000184BC /* TAnalysis.hpp */,
-				342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */,
-				342DD5F81CB4E8DB000184BC /* TUtility.hpp */,
-				342DD5F71CB4E8DB000184BC /* TUtility.cpp */,
-			);
-			name = Miscellaneous;
+			name = GeometricObjectsOld;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -269,8 +279,10 @@
 				342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */,
 				342DD5F91CB4E8DB000184BC /* Main.cpp in Sources */,
 				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
+				34810FDD1D826B1300F3F222 /* DataContainers.cpp in Sources */,
 				3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */,
 				342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */,
+				34810FE01D826B3B00F3F222 /* GeometricObjects.cpp in Sources */,
 				342DD5FF1CB4E8DB000184BC /* THistogramList.cpp in Sources */,
 				342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */,
 			);
