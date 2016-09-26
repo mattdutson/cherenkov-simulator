@@ -12,6 +12,15 @@
 
 namespace cherenkov_simulator
 {
+    class Shower;
+    
+    class IntensityFunctor
+    {
+    public:
+        
+        virtual double GetIntensity(Shower shower) = 0;
+    };
+    
     class Plane
     {
     private:
@@ -42,6 +51,12 @@ namespace cherenkov_simulator
         void IncrementPosition(double time);
         
         double TimeToPlane(Plane p);
+        
+        double GetTime();
+        
+        TVector3 GetPosition();
+        
+        TVector3 GetVelocity();
     };
 
     class Shower: public Ray
@@ -54,7 +69,9 @@ namespace cherenkov_simulator
         
     public:
         
-        Shower(double time, TVector3 position, TVector3 direction);
+        Shower(double time, TVector3 position, TVector3 direction, IntensityFunctor func);
+        
+        int GetPhotons();
     };
 }
 

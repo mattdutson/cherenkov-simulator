@@ -21,15 +21,17 @@ namespace cherenkov_simulator
         
         FileOptions config;
         
-        void ViewPoint(Shower shower, RawData raw_data);
+        void ViewPoint(Shower shower, RawData* raw_data);
         
-        void CherenkovBlast(Shower shower, RawData raw_data);
+        void CherenkovBlast(Shower shower, RawData* raw_data);
         
         SignalData BinRawData(RawData raw_data);
         
-        void AddNoise(SignalData binned);
+        void AddNoise(SignalData* binned);
         
         SignalData CalculateResponse(SignalData count);
+        
+        TVector3 RandomStopImpact();
         
     public:
         
