@@ -12,11 +12,15 @@ namespace cherenkov_simulator
 {
     SignalData Simulator::SimulateShower(Shower shower)
     {
+        double time_delay = config.Get<double>("time_delay");
+        Plane ground_plane = Plane(config.Get<TVector3>("ground_normal"), config.Get<TVector3>("ground_point"));
+        int n_steps = (int) (shower.TimeToPlane(ground_plane) / time_delay) + 2;
+        
         RawData raw_data = RawData();
         
         for(int i = 0; i < n_steps; i++) {
             ViewPoint(shower, raw_data);
-            shower.IncrementPosition(timeDelay);
+            shower.IncrementPosition(time_delay);
         }
         
         CherenkovBlast(shower, raw_data);
@@ -25,7 +29,7 @@ namespace cherenkov_simulator
         
         AddNoise(binned);
         
-        SignalData voltage = CalculateResponse(raw_data);
+        SignalData voltage = CalculateResponse(binned);
         
         return voltage;
     }

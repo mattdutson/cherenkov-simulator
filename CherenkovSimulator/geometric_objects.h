@@ -39,6 +39,8 @@ namespace cherenkov_simulator
         
         Ray(double time, TVector3 position, TVector3 direction);
         
+        void IncrementPosition(double time);
+        
         double TimeToPlane(Plane p);
     };
 
