@@ -8,22 +8,51 @@
 #ifndef geometric_objects_h
 #define geometric_objects_h
 
+#include "TVector3.h"
+
 namespace cherenkov_simulator
 {
-
+    class Plane
+    {
+    private:
+        
+        TVector3 normal;
+        
+        double coefficient;
+        
+    public:
+        
+        Plane(TVector3 normal, TVector3 point);
+    };
+    
     class Ray
     {
+    protected:
         
+        double current_time;
+        
+        TVector3 current_position;
+        
+        TVector3 current_velocity;
+        
+    public:
+        
+        Ray(double time, TVector3 position, TVector3 direction);
+        
+        double TimeToPlane(Plane p);
     };
 
     class Shower: public Ray
     {
+    private:
         
-    };
-
-    class Plane
-    {
+        double start_time;
         
+        TVector3 start_position;
+        
+    public:
+        
+        Shower(double time, TVector3 position, TVector3 direction);
     };
 }
 

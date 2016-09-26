@@ -14,7 +14,6 @@
 
 namespace cherenkov_simulator
 {
-   
     class Simulator
     {
         
