@@ -20,7 +20,7 @@ namespace cherenkov_simulator
         
     private:
         
-        ConfigManager config;
+        FileOptions config;
         
     public:
         
