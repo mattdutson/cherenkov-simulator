@@ -7,6 +7,7 @@
 
 #include "data_containers.h"
 
-namespace cherenkov_simulator {
+namespace cherenkov_simulator
+{
     
 }

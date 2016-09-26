@@ -8,40 +8,63 @@
 #ifndef Common_h
 #define Common_h
 
-namespace cherenkov_simulator {
-    
-    class ConfigManager {
+namespace cherenkov_simulator
+{
+    class ConfigManager
+    {
         
-    private:
+    protected:
         
-        boost::program_options::options_description command_line_;
+        boost::program_options::options_description allowed_options;
         
-        boost::program_options::options_description file_options_;
+        boost::program_options::variables_map option_map;
         
-        boost::program_options::variables_map option_map_;
+        ConfigManager(std::string name);
         
     public:
         
-        ConfigManager();
-        
-        void ParseCommandLine(int argc, const char* argv[]);
-        
-        void ParseOptionsFile();
-        
-        void HelpMessage();
+        std::string HelpMessage();
         
         template <typename Type>
-        Type Get(std::string path) {
-            try {
-                return option_map_[path].as<Type>();
+        Type Contains(std::string path)
+        {
+            return option_map.count(path) > 0;
+        }
+        
+        template <typename Type>
+        Type Get(std::string path)
+        {
+            try
+            {
+                return option_map[path].as<Type>();
             }
-            catch (...) {
+            catch (...)
+            {
                 throw std::exception();
             }
         }
     };
-
-    extern ConfigManager globalConfig;
+    
+    class CommandOptions: public ConfigManager
+    {
+        
+    public:
+        
+        CommandOptions();
+        
+        void ParseCommand(int argc, const char** argv);
+        
+    };
+    
+    class FileOptions: public ConfigManager
+    {
+        
+    public:
+        
+        FileOptions();
+        
+        void ParseFile(std::string filename);
+    };
 }
 
 

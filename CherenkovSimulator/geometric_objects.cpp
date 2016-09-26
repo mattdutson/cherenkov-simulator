@@ -7,6 +7,7 @@
 
 #include "geometric_objects.h"
 
-namespace cherenkov_simulator {
+namespace cherenkov_simulator
+{
     
 }

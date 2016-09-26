@@ -8,17 +8,21 @@
 #ifndef geometric_objects_h
 #define geometric_objects_h
 
-namespace cherenkov_simulator {
+namespace cherenkov_simulator
+{
 
-    class Ray {
+    class Ray
+    {
         
     };
 
-    class Shower: public Ray {
+    class Shower: public Ray
+    {
         
     };
 
-    class Plane {
+    class Plane
+    {
         
     };
 }

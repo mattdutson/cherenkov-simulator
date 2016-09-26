@@ -86,11 +86,9 @@
 		34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = geometric_objects.cpp; sourceTree = "<group>"; };
 		34810FDF1D826B3B00F3F222 /* geometric_objects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = geometric_objects.h; sourceTree = "<group>"; };
 		34810FE31D826D9000F3F222 /* shower_simulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shower_simulator.cpp; sourceTree = "<group>"; };
-		34810FE41D826D9000F3F222 /* shower_simulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shower_simulator.h; sourceTree = "<group>"; };
+		34810FE41D826D9000F3F222 /* simulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = simulator.h; sourceTree = "<group>"; };
 		34810FE61D826E9D00F3F222 /* reconstruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reconstruction.cpp; sourceTree = "<group>"; };
-		34810FE71D826E9D00F3F222 /* reconstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reconstruction.h; sourceTree = "<group>"; };
 		34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = accuracy_estimator.cpp; sourceTree = "<group>"; };
-		34810FEA1D826FFC00F3F222 /* accuracy_estimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = accuracy_estimator.h; sourceTree = "<group>"; };
 		34CA570D1D81DB55003EF1EC /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		34CA570F1D81DF2A003EF1EC /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
 		34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TPixelData.cpp; sourceTree = "<group>"; };
@@ -137,11 +135,9 @@
 				34810FDB1D826B1300F3F222 /* data_containers.cpp */,
 				34810FDF1D826B3B00F3F222 /* geometric_objects.h */,
 				34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */,
-				34810FE41D826D9000F3F222 /* shower_simulator.h */,
+				34810FE41D826D9000F3F222 /* simulator.h */,
 				34810FE31D826D9000F3F222 /* shower_simulator.cpp */,
-				34810FE71D826E9D00F3F222 /* reconstruction.h */,
 				34810FE61D826E9D00F3F222 /* reconstruction.cpp */,
-				34810FEA1D826FFC00F3F222 /* accuracy_estimator.h */,
 				34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */,
 				34CA570F1D81DF2A003EF1EC /* config.txt */,
 				34810FE11D826B6600F3F222 /* DataContainersOld */,

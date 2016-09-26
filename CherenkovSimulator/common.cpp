@@ -10,38 +10,37 @@
 using namespace boost::program_options;
 using namespace std;
 
-namespace cherenkov_simulator {
+namespace cherenkov_simulator
+{
     
-    ConfigManager::ConfigManager(): command_line_("Command Line Options"), file_options_("Configuration File Options") {
-        command_line_.add_options()
+    ConfigManager::ConfigManager(std::string name): allowed_options(name) {}
+
+    std::string ConfigManager::HelpMessage()
+    {
+        stringstream output;
+        output << allowed_options;
+        return output.str();
+    }
+    
+    CommandOptions::CommandOptions(): ConfigManager("Command line options") {
+        allowed_options.add_options()
         ("config_file", value<std::string>()->default_value("config.txt"), "The path to the configuration file")
         ("help", "Show help message");
-        
-        file_options_.add_options()
-        ("mirror_radius", value<double>(), "The radius of curvature of the telescope mirror");
-        
-        options_description sharedOptions;
-        sharedOptions.add_options()
-        ("test", value<std::string>(), "The test to be performed");
-        file_options_.add(sharedOptions);
-        command_line_.add(sharedOptions);
     }
-
-    void ConfigManager::ParseCommandLine(int argc, const char* argv[]) {
-        store(parse_command_line(argc, argv, command_line_), option_map_);
-        notify(option_map_);
+    
+    void CommandOptions::ParseCommand(int argc, const char **argv) {
+        store(parse_command_line(argc, argv, allowed_options), option_map);
     }
-
-    void ConfigManager::ParseOptionsFile() {
-        string filename = Get<string>("config_file");
+    
+    FileOptions::FileOptions(): ConfigManager("File options") {
+        allowed_options.add_options()
+        ("mirror_radius", value<double>()->required(), "The radius of curvature of the telescope mirror");
+        notify(option_map);
+    }
+    
+    void FileOptions::ParseFile(std::string filename) {
         ifstream file(filename.c_str());
-        store(parse_config_file(file, file_options_), option_map_);
-        notify(option_map_);
+        store(parse_config_file(file, allowed_options), option_map);
+        notify(option_map);
     }
-
-    void ConfigManager::HelpMessage() {
-        cout << command_line_ << endl;
-    }
-        
-    ConfigManager globalConfig;
 }

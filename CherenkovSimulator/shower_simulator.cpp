@@ -5,8 +5,9 @@
 //
 //
 
-#include "shower_simulator.h"
+#include "simulator.h"
 
-namespace cherenkov_simulator {
+namespace cherenkov_simulator
+{
     
 }

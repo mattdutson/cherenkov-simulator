@@ -5,8 +5,9 @@
 //
 //
 
-#include "accuracy_estimator.h"
+#include "simulator.h"
 
-namespace cherenkov_simulator {
+namespace cherenkov_simulator
+{
     
 }

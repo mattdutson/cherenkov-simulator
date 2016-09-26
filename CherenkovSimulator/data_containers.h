@@ -8,13 +8,15 @@
 #ifndef data_containers_h
 #define data_containers_h
 
-namespace cherenkov_simulator {
-
-    class RawData {
+namespace cherenkov_simulator
+{
+    class RawData
+    {
         
     };
 
-    class SignalData {
+    class SignalData
+    {
         
     };
 }
