@@ -25,6 +25,10 @@ namespace cherenkov_simulator
     public:
         
         SignalData SimulateShower(Shower shower);
+        
+        Shower ReconstructShower(SignalData dat);
+        
+        void EstimateAccuracy();
     };
 }
 
