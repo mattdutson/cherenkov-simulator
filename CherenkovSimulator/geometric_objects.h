@@ -57,6 +57,12 @@ namespace cherenkov_simulator
         TVector3 GetPosition();
         
         TVector3 GetVelocity();
+        
+        void Reflect(TVector3 normal);
+        
+        void Refract(TVector3 normal, double n1, double n2);
+        
+        void PropagateToPoint(TVector3 point);
     };
 
     class Shower: public Ray

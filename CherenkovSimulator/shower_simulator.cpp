@@ -34,27 +34,40 @@ namespace cherenkov_simulator
         return voltage;
     }
     
-    void ViewPoint(Shower shower, RawData* raw_data)
+    void Simulator::ViewPoint(Shower shower, RawData* raw_data)
     {
-        TVector3 impact = RandomStopImpact();
-        Ray observed = Ray(shower.GetTime(), shower.GetPosition(), impact - shower.GetPosition());
+        int total_photons = shower.GetPhotons();
+        double fraction_captured = FractionCaptured(shower);
+        int number_detected = (int) (total_photons * fraction_captured);
         
-        Int_t numberOfPhotons = NumberOfPhotonsViewed(shower);
-        for (Int_t i = 0; i < numberOfPhotons; i++) {
-            TVector3 mirrorImpact = fMirror.GetMirrorImpact();
-            TVector3 mirrorNormal = fMirror.GetMirrorNormal(mirrorImpact);
-            TVector3 transformedPosition = shower.GetPosition();
-            fCoordinates.PositionToObservatoryFrame(transformedPosition);
-            TPlane3 focalPlane = TPlane3(TVector3(0, 0, 1), TVector3(0, 0, -fMirror.Radius() + FocalLength()));
-            TRay detectedRay = TRay(shower.GetTime(), transformedPosition, mirrorImpact - transformedPosition);
-            detectedRay.PropagateToPlane(focalPlane);
-            if (CheckCollision(detectedRay.GetPosition())) {
-                continue;
-            }
-            detectedRay.PropagateToPoint(mirrorImpact);
-            detectedRay.ReflectFromPlane(TPlane3(mirrorNormal, mirrorImpact));
-            detectedRay.PropagateToPlane(focalPlane);
-            rawData.PushBack(detectedRay.GetPosition().X(), detectedRay.GetPosition().Y(), detectedRay.GetTime());
+        for (int i = 0; i < number_detected; i++) {
+            
+            TVector3 impact = RandomStopImpact();
+            Ray observed = Ray(shower.GetTime(), shower.GetPosition(), impact - shower.GetPosition());
+            observed.PropagateToPoint(impact);
+            
+            observed.Refract(OuterLensNormal(impact), 1, config.Get<double>("refraction_index"));
+            
+            TVector3 exit;
+            if (!LensExitPoint(observed, &exit)) continue;
+            observed.PropagateToPoint(exit);
+            
+            observed.Refract(InnerLensNormal(exit), config.Get<double>("refraction_index"), 1);
+            
+            TVector3 reflect_point;
+            if (!MirrorImpactPoint(observed, &reflect_point)) continue;
+            if (CameraImpact(exit, reflect_point)) continue;
+            observed.PropagateToPoint(reflect_point);
+            
+            observed.Reflect(MirrorNormal(reflect_point));
+            
+            TVector3 camera_impact;
+            if (!CameraImpactPoint(observed, &camera_impact)) continue;
+            observed.PropagateToPoint(camera_impact);
+            
+            TVector3 view_direction = GetViewDirection(camera_impact);
+            
+            raw_data->AddPoint(view_direction, observed.GetTime());
         }
     }
 }

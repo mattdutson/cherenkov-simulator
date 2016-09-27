@@ -33,6 +33,24 @@ namespace cherenkov_simulator
         
         TVector3 RandomStopImpact();
         
+        double FractionCaptured(Shower shower);
+        
+        TVector3 OuterLensNormal(TVector3 point);
+        
+        TVector3 InnerLensNormal(TVector3 point);
+        
+        TVector3 MirrorNormal(TVector3 point);
+        
+        bool LensExitPoint(Ray ray, TVector3* point);
+        
+        bool MirrorImpactPoint(Ray ray, TVector3* point);
+        
+        bool CameraImpactPoint(Ray ray, TVector3* point);
+        
+        TVector3 GetViewDirection(TVector3 impact_position);
+        
+        bool CameraImpact(TVector3 start, TVector3 end);
+        
     public:
         
         SignalData SimulateShower(Shower shower);

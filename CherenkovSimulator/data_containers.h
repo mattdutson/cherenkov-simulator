@@ -12,7 +12,15 @@ namespace cherenkov_simulator
 {
     class RawData
     {
+    private:
         
+        std::vector<TVector3> directions;
+        
+        std::vector<double> times;
+        
+    public:
+        
+        void AddPoint(TVector3 direction, double time);
     };
 
     class SignalData
