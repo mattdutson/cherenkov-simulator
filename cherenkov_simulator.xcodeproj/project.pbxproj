@@ -8,29 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		342DD5F91CB4E8DB000184BC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D71CB4E8DB000184BC /* main.cpp */; };
-		342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5D91CB4E8DB000184BC /* TAnalysis.cpp */; };
-		342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DD1CB4E8DB000184BC /* TCamera.cpp */; };
-		342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5DF1CB4E8DB000184BC /* TConstantIntensity.cpp */; };
-		342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E11CB4E8DB000184BC /* TCoordinates.cpp */; };
-		342DD5FF1CB4E8DB000184BC /* THistogramList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E31CB4E8DB000184BC /* THistogramList.cpp */; };
-		342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E51CB4E8DB000184BC /* TMirror.cpp */; };
-		342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E71CB4E8DB000184BC /* TObservatory.cpp */; };
-		342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5E91CB4E8DB000184BC /* TPlane3.cpp */; };
-		342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5EB1CB4E8DB000184BC /* TRawData.cpp */; };
-		342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5ED1CB4E8DB000184BC /* TRay.cpp */; };
-		342DD6051CB4E8DB000184BC /* TResponseFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5EF1CB4E8DB000184BC /* TResponseFunction.cpp */; };
-		342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F11CB4E8DB000184BC /* TSegmentedData.cpp */; };
-		342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F31CB4E8DB000184BC /* TShower.cpp */; };
-		342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F51CB4E8DB000184BC /* TSurroundings.cpp */; };
-		342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 342DD5F71CB4E8DB000184BC /* TUtility.cpp */; };
-		3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 345983881CBEACCF0001612D /* TPoissonDistribution.cpp */; };
 		34810FDD1D826B1300F3F222 /* data_containers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDB1D826B1300F3F222 /* data_containers.cpp */; };
 		34810FE01D826B3B00F3F222 /* geometric_objects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FDE1D826B3B00F3F222 /* geometric_objects.cpp */; };
 		34810FE51D826D9000F3F222 /* shower_simulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE31D826D9000F3F222 /* shower_simulator.cpp */; };
 		34810FE81D826E9D00F3F222 /* reconstruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE61D826E9D00F3F222 /* reconstruction.cpp */; };
 		34810FEB1D826FFC00F3F222 /* accuracy_estimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34810FE91D826FFC00F3F222 /* accuracy_estimator.cpp */; };
 		34CA570E1D81DB55003EF1EC /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA570D1D81DB55003EF1EC /* common.cpp */; };
-		34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34F2EECB1CB60FDF0003A939 /* TPixelData.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -246,7 +229,7 @@
 		342DD5C51CB4E813000184BC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Matthew Dutson";
 				TargetAttributes = {
 					342DD5CC1CB4E814000184BC = {
@@ -276,30 +259,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				342DD5FA1CB4E8DB000184BC /* TAnalysis.cpp in Sources */,
-				34810FEB1D826FFC00F3F222 /* accuracy_estimator.cpp in Sources */,
-				342DD5FC1CB4E8DB000184BC /* TCamera.cpp in Sources */,
-				342DD5FE1CB4E8DB000184BC /* TCoordinates.cpp in Sources */,
-				34CA570E1D81DB55003EF1EC /* common.cpp in Sources */,
-				342DD6031CB4E8DB000184BC /* TRawData.cpp in Sources */,
-				342DD6091CB4E8DB000184BC /* TUtility.cpp in Sources */,
-				342DD6001CB4E8DB000184BC /* TMirror.cpp in Sources */,
-				34F2EECD1CB60FDF0003A939 /* TPixelData.cpp in Sources */,
-				342DD6051CB4E8DB000184BC /* TResponseFunction.cpp in Sources */,
-				342DD6011CB4E8DB000184BC /* TObservatory.cpp in Sources */,
-				342DD5FD1CB4E8DB000184BC /* TConstantIntensity.cpp in Sources */,
-				342DD6081CB4E8DB000184BC /* TSurroundings.cpp in Sources */,
-				34810FE81D826E9D00F3F222 /* reconstruction.cpp in Sources */,
-				34810FE51D826D9000F3F222 /* shower_simulator.cpp in Sources */,
-				342DD6071CB4E8DB000184BC /* TShower.cpp in Sources */,
 				342DD5F91CB4E8DB000184BC /* main.cpp in Sources */,
-				342DD6041CB4E8DB000184BC /* TRay.cpp in Sources */,
+				34CA570E1D81DB55003EF1EC /* common.cpp in Sources */,
 				34810FDD1D826B1300F3F222 /* data_containers.cpp in Sources */,
-				3459838A1CBEACCF0001612D /* TPoissonDistribution.cpp in Sources */,
-				342DD6061CB4E8DB000184BC /* TSegmentedData.cpp in Sources */,
 				34810FE01D826B3B00F3F222 /* geometric_objects.cpp in Sources */,
-				342DD5FF1CB4E8DB000184BC /* THistogramList.cpp in Sources */,
-				342DD6021CB4E8DB000184BC /* TPlane3.cpp in Sources */,
+				34810FE51D826D9000F3F222 /* shower_simulator.cpp in Sources */,
+				34810FE81D826E9D00F3F222 /* reconstruction.cpp in Sources */,
+				34810FEB1D826FFC00F3F222 /* accuracy_estimator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,8 +286,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -364,8 +332,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -393,39 +363,16 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CherenkovSimulator/prefix.pch;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/root/include/root,
-					/usr/local/boost_1_61_0,
+					/usr/local/root/include,
+					/usr/local/boost,
+					/usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-pthread",
-					"-stdlib=libc++",
-					"-std=c++11",
-					"-m64",
-					"-I/usr/local/root/include/root",
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/root/lib,
+					/usr/local/lib,
 				);
-				OTHER_LDFLAGS = (
-					"-L/usr/local/root/lib",
-					"-lCore",
-					"-lRIO",
-					"-lNet",
-					"-lHist",
-					"-lGraf",
-					"-lGraf3d",
-					"-lGpad",
-					"-lTree",
-					"-lRint",
-					"-lPostscript",
-					"-lMatrix",
-					"-lPhysics",
-					"-lMathCore",
-					"-lThread",
-					"-lpthread",
-					"-stdlib=libc++",
-					"-lm",
-					"-ldl",
-				);
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = cherenkov_simulator;
 			};
 			name = Debug;
@@ -436,39 +383,16 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CherenkovSimulator/prefix.pch;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/root/include/root,
-					/usr/local/boost_1_61_0,
+					/usr/local/root/include,
+					/usr/local/boost,
+					/usr/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/root/lib;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-pthread",
-					"-stdlib=libc++",
-					"-std=c++11",
-					"-m64",
-					"-I/usr/local/root/include/root",
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/root/lib,
+					/usr/local/lib,
 				);
-				OTHER_LDFLAGS = (
-					"-L/usr/local/root/lib",
-					"-lCore",
-					"-lRIO",
-					"-lNet",
-					"-lHist",
-					"-lGraf",
-					"-lGraf3d",
-					"-lGpad",
-					"-lTree",
-					"-lRint",
-					"-lPostscript",
-					"-lMatrix",
-					"-lPhysics",
-					"-lMathCore",
-					"-lThread",
-					"-lpthread",
-					"-stdlib=libc++",
-					"-lm",
-					"-ldl",
-				);
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = cherenkov_simulator;
 			};
 			name = Release;

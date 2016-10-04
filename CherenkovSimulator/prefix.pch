@@ -19,4 +19,6 @@
 
 #include <TVector3.h>
 
+#include <fftw3.h>
+
 #endif
