@@ -18,7 +18,8 @@
 namespace cherenkov_simulator
 {
     constexpr double light_speed = 3e8;
-    
+
+    // A template for a class containing the simulator configuration.
     class ConfigManager
     {
         
