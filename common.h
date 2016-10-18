@@ -54,7 +54,8 @@ namespace cherenkov_simulator
             }
         }
     };
-    
+
+    // A class containing options parsed from the command line.
     class CommandOptions: public ConfigManager
     {
         
