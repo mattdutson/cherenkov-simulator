@@ -8,22 +8,28 @@
 #ifndef data_containers_h
 #define data_containers_h
 
+#include "common.h"
+
 namespace cherenkov_simulator
 {
-    class RawData
+
+    class PhotonCount
     {
     private:
         
-        std::vector<TVector3> directions;
+        std::vector<std::vector<std::vector<int>>> photon_counts;
         
-        std::vector<double> times;
+        FileOptions config;
         
     public:
         
-        void AddPoint(TVector3 direction, double time);
+        PhotonCount(FileOptions config);
+        
+        void AddPhoton(double time, int x_index, int y_index);
+        
     };
-
-    class SignalData
+    
+    class VoltageSignal
     {
         
     };

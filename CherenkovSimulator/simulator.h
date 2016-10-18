@@ -21,41 +21,41 @@ namespace cherenkov_simulator
         
         FileOptions config;
         
-        void ViewPoint(Shower shower, RawData* raw_data);
+        void ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count);
         
-        void CherenkovBlast(Shower shower, RawData* raw_data);
+        void ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount* photon_count);
         
-        SignalData BinRawData(RawData raw_data);
+        void SimulateOptics(Ray photon, PhotonCount* photon_count);
         
-        void AddNoise(SignalData* binned);
+        void AddNoise(PhotonCount* photon_count);
         
-        SignalData CalculateResponse(SignalData count);
+        VoltageSignal VoltageResponse(PhotonCount photon_count);
         
         TVector3 RandomStopImpact();
         
-        double FractionCaptured(Shower shower);
-        
-        TVector3 OuterLensNormal(TVector3 point);
-        
-        TVector3 InnerLensNormal(TVector3 point);
+        double FluorescenceFractionCaptured(Shower shower);
         
         TVector3 MirrorNormal(TVector3 point);
         
-        bool LensExitPoint(Ray ray, TVector3* point);
+        bool LensImpactPoint(Ray ray, TVector3* point);
         
         bool MirrorImpactPoint(Ray ray, TVector3* point);
         
         bool CameraImpactPoint(Ray ray, TVector3* point);
         
-        TVector3 GetViewDirection(TVector3 impact_position);
+        bool BlockedByCamera(TVector3 start, TVector3 end);
         
-        bool CameraImpact(TVector3 start, TVector3 end);
+        void DeflectFromLens(Ray* photon);
+        
+        bool ReflectFromGround(Ray* photon);
+        
+        void ImpactPointToCameraIndex(TVector3 impact, int* x_index, int* y_index);
         
     public:
         
-        SignalData SimulateShower(Shower shower);
+        VoltageSignal SimulateShower(Shower shower);
         
-        Shower ReconstructShower(SignalData dat);
+        Shower ReconstructShower(VoltageSignal dat);
         
         void EstimateAccuracy();
     };

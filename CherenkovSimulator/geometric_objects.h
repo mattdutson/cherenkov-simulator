@@ -60,9 +60,9 @@ namespace cherenkov_simulator
         
         void Reflect(TVector3 normal);
         
-        void Refract(TVector3 normal, double n1, double n2);
-        
         void PropagateToPoint(TVector3 point);
+        
+        void PropagateToPlane(Plane plane);
     };
 
     class Shower: public Ray
@@ -77,7 +77,11 @@ namespace cherenkov_simulator
         
         Shower(double time, TVector3 position, TVector3 direction, IntensityFunctor func);
         
-        int GetPhotons();
+        int NumberFluorescencePhotons();
+        
+        int NumberCherenkovPhotons();
+        
+        Ray GenerateCherenkovPhoton();
     };
 }
 
