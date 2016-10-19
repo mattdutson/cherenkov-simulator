@@ -31,13 +31,17 @@ namespace cherenkov_simulator
     {
     private:
         
-        TVector3 normal;
+        TVector3 normal_vector;
         
         double coefficient;
         
     public:
         
         Plane(TVector3 normal, TVector3 point);
+
+        TVector3 Normal();
+
+        double Coefficient();
     };
     
     class Ray
@@ -58,11 +62,13 @@ namespace cherenkov_simulator
         
         double TimeToPlane(Plane p);
         
-        double GetTime();
+        double Time();
         
-        TVector3 GetPosition();
+        TVector3 Position();
         
-        TVector3 GetVelocity();
+        TVector3 Velocity();
+
+        void SetDirection(TVector3 direction);
         
         void Reflect(TVector3 normal);
         
@@ -78,6 +84,8 @@ namespace cherenkov_simulator
         double start_time;
         
         TVector3 start_position;
+
+        IntensityFunctor intensity_functor;
         
     public:
         

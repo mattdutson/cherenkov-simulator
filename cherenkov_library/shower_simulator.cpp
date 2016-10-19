@@ -38,7 +38,7 @@ namespace cherenkov_simulator
         for (int i = 0; i < number_detected; i++)
         {
             TVector3 lens_impact = RandomStopImpact();
-            Ray photon = Ray(shower.GetTime(), shower.GetPosition(), lens_impact - shower.GetPosition());
+            Ray photon = Ray(shower.Time(), shower.Position(), lens_impact - shower.Position());
             photon.PropagateToPoint(lens_impact);
             
             SimulateOptics(photon, photon_count);
@@ -68,7 +68,7 @@ namespace cherenkov_simulator
         
         TVector3 reflect_point;
         if (!MirrorImpactPoint(photon, &reflect_point)) return;
-        if (BlockedByCamera(photon.GetPosition(), reflect_point)) return;
+        if (BlockedByCamera(photon.Position(), reflect_point)) return;
         photon.PropagateToPoint(reflect_point);
         photon.Reflect(MirrorNormal(reflect_point));
         
@@ -76,7 +76,7 @@ namespace cherenkov_simulator
         if (!CameraImpactPoint(photon, &camera_impact)) return;
         photon.PropagateToPoint(camera_impact);
         
-        photon_count->AddPoint(GetViewDirection(camera_impact), photon.GetTime());
+        photon_count->AddPoint(GetViewDirection(camera_impact), photon.Time());
     }
 
     void Simulator::AddNoise(PhotonCount *photon_count) {
