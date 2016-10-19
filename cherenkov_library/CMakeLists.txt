@@ -19,7 +19,6 @@ add_library(cherenkov_library STATIC ${SOURCE_FILES})
 
 # Link to the Boost package
 list(APPEND CMAKE_PREFIX_PATH /usr/local/boost)
-set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS program_options REQUIRED)
 target_link_libraries(cherenkov_library ${Boost_LIBRARIES})
 include_directories(${Boost_INCLUDE_DIR})
