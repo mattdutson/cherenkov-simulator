@@ -20,6 +20,12 @@ namespace cherenkov_simulator
         
         virtual double GetIntensity(Shower shower) = 0;
     };
+
+    class ConstantIntensity: public IntensityFunctor
+    {
+    public:
+        double GetIntensity(Shower shower);
+    };
     
     class Plane
     {

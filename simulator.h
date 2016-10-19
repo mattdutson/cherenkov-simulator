@@ -50,6 +50,8 @@ namespace cherenkov_simulator
         bool ReflectFromGround(Ray* photon);
         
         void ImpactPointToCameraIndex(TVector3 impact, int* x_index, int* y_index);
+
+        TVector3 GetViewDirection(TVector3 impact_point);
         
     public:
         

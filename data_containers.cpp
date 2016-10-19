@@ -9,5 +9,16 @@
 
 namespace cherenkov_simulator
 {
-    
+
+    PhotonCount::PhotonCount(FileOptions config) {
+
+    }
+
+    void PhotonCount::AddPhoton(double time, int x_index, int y_index) {
+
+    }
+
+    void PhotonCount::AddPoint(TVector3 direction, double time) {
+
+    }
 }

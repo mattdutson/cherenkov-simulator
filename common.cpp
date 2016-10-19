@@ -23,24 +23,24 @@ namespace cherenkov_simulator
     }
     
     CommandOptions::CommandOptions(): ConfigManager("Command line options") {
-        allowed_options.add_options()
-        ("config_file", value<std::string>()->default_value("config.txt"), "The path to the configuration file")
-        ("help", "Show help message");
+//        allowed_options.add_options()
+//        ("config_file", value<std::string>()->default_value("config.txt"), "The path to the configuration file")
+//        ("help", "Show help message");
     }
     
     void CommandOptions::ParseCommand(int argc, const char **argv) {
-        store(parse_command_line(argc, argv, allowed_options), option_map);
+//        store(parse_command_line(argc, argv, allowed_options), option_map);
     }
     
     FileOptions::FileOptions(): ConfigManager("File options") {
-        allowed_options.add_options()
-        ("mirror_radius", value<double>()->required(), "The radius of curvature of the telescope mirror");
-        notify(option_map);
+//        allowed_options.add_options()
+//        ("mirror_radius", value<double>()->required(), "The radius of curvature of the telescope mirror");
+//        notify(option_map);
     }
     
     void FileOptions::ParseFile(std::string filename) {
-        ifstream file(filename.c_str());
-        store(parse_config_file(file, allowed_options), option_map);
-        notify(option_map);
+//        ifstream file(filename.c_str());
+//        store(parse_config_file(file, allowed_options), option_map);
+//        notify(option_map);
     }
 }

@@ -78,4 +78,64 @@ namespace cherenkov_simulator
         
         photon_count->AddPoint(GetViewDirection(camera_impact), photon.GetTime());
     }
+
+    void Simulator::AddNoise(PhotonCount *photon_count) {
+
+    }
+
+    VoltageSignal Simulator::VoltageResponse(PhotonCount photon_count) {
+        return VoltageSignal();
+    }
+
+    TVector3 Simulator::RandomStopImpact() {
+        return TVector3();
+    }
+
+    double Simulator::FluorescenceFractionCaptured(Shower shower) {
+        return 0;
+    }
+
+    TVector3 Simulator::MirrorNormal(TVector3 point) {
+        return TVector3();
+    }
+
+    bool Simulator::LensImpactPoint(Ray ray, TVector3 *point) {
+        return false;
+    }
+
+    bool Simulator::MirrorImpactPoint(Ray ray, TVector3 *point) {
+        return false;
+    }
+
+    bool Simulator::CameraImpactPoint(Ray ray, TVector3 *point) {
+        return false;
+    }
+
+    bool Simulator::BlockedByCamera(TVector3 start, TVector3 end) {
+        return false;
+    }
+
+    void Simulator::DeflectFromLens(Ray *photon) {
+
+    }
+
+    bool Simulator::ReflectFromGround(Ray *photon) {
+        return false;
+    }
+
+    void Simulator::ImpactPointToCameraIndex(TVector3 impact, int *x_index, int *y_index) {
+
+    }
+
+    TVector3 Simulator::GetViewDirection(TVector3 impact_point) {
+        return TVector3();
+    }
+
+    Shower Simulator::ReconstructShower(VoltageSignal dat) {
+        return Shower(0, TVector3(), TVector3(), ConstantIntensity());
+    }
+
+    void Simulator::EstimateAccuracy() {
+
+    }
 }

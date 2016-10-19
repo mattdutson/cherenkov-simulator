@@ -9,6 +9,7 @@
 #define data_containers_h
 
 #include "common.h"
+#include "TVector3.h"
 
 namespace cherenkov_simulator
 {
@@ -26,6 +27,8 @@ namespace cherenkov_simulator
         PhotonCount(FileOptions config);
         
         void AddPhoton(double time, int x_index, int y_index);
+
+        void AddPoint(TVector3 direction, double time);
         
     };
     
