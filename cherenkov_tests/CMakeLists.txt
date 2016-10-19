@@ -7,7 +7,7 @@ add_executable(cherenkov_tests ${SOURCE_FILES})
 
 include_directories(cherenkov_library)
 
-add_subdirectory(google_test)
+add_subdirectory(gtest)
 
 target_link_libraries(cherenkov_tests cherenkov_library)
 target_link_libraries(cherenkov_tests gtest gtest_main)

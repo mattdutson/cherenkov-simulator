@@ -37,7 +37,7 @@ import re
 
 # Matches the line from 'svn info .' output that describes what SVN
 # path the current local directory corresponds to.  For example, in
-# a google_test SVN workspace's trunk/test directory, the output will be:
+# a gtest SVN workspace's trunk/test directory, the output will be:
 #
 # URL: https://googletest.googlecode.com/svn/trunk/test
 _SVN_INFO_URL_RE = re.compile(r'^URL: https://(\w+)\.googlecode\.com/svn(.*)')
@@ -58,7 +58,7 @@ def GetSvnInfo():
   for line in GetCommandOutput('svn info .'):
     m = _SVN_INFO_URL_RE.match(line)
     if m:
-      project = m.group(1)  # google_test or googlemock
+      project = m.group(1)  # gtest or googlemock
       rel_path = m.group(2)
       root = os.path.realpath(rel_path.count('/') * '../')
       return project, root
@@ -75,7 +75,7 @@ def GetSvnTrunk():
 
 def IsInGTestSvn():
   project, _ = GetSvnInfo()
-  return project == 'google_test'
+  return project == 'gtest'
 
 
 def IsInGMockSvn():

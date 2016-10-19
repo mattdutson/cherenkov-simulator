@@ -91,7 +91,7 @@ class WikiBrancher(object):
 
   def __init__(self, dot_version):
     self.project, svn_root_path = common.GetSvnInfo()
-    if self.project not in ('google_test', 'googlemock'):
+    if self.project not in ('gtest', 'googlemock'):
       sys.exit('This script must be run in a gtest or gmock SVN workspace.')
     self.wiki_dir = svn_root_path + '/wiki'
     # Turn '2.6' to 'V2_6_'.
@@ -117,7 +117,7 @@ class WikiBrancher(object):
   def GetFilesToBranch(self):
     """Returns a list of .wiki file names that need to be branched."""
 
-    unversioned_wikis = (GTEST_UNVERSIONED_WIKIS if self.project == 'google_test'
+    unversioned_wikis = (GTEST_UNVERSIONED_WIKIS if self.project == 'gtest'
                          else GMOCK_UNVERSIONED_WIKIS)
     return [f for f in os.listdir(self.wiki_dir)
             if (f.endswith('.wiki') and
