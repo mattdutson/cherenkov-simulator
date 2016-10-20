@@ -69,7 +69,7 @@ namespace cherenkov_simulator
     {
         TVector3 displacement = point - current_position;
         SetDirection(displacement);
-        double time = (displacement).Mag() / light_speed;
+        double time = displacement.Mag() / light_speed;
         IncrementPosition(time);
     }
 
@@ -79,7 +79,8 @@ namespace cherenkov_simulator
         IncrementPosition(time);
     }
 
-    Shower::Shower(double time, TVector3 position, TVector3 direction, IntensityFunctor func) : Ray(time, position, direction)
+    Shower::Shower(double time, TVector3 position, TVector3 direction, IntensityFunctor func) : Ray(time, position,
+                                                                                                    direction)
     {
         start_time = time;
         start_position = position;
