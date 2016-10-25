@@ -12,10 +12,18 @@ namespace cherenkov_simulator
 {
     VoltageSignal Simulator::SimulateShower(Shower shower)
     {
-        double time_delay = config.Get<double>("time_delay");
+        // Transform the shower to the detector frame.
+        shower.Transform(to_detector_frame);
+
+        // Construct the ground plane and transform it to the detector reference frame.
         Plane ground_plane = Plane(config.Get<TVector3>("ground_normal"), config.Get<TVector3>("ground_point"));
+        ground_plane.Transform(to_detector_frame);
+
+        // Determine the number of steps in the simulation of the shower
+        double time_delay = config.Get<double>("time_delay");
         int n_steps = (int) (shower.TimeToPlane(ground_plane) / time_delay) + 2;
-        
+
+        // Initialize the data container for photon counts.
         PhotonCount photon_count = PhotonCount(config);
         
         for(int i = 0; i < n_steps; i++) {

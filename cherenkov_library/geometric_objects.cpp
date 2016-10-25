@@ -104,9 +104,9 @@ namespace cherenkov_simulator
         return Ray(0, TVector3(), TVector3());
     }
 
-    Plane::Plane(TVector3 normal, TVector3 point)
+    Plane::Plane(TVector3 normal_vector, TVector3 point)
     {
-        normal_vector = normal.Unit();
+        normal = normal_vector.Unit();
         coefficient = normal.Dot(point);
     }
 }
