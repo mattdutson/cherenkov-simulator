@@ -23,13 +23,45 @@ namespace cherenkov_simulator
         FileOptions config;
         
     public:
+
+        class SignalIterator
+        {
+
+            friend class PhotonCount;
+
+        private:
+
+            int x_current;
+
+            int y_current;
+
+            std::vector<std::vector<bool>> nonempty_pixels;
+
+            SignalIterator();
+
+            SignalIterator(std::vector<std::vector<bool>> pixel_map);
+
+        public:
+
+            int X();
+
+            int Y();
+
+            bool Next();
+
+            void Reset();
+
+        };
         
         PhotonCount(FileOptions config);
         
         void AddPhoton(double time, int x_index, int y_index);
 
         void AddPoint(TVector3 direction, double time);
-        
+
+        TVector3 PixelDirection(int x_index, int y_index);
+
+        SignalIterator Iterator();
     };
     
     class VoltageSignal

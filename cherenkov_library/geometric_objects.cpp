@@ -5,7 +5,6 @@
 //
 //
 
-#include <ImageIO/ImageIO.h>
 #include "geometric_objects.h"
 #include "common.h"
 
