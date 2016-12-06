@@ -64,6 +64,8 @@ namespace cherenkov_simulator
         Shower ReconstructShower(VoltageSignal dat);
 
         void EstimateAccuracy();
+
+        Shower GenerateRandomShower();
     };
 }
 

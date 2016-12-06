@@ -7,9 +7,24 @@
 
 #include "simulator.h"
 #include "geometric_objects.h"
+#include "TF1.h"
 
 namespace cherenkov_simulator
 {
+    Shower Simulator::GenerateRandomShower()
+    {
+        // Determine the energy of the shower primary using a distribution proportional to E^-energy_power.
+        double min = config.Get("min_energy");
+        double max = config.Get("max_energy");
+        double power = config.Get("energy_power");
+        std::string formula = "x^(-" + std::to_string(power) + ")";
+        TF1 energy_profile = TF1("energy", formula.c_str(), min, max);
+        double energy = energy_profile.GetRandom();
+
+        // Determine the depth of the first interaction.
+        
+    }
+
     VoltageSignal Simulator::SimulateShower(Shower shower)
     {
         // Transform the shower to the detector frame.
