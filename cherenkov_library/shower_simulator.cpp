@@ -8,6 +8,9 @@
 #include "simulator.h"
 #include "geometric_objects.h"
 #include "TF1.h"
+#include "TMath.h"
+
+using namespace TMath;
 
 namespace cherenkov_simulator
 {
@@ -21,8 +24,55 @@ namespace cherenkov_simulator
         TF1 energy_profile = TF1("energy", formula.c_str(), min, max);
         double energy = energy_profile.GetRandom();
 
-        // Determine the depth of the first interaction.
-        
+        // Determine the direction of the shower and its position relative to the detector. The angle of the shower
+        // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
+        TF1 cosine_dist = TF1("cosine", "cos(x)", -TMath::Pi() / 2, TMath::Pi() / 2);
+        TF1 uniform_angle_dist = TF1("uniform_angle", "1", 0, 2 * TMath::Pi());
+        double theta = cosine_dist.GetRandom();
+        double phi_shower = uniform_angle_dist.GetRandom();
+        double phi_detector = uniform_angle_dist.GetRandom();
+
+        // Determine the impact parameter.
+        double r_min = config.Get("min_impact");
+        double r_max = config.Get("max_impact");
+        TF1 r_dist = TF1("r^2_dist", "x*x", r_min, r_max);
+        double impact_param = r_dist.GetRandom();
+
+        // Find the Cartesian shower axis vector. This vector is in the world frame (z is normal to the surface of the
+        // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
+        // local ground.
+        TVector3 shower_axis = TVector3(cos(theta), sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower));
+
+        // We define the origin of both the world and detector frames to be the detector's center of curvature for
+        // simplicity.
+
+        // We know that, at the impact point, the position vector of the shower is normal to its direction vector. Let's
+        // find a vector normal to the direction. Choose the one with a zero z-component (we'll randomly rotate it
+        // later). We solve dir_x * perp_x + dir_y * perp_y = 0.
+        // TODO: Make sure this actually works
+        TVector3 relative_direction;
+        if (shower_axis.Y() == 0)
+        {
+            relative_direction = TVector3(0, 1, 0);
+        } else
+        {
+            relative_direction = TVector3(1, shower_axis.X() / shower_axis.Y(), 0).Unit();
+        }
+        relative_direction.Rotate(phi_detector, shower_axis);
+
+        // Now we have a point and direction for the shower (in the world frame). We will now determine other shower
+        // parameters, assuming a proton primary.
+        // TODO: Add specific numerical values to the configuration file.
+
+        // Find the depth of the first interaction. See AbuZayyad 6.1
+        TF1 depth_dist = TF1("interact", "e^(-x/70)", 0, TMath::Infinity());
+        double first_interaction = depth_dist.GetRandom();
+
+        // Determine the depth of the shower maximum. See AbuZayyad 6.2
+        double x_max_diff = 725.0 + 55.0 * (Log(energy) - 18.0) - 70;
+
+        // Determine the size of the shower at the maximum. See AbuZayyad 6.4
+        double n_max = energy / (1.3e9);
     }
 
     VoltageSignal Simulator::SimulateShower(Shower shower)
