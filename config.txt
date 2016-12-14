@@ -2,3 +2,16 @@ mirror_radius = 4.0
 time_delay = 1e-8
 ground_normal = (0, 0, 1)
 ground_point = (0, 0, -40)
+
+[atmosphere]
+    # The scale height in cm
+    H = 799000
+
+    # The density of the atmosphere at sea level in g/cm^3
+    sea_level = 0.001225
+
+    # The elvation of the detector in cm (Delta)
+    detector_elevation = 141400
+
+[simulation]
+    n_steps = 1000

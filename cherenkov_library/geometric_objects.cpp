@@ -24,7 +24,7 @@ namespace cherenkov_simulator
         SetDirection(direction);
     }
 
-    void Ray::IncrementPosition(double time)
+    void Ray::IncrementTime(double time)
     {
         current_time += time;
         current_position += time * current_velocity;
@@ -69,21 +69,19 @@ namespace cherenkov_simulator
         TVector3 displacement = point - current_position;
         SetDirection(displacement);
         double time = displacement.Mag() / light_speed;
-        IncrementPosition(time);
+        IncrementTime(time);
     }
 
     void Ray::PropagateToPlane(Plane plane)
     {
         double time = TimeToPlane(plane);
-        IncrementPosition(time);
+        IncrementTime(time);
     }
 
-    Shower::Shower(double time, TVector3 position, TVector3 direction, IntensityFunctor func) : Ray(time, position,
-                                                                                                    direction)
+    Shower::Shower(double time, TVector3 position, TVector3 direction) : Ray(time, position, direction)
     {
         start_time = time;
         start_position = position;
-        intensity_functor = func;
     }
 
     // TODO: Implement this method

@@ -14,6 +14,44 @@ using namespace TMath;
 
 namespace cherenkov_simulator
 {
+    VoltageSignal Simulator::SimulateShower(Shower shower)
+    {
+        // Transform the shower to the detector frame.
+        shower.Transform(to_detector_frame);
+
+        // Construct the ground plane and transform it to the detector reference frame.
+        Plane ground_plane = Plane(config.Get<TVector3>("ground_normal"), config.Get<TVector3>("ground_point"));
+        ground_plane.Transform(to_detector_frame);
+
+        // Determine the number of steps in the simulation of the shower
+//        double time_delay = config.Get<double>("time_delay");
+//        int n_steps = (int) (shower.TimeToPlane(ground_plane) / time_delay) + 2;
+
+        int n_steps = config.Get("simulation.n_steps");
+
+        // Initialize the data container for photon counts.
+        PhotonCount photon_count = PhotonCount(config);
+        
+        for(int i = 0; i < n_steps; i++) {
+            ViewFluorescencePhotons(shower, &photon_count);
+            ViewCherenkovPhotons(shower, ground_plane, &photon_count);
+            double distance = FindDistance(shower);
+            shower.IncrementPosition(distance);
+        }
+        
+        AddNoise(&photon_count);
+        
+        return VoltageResponse(photon_count);
+    }
+
+    double Simulator::FindDistance(Shower shower)
+    {
+        double total_depth = VerticalDepth(shower.ground_impact, shower.start_position);
+        double depth_step = total_depth / n_steps;
+        double vertical_distance = -H * Log(Exp(-shower.Position().Z() / H) + H * depth_step / rho0);
+        return vertical_distance / cos(shower.vertical_angle);
+    }
+
     Shower Simulator::GenerateRandomShower()
     {
         // Determine the energy of the shower primary using a distribution proportional to E^-energy_power.
@@ -59,6 +97,7 @@ namespace cherenkov_simulator
             relative_direction = TVector3(1, shower_axis.X() / shower_axis.Y(), 0).Unit();
         }
         relative_direction.Rotate(phi_detector, shower_axis);
+        TVector3 impact_point = impact_param * relative_direction;
 
         // Now we have a point and direction for the shower (in the world frame). We will now determine other shower
         // parameters, assuming a proton primary.
@@ -73,33 +112,27 @@ namespace cherenkov_simulator
 
         // Determine the size of the shower at the maximum. See AbuZayyad 6.4
         double n_max = energy / (1.3e9);
-    }
 
-    VoltageSignal Simulator::SimulateShower(Shower shower)
-    {
-        // Transform the shower to the detector frame.
-        shower.Transform(to_detector_frame);
+        // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
+        // the first interaction.
+        double H = config.Get("atmosphere.H");
+        double sea_density = config.Get("atmosphere.sea_level");
+        double elev = config.Get("atmosphere.detector_elevation");
 
-        // Construct the ground plane and transform it to the detector reference frame.
-        Plane ground_plane = Plane(config.Get<TVector3>("ground_normal"), config.Get<TVector3>("ground_point"));
-        ground_plane.Transform(to_detector_frame);
+        // See notes for derivation details.
+        double detector_density = sea_density * Exp(-elev / H);
 
-        // Determine the number of steps in the simulation of the shower
-        double time_delay = config.Get<double>("time_delay");
-        int n_steps = (int) (shower.TimeToPlane(ground_plane) / time_delay) + 2;
+        // Deal with the slant of the shower.
+        H = H * cos(theta);
 
-        // Initialize the data container for photon counts.
-        PhotonCount photon_count = PhotonCount(config);
-        
-        for(int i = 0; i < n_steps; i++) {
-            ViewFluorescencePhotons(shower, &photon_count);
-            ViewCherenkovPhotons(shower, ground_plane, &photon_count);
-            shower.IncrementPosition(time_delay);
-        }
-        
-        AddNoise(&photon_count);
-        
-        return VoltageResponse(photon_count);
+        // Now find the interaction height.
+        double interaction_height = -H * Log(first_interaction / (detector_density * H));
+
+        // Now we can solve for the position at the interaction height.
+        double param = (interaction_height - impact_point.Z()) / (shower_axis.Z());
+        TVector3 starting_position = impact_point + param * shower_axis;
+
+        return Shower();
     }
     
     void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count)
@@ -116,6 +149,36 @@ namespace cherenkov_simulator
             
             SimulateOptics(photon, photon_count);
         }
+    }
+
+    int Simulator::NumberFluorescencePhotons(Shower shower)
+    {
+        // Use the Gaisser-Hilles profile to find the number of electrons.
+        double x = SlantDepth(shower.Position(), shower.start_position);
+        double n_max = shower.n_max;
+        double x_max = shower.x_max;
+        double x_0 = shower.x_0;
+        double n = n_max * Power((x - x_0) / (x_max - x_0), (x_max - x_0) / lambda) * Exp((x_max - x) / lambda);
+        return (int) n * config.Get<double>("fluorescence_yield");
+    }
+
+    double Simulator::VerticalDepth(TVector3 point1, TVector3 point2)
+    {
+        if (point1.Z() > point2.Z())
+        {
+            // point1 should be the point with the smaller z-coordinate
+            TVector3 tmp = point1;
+            point1 = point2;
+            point2 = tmp;
+        }
+        return -rho0 / H * (Exp(-point2.Z() / H) - Exp(-point1.Z() / H));
+    }
+
+    double Simulator::SlantDepth(TVector3 point1, TVector3 point2)
+    {
+        TVector3 diff = point1 - point2;
+        double cosine = Abs(diff.Z() / diff.Mag());
+        return VerticalDepth(point1, point2) / cosine;
     }
     
     void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount* photon_count)

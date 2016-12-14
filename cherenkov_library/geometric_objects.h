@@ -32,21 +32,6 @@ namespace cherenkov_simulator
         Transformation Inverse();
     };
 
-    class Shower;
-
-    class IntensityFunctor
-    {
-    public:
-
-        virtual double GetIntensity(Shower shower) = 0;
-    };
-
-    class ConstantIntensity : public IntensityFunctor
-    {
-    public:
-        double GetIntensity(Shower shower);
-    };
-
     class Plane
     {
     private:
@@ -80,7 +65,9 @@ namespace cherenkov_simulator
 
         Ray(double time, TVector3 position, TVector3 direction);
 
-        void IncrementPosition(double time);
+        void IncrementTime(double time);
+
+        void IncrementPosition(double position);
 
         double TimeToPlane(Plane p);
 
@@ -103,17 +90,24 @@ namespace cherenkov_simulator
 
     class Shower : public Ray
     {
-    private:
+    public:
 
         double start_time;
 
         TVector3 start_position;
 
-        IntensityFunctor intensity_functor;
+        TVector3 ground_impact;
 
-    public:
+        double x_0;
 
-        Shower(double time, TVector3 position, TVector3 direction, IntensityFunctor func);
+        double x_max;
+
+        double n_max;
+
+        // The angle of the shower axis from the vertical direction.
+        double vertical_angle;
+
+        Shower(double time, TVector3 position, TVector3 direction, double n_max, double x_max_diff,);
 
         int NumberFluorescencePhotons();
 
