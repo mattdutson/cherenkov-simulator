@@ -9,29 +9,10 @@
 #define geometric_objects_h
 
 #include "TVector3.h"
+#include "TRotation.h"
 
 namespace cherenkov_simulator
 {
-    class Transformation
-    {
-
-    private:
-
-        bool invert;
-
-    public:
-
-        /*
-         * In the detector frame, the center of curvature is the origin. The axis of the telescope points in the +z
-         * direction and the +x axis is parallel to the ground. The coordinate system is right-handed.
-         */
-        void TransformPosition(TVector3* position);
-
-        void TransformDirection(TVector3* position);
-
-        Transformation Inverse();
-    };
-
     class Plane
     {
     private:
@@ -47,8 +28,6 @@ namespace cherenkov_simulator
         TVector3 Normal();
 
         double Coefficient();
-
-        void Transform(Transformation t);
     };
 
     class Ray
@@ -85,14 +64,12 @@ namespace cherenkov_simulator
 
         void PropagateToPlane(Plane plane);
 
-        void Transform(Transformation t);
+        void Transform(TRotation t);
     };
 
     class Shower : public Ray
     {
-    public:
-
-        double start_time;
+    private:
 
         TVector3 start_position;
 
@@ -104,18 +81,36 @@ namespace cherenkov_simulator
 
         double n_max;
 
-        // The angle of the shower axis from the vertical direction.
-        double vertical_angle;
+    public:
 
-        Shower(double time, TVector3 position, TVector3 direction, double n_max, double x_max_diff,);
+        Shower(TVector3 position, TVector3 direction, double x_0, double x_max, double n_max, double time = 0);
 
-        int NumberFluorescencePhotons();
+        void Transform(TRotation t);
 
-        int NumberCherenkovPhotons();
+        /*
+         * Returns the starting position of the shower.
+         */
+        TVector3 StartPosition();
 
-        Ray GenerateCherenkovPhoton();
+        /*
+         * Returns the impact point of the shower.
+         */
+        TVector3 GroundImpact();
 
-        void Transform(Transformation t);
+        /*
+         * Returns the slant depth of the first shower interaction.
+         */
+        double X0();
+
+        /*
+         * Returns the slant depth of the shower maximum.
+         */
+        double XMax();
+
+        /*
+         * Returns the number of electrons at the shower maximum.
+         */
+        double NMax();
     };
 }
 

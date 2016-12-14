@@ -12,6 +12,9 @@
 #include "geometric_objects.h"
 #include "common.h"
 #include "TF1.h"
+#include "Math/Transform3D.h"
+#include "TRandom3.h"
+#include "TRotation.h"
 
 namespace cherenkov_simulator
 {
@@ -21,29 +24,30 @@ namespace cherenkov_simulator
     private:
 
         // Simulation-life parameters
-        double min_energy;
-        double max_energy;
-        double energy_power;
-        double impact_param_min;
-        double impact_param_max;
         double H;
-        double rho0;
-        double detector_elevation;
+        double rho_0;
+        double theta_0;
         int n_steps;
+
+        // A general purpose random number generator
+        TRandom3 rng;
 
         double lambda;
 
-        // A function of atmosphere
+        // Various probability distributions
         TF1 energy_distribution;
-        TF1 atmosphere;
+        TF1 cosine_distribution;
+        TF1 impact_distrubition;
+        TF1 interact_distribution;
 
+        double stop_radius;
 
+        // A transformation which rotates us from the detector frame to the world frame.
+        TRotation rotate_to_world;
 
-        Transformation to_detector_frame;
-
-        Transformation to_world_frame;
-
-        FileOptions config;
+        // There are problems with the copy constructor of the FileOptions class (due to the boost library used), so we
+        // don't copy it and just use a pointer.
+        FileOptions* config;
 
         void ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count);
 
@@ -63,8 +67,6 @@ namespace cherenkov_simulator
 
         TVector3 RandomStopImpact();
 
-        double FluorescenceFractionCaptured(Shower shower);
-
         TVector3 MirrorNormal(TVector3 point);
 
         bool LensImpactPoint(Ray ray, TVector3* point);
@@ -83,7 +85,32 @@ namespace cherenkov_simulator
 
         TVector3 GetViewDirection(TVector3 impact_point);
 
+        /*
+         * Calculates the intensity of the shower using the Gaiser-Hilles profile.
+         */
+        double GaiserHilles(Shower shower);
+
+        /*
+         * Calculates the fraction of photons radiated at a certain point which would be captured by our detector. The
+         * point must be in the world reference frame (detector at origin with +z perpendicular to earth surface).
+         */
+        double PhotonFraction(TVector3 view_point);
+
+        /*
+         * Determines the total number of Fluorescence photons detected.
+         */
         int NumberFluorescencePhotons(Shower shower);
+
+        /*
+         * Determines the total number of Cherenkov photons detected.
+         */
+        int NumberCherenkovPhotons(Shower shower);
+
+        /*
+         * Creates a Cherenkov photon with a randomly-assigned direction (the direction follows a e^-theta/sin(theta)
+         * distribution.
+         */
+        Ray GenerateCherenkovPhoton(Shower shower);
 
         /*
          * Determines the slant depth between two points (g/cm^2), assuming an exponential atmosphere with parameters specified
@@ -97,6 +124,8 @@ namespace cherenkov_simulator
         double VerticalDepth(TVector3 point1, TVector3 point2);
 
     public:
+
+        Simulator(FileOptions* config);
 
         VoltageSignal SimulateShower(Shower shower);
 

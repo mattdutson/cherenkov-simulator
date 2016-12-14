@@ -15,6 +15,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "TVector3.h"
+#include "TMath.h"
+#include "TRandom3.h"
 
 namespace cherenkov_simulator
 {
@@ -77,6 +80,12 @@ namespace cherenkov_simulator
         
         void ParseFile(std::string filename);
     };
+
+    /*
+     * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
+     * returned.
+     */
+    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3 rng);
 }
 
 

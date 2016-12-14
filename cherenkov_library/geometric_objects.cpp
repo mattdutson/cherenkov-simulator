@@ -10,12 +10,6 @@
 
 namespace cherenkov_simulator
 {
-
-    double ConstantIntensity::GetIntensity(Shower shower)
-    {
-        return 0;
-    }
-
     Ray::Ray(double time, TVector3 position, TVector3 direction)
     {
         // TODO: Define behavior when the direction vector is zero
@@ -78,28 +72,38 @@ namespace cherenkov_simulator
         IncrementTime(time);
     }
 
-    Shower::Shower(double time, TVector3 position, TVector3 direction) : Ray(time, position, direction)
+    Shower::Shower(TVector3 position, TVector3 direction, double x_0, double x_max, double n_max, double time) : Ray(
+            time, position, direction)
     {
-        start_time = time;
         start_position = position;
+        this->x_0 = x_0;
+        this->x_max = x_max;
+        this->n_max = n_max;
     }
 
-    // TODO: Implement this method
-    int Shower::NumberFluorescencePhotons()
+    TVector3 Shower::StartPosition()
     {
-        return 0;
+        return start_position;
     }
 
-    // TODO: Implement this method
-    int Shower::NumberCherenkovPhotons()
+    TVector3 Shower::GroundImpact()
     {
-        return 0;
+        return ground_impact;
     }
 
-    // TODO: Implement this method
-    Ray Shower::GenerateCherenkovPhoton()
+    double Shower::X0()
     {
-        return Ray(0, TVector3(), TVector3());
+        return x_0;
+    }
+
+    double Shower::XMax()
+    {
+        return x_max;
+    }
+
+    double Shower::NMax()
+    {
+        return n_max;
     }
 
     Plane::Plane(TVector3 normal_vector, TVector3 point)

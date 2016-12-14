@@ -10,7 +10,8 @@
 namespace cherenkov_simulator
 {
 
-    PhotonCount::PhotonCount(FileOptions config) {
+    PhotonCount::PhotonCount(FileOptions* config)
+    {
 
     }
 

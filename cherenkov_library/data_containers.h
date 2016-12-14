@@ -19,8 +19,8 @@ namespace cherenkov_simulator
     private:
         
         std::vector<std::vector<std::vector<int>>> photon_counts;
-        
-        FileOptions config;
+
+        FileOptions* config;
         
     public:
 
@@ -52,8 +52,8 @@ namespace cherenkov_simulator
             void Reset();
 
         };
-        
-        PhotonCount(FileOptions config);
+
+        PhotonCount(FileOptions* config);
         
         void AddPhoton(double time, int x_index, int y_index);
 

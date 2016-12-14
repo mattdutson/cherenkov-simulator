@@ -43,4 +43,18 @@ namespace cherenkov_simulator
 //        store(parse_config_file(file, allowed_options), option_map);
 //        notify(option_map);
     }
+
+    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3 rng)
+    {
+        if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
+        {
+            return TVector3(1, 0, 0);
+        } else
+        {
+            TVector3 other_vec = vec + TVector3(1, 0, 0);
+            TVector3 normal = (vec.Cross(other_vec)).Unit();
+            normal.Rotate(rng.Uniform(2 * TMath::Pi()), vec);
+            return normal;
+        }
+    }
 }
