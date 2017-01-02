@@ -34,3 +34,6 @@ ground_point = (0, 0, -40)
 
     # The diameter of the photomultiplier array in cm
     cluster_size = 100
+
+    # The width/height of the photomultiplier grid in number of photomultipliers (even)
+    n_pmt_across = 200;

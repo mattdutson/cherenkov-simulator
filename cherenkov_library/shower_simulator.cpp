@@ -357,11 +357,31 @@ namespace cherenkov_simulator
     }
 
     void Simulator::ImpactPointToCameraIndex(TVector3 impact, int *x_index, int *y_index) {
+        TVector3 direction = GetViewDirection(impact);
 
+        // The angle of the yz projection with the z axis. See notes for details.
+        double elevation = ATan(direction.Y() / direction.Z());
+
+        // The angle of the xz projection with the z axis. See notes for details.
+        double azimuth = ATan(direction.X() / direction.Z());
+
+        // Arc length = angle * radius
+        double cluster_size = config->Get<double>("cluster_size");
+        double mirror_radius = config->Get<double>("mirror_radius");
+        double field_of_view = cluster_size / (mirror_radius / 2.0);
+
+        int n = config->Get<int>("n_pmt_across");
+
+        double y_bin_size = field_of_view / ((double) n);
+        *y_index = Floor(elevation / y_bin_size) + n + 1;
+
+        double x_bin_size = field_of_view / ((double) n * Cos(elevation));
+        *x_index = Floor(azimuth / x_bin_size) + n + 1;
     }
 
     TVector3 Simulator::GetViewDirection(TVector3 impact_point) {
-        return TVector3();
+        // TODO: Investigate the effect of the corrector plate on the outward view direction
+        return -impact_point.Unit();
     }
 
     Shower Simulator::ReconstructShower(VoltageSignal dat) {

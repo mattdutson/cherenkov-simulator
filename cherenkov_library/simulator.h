@@ -81,6 +81,9 @@ namespace cherenkov_simulator
 
         bool ReflectFromGround(Ray* photon);
 
+        /*
+         * Finds the x and y camera index given a 3-d impact location.
+         */
         void ImpactPointToCameraIndex(TVector3 impact, int* x_index, int* y_index);
 
         TVector3 GetViewDirection(TVector3 impact_point);
