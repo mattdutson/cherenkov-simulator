@@ -11,6 +11,7 @@
 #include "TMath.h"
 #include "TRandom3.h"
 #include "common.h"
+#include "Math/Polynomial.h"
 
 using namespace TMath;
 
@@ -88,7 +89,7 @@ namespace cherenkov_simulator
         // Determine the direction of the shower and its position relative to the detector. The angle of the shower
         // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
         double theta = cosine_distribution.GetRandom();
-        double phi_shower = rng.Uniform(2 * Pi());
+        double phi_shower = rng.Uniform(TwoPi());
 
         // Determine the impact parameter.
         double impact_param = impact_distrubition.GetRandom();
@@ -211,18 +212,23 @@ namespace cherenkov_simulator
     
     void Simulator::SimulateOptics(Ray photon, PhotonCount* photon_count)
     {
+        // Refract the ray over the corrector plate.
         DeflectFromLens(&photon);
-        
-        TVector3 reflect_point;
+
+        // Check whether the ray hit the back of the camera.
+        TVector3 reflect_point, camera_impact;
+        if (CameraImpactPoint(photon, &camera_impact)) return;
+
+        // Check whether the ray bounces off the mirror and then reflect it.
         if (!MirrorImpactPoint(photon, &reflect_point)) return;
-        if (BlockedByCamera(photon.Position(), reflect_point)) return;
         photon.PropagateToPoint(reflect_point);
         photon.Reflect(MirrorNormal(reflect_point));
-        
-        TVector3 camera_impact;
+
+        // Check whether and where the ray is detected by the cluster.
         if (!CameraImpactPoint(photon, &camera_impact)) return;
         photon.PropagateToPoint(camera_impact);
-        
+
+        // Record the detection position.
         photon_count->AddPoint(GetViewDirection(camera_impact), photon.Time());
     }
 
@@ -235,30 +241,114 @@ namespace cherenkov_simulator
     }
 
     TVector3 Simulator::RandomStopImpact() {
-        return TVector3();
+        double phi_rand = rng.Uniform(TwoPi());
+
+        // The probability that a random point on a circle will lie at radius r is proportional to r (area of slice is
+        // 2*pi*r*dr).
+        TF1 radius_distribution = TF1("stop_impact", "x", 0, config->Get<double>("camera.stop_size"));
+        double r_rand = radius_distribution.GetRandom();
+        return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
 
     TVector3 Simulator::MirrorNormal(TVector3 point) {
-        return TVector3();
+        // For a spherical mirror, the normal vector will always point straight back to the center of curvature (the
+        // origin in this case).
+        return -point;
     }
 
     bool Simulator::LensImpactPoint(Ray ray, TVector3 *point) {
         return false;
     }
 
-    bool Simulator::MirrorImpactPoint(Ray ray, TVector3 *point) {
-        return false;
+    bool Simulator::MirrorImpactPoint(Ray ray, TVector3* point)
+    {
+        // Find the point with the smallest z-component where the ray intersects with the mirror sphere
+        double radius = config->Get<double>("camera.mirror_radius");
+        BackOriginSphereImpact(ray, point, radius);
+
+        // Ensure that the ray actually hits the mirror
+        double mirror_size = config->Get("camera.mirror_size") / 2.0;
+        return WithinXYDisk(*point, mirror_size) && point->Z() < 0;
+    }
+
+    bool Simulator::BackOriginSphereImpact(Ray ray, TVector3* point, double radius)
+    {
+        // Solve for the time when the ray impacts a sphere centered at the origin. See notes for details.
+        double a = ray.Position().Dot(ray.Position()) - radius * radius;
+        double b = 2 * ray.Position().Dot(ray.Velocity());
+        double c = ray.Velocity().Dot(ray.Velocity());
+        ROOT::Math::Polynomial poly = ROOT::Math::Polynomial(a, b, c);
+        std::vector<double> roots = poly.FindRealRoots();
+        if (roots.size() == 0)
+        {
+            *point = TVector3(0, 0, 0);
+            return false;
+        }
+        double time;
+        if (roots.size() == 1)
+        {
+            time = roots[0];
+        } else
+        {
+            if (ray.Velocity().Z() < 0)
+            {
+                time = Max(roots[0], roots[1]);
+            } else
+            {
+                time = Min(roots[0], roots[1]);
+            }
+        }
+        *point = ray.Position() + time * ray.Velocity();
+        return true;
+    }
+
+    bool Simulator::WithinXYDisk(TVector3 vec, double radius)
+    {
+        double xy_radius = Sqrt(vec.X() * vec.X() + vec.Y() * vec.Y());
+        if (xy_radius < radius)
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 
     bool Simulator::CameraImpactPoint(Ray ray, TVector3 *point) {
-        return false;
-    }
+        double radius = config->Get<double>("camera.mirror_radius") / 2.0;
+        BackOriginSphereImpact(ray, point, radius);
 
-    bool Simulator::BlockedByCamera(TVector3 start, TVector3 end) {
-        return false;
+        double cluster_size = config->Get<double>("camera.cluster_size") / 2.0;
+        return WithinXYDisk(*point, cluster_size) && point->Z() < 0;
     }
 
     void Simulator::DeflectFromLens(Ray *photon) {
+        double stop_radius = config->Get<double>("stop_size");
+        TVector3 position = photon->Position();
+
+        // Only deflect the photon if it's on the portion of the lens where the s^4 term dominates.
+        double photon_axis_dist = Sqrt(position.X() * position.X() + position.Y() * position.Y());
+        if (photon_axis_dist < Sqrt2() * stop_radius)
+        {
+            return;
+        }
+
+        double refrac_corrector = config->Get<double>("optics.n_corrector");
+        double refrac_air = config->Get<double>("optics.n_air");
+        double r_curve = config->Get<double>("camera.mirror_radius");
+        double schmidt_coefficient = 1.0 / (4.0 * (refrac_corrector - 1) * Power(r_curve, 3));
+
+        // Now let's find a vector normal to the lens surface. Start with the derivative.
+        double deriv = 4 * schmidt_coefficient * Power(photon_axis_dist, 3);
+        double theta = ATan(1.0 / deriv);
+
+        double phi = position.Phi();
+
+        TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(phi));
+
+        photon->Refract(norm, refrac_air, refrac_corrector);
+
+        photon->Refract(TVector3(0, 0, 1), refrac_corrector, refrac_air);
 
     }
 

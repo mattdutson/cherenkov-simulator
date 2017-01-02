@@ -123,6 +123,18 @@ namespace cherenkov_simulator
          */
         double VerticalDepth(TVector3 point1, TVector3 point2);
 
+        /*
+         * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
+         * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
+         * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
+         */
+        bool BackOriginSphereImpact(Ray ray, TVector3* point, double radius);
+
+        /*
+         * Determines whether the xy projection of the vector lies within a disk centered at the origin.
+         */
+        bool WithinXYDisk(TVector3 vec, double radius);
+
     public:
 
         Simulator(FileOptions* config);

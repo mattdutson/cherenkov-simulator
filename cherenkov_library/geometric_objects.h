@@ -60,6 +60,11 @@ namespace cherenkov_simulator
 
         void Reflect(TVector3 normal);
 
+        /*
+         * Refracts the ray across the normal vector using the incident and outward indices of refraction specified.
+         */
+        void Refract(TVector3 normal, double n_in, double n_out);
+
         void PropagateToPoint(TVector3 point);
 
         void PropagateToPlane(Plane plane);

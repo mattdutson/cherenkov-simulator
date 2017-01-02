@@ -7,6 +7,9 @@
 
 #include "geometric_objects.h"
 #include "common.h"
+#include "TMath.h"
+
+using namespace TMath;
 
 namespace cherenkov_simulator
 {
@@ -56,6 +59,17 @@ namespace cherenkov_simulator
     void Ray::Reflect(TVector3 normal)
     {
         current_velocity -= 2 * current_velocity.Dot(normal) * normal;
+    }
+
+    void Ray::Refract(TVector3 normal, double n_in, double n_out)
+    {
+        TVector3 mutual_norm = normal.Cross(current_velocity).Unit();
+        double angle_in = current_velocity.Angle(normal);
+
+        // Now refract using Snell's Law.
+        double angle_out = ASin(n_in * Sin(angle_in) / n_out);
+
+        current_velocity.Rotate(angle_out - angle_in, mutual_norm);
     }
 
     void Ray::PropagateToPoint(TVector3 point)
