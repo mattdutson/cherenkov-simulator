@@ -47,6 +47,10 @@ namespace cherenkov_simulator
 
             int Y();
 
+            /*
+             * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
+             * collection (the last photomultiplier).
+             */
             bool Next();
 
             void Reset();
@@ -64,7 +68,15 @@ namespace cherenkov_simulator
 
         TVector3 PixelDirection(int x_index, int y_index);
 
+        /*
+         * Returns an object for iterating through the pixels.
+         */
         SignalIterator Iterator();
+
+        /*
+         * Sums all bins in the channel specified by the iterator.
+         */
+        double SumBins(SignalIterator iter);
     };
     
     class VoltageSignal

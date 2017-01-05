@@ -63,6 +63,7 @@ namespace cherenkov_simulator
 
     double Simulator::AtmosphereDelta(double height)
     {
+        // Assume that delta is proportional to the local atmospheric density.
         return delta_0 * Exp(-height / H);
     }
 

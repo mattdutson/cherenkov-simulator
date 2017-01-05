@@ -92,6 +92,11 @@ namespace cherenkov_simulator
          */
         void ImpactPointToCameraIndex(TVector3 impact, int* x_index, int* y_index);
 
+        /*
+         * Finds the direction of a photomultiplier given its x and y indices in the array.
+         */
+        TVector3 CameraIndexToViewDirection(int x_index, int y_index);
+
         TVector3 GetViewDirection(TVector3 impact_point);
 
         /*
@@ -157,29 +162,31 @@ namespace cherenkov_simulator
         /*
          * Calculates the effective ionization loss rate for a shower (alpha_eff).
          */
-        double Simulator::IonizationLossRate(Shower shower);
+        double IonizationLossRate(Shower shower);
 
         /*
          * Calculates the atmospheric density at some height above the origin (the location of the detector). The height
          * is NOT relative to sea level.
          */
-        double Simulator::AtmosphereDensity(double height);
+        double AtmosphereDensity(double height);
 
         /*
          * Calculates delta = n - 1 for the atmosphere at some height. This assumes that the quantity delta is
          * approximately proportional to the local atmospheric density.
          */
-        double Simulator::AtmosphereDelta(double height);
+        double AtmosphereDelta(double height);
 
         /*
          * Calculates the Cherenkov threshold energy at some height. Uses the AtmosphereDelta function.
          */
-        double Simulator::EThresh(double height);
+        double EThresh(double height);
 
         /*
          * Calculates the critical angle in the expression for the Cherenkov angular distribution.
          */
-        double Simulator::ThetaC(double height);
+        double ThetaC(double height);
+
+        TVector3 FitSDPlane(PhotonCount data);
 
     public:
 
