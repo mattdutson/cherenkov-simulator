@@ -61,9 +61,29 @@ ground_point = (0, 0, -40)
     # The mass of the electron in grams
     e_mass = 9.10938e-28
 
+    # The fine structure constant
+    fine_structure = 0.0072973525664
+
 [cherenkov]
     # The leading constant in the expression for theta_c in the Cherenkov angular distribution (see Stratton 4.17)
     k1 = 0.83
 
     # The constant in the exponent for theta_c in the Cherenkov angular distribution (see Stratton 4.17)
     k2 = -0.67
+
+    # The minimum wavelength of Cherenkov photons being considered
+    lambda_min = 300;
+
+    # The maximum wavelength of Cherenkov photons being considered
+    lambda_max = 400;
+
+    # Parameters in the expression for the electron energy spectrum (see Nerling Eq 18 - 21)
+    a11 = 6.42522
+    a12 = 1.53183
+    a21 = 168.168
+    a22 = 42.1368
+
+    # These parameters may need to be linearly interpolated (see Nerling Table 1)
+    k0 = 1.48071e-1
+    k1 = 6.22334
+    k2 = -5.89710e-1

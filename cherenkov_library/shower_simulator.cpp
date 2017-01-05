@@ -12,6 +12,7 @@
 #include "TRandom3.h"
 #include "common.h"
 #include "Math/Polynomial.h"
+#include <iostream>
 
 using namespace TMath;
 
@@ -181,10 +182,38 @@ namespace cherenkov_simulator
     int Simulator::NumberCherenkovPhotons(Shower shower)
     {
         // TODO: Use the Gaiser-Hilles profile and material from Nerling to determine the number of Cherenkov photons
-        int total_produced = 0;
+        double alpha = config->Get<double>("constants.fine_structure");
+        double lambda_1 = config->Get<double>("cherenkov.lambda_min");
+        double lambda_2 = config->Get<double>("cherenkov.lambda_max");
+        double mass_e = config->Get<double>("constants.e_mass");
+        double rho = AtmosphereDensity(shower.Position().Z());
 
-        // Determine the fraction captured.
-        return total_produced * PhotonFraction(shower.GroundImpact());
+        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
+        double k_out = 2 * Pi() * alpha / rho * (1 / lambda_1 - 1 / lambda_2);
+        double k_1 = k_out * 2 * AtmosphereDelta(shower.Position().Y());
+
+        // TODO: Make sure the value for C is in units of cm/s.
+        double k_2 = k_out * mass_e * mass_e * Power(C(), 4);
+
+        // Parameters in the electron energy distribution
+        double age = ShowerAge(shower);
+        double a1 = config->Get<double>("cherenkov.a11") - config->Get<double>("cherenkov.a12") * age;
+        double a2 = config->Get<double>("cherenkov.a21") - config->Get<double>("cherenkov.a22") * age;
+        double a0 = config->Get<double>("cherenkov.k0") *
+                    Exp(config->Get<double>("cherenkov.k1") * age + config->Get<double>("cherenkov.k2") * age * age);
+
+        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
+        // variable of integration is lnE.
+        std::stringstream func_string;
+        func_string << "(" << a0 << "* e^x / ((" << a1 << "+e^x)(" << a2 << "+e^x)^" << age << "))(" << k_1 << "-"
+                    << k_2 << "/e^x)";
+        double e_thresh = EThresh(shower.Position().Z());
+        TF1 func = TF1("integrand", func_string.str().c_str(), e_thresh, Infinity());
+        double integral = func.Integral(e_thresh, Infinity());
+
+        // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
+        // not a full sphere.
+        return GaiserHilles(shower) * integral * PhotonFraction(shower.GroundImpact()) * 2;
     }
 
     double Simulator::GaiserHilles(Shower shower)
