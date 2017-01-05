@@ -50,6 +50,34 @@ namespace cherenkov_simulator
         double sea_density = config->Get<double>("atmosphere.sea_level");
         double elev = config->Get<double>("atmosphere.detector_elevation");
         rho_0 = sea_density * Exp(-elev / H);
+
+        // 1 - the index of refraction at the detector
+        double delta_sea = 1.0 - config->Get<double>("optics.n_air");
+        delta_0 = delta_sea * Exp(-elev / H);
+    }
+
+    double Simulator::AtmosphereDensity(double height)
+    {
+        return rho_0 * Exp(-height / H);
+    }
+
+    double Simulator::AtmosphereDelta(double height)
+    {
+        return delta_0 * Exp(-height / H);
+    }
+
+    double Simulator::EThresh(double height)
+    {
+        double e_mass = config->Get<double>("constants.e_mass");
+        double delta = AtmosphereDelta(height);
+        return e_mass * C() * C() / Sqrt(2 * delta);
+    }
+
+    double Simulator::ThetaC(double height)
+    {
+        double k1 = config->Get<double>("cherenkov.k1");
+        double k2 = config->Get<double>("cherenkov.k2");
+        return k1 * Power(EThresh(height), k2);
     }
 
     VoltageSignal Simulator::SimulateShower(Shower shower)
@@ -135,10 +163,18 @@ namespace cherenkov_simulator
         }
     }
 
-    int Simulator::NumberFluorescencePhotons(Shower shower)
+    int Simulator::NumberFluorescencePhotons(Shower shower, double depth)
     {
-        return (int) GaiserHilles(shower) * config->Get<double>("fluorescence_yield") *
-               PhotonFraction(shower.Position());
+        int n_charged = GaiserHilles(shower);
+        double alpha_eff = IonizationLossRate(shower);
+        double yield = FluorescenceYield(shower);
+
+        // See Stratton Equation 4.2. The energy deposit rate for a single photon is alpha_eff, so the deposit rate for
+        // all photons is alpha_eff * N.
+        double total_produced = n_charged * alpha_eff * yield * depth;
+
+        // Find the fraction captured by the camera.
+        return total_produced * PhotonFraction(shower.Position());
     }
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
@@ -160,6 +196,29 @@ namespace cherenkov_simulator
         return n_max * Power((x - x_0) / (x_max - x_0), (x_max - x_0) / lambda) * Exp((x_max - x) / lambda);
     }
 
+    double Simulator::FluorescenceYield(Shower shower)
+    {
+        double fluorescence_yield;
+        return
+    }
+
+    double Simulator::ShowerAge(Shower shower)
+    {
+        double x = SlantDepth(shower.Position(), shower.StartPosition());
+        return 3.0 * x / (x + 2.0 * shower.XMax());
+    }
+
+    double Simulator::IonizationLossRate(Shower shower)
+    {
+        double s = ShowerAge(shower);
+        double c1 = config->Get<double>("ionization_loss.c1");
+        double c2 = config->Get<double>("ionization_loss.c2");
+        double c3 = config->Get<double>("ionization_loss.c3");
+        double c4 = config->Get<double>("ionization_loss.c4");
+        double c5 = config->Get<double>("ionization_loss.c5");
+        return c1 / Power(c2 + s, c3) + c4 + c5 * s;
+    }
+
     double Simulator::PhotonFraction(TVector3 view_point)
     {
         TVector3 detector_axis = rotate_to_world * TVector3(0, 0, 1);
@@ -174,6 +233,9 @@ namespace cherenkov_simulator
         TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), rng);
         std::string formula = "e^(-x/" + std::to_string(theta_0) + ")/sin(x)";
         TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
+        TVector3 direction = shower.Velocity().Unit();
+        direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
+        return Ray(shower.Time(), shower.Position(), direction);
     }
 
     double Simulator::VerticalDepth(TVector3 point1, TVector3 point2)

@@ -12,8 +12,11 @@ ground_point = (0, 0, -40)
     # The elevation of the detector in cm (Delta)
     detector_elevation = 141400
 
+    # The assumed constant temperature of the atmosphere in the exponential model (units of K)
+    temp = 273
+
 [optics]
-    # The index of refraction of the air near the camera (currently set to the value at STP).
+    # The index of refraction at sea level, decreases as the atmospheric density decreases
     n_air = 1.0029
 
     # The index of refraction of the corrector plate.
@@ -37,3 +40,30 @@ ground_point = (0, 0, -40)
 
     # The width/height of the photomultiplier grid in number of photomultipliers (even)
     n_pmt_across = 200;
+
+[fluorescence]
+    # Parameters in the expression for the fluorescence yield (see Kakimoto). A constants have units of m^2 * kg^-1. B
+    # constants have units of m^3 * kg^-1 * K^-1/2.
+    A1 = 89.0
+    A2 = 55.0
+    B1 = 1.85
+    B2 = 6.50
+
+[ionization_loss]
+    #Parameters in the expression for the effective ionization loss rate (unitless)
+    c1 = 3.90883
+    c2 = 1.05301
+    c3 = 9.91717
+    c4 = 2.41715
+    c5 = 0.13180
+
+[constants]
+    # The mass of the electron in grams
+    e_mass = 9.10938e-28
+
+[cherenkov]
+    # The leading constant in the expression for theta_c in the Cherenkov angular distribution (see Stratton 4.17)
+    k1 = 0.83
+
+    # The constant in the exponent for theta_c in the Cherenkov angular distribution (see Stratton 4.17)
+    k2 = -0.67

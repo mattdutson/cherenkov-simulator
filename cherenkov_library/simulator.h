@@ -23,10 +23,16 @@ namespace cherenkov_simulator
 
     private:
 
-        // Simulation-life parameters
+        // The atmospheric scale height
         double H;
+
+        // The density of air at the detector
         double rho_0;
-        double theta_0;
+
+        // 1 - the index of refraction at the detector
+        double delta_0;
+
+        // The number of steps to increment the shower
         int n_steps;
 
         // A general purpose random number generator
@@ -102,7 +108,7 @@ namespace cherenkov_simulator
         /*
          * Determines the total number of Fluorescence photons detected.
          */
-        int NumberFluorescencePhotons(Shower shower);
+        int NumberFluorescencePhotons(Shower shower, double depth);
 
         /*
          * Determines the total number of Cherenkov photons detected.
@@ -137,6 +143,43 @@ namespace cherenkov_simulator
          * Determines whether the xy projection of the vector lies within a disk centered at the origin.
          */
         bool WithinXYDisk(TVector3 vec, double radius);
+
+        /*
+         * Determines the local fluorescence yield of the shower.
+         */
+        double Simulator::FluorescenceYield(Shower shower);
+
+        /*
+         * Calculates the current age of the shower.
+         */
+        double ShowerAge(Shower shower);
+
+        /*
+         * Calculates the effective ionization loss rate for a shower (alpha_eff).
+         */
+        double Simulator::IonizationLossRate(Shower shower);
+
+        /*
+         * Calculates the atmospheric density at some height above the origin (the location of the detector). The height
+         * is NOT relative to sea level.
+         */
+        double Simulator::AtmosphereDensity(double height);
+
+        /*
+         * Calculates delta = n - 1 for the atmosphere at some height. This assumes that the quantity delta is
+         * approximately proportional to the local atmospheric density.
+         */
+        double Simulator::AtmosphereDelta(double height);
+
+        /*
+         * Calculates the Cherenkov threshold energy at some height. Uses the AtmosphereDelta function.
+         */
+        double Simulator::EThresh(double height);
+
+        /*
+         * Calculates the critical angle in the expression for the Cherenkov angular distribution.
+         */
+        double Simulator::ThetaC(double height);
 
     public:
 
