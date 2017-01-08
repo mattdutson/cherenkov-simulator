@@ -91,11 +91,6 @@ namespace cherenkov_simulator
          */
         double SumBins(SignalIterator iter);
     };
-    
-    class VoltageSignal
-    {
-        
-    };
 }
 
 #endif

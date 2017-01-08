@@ -53,7 +53,7 @@ namespace cherenkov_simulator
 
     void Ray::SetDirection(TVector3 direction)
     {
-        current_velocity = direction.Unit() * light_speed;
+        current_velocity = direction.Unit() * C();
     }
 
     void Ray::Reflect(TVector3 normal)
@@ -76,7 +76,7 @@ namespace cherenkov_simulator
     {
         TVector3 displacement = point - current_position;
         SetDirection(displacement);
-        double time = displacement.Mag() / light_speed;
+        double time = displacement.Mag() / C();
         IncrementTime(time);
     }
 
@@ -110,6 +110,18 @@ namespace cherenkov_simulator
         return x_0;
     }
 
+    double Shower::X()
+    {
+
+        TVector3 point1 = Position();
+        TVector3 point2 = StartPosition();
+        TVector3 diff = point2 - point1;
+        double cosine = Abs(diff.Z() / diff.Mag());
+        double vertical_depth =
+                -rho_0 / scale_height * (Exp(-point2.Z() / scale_height) - Exp(-point1.Z() / scale_height));
+        return vertical_depth / cosine;
+    }
+
     double Shower::XMax()
     {
         return x_max;
@@ -120,9 +132,23 @@ namespace cherenkov_simulator
         return n_max;
     }
 
+    double Shower::Age()
+    {
+        double x = X();
+        return 3.0 * x / (x + 2.0 * XMax());
+    }
+
     Plane::Plane(TVector3 normal_vector, TVector3 point)
     {
         normal = normal_vector.Unit();
         coefficient = normal.Dot(point);
+    }
+
+    // TODO: Implement this method
+    Shower::IncrementDepth(double depth)
+    {
+        double vertical_distance =
+                -scale_height * Log(Exp(-shower.Position().Z() / scale_height) + scale_height * depth_step / rho_0);
+        return vertical_distance / Abs(shower.Velocity().CosTheta());
     }
 }

@@ -10,6 +10,7 @@
 
 #include "TVector3.h"
 #include "TRotation.h"
+#include "TMath.h"
 
 namespace cherenkov_simulator
 {
@@ -22,6 +23,8 @@ namespace cherenkov_simulator
         double coefficient;
 
     public:
+
+        Plane();
 
         Plane(TVector3 normal, TVector3 point);
 
@@ -40,11 +43,13 @@ namespace cherenkov_simulator
 
         TVector3 current_velocity;
 
+        void IncrementTime(double time);
+
     public:
 
         Ray(double time, TVector3 position, TVector3 direction);
 
-        void IncrementTime(double time);
+
 
         void IncrementPosition(double position);
 
@@ -68,13 +73,18 @@ namespace cherenkov_simulator
         void PropagateToPoint(TVector3 point);
 
         void PropagateToPlane(Plane plane);
-
-        void Transform(TRotation t);
     };
 
     class Shower : public Ray
     {
     private:
+
+        using Ray::IncrementTime;
+        using Ray::IncrementPosition;
+        using Ray::SetDirection;
+        using Ray::Reflect;
+        using Ray::PropagateToPoint;
+        using Ray::PropagateToPlane;
 
         TVector3 start_position;
 
@@ -96,8 +106,6 @@ namespace cherenkov_simulator
 
         Shower(TVector3 position, TVector3 direction, double x_0, double x_max, double n_max, double time = 0);
 
-        void Transform(TRotation t);
-
         /*
          * Returns the starting position of the shower.
          */
@@ -114,6 +122,11 @@ namespace cherenkov_simulator
         double X0();
 
         /*
+         * Returns the current slant depth of the shower. Note that this will be NEGATIVE if the shower is moving up.
+         */
+        double X();
+
+        /*
          * Returns the slant depth of the shower maximum.
          */
         double XMax();
@@ -122,6 +135,13 @@ namespace cherenkov_simulator
          * Returns the number of electrons at the shower maximum.
          */
         double NMax();
+
+        /*
+         * Finds the age of the shower
+         */
+        double Age();
+
+        void IncrementDepth(double depth);
     };
 }
 

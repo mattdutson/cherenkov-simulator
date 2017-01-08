@@ -32,13 +32,6 @@ namespace cherenkov_simulator
         Plane ground_plane;
         TRotation rotate_to_world;
 
-        // Parameters used to generate random showers in the Monte Carlo simulation
-        TF1 energy_distribution;
-        TF1 cosine_distribution;
-        TF1 impact_distribution;
-        TF1 interact_distribution;
-        double n_max_ratio;
-
         // Parameters defining properties of the atmosphere
         double scale_height;
         double rho_0;
@@ -92,37 +85,20 @@ namespace cherenkov_simulator
          */
         double FindDistance(Shower shower);
 
+        /*
+         * Adds Poisson-distributed background noise to the signal.
+         */
         void AddNoise(PhotonCount* photon_count);
-
-        VoltageSignal VoltageResponse(PhotonCount photon_count);
 
         TVector3 RandomStopImpact();
 
         TVector3 MirrorNormal(TVector3 point);
 
-        bool LensImpactPoint(Ray ray, TVector3* point);
-
         bool MirrorImpactPoint(Ray ray, TVector3* point);
 
         bool CameraImpactPoint(Ray ray, TVector3* point);
 
-        bool BlockedByCamera(TVector3 start, TVector3 end);
-
         void DeflectFromLens(Ray* photon);
-
-        bool ReflectFromGround(Ray* photon);
-
-        /*
-         * Finds the x and y camera index given a 3-d impact location.
-         */
-        void ImpactPointToCameraIndex(TVector3 impact, int* x_index, int* y_index);
-
-        /*
-         * Finds the direction of a photomultiplier given its x and y indices in the array.
-         */
-        TVector3 CameraIndexToViewDirection(int x_index, int y_index);
-
-        TVector3 GetViewDirection(TVector3 impact_point);
 
         /*
          * Calculates the intensity of the shower using the Gaiser-Hilles profile.
@@ -152,17 +128,6 @@ namespace cherenkov_simulator
         Ray GenerateCherenkovPhoton(Shower shower);
 
         /*
-         * Determines the slant depth between two points (g/cm^2), assuming an exponential atmosphere with parameters specified
-         * in the configuration file.
-         */
-        double SlantDepth(TVector3 point1, TVector3 point2);
-
-        /*
-         * Determines the vertical depth beetween two points (g/cm^2), using the same assumptions as SlantDepth.
-         */
-        double VerticalDepth(TVector3 point1, TVector3 point2);
-
-        /*
          * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
          * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
          * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
@@ -178,11 +143,6 @@ namespace cherenkov_simulator
          * Determines the local fluorescence yield of the shower.
          */
         double FluorescenceYield(Shower shower);
-
-        /*
-         * Calculates the current age of the shower.
-         */
-        double ShowerAge(Shower shower);
 
         /*
          * Calculates the effective ionization loss rate for a shower (alpha_eff).
@@ -211,27 +171,15 @@ namespace cherenkov_simulator
          */
         double ThetaC(double height);
 
-        TVector3 FitSDPlane(PhotonCount data);
 
     public:
 
         /*
-         * The default constructor
-         */
-        Simulator();
-
-        /*
          * Parses the specified file to XML and attemts to extract parameters.
          */
-        void ParseFile(std::ifstream config_file);
+        void ParseFile(boost::property_tree::ptree config);
 
-        VoltageSignal SimulateShower(Shower shower);
-
-        Shower ReconstructShower(VoltageSignal dat);
-
-        void EstimateAccuracy();
-
-        Shower GenerateRandomShower();
+        PhotonCount SimulateShower(Shower shower);
     };
 }
 

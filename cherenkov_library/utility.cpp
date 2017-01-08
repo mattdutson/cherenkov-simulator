@@ -9,6 +9,7 @@
 
 using namespace boost::program_options;
 using namespace std;
+using boost::property_tree::ptree;
 
 namespace cherenkov_simulator
 {
@@ -36,6 +37,61 @@ namespace cherenkov_simulator
             TVector3 normal = (vec.Cross(other_vec)).Unit();
             normal.Rotate(rng.Uniform(2 * TMath::Pi()), vec);
             return normal;
+        }
+    }
+
+    ptree Utility::ParseXMLFile(string filename)
+    {
+        // Try opening the specified file
+        ifstream config_file = ifstream();
+        try
+        {
+            config_file.open(filename);
+        }
+        catch (...)
+        {
+            cout << "The file " << filename << " could not be opened. Check the path." << endl;
+            return -1;
+        }
+
+        // Try to construct the simulator using parameters in the configuration file
+        Simulator sim = Simulator();
+        try
+        {
+            sim.ParseFile(config_file);
+        }
+        catch (runtime_error e)
+        {
+            cout << e.what() << endl;
+            return -1;
+        }
+        catch (...)
+        {
+            cout << "An unknown exception occured." << endl;
+            return -1;
+        }
+
+        // Parse the file to XML.
+        ptree xml_file = ptree();
+        try
+        {
+            read_xml(config_file, xml_file);
+        }
+        catch (...)
+        {
+            throw std::runtime_error("There was a problem parsing the file to XML. Check for syntax errors.");
+        }
+
+        bool Utility::WithinXYDisk(TVector3 vec, double radius)
+        {
+            double xy_radius = Sqrt(vec.X() * vec.X() + vec.Y() * vec.Y());
+            if (xy_radius < radius)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
     }
 }

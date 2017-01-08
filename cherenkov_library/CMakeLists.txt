@@ -6,13 +6,15 @@ set(SOURCE_FILES
         monte_carlo.cpp
         utility.cpp
         utility.h
-    data_containers.cpp
-    data_containers.h
-    geometric_objects.cpp
-    geometric_objects.h
+        data_containers.cpp
+        data_containers.h
+        geometric_objects.cpp
+        geometric_objects.h
         reconstructor.cpp
         simulator.cpp
-        simulator.h reconstructor.h monte_carlo.h)
+        simulator.h
+        reconstructor.h
+        monte_carlo.h)
 add_library(cherenkov_library STATIC ${SOURCE_FILES})
 
 # Link to the Boost package

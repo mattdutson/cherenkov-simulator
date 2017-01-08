@@ -5,7 +5,7 @@
 //
 //
 
-#include "simulator.h"
+#include "reconstructor.h"
 #include "data_containers.h"
 #include "TMatrixD.h"
 #include "TMatrixDSymEigen.h"
@@ -13,7 +13,18 @@
 
 namespace cherenkov_simulator
 {
-    TVector3 Simulator::FitSDPlane(PhotonCount data)
+    void Reconstructor::ParseFile(std::ifstream config_file)
+    {
+        // Construct the ground plane in the world frame.
+        ground_plane = Plane(ToVector(config.get<string>("ground_normal")),
+                             ToVector(config.get<string>("ground_point")));
+
+        // The rotation from detector frame to world frame. The frames share the same x-axis.
+        rotate_to_world = TRotation();
+        rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
+    }
+
+    TVector3 Reconstructor::FitSDPlane(PhotonCount data)
     {
         // Compute the matrix specified in Stratton 3.4.
         // TODO: Check that a TMatrixDSym doesn't have unexpected behavior when setting elements individually.
