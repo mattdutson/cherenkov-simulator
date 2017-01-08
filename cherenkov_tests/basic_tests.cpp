@@ -4,7 +4,10 @@
 
 #include <gtest/gtest.h>
 
-TEST(basic_tests, test_eq)
+TEST(config_file, xml_behavior)
 {
+    std::string xml_file = "<configuration>/n<property>10</property>/n</configuration>";
+
     EXPECT_EQ(0, 1);
 }
+

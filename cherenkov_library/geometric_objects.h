@@ -86,6 +86,12 @@ namespace cherenkov_simulator
 
         double n_max;
 
+        // The density of the atmosphere at the origin
+        double rho_0;
+
+        // The atmospheric scale height
+        double scale_height;
+
     public:
 
         Shower(TVector3 position, TVector3 direction, double x_0, double x_max, double n_max, double time = 0);

@@ -4,7 +4,7 @@ ground_point = (0, 0, -40)
 
 [atmosphere]
     # The scale height in cm
-    H = 799000
+    scale_height = 799000
 
     # The density of the atmosphere at sea level in g/cm^3
     sea_level = 0.001225
@@ -61,7 +61,7 @@ ground_point = (0, 0, -40)
     # The mass of the electron in grams
     e_mass = 9.10938e-28
 
-    # The fine structure constant
+    # The fine structure constant (unitless)
     fine_structure = 0.0072973525664
 
 [cherenkov]
@@ -87,3 +87,10 @@ ground_point = (0, 0, -40)
     k0 = 1.48071e-1
     k1 = 6.22334
     k2 = -5.89710e-1
+
+[noise]
+    # The number of noise photons per square centimeter per solid angle per second above the horizon
+    noise_sky = 10;
+
+    # The number of noise photons per square centimeter per solid angle per second below the horizon
+    noise_ground = 0;

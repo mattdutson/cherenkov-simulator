@@ -6,93 +6,124 @@
 //
 
 #include "simulator.h"
-#include "geometric_objects.h"
-#include "TF1.h"
-#include "TMath.h"
-#include "TRandom3.h"
-#include "common.h"
 #include "Math/Polynomial.h"
-#include <iostream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 using namespace TMath;
+using std::string;
 
 namespace cherenkov_simulator
 {
-    Simulator::Simulator(FileOptions* file_config)
+    Simulator::Simulator() : ground_plane(TVector3(0, 0, 0), TVector3(0, 0, 0))
     {
-        // The overall program configuration
-        config = file_config;
+    }
+
+    void Simulator::ParseFile(std::ifstream config_file)
+    {
+        using namespace boost::property_tree;
+
+        // Parse the file to XML.
+        ptree xml_file = ptree();
+        try
+        {
+            read_xml(config_file, xml_file);
+        }
+        catch (...)
+        {
+            throw std::runtime_error("There was a problem parsing the file to XML. Check for syntax errors.");
+        }
+        ptree config = xml_file.get_child("configuration");
+
+        // Parameters related to the behavior of the simulation
+        {
+            depth_step = config.get<double>("depth_step");
+        }
+
+        // Parameters relating to the position and orientation of the detector relative to its surroundings
+        {
+            // Construct the ground plane in the world frame.
+            ground_plane = Plane(ToVector(config.get<string>("ground_normal")),
+                                 ToVector(config.get<string>("ground_point")));
+
+            // The rotation from detector frame to world frame. The frames share the same x-axis.
+            rotate_to_world = TRotation();
+            rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
+        }
+
+        // Parameters used to generate random showers in the Monte Carlo simulation
+        {
+            // The distribution of shower energies
+            std::string energy_formula = "x^(-" + std::to_string(config.get<double>("energy_pow")) + ")";
+            energy_distribution = TF1("energy", energy_formula.c_str(), config.get<double>("e_min"),
+                                      config.get<double>("e_max"));
+
+            // The distribution of shower vertical directions
+            cosine_distribution = TF1("cosine", "cos(x)", -TMath::Pi() / 2, TMath::Pi() / 2);
+
+            // The Monte Carlo distribution of impact parameters
+            impact_distribution = TF1("impact", "x", config.get<double>("impact_min"),
+                                      config.get<double>("impact_max"));
+
+            // The distribution of first interaction depths (See AbuZayyad 6.1)
+            std::string interaction_formula = "e^(-x/ " + std::to_string(config.get<double>("avg_interact")) + ")";
+            interact_distribution = TF1("interact", interaction_formula.c_str(), 0, TMath::Infinity());
+        }
+
+        // Parameters defining properties of the atmosphere
+        {
+            scale_height = config.get<double>("atmosphere.scale_height");
+            double rho_sea = config.get<double>("atmosphere.rho_sea");
+            double detect_elevation = config.get<double>("atmosphere.detect_elevation");
+            rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
+
+            // 1 - the index of refraction at the detector (proportional to atmospheric density)
+            double delta_sea = 1.0 - config.get<double>("optics.n_air");
+            delta_0 = delta_sea * Exp(-detect_elevation / scale_height);
+        }
+
+        // Physics constants
+        {
+            mass_e = config.get<double>("mass_e");
+            fine_struct = config.get<double>("fine_struct");
+        }
 
         // A general-purpose random number generator
         rng = TRandom3();
-
-        // The rotation from detector frame to world frame. The frames share the same x-axis.
-        rotate_to_world = TRotation();
-        rotate_to_world.RotateX(-PiOver2() + config->Get<double>("elevation_angle"));
-
-        // The distribution of shower energies
-        std::string energy_formula = "x^(-" + std::to_string(config->Get<double>("energy_power")) + ")";
-        energy_distribution = TF1("energy", energy_formula.c_str(), config->Get<double>("min_energy"),
-                                  config->Get<double>("max_energy"));
-
-        // The distribution of shower vertical directions
-        cosine_distribution = TF1("cosine", "cos(x)", -TMath::Pi() / 2, TMath::Pi() / 2);
-
-        // The Monte Carlo distribution of impact parameters
-        impact_distrubition = TF1("impact", "x^2", config->Get<double>("min_impact"),
-                                  config->Get<double>("max_impact"));
-
-        // The distribution of first interaction depths (See AbuZayyad 6.1)
-        std::string interaction_formula = "e^(-x/ " + std::to_string(config->Get<double>("mean_interaction")) + ")";
-        interact_distribution = TF1("interact", interaction_formula.c_str(), 0, TMath::Infinity());
-
-        // Atmospheric parameters (see notes)
-        H = config->Get<double>("atmosphere.H");
-        double sea_density = config->Get<double>("atmosphere.sea_level");
-        double elev = config->Get<double>("atmosphere.detector_elevation");
-        rho_0 = sea_density * Exp(-elev / H);
-
-        // 1 - the index of refraction at the detector
-        double delta_sea = 1.0 - config->Get<double>("optics.n_air");
-        delta_0 = delta_sea * Exp(-elev / H);
     }
 
     double Simulator::AtmosphereDensity(double height)
     {
-        return rho_0 * Exp(-height / H);
+        return rho_0 * Exp(-height / scale_height);
     }
 
     double Simulator::AtmosphereDelta(double height)
     {
         // Assume that delta is proportional to the local atmospheric density.
-        return delta_0 * Exp(-height / H);
+        return delta_0 * Exp(-height / scale_height);
     }
 
     double Simulator::EThresh(double height)
     {
-        double e_mass = config->Get<double>("constants.e_mass");
         double delta = AtmosphereDelta(height);
-        return e_mass * C() * C() / Sqrt(2 * delta);
+        return mass_e * C() * C() / Sqrt(2 * delta);
     }
 
     double Simulator::ThetaC(double height)
     {
-        double k1 = config->Get<double>("cherenkov.k1");
-        double k2 = config->Get<double>("cherenkov.k2");
-        return k1 * Power(EThresh(height), k2);
+        return ckv_k1 * Power(EThresh(height), ckv_k2);
     }
 
     VoltageSignal Simulator::SimulateShower(Shower shower)
     {
-        // Construct the ground plane in the world frame.
-        Plane ground_plane = Plane(config->Get<TVector3>("ground_normal"), config->Get<TVector3>("ground_point"));
-
-        // Initialize the data container for photon counts.
-        PhotonCount photon_count = PhotonCount(config);
+        // TODO: Change the initial time in the data container to a better value.
+        // Arc length = angle * radius
+        double pmt_angular_size = (cluster_size / (double) n_pmt_across) / (mirror_radius / 2.0);
+        PhotonCount photon_count = PhotonCount(n_pmt_across, shower.Time(), time_bin, pmt_angular_size);
 
         // Step the shower through its path.
-        int n_steps = config->Get<int>("simulation.n_steps");
-        for(int i = 0; i < n_steps; i++) {
+        while (shower.TimeToPlane(ground_plane) > 0)
+        {
             ViewFluorescencePhotons(shower, &photon_count);
             ViewCherenkovPhotons(shower, ground_plane, &photon_count);
             double distance = FindDistance(shower);
@@ -106,9 +137,8 @@ namespace cherenkov_simulator
 
     double Simulator::FindDistance(Shower shower)
     {
-        double total_depth = VerticalDepth(shower.GroundImpact(), shower.StartPosition());
-        double depth_step = total_depth / n_steps;
-        double vertical_distance = -H * Log(Exp(-shower.Position().Z() / H) + H * depth_step / rho_0);
+        double vertical_distance =
+                -scale_height * Log(Exp(-shower.Position().Z() / scale_height) + scale_height * depth_step / rho_0);
         return vertical_distance / Abs(shower.Velocity().CosTheta());
     }
 
@@ -122,7 +152,7 @@ namespace cherenkov_simulator
         double phi_shower = rng.Uniform(TwoPi());
 
         // Determine the impact parameter.
-        double impact_param = impact_distrubition.GetRandom();
+        double impact_param = impact_distribution.GetRandom();
 
         // Find the Cartesian shower axis vector. This vector is in the world frame (z is normal to the surface of the
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
@@ -139,11 +169,11 @@ namespace cherenkov_simulator
         // TODO: Add specific numerical values to the configuration file.
         double x_0 = interact_distribution.GetRandom();
         double x_max = 725.0 + 55.0 * (Log(energy) - 18.0) - 70 + x_0;
-        double n_max = energy / config->Get<double>("n_max_ratio");
+        double n_max = energy / n_max_ratio;
 
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
         // the first interaction.
-        double interaction_height = -H * cos(theta) * Log(x_0 / (rho_0 * H * cos(theta)));
+        double interaction_height = -scale_height * cos(theta) * Log(x_0 / (rho_0 * scale_height * cos(theta)));
         double param = (interaction_height - impact_point.Z()) / (shower_axis.Z());
         TVector3 starting_position = impact_point + param * shower_axis;
 
@@ -165,7 +195,7 @@ namespace cherenkov_simulator
         }
     }
 
-    int Simulator::NumberFluorescencePhotons(Shower shower, double depth)
+    int Simulator::NumberFluorescencePhotons(Shower shower)
     {
         int n_charged = GaiserHilles(shower);
         double alpha_eff = IonizationLossRate(shower);
@@ -173,7 +203,7 @@ namespace cherenkov_simulator
 
         // See Stratton Equation 4.2. The energy deposit rate for a single photon is alpha_eff, so the deposit rate for
         // all photons is alpha_eff * N.
-        double total_produced = n_charged * alpha_eff * yield * depth;
+        double total_produced = n_charged * alpha_eff * yield * depth_step;
 
         // Find the fraction captured by the camera.
         return total_produced * PhotonFraction(shower.Position());
@@ -181,26 +211,19 @@ namespace cherenkov_simulator
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
     {
-        // TODO: Use the Gaiser-Hilles profile and material from Nerling to determine the number of Cherenkov photons
-        double alpha = config->Get<double>("constants.fine_structure");
-        double lambda_1 = config->Get<double>("cherenkov.lambda_min");
-        double lambda_2 = config->Get<double>("cherenkov.lambda_max");
-        double mass_e = config->Get<double>("constants.e_mass");
-        double rho = AtmosphereDensity(shower.Position().Z());
-
         // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
-        double k_out = 2 * Pi() * alpha / rho * (1 / lambda_1 - 1 / lambda_2);
+        double rho = AtmosphereDensity(shower.Position().Z());
+        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
         double k_1 = k_out * 2 * AtmosphereDelta(shower.Position().Y());
 
         // TODO: Make sure the value for C is in units of cm/s.
-        double k_2 = k_out * mass_e * mass_e * Power(C(), 4);
+        double k_2 = k_out * Sq(mass_e) * Power(C(), 4);
 
         // Parameters in the electron energy distribution
         double age = ShowerAge(shower);
-        double a1 = config->Get<double>("cherenkov.a11") - config->Get<double>("cherenkov.a12") * age;
-        double a2 = config->Get<double>("cherenkov.a21") - config->Get<double>("cherenkov.a22") * age;
-        double a0 = config->Get<double>("cherenkov.k0") *
-                    Exp(config->Get<double>("cherenkov.k1") * age + config->Get<double>("cherenkov.k2") * age * age);
+        double a1 = fe_a11 - fe_a12 * age;
+        double a2 = fe_a21 - fe_a22 * age;
+        double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
 
         // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
         // variable of integration is lnE.
@@ -223,13 +246,13 @@ namespace cherenkov_simulator
         double n_max = shower.NMax();
         double x_max = shower.XMax();
         double x_0 = shower.X0();
-        return n_max * Power((x - x_0) / (x_max - x_0), (x_max - x_0) / lambda) * Exp((x_max - x) / lambda);
+        return n_max * Power((x - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda) * Exp((x_max - x) / gh_lambda);
     }
 
     double Simulator::FluorescenceYield(Shower shower)
     {
-        double fluorescence_yield;
-        return
+        // TODO: Implement fluorescence yield calculation
+        return 0.0;
     }
 
     double Simulator::ShowerAge(Shower shower)
@@ -241,12 +264,7 @@ namespace cherenkov_simulator
     double Simulator::IonizationLossRate(Shower shower)
     {
         double s = ShowerAge(shower);
-        double c1 = config->Get<double>("ionization_loss.c1");
-        double c2 = config->Get<double>("ionization_loss.c2");
-        double c3 = config->Get<double>("ionization_loss.c3");
-        double c4 = config->Get<double>("ionization_loss.c4");
-        double c5 = config->Get<double>("ionization_loss.c5");
-        return c1 / Power(c2 + s, c3) + c4 + c5 * s;
+        return ion_c1 / Power(ion_c2 + s, ion_c3) + ion_c4 + ion_c5 * s;
     }
 
     double Simulator::PhotonFraction(TVector3 view_point)
@@ -254,14 +272,14 @@ namespace cherenkov_simulator
         TVector3 detector_axis = rotate_to_world * TVector3(0, 0, 1);
         double angle = detector_axis.Angle(view_point);
         double distance = view_point.Mag();
-        double area_fraction = stop_radius * stop_radius / (4.0 * distance * distance);
+        double area_fraction = Sq(stop_size / 2.0) / (4.0 * Sq(distance));
         return area_fraction * cos(angle);
     }
 
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
     {
         TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), rng);
-        std::string formula = "e^(-x/" + std::to_string(theta_0) + ")/sin(x)";
+        std::string formula = "e^(-x/" + std::to_string(ThetaC(shower.Position().Z())) + ")/sin(x)";
         TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
         TVector3 direction = shower.Velocity().Unit();
         direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
@@ -277,7 +295,7 @@ namespace cherenkov_simulator
             point1 = point2;
             point2 = tmp;
         }
-        return -rho_0 / H * (Exp(-point2.Z() / H) - Exp(-point1.Z() / H));
+        return -rho_0 / scale_height * (Exp(-point2.Z() / scale_height) - Exp(-point1.Z() / scale_height));
     }
 
     double Simulator::SlantDepth(TVector3 point1, TVector3 point2)
@@ -321,11 +339,16 @@ namespace cherenkov_simulator
         photon.PropagateToPoint(camera_impact);
 
         // Record the detection position.
-        photon_count->AddPoint(GetViewDirection(camera_impact), photon.Time());
+        photon_count->AddPhoton(photon.Time(), camera_impact);
     }
 
-    void Simulator::AddNoise(PhotonCount *photon_count) {
-
+    void Simulator::AddNoise(PhotonCount* photon_count)
+    {
+        // TODO: Find expressions for these in terms of the detector field of view and the radius of curvature
+        double detector_area;
+        double detector_solid_angle;
+        double pmt_area;
+        double pmt_solid_angle;
     }
 
     VoltageSignal Simulator::VoltageResponse(PhotonCount photon_count) {
@@ -337,7 +360,7 @@ namespace cherenkov_simulator
 
         // The probability that a random point on a circle will lie at radius r is proportional to r (area of slice is
         // 2*pi*r*dr).
-        TF1 radius_distribution = TF1("stop_impact", "x", 0, config->Get<double>("camera.stop_size"));
+        TF1 radius_distribution = TF1("stop_impact", "x", 0, stop_size / 2.0);
         double r_rand = radius_distribution.GetRandom();
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
@@ -355,12 +378,10 @@ namespace cherenkov_simulator
     bool Simulator::MirrorImpactPoint(Ray ray, TVector3* point)
     {
         // Find the point with the smallest z-component where the ray intersects with the mirror sphere
-        double radius = config->Get<double>("camera.mirror_radius");
-        BackOriginSphereImpact(ray, point, radius);
+        BackOriginSphereImpact(ray, point, mirror_radius);
 
         // Ensure that the ray actually hits the mirror
-        double mirror_size = config->Get("camera.mirror_size") / 2.0;
-        return WithinXYDisk(*point, mirror_size) && point->Z() < 0;
+        return WithinXYDisk(*point, mirror_size / 2.0) && point->Z() < 0.0;
     }
 
     bool Simulator::BackOriginSphereImpact(Ray ray, TVector3* point, double radius)
@@ -407,28 +428,21 @@ namespace cherenkov_simulator
     }
 
     bool Simulator::CameraImpactPoint(Ray ray, TVector3 *point) {
-        double radius = config->Get<double>("camera.mirror_radius") / 2.0;
-        BackOriginSphereImpact(ray, point, radius);
-
-        double cluster_size = config->Get<double>("camera.cluster_size") / 2.0;
-        return WithinXYDisk(*point, cluster_size) && point->Z() < 0;
+        BackOriginSphereImpact(ray, point, mirror_radius);
+        return WithinXYDisk(*point, cluster_size / 2.0) && point->Z() < 0;
     }
 
     void Simulator::DeflectFromLens(Ray *photon) {
-        double stop_radius = config->Get<double>("stop_size");
         TVector3 position = photon->Position();
 
         // Only deflect the photon if it's on the portion of the lens where the s^4 term dominates.
         double photon_axis_dist = Sqrt(position.X() * position.X() + position.Y() * position.Y());
-        if (photon_axis_dist < Sqrt2() * stop_radius)
+        if (photon_axis_dist < Sqrt2() * stop_size / 2.0)
         {
             return;
         }
 
-        double refrac_corrector = config->Get<double>("optics.n_corrector");
-        double refrac_air = config->Get<double>("optics.n_air");
-        double r_curve = config->Get<double>("camera.mirror_radius");
-        double schmidt_coefficient = 1.0 / (4.0 * (refrac_corrector - 1) * Power(r_curve, 3));
+        double schmidt_coefficient = 1.0 / (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3));
 
         // Now let's find a vector normal to the lens surface. Start with the derivative.
         double deriv = 4 * schmidt_coefficient * Power(photon_axis_dist, 3);
@@ -438,9 +452,9 @@ namespace cherenkov_simulator
 
         TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(phi));
 
-        photon->Refract(norm, refrac_air, refrac_corrector);
+        photon->Refract(norm, delta_0 + 1, refrac_lens);
 
-        photon->Refract(TVector3(0, 0, 1), refrac_corrector, refrac_air);
+        photon->Refract(TVector3(0, 0, 1), refrac_lens, delta_0 + 1);
 
     }
 
@@ -448,27 +462,9 @@ namespace cherenkov_simulator
         return false;
     }
 
+    // TODO: Move this method to the photon count data container.
     void Simulator::ImpactPointToCameraIndex(TVector3 impact, int *x_index, int *y_index) {
-        TVector3 direction = GetViewDirection(impact);
 
-        // The angle of the yz projection with the z axis. See notes for details.
-        double elevation = ATan(direction.Y() / direction.Z());
-
-        // The angle of the xz projection with the z axis. See notes for details.
-        double azimuth = ATan(direction.X() / direction.Z());
-
-        // Arc length = angle * radius
-        double cluster_size = config->Get<double>("cluster_size");
-        double mirror_radius = config->Get<double>("mirror_radius");
-        double field_of_view = cluster_size / (mirror_radius / 2.0);
-
-        int n = config->Get<int>("n_pmt_across");
-
-        double y_bin_size = field_of_view / ((double) n);
-        *y_index = Floor(elevation / y_bin_size) + n + 1;
-
-        double x_bin_size = field_of_view / ((double) n * Cos(elevation));
-        *x_index = Floor(azimuth / x_bin_size) + n + 1;
     }
 
     TVector3 Simulator::GetViewDirection(TVector3 impact_point) {

@@ -1,20 +1,18 @@
 # Set general flags and define the project
-cmake_minimum_required(VERSION 3.6)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 project(cherenkov_library)
 
 # Define source files and add the main executable
 set(SOURCE_FILES
-    accuracy_estimator.cpp
-    common.cpp
-    common.h
+        monte_carlo.cpp
+        utility.cpp
+        utility.h
     data_containers.cpp
     data_containers.h
     geometric_objects.cpp
     geometric_objects.h
-    reconstruction.cpp
-    shower_simulator.cpp
-    simulator.h)
+        reconstructor.cpp
+        simulator.cpp
+        simulator.h reconstructor.h monte_carlo.h)
 add_library(cherenkov_library STATIC ${SOURCE_FILES})
 
 # Link to the Boost package

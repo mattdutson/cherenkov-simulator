@@ -6,7 +6,7 @@
 //
 
 #include "geometric_objects.h"
-#include "common.h"
+#include "utility.h"
 #include "TMath.h"
 
 using namespace TMath;

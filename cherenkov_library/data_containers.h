@@ -8,7 +8,7 @@
 #ifndef data_containers_h
 #define data_containers_h
 
-#include "common.h"
+#include "utility.h"
 #include "TVector3.h"
 
 namespace cherenkov_simulator
@@ -17,8 +17,19 @@ namespace cherenkov_simulator
     class PhotonCount
     {
     private:
-        
+
+        // TODO: Pass this container information about the relationship between pixel directions and indices.
+
         std::vector<std::vector<std::vector<int>>> photon_counts;
+
+        // The time at the beginning of the zeroth bin
+        double start_time;
+
+        // The size of time bins
+        double time_bin;
+
+        // The angle viewed by each photomultiplier
+        double pmt_angular_size;
 
         bool ValidPixel(int x_index, int y_index);
         
@@ -62,9 +73,11 @@ namespace cherenkov_simulator
          * series for a particular photomultiplier. The pixel_count parameter defines the width/height of the cluster in
          * number of pixels.
          */
-        PhotonCount(int pixel_count);
+        PhotonCount(int n_pmt_across, double start_time, double time_bin, double pmt_angular_size);
 
-        void AddPhoton(int time_slot, int x_index, int y_index);
+        void AddPhoton(double time, TVector3 direction);
+
+        void AddNoise(double noise_rate, SignalIterator current);
 
         TVector3 PixelDirection(int x_index, int y_index);
 

@@ -10,11 +10,12 @@
 
 #include "data_containers.h"
 #include "geometric_objects.h"
-#include "common.h"
+#include "utility.h"
 #include "TF1.h"
 #include "Math/Transform3D.h"
 #include "TRandom3.h"
 #include "TRotation.h"
+#include <istream>
 
 namespace cherenkov_simulator
 {
@@ -23,37 +24,61 @@ namespace cherenkov_simulator
 
     private:
 
-        // The atmospheric scale height
-        double H;
+        // Parameters related to the behavior of the simulation
+        double depth_step;
+        double time_bin;
 
-        // The density of air at the detector
+        // Parameters relating to the position and orientation of the detector relative to its surroundings
+        Plane ground_plane;
+        TRotation rotate_to_world;
+
+        // Parameters used to generate random showers in the Monte Carlo simulation
+        TF1 energy_distribution;
+        TF1 cosine_distribution;
+        TF1 impact_distribution;
+        TF1 interact_distribution;
+        double n_max_ratio;
+
+        // Parameters defining properties of the atmosphere
+        double scale_height;
         double rho_0;
-
-        // 1 - the index of refraction at the detector
         double delta_0;
 
-        // The number of steps to increment the shower
-        int n_steps;
+        // Parameters defining properties of the detector optics
+        double refrac_lens;
+        double mirror_radius;
+        double stop_size;
+        double mirror_size;
+        double cluster_size;
+        int n_pmt_across;
+
+        // Parameters in the GH profile
+        double gh_lambda;
+
+        // Parameters used when calculating the fluorescence yield
+        double fluor_a1, fluor_a2;
+        double fluor_b1, fluor_b2;
+
+        // Parameters used when calculating the effective ionization loss rate
+        double ion_c1, ion_c2, ion_c3, ion_c4, ion_c5;
+
+        // Parameters used when calculating theta_c in the Cherenkov angular distribution
+        double ckv_k1, ckv_k2;
+
+        // Parameters used when calculating the Cherenkov yield
+        double lambda_min, lambda_max;
+
+        // Parameters in the electron energy spectrum
+        double fe_a11, fe_a12;
+        double fe_a21, fe_a22;
+        double fe_k0, fe_k1, fe_k2;
+
+        // Physics constants
+        double mass_e;
+        double fine_struct;
 
         // A general purpose random number generator
         TRandom3 rng;
-
-        double lambda;
-
-        // Various probability distributions
-        TF1 energy_distribution;
-        TF1 cosine_distribution;
-        TF1 impact_distrubition;
-        TF1 interact_distribution;
-
-        double stop_radius;
-
-        // A transformation which rotates us from the detector frame to the world frame.
-        TRotation rotate_to_world;
-
-        // There are problems with the copy constructor of the FileOptions class (due to the boost library used), so we
-        // don't copy it and just use a pointer.
-        FileOptions* config;
 
         void ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count);
 
@@ -113,7 +138,7 @@ namespace cherenkov_simulator
         /*
          * Determines the total number of Fluorescence photons detected.
          */
-        int NumberFluorescencePhotons(Shower shower, double depth);
+        int NumberFluorescencePhotons(Shower shower);
 
         /*
          * Determines the total number of Cherenkov photons detected.
@@ -152,7 +177,7 @@ namespace cherenkov_simulator
         /*
          * Determines the local fluorescence yield of the shower.
          */
-        double Simulator::FluorescenceYield(Shower shower);
+        double FluorescenceYield(Shower shower);
 
         /*
          * Calculates the current age of the shower.
@@ -190,7 +215,15 @@ namespace cherenkov_simulator
 
     public:
 
-        Simulator(FileOptions* config);
+        /*
+         * The default constructor
+         */
+        Simulator();
+
+        /*
+         * Parses the specified file to XML and attemts to extract parameters.
+         */
+        void ParseFile(std::ifstream config_file);
 
         VoltageSignal SimulateShower(Shower shower);
 

@@ -11,3 +11,4 @@ add_subdirectory(cherenkov_library)
 add_subdirectory(cherenkov_tests)
 
 target_link_libraries(cherenkov_simulator cherenkov_library)
+
