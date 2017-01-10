@@ -141,7 +141,10 @@ namespace cherenkov_simulator
          */
         double Age();
 
-        void IncrementDepth(double depth);
+        /*
+         * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
+         */
+        double IncrementDepth(double depth);
     };
 }
 

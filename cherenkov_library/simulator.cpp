@@ -72,27 +72,27 @@ namespace cherenkov_simulator
 
     PhotonCount Simulator::SimulateShower(Shower shower)
     {
-        // TODO: Change the initial time in the data container to a better value.
         // Arc length = angle * radius
-        double pmt_angular_size = (cluster_size / (double) n_pmt_across) / (mirror_radius / 2.0);
-        PhotonCount photon_count = PhotonCount(n_pmt_across, shower.Time(), time_bin, pmt_angular_size);
+        double pmt_linear_size = cluster_size / n_pmt_across;
+        double pmt_angular_size = pmt_linear_size / (mirror_radius / 2.0);
+        PhotonCount photon_count = PhotonCount(n_pmt_across, shower.Time(), time_bin, pmt_angular_size,
+                                               pmt_linear_size);
 
         // Step the shower through its path.
         while (shower.TimeToPlane(ground_plane) > 0)
         {
-            ViewFluorescencePhotons(shower, &photon_count);
+            double distance = shower.IncrementDepth(depth_step);
+            ViewFluorescencePhotons(shower, distance, &photon_count);
             ViewCherenkovPhotons(shower, ground_plane, &photon_count);
-            double distance = FindDistance(shower);
-            shower.IncrementPosition(distance);
         }
         
         AddNoise(&photon_count);
         return photon_count;
     }
 
-    void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count)
+    void Simulator::ViewFluorescencePhotons(Shower shower, double distance, PhotonCount* photon_count)
     {
-        int number_detected = NumberFluorescencePhotons(shower);
+        int number_detected = NumberFluorescencePhotons(shower, distance);
         
         for (int i = 0; i < number_detected; i++)
         {
@@ -104,15 +104,19 @@ namespace cherenkov_simulator
         }
     }
 
-    int Simulator::NumberFluorescencePhotons(Shower shower)
+    int Simulator::NumberFluorescencePhotons(Shower shower, double distance)
     {
         int n_charged = GaiserHilles(shower);
         double alpha_eff = IonizationLossRate(shower);
-        double yield = FluorescenceYield(shower);
 
-        // See Stratton Equation 4.2. The energy deposit rate for a single photon is alpha_eff, so the deposit rate for
-        // all photons is alpha_eff * N.
-        double total_produced = n_charged * alpha_eff * yield * depth_step;
+        double rho = AtmosphereDensity(shower.Position().Z());
+        double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
+        double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
+
+        // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
+        // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
+        double yield = alpha_eff / dep_1_4 * (term_1 + term_2);
+        double total_produced = yield * n_charged * distance;
 
         // Find the fraction captured by the camera.
         return total_produced * PhotonFraction(shower.Position());
@@ -157,14 +161,6 @@ namespace cherenkov_simulator
         double x_0 = shower.X0();
         return n_max * Power((x - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda) * Exp((x_max - x) / gh_lambda);
     }
-
-    double Simulator::FluorescenceYield(Shower shower)
-    {
-        // TODO: Implement fluorescence yield calculation
-        return 0.0;
-    }
-
-
 
     double Simulator::IonizationLossRate(Shower shower)
     {
@@ -230,11 +226,24 @@ namespace cherenkov_simulator
 
     void Simulator::AddNoise(PhotonCount* photon_count)
     {
-        // TODO: Find expressions for these in terms of the detector field of view and the radius of curvature
-        double detector_area;
-        double detector_solid_angle;
-        double pmt_area;
-        double pmt_solid_angle;
+        SignalIterator iter = photon_count->Iterator();
+        while (iter.Next())
+        {
+            TVector3 direction = photon_count->Direction(iter);
+            Ray outward_ray = Ray(0, direction, TVector3(0, 0, 0));
+
+            // If the pixel is looking at the ground, use the noise rate for the ground. Otherwise, use the sky rate.
+            double noise_rate;
+            if (outward_ray.TimeToPlane(ground_plane) > 0)
+            {
+                noise_rate = ground_noise;
+            }
+            else
+            {
+                noise_rate = sky_noise;
+            }
+            photon_count->AddNoise(noise_rate, iter, rng);
+        }
     }
 
     TVector3 Simulator::RandomStopImpact() {

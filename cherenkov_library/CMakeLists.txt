@@ -14,7 +14,7 @@ set(SOURCE_FILES
         simulator.cpp
         simulator.h
         reconstructor.h
-        monte_carlo.h)
+        monte_carlo.h analysis.cpp analysis.h)
 add_library(cherenkov_library STATIC ${SOURCE_FILES})
 
 # Link to the Boost package
