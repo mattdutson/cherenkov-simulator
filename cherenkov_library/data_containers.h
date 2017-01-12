@@ -13,7 +13,10 @@
 
 namespace cherenkov_simulator
 {
-
+    /*
+     * An object used for keeping track of indices in the photon count container and iterating through the non-null
+     * photomultipliers.
+     */
     class SignalIterator
     {
 
@@ -58,6 +61,11 @@ namespace cherenkov_simulator
         int y_current;
     };
 
+    /*
+     * A class containing a 2d collection of vectors. Each vector represents the photon-time signal for a particular
+     * photomultiplier. Also contains basic information about the surroundings which is used to find the direction of
+     * each photomultiplier.
+     */
     class PhotonCount
     {
 

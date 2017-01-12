@@ -27,6 +27,11 @@ namespace cherenkov_simulator
         Plane ground_plane;
         TRotation rotate_to_world;
 
+
+        // Parameters defining the amount of night sky background noise (used to subtract the average noise level from
+        // the signal).
+        double sky_noise;
+        double ground_noise;
     };
 }
 

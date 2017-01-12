@@ -39,6 +39,11 @@ namespace cherenkov_simulator
      */
     boost::property_tree::ptree ParseXMLFile(std::string filename);
 
+    /*
+     * Returns the speed of light measured in cm/s. Use this instead of the ROOT C() method.
+     */
+    double CentC();
+
     bool WithinXYDisk(TVector3 vec, double radius);
 
 }

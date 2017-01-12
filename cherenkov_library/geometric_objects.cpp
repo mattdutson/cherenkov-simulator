@@ -3,37 +3,59 @@
 //
 // Created by Matthew Dutson on 9/8/16.
 //
-//
+// Contains the implementation of methods in geometric_objects.h.
 
 #include "geometric_objects.h"
 #include "utility.h"
-#include "TMath.h"
 
 using namespace TMath;
 
 namespace cherenkov_simulator
 {
+    Plane::Plane() : Plane(TVector3(), TVector3())
+    {}
+
+    Plane::Plane(TVector3 normal_vector, TVector3 point)
+    {
+        // If a zero normal vector is passed, use (0, 0, 1) instead.
+        if (normal_vector == TVector3(0, 0, 0))
+        {
+            normal = TVector3(0, 0, 1);
+        }
+        else
+        {
+            normal = normal_vector.Unit();
+        }
+
+        // d = a * x_0 + b * y_0 + c * z_0
+        coefficient = normal.Dot(point);
+    }
+
+    TVector3 Plane::Normal()
+    {
+        return normal;
+    }
+
+    double Plane::Coefficient()
+    {
+        return coefficient;
+    }
+
     Ray::Ray(double time, TVector3 position, TVector3 direction)
     {
-        // TODO: Define behavior when the direction vector is zero
+        // If a zero direction vector is passed, use (0, 0, 1) instead.
+        if (direction == TVector3(0, 0, 0))
+        {
+            SetDirection(TVector3(0, 0, 1));
+        }
+        else
+        {
+            SetDirection(direction);
+        }
+
+        // All times and starting positions are assumed valid.
         current_time = time;
         current_position = position;
-        SetDirection(direction);
-    }
-
-    void Ray::IncrementTime(double time)
-    {
-        current_time += time;
-        current_position += time * current_velocity;
-    }
-
-    double Ray::TimeToPlane(Plane plane)
-    {
-        TVector3 normal = plane.Normal();
-        double coefficient = plane.Coefficient();
-
-        // TODO: Determine behavior when normal.Dot(current_velocity) is zero and behavior when time is negative
-        return (coefficient - normal.Dot(current_position)) / normal.Dot(current_velocity);
     }
 
     double Ray::Time()
@@ -53,7 +75,45 @@ namespace cherenkov_simulator
 
     void Ray::SetDirection(TVector3 direction)
     {
-        current_velocity = direction.Unit() * C();
+        // Use the speed of light in centimeters/second.
+        current_velocity = direction.Unit() * CentC();
+    }
+
+    void Ray::PropagateToPoint(TVector3 destination)
+    {
+        // If needed, change the direction so the ray is pointing toward the destination.
+        TVector3 displacement = destination - current_position;
+        SetDirection(displacement);
+
+        // Move the ray forward until it reaches the destination.
+        IncrementPosition(displacement.Mag());
+    }
+
+    void Ray::PropagateToPlane(Plane plane)
+    {
+        double time = TimeToPlane(plane);
+
+        // Only change the ray's position if the ray and plane aren't perfectly parallel.
+        if (time != Infinity())
+        {
+            IncrementTime(time);
+        }
+    }
+
+    double Ray::TimeToPlane(Plane plane)
+    {
+        TVector3 normal = plane.Normal();
+        double coefficient = plane.Coefficient();
+
+        // Check the edge case where the vector is perfectly parallel to the plane.
+        if (normal.Dot(current_velocity) == 0)
+        {
+            return Infinity();
+        }
+        else
+        {
+            return (coefficient - normal.Dot(current_position)) / normal.Dot(current_velocity);
+        }
     }
 
     void Ray::Reflect(TVector3 normal)
@@ -63,62 +123,63 @@ namespace cherenkov_simulator
 
     void Ray::Refract(TVector3 normal, double n_in, double n_out)
     {
-        TVector3 mutual_norm = normal.Cross(current_velocity).Unit();
-        double angle_in = current_velocity.Angle(normal);
+        // If the current velocity and normal vector are parallel, don't do anything.
+        if (normal.Cross(current_velocity) != TVector3(0, 0, 0))
+        {
+            // Apply Snell's law.
+            double angle_in = current_velocity.Angle(normal);
+            double angle_out = ASin(n_in * Sin(angle_in) / n_out);
 
-        // Now refract using Snell's Law.
-        double angle_out = ASin(n_in * Sin(angle_in) / n_out);
-
-        current_velocity.Rotate(angle_out - angle_in, mutual_norm);
+            // Refract and rotate around some vector perpendicular to both the ray and plane normal.
+            TVector3 mutual_norm = normal.Cross(current_velocity);
+            current_velocity.Rotate(angle_out - angle_in, mutual_norm);
+        }
     }
 
-    void Ray::PropagateToPoint(TVector3 point)
+    void Ray::IncrementPosition(double distance)
     {
-        TVector3 displacement = point - current_position;
-        SetDirection(displacement);
-        double time = displacement.Mag() / C();
+        double time = distance / CentC();
         IncrementTime(time);
     }
 
-    void Ray::PropagateToPlane(Plane plane)
+    void Ray::IncrementTime(double time)
     {
-        double time = TimeToPlane(plane);
-        IncrementTime(time);
+        current_time += time;
+        current_position += time * current_velocity;
     }
 
-    Shower::Shower(TVector3 position, TVector3 direction, double x_0, double x_max, double n_max, double time) : Ray(
+    Shower::Shower(double time = 0, TVector3 position, TVector3 direction, double x_0, double x_max, double n_max,
+                   double rho_0, double scale_height) : Ray(
             time, position, direction)
     {
         start_position = position;
         this->x_0 = x_0;
         this->x_max = x_max;
         this->n_max = n_max;
+        this->rho_0 = rho_0;
+        this->scale_height = scale_height;
     }
 
-    TVector3 Shower::StartPosition()
+    double Shower::Age()
     {
-        return start_position;
-    }
-
-    TVector3 Shower::GroundImpact()
-    {
-        return ground_impact;
-    }
-
-    double Shower::X0()
-    {
-        return x_0;
+        return 3.0 * X() / (X() + 2.0 * XMax());
     }
 
     double Shower::X()
     {
+        // TODO: Should we be integrating from the shower's starting point or from the top of the atmosphere?
         TVector3 point1 = Position();
-        TVector3 point2 = StartPosition();
+        TVector3 point2 = start_position;
         TVector3 diff = point2 - point1;
         double cosine = Abs(diff.Z() / diff.Mag());
         double vertical_depth =
                 -rho_0 / scale_height * (Exp(-point2.Z() / scale_height) - Exp(-point1.Z() / scale_height));
         return vertical_depth / cosine;
+    }
+
+    double Shower::X0()
+    {
+        return x_0;
     }
 
     double Shower::XMax()
@@ -129,18 +190,6 @@ namespace cherenkov_simulator
     double Shower::NMax()
     {
         return n_max;
-    }
-
-    double Shower::Age()
-    {
-        double x = X();
-        return 3.0 * x / (x + 2.0 * XMax());
-    }
-
-    Plane::Plane(TVector3 normal_vector, TVector3 point)
-    {
-        normal = normal_vector.Unit();
-        coefficient = normal.Dot(point);
     }
 
     double Shower::IncrementDepth(double depth)

@@ -6,6 +6,7 @@
 //
 
 #include "utility.h"
+#include "TMath.h"
 
 using namespace boost::program_options;
 using namespace std;
@@ -40,7 +41,7 @@ namespace cherenkov_simulator
         }
     }
 
-    ptree Utility::ParseXMLFile(string filename)
+    ptree ParseXMLFile(string filename)
     {
         // Try opening the specified file
         ifstream config_file = ifstream();
@@ -93,5 +94,10 @@ namespace cherenkov_simulator
                 return false;
             }
         }
+    }
+
+    double CentC()
+    {
+        return TMath::C() * 100.0;
     }
 }
