@@ -2,7 +2,7 @@
 // Created by Matthew Dutson on 1/9/17.
 //
 
-#include "analysis.h"
+#include "data_analysis.h"
 
 namespace cherenkov_simulator
 {

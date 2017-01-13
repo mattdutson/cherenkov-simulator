@@ -13,13 +13,11 @@ set(SOURCE_FILES
         simulator.h
         reconstructor.h
         monte_carlo.h
-        analysis.cpp
-        analysis.h)
+        data_analysis.cpp
+        data_analysis.h)
 add_library(cherenkov_library STATIC ${SOURCE_FILES})
 
 # Link to external libraries.
 include(ExternalLibraries.cmake)
 link_boost(cherenkov_library)
 link_root(cherenkov_library)
-
-

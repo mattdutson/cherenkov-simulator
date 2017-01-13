@@ -13,4 +13,3 @@ target_link_libraries(cherenkov_tests cherenkov_library)
 # Link to gtest.
 add_subdirectory(gtest)
 target_link_libraries(cherenkov_tests gtest gtest_main)
-

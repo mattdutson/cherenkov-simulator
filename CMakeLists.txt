@@ -14,4 +14,3 @@ add_subdirectory(cherenkov_tests)
 
 # Link to the contents of cherenkov_library.
 target_link_libraries(cherenkov_simulator cherenkov_library)
-
