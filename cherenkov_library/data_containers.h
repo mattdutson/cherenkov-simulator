@@ -80,7 +80,8 @@ namespace cherenkov_simulator
                     double pmt_linear_size);
 
         /*
-         * Increments the photon count at some time for the photomultiplier pointing in the specified direction.
+         * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
+         * specified time is before the container's start time, nothing is done.
          */
         void AddPhoton(double time, TVector3 direction);
 
@@ -113,6 +114,17 @@ namespace cherenkov_simulator
          */
         bool ValidPixel(int x_index, int y_index);
 
+        /*
+         * Finds the bin for some double precision time.
+         */
+        int TimeBin(double time);
+
+        /*
+         * If the vector at indices (x, y) is smaller than the specified size, it is expanded. This method does NOT
+         * check that the indices are valid.
+         */
+        void ExpandVector(int x_index, int y_index, int min_size);
+
         // The underlying data structure to store photon counts
         std::vector<std::vector<std::vector<int>>> photon_counts;
 
@@ -121,6 +133,9 @@ namespace cherenkov_simulator
 
         // The time at the beginning of the zeroth bin
         double start_time;
+
+        // The last real signal (added by AddPhoton) seen by the array
+        double last_time;
 
         // The size of time bins
         double time_bin;

@@ -13,7 +13,6 @@ using std::vector;
 
 namespace cherenkov_simulator
 {
-
     SignalIterator::SignalIterator(std::vector<std::vector<bool>> validPixels)
     {
         this->valid_pixels = validPixels;
@@ -83,6 +82,9 @@ namespace cherenkov_simulator
         this->pmt_angular_size = pmt_angular_size;
         this->pmt_linear_size = pmt_linear_size;
 
+        // We haven't seen any non-noise photons yet, so the last time is the start time.
+        last_time = start_time;
+
         // Initialize the photon count and valid pixel structures.
         photon_counts = vector<vector<vector<int>>>();
         valid_pixels = vector<vector<bool>>();
@@ -100,10 +102,13 @@ namespace cherenkov_simulator
 
     void PhotonCount::AddPhoton(double time, TVector3 direction)
     {
-        // The angle of the yz projection with the z axis. See notes for details.
+        // If the time is earlier than the time of the first index, we would run into time binning errors.
+        if (time < start_time) return;
+
+        // The angle of the yz projection with the z axis
         double elevation = ATan(direction.Y() / direction.Z());
 
-        // The angle of the xz projection with the z axis. See notes for details.
+        // The angle of the xz projection with the z axis
         double azimuth = ATan(direction.X() / direction.Z());
 
         // The number of photomultipliers across is equal to the size of the data container.
@@ -111,19 +116,33 @@ namespace cherenkov_simulator
         int x_index = Floor(azimuth / (pmt_angular_size * Cos(elevation))) + photon_counts.size() + 1;
 
         // If the location is valid, add the pixel to the underlying data structure.
-        if (ValidPixel(x_index, y_index))
+        if (ValidPixel(x_index, y_index) && time)
         {
-            int time_slot = Floor((time - start_time) / time_bin);
-            if (photon_counts[x_index][y_index].size() < time_slot)
-            {
-                photon_counts[x_index][y_index].resize(time_slot, 0);
-            }
+            // Make sure the vector is big enough.
+            int time_slot = TimeBin(time);
+            ExpandVector(x_index, y_index, time_slot + 1);
+
+            // Add the photon.
             photon_counts[x_index][y_index][time_slot]++;
+
+            // Keep track of the latest photon seen.
+            if (time > last_time)
+            {
+                last_time = time;
+            }
         }
     }
 
     void PhotonCount::AddNoise(double noise_rate, SignalIterator current, TRandom3 rng)
     {
+        // Resize all channels so they have bins up through the last photon seen.
+        int min_size = TimeBin(last_time) + 1;
+        SignalIterator iter = Iterator();
+        while (iter.Next())
+        {
+            ExpandVector(iter.X(), iter.Y(), min_size);
+        }
+
         // Calculate the number of noise photons per second from the number of photons per second per steradian per
         // square centimeter.
         double solid_angle = Sq(pmt_angular_size);
@@ -178,5 +197,18 @@ namespace cherenkov_simulator
 
         // The radius of the valid circle is equal to half the number of valid pixels.
         return Sq(x_dist) + Sq(y_dist) < Sq(n_pixels / 2.0);
+    }
+
+    int PhotonCount::TimeBin(double time)
+    {
+        return Floor((time - start_time) / time_bin);
+    }
+
+    void PhotonCount::ExpandVector(int x_index, int y_index, int min_size)
+    {
+        if (photon_counts[x_index][y_index].size() < min_size)
+        {
+            photon_counts[x_index][y_index].resize(min_size, 0);
+        }
     }
 }
