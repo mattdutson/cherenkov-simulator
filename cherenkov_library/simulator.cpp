@@ -30,16 +30,6 @@ namespace cherenkov_simulator
         rotate_to_world = TRotation();
         rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
 
-        // Parameters defining properties of the atmosphere
-        scale_height = config.get<double>("atmosphere.scale_height");
-        double rho_sea = config.get<double>("atmosphere.rho_sea");
-        double detect_elevation = config.get<double>("atmosphere.detect_elevation");
-        rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
-
-        // 1 - the index of refraction at the detector (proportional to atmospheric density)
-        double delta_sea = 1.0 - config.get<double>("optics.n_air");
-        delta_0 = delta_sea * Exp(-detect_elevation / scale_height);
-
         // Physics constants
         mass_e = config.get<double>("mass_e");
         fine_struct = config.get<double>("fine_struct");
@@ -48,26 +38,15 @@ namespace cherenkov_simulator
         rng = TRandom3();
     }
 
-    double Simulator::AtmosphereDensity(double height)
+    double Simulator::EThresh(Shower shower)
     {
-        return rho_0 * Exp(-height / scale_height);
-    }
-
-    double Simulator::AtmosphereDelta(double height)
-    {
-        // Assume that delta is proportional to the local atmospheric density.
-        return delta_0 * Exp(-height / scale_height);
-    }
-
-    double Simulator::EThresh(double height)
-    {
-        double delta = AtmosphereDelta(height);
+        double delta = shower.LocalDelta();
         return mass_e * C() * C() / Sqrt(2 * delta);
     }
 
-    double Simulator::ThetaC(double height)
+    double Simulator::ThetaC(Shower shower)
     {
-        return ckv_k1 * Power(EThresh(height), ckv_k2);
+        return ckv_k1 * Power(EThresh(shower), ckv_k2);
     }
 
     PhotonCount Simulator::SimulateShower(Shower shower)
@@ -97,7 +76,7 @@ namespace cherenkov_simulator
         for (int i = 0; i < number_detected; i++)
         {
             TVector3 lens_impact = RandomStopImpact();
-            Ray photon = Ray(shower.Time(), shower.Position(), lens_impact - shower.Position());
+            Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), shower.Time());
             photon.PropagateToPoint(lens_impact);
             
             SimulateOptics(photon, photon_count);
@@ -109,7 +88,7 @@ namespace cherenkov_simulator
         int n_charged = GaiserHilles(shower);
         double alpha_eff = IonizationLossRate(shower);
 
-        double rho = AtmosphereDensity(shower.Position().Z());
+        double rho = shower.LocalRho();
         double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
         double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
 
@@ -125,9 +104,9 @@ namespace cherenkov_simulator
     int Simulator::NumberCherenkovPhotons(Shower shower)
     {
         // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
-        double rho = AtmosphereDensity(shower.Position().Z());
+        double rho = shower.LocalRho();
         double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
-        double k_1 = k_out * 2 * AtmosphereDelta(shower.Position().Y());
+        double k_1 = k_out * 2 * shower.LocalDelta();
 
         // TODO: Make sure the value for C is in units of cm/s.
         double k_2 = k_out * Sq(mass_e) * Power(C(), 4);
@@ -143,13 +122,13 @@ namespace cherenkov_simulator
         std::stringstream func_string;
         func_string << "(" << a0 << "* e^x / ((" << a1 << "+e^x)(" << a2 << "+e^x)^" << age << "))(" << k_1 << "-"
                     << k_2 << "/e^x)";
-        double e_thresh = EThresh(shower.Position().Z());
+        double e_thresh = EThresh(shower);
         TF1 func = TF1("integrand", func_string.str().c_str(), e_thresh, Infinity());
         double integral = func.Integral(e_thresh, Infinity());
 
         // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
         // not a full sphere.
-        return GaiserHilles(shower) * integral * PhotonFraction(shower.GroundImpact()) * 2;
+        return GaiserHilles(shower) * integral * PhotonFraction(shower.PlaneImpact(ground_plane)) * 2;
     }
 
     double Simulator::GaiserHilles(Shower shower)
@@ -180,11 +159,11 @@ namespace cherenkov_simulator
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
     {
         TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), rng);
-        std::string formula = "e^(-x/" + std::to_string(ThetaC(shower.Position().Z())) + ")/sin(x)";
+        std::string formula = "e^(-x/" + std::to_string(ThetaC(shower)) + ")/sin(x)";
         TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
         TVector3 direction = shower.Velocity().Unit();
         direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
-        return Ray(shower.Time(), shower.Position(), direction);
+        return Ray(shower.Position(), direction, shower.Time());
     }
 
     void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount* photon_count)
@@ -230,7 +209,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             TVector3 direction = photon_count->Direction(iter);
-            Ray outward_ray = Ray(0, direction, TVector3(0, 0, 0));
+            Ray outward_ray = Ray(direction, TVector3(0, 0, 0), 0);
 
             // If the pixel is looking at the ground, use the noise rate for the ground. Otherwise, use the sky rate.
             double noise_rate;
@@ -329,9 +308,10 @@ namespace cherenkov_simulator
 
         TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(phi));
 
-        photon->Refract(norm, delta_0 + 1, refrac_lens);
+        // TODO: Here we are assuming an index of refraction for the air of one. Should we change this?
+        photon->Refract(norm, 1, refrac_lens);
 
-        photon->Refract(TVector3(0, 0, 1), refrac_lens, delta_0 + 1);
+        photon->Refract(TVector3(0, 0, 1), refrac_lens, 1);
 
     }
 }

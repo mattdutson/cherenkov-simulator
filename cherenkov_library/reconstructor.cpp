@@ -10,10 +10,17 @@
 #include "TMatrixD.h"
 #include "TMatrixDSymEigen.h"
 #include "TVectorD.h"
+#include "utility.h"
+#include <string>
+#include "TMath.h"
+
+using boost::property_tree::ptree;
+using std::string;
+using namespace TMath;
 
 namespace cherenkov_simulator
 {
-    void Reconstructor::ParseFile(std::ifstream config_file)
+    void Reconstructor::ParseFile(ptree config)
     {
         // Construct the ground plane in the world frame.
         ground_plane = Plane(ToVector(config.get<string>("ground_normal")),
@@ -29,7 +36,7 @@ namespace cherenkov_simulator
         // Compute the matrix specified in Stratton 3.4.
         // TODO: Check that a TMatrixDSym doesn't have unexpected behavior when setting elements individually.
         // Maybe just iterate over elements whose symmetric counterparts haven't been found yet.
-        PhotonCount::SignalIterator iter = data.Iterator();
+        SignalIterator iter = data.Iterator();
         TMatrixDSym matrix(3, 3);
         for (int j = 0; j < 3; j++)
         {
@@ -39,7 +46,7 @@ namespace cherenkov_simulator
                 iter.Reset();
                 while (iter.Next())
                 {
-                    TVector3 direction = CameraIndexToViewDirection(iter.X(), iter.Y());
+                    TVector3 direction = data.Direction(iter);
                     int pmt_sum = data.SumBins(iter);
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }

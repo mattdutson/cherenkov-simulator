@@ -64,7 +64,7 @@ namespace cherenkov_simulator
          * The only constructor. Constructs a ray at the specified position, moving in the specified direction, at the
          * given time. If (0, 0, 0) is passed as the direction vector, (0, 0, 1) is used instead.
          */
-        Ray(double time, TVector3 position, TVector3 direction);
+        Ray(TVector3 position, TVector3 direction, double time);
 
         /*
          * Returns the current time of the ray.
@@ -108,6 +108,12 @@ namespace cherenkov_simulator
         double TimeToPlane(Plane plane);
 
         /*
+         * Find the point where this ray will intersect with the plane. If the ray and the plane are exactly parallel,
+         * the current position of the ray is returned.
+         */
+        TVector3 PlaneImpact(Plane plane);
+
+        /*
          * Reflects the ray across the normal vector.
          */
         void Reflect(TVector3 normal);
@@ -148,12 +154,24 @@ namespace cherenkov_simulator
     public:
 
         /*
+         * A container for shower parameters to be passed to the constructor.
+         */
+        struct Params
+        {
+            double x_0;
+            double x_max;
+            double n_max;
+            double rho_0;
+            double scale_height;
+            double delta_0;
+        };
+
+        /*
          * The only constructor. Takes all of the parameters used in the Ray class, as well as three shower-specific
          * parameters (x_0, x_max, n_max). Also takes two atmospheric parameters (rho_0 and scale_height). The starting
          * time is assumed to be zero by default.
          */
-        Shower(double time = 0, TVector3 position, TVector3 direction, double x_0, double x_max, double n_max,
-               double rho_0, double scale_height);
+        Shower(Params params, TVector3 position, TVector3 direction, double time = 0);
 
         /*
          * Finds the age of the shower, given by 3 * X / (x + 2 * XMax).
@@ -180,6 +198,16 @@ namespace cherenkov_simulator
          * Returns the number of electrons at the shower maximum.
          */
         double NMax();
+
+        /*
+         * Returns the atmospheric density at the shower's current position.
+         */
+        double LocalRho();
+
+        /*
+         * Returns the local value for n - 1.
+         */
+        double LocalDelta();
 
         /*
          * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
@@ -214,6 +242,9 @@ namespace cherenkov_simulator
 
         // The atmospheric scale height
         double scale_height;
+
+        // 1 - n at the origin
+        double delta_0;
     };
 }
 

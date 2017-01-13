@@ -9,7 +9,9 @@
 
 #include "data_containers.h"
 #include "geometric_objects.h"
+#include "TRotation.h"
 #include <istream>
+#include "boost/property_tree/ptree.hpp"
 
 namespace cherenkov_simulator
 {
@@ -17,7 +19,7 @@ namespace cherenkov_simulator
     {
     public:
 
-        void ParseFile(std::ifstream config_file);
+        void ParseFile(boost::property_tree::ptree config);
 
         TVector3 FitSDPlane(PhotonCount data);
 

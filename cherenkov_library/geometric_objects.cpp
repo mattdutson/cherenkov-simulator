@@ -41,7 +41,7 @@ namespace cherenkov_simulator
         return coefficient;
     }
 
-    Ray::Ray(double time, TVector3 position, TVector3 direction)
+    Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
         // If a zero direction vector is passed, use (0, 0, 1) instead.
         if (direction == TVector3(0, 0, 0))
@@ -91,13 +91,7 @@ namespace cherenkov_simulator
 
     void Ray::PropagateToPlane(Plane plane)
     {
-        double time = TimeToPlane(plane);
-
-        // Only change the ray's position if the ray and plane aren't perfectly parallel.
-        if (time != Infinity())
-        {
-            IncrementTime(time);
-        }
+        PropagateToPoint(PlaneImpact(plane));
     }
 
     double Ray::TimeToPlane(Plane plane)
@@ -113,6 +107,21 @@ namespace cherenkov_simulator
         else
         {
             return (coefficient - normal.Dot(current_position)) / normal.Dot(current_velocity);
+        }
+    }
+
+    TVector3 Ray::PlaneImpact(Plane plane)
+    {
+        double time = TimeToPlane(plane);
+
+        // If the ray and the plane are exactly parallel, return the current position of the ray.
+        if (time == Infinity())
+        {
+            return current_position;
+        }
+        else
+        {
+            return current_position + time * current_velocity;
         }
     }
 
@@ -148,16 +157,15 @@ namespace cherenkov_simulator
         current_position += time * current_velocity;
     }
 
-    Shower::Shower(double time = 0, TVector3 position, TVector3 direction, double x_0, double x_max, double n_max,
-                   double rho_0, double scale_height) : Ray(
-            time, position, direction)
+    Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
         start_position = position;
-        this->x_0 = x_0;
-        this->x_max = x_max;
-        this->n_max = n_max;
-        this->rho_0 = rho_0;
-        this->scale_height = scale_height;
+        this->x_0 = params.x_0;
+        this->x_max = params.x_max;
+        this->n_max = params.n_max;
+        this->rho_0 = params.rho_0;
+        this->scale_height = params.scale_height;
+        this->delta_0 = params.delta_0;
     }
 
     double Shower::Age()
@@ -190,6 +198,16 @@ namespace cherenkov_simulator
     double Shower::NMax()
     {
         return n_max;
+    }
+
+    double Shower::LocalRho()
+    {
+        return rho_0 * Exp(-current_position.Z() / scale_height);
+    }
+
+    double Shower::LocalDelta()
+    {
+        return delta_0 * Exp(-current_position.Z() / scale_height);
     }
 
     double Shower::IncrementDepth(double depth)

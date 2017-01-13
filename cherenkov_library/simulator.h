@@ -33,9 +33,6 @@ namespace cherenkov_simulator
         TRotation rotate_to_world;
 
         // Parameters defining properties of the atmosphere
-        double scale_height;
-        double rho_0;
-        double delta_0;
         double atmosphere_temp;
 
         // Parameters defining properties of the detector optics
@@ -152,26 +149,14 @@ namespace cherenkov_simulator
         double IonizationLossRate(Shower shower);
 
         /*
-         * Calculates the atmospheric density at some height above the origin (the location of the detector). The height
-         * is NOT relative to sea level.
-         */
-        double AtmosphereDensity(double height);
-
-        /*
-         * Calculates delta = n - 1 for the atmosphere at some height. This assumes that the quantity delta is
-         * approximately proportional to the local atmospheric density.
-         */
-        double AtmosphereDelta(double height);
-
-        /*
          * Calculates the Cherenkov threshold energy at some height. Uses the AtmosphereDelta function.
          */
-        double EThresh(double height);
+        double EThresh(Shower shower);
 
         /*
          * Calculates the critical angle in the expression for the Cherenkov angular distribution.
          */
-        double ThetaC(double height);
+        double ThetaC(Shower shower);
 
 
     public:

@@ -10,7 +10,9 @@
 
 namespace cherenkov_simulator
 {
-    std::vector<int[2]> CollapseToProfile(PhotonCount data, Plane s_d_plane);
+    bool Above(TVector3 reference, TVector3 other);
+
+    std::vector<std::array<double, 2>> CollapseToProfile(PhotonCount data, Plane s_d_plane);
 }
 
 #endif

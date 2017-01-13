@@ -7,6 +7,8 @@
 
 #include "monte_carlo.h"
 
+using namespace TMath;
+
 namespace cherenkov_simulator
 {
     void MonteCarlo::ParseFile(boost::property_tree::ptree config)
@@ -26,6 +28,16 @@ namespace cherenkov_simulator
         // The distribution of first interaction depths (See AbuZayyad 6.1)
         std::string interaction_formula = "e^(-x/ " + std::to_string(config.get<double>("avg_interact")) + ")";
         interact_distribution = TF1("interact", interaction_formula.c_str(), 0, TMath::Infinity());
+
+        // Parameters defining properties of the atmosphere
+        scale_height = config.get<double>("atmosphere.scale_height");
+        double rho_sea = config.get<double>("atmosphere.rho_sea");
+        double detect_elevation = config.get<double>("atmosphere.detect_elevation");
+        rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
+
+        // 1 - the index of refraction at the detector (proportional to atmospheric density)
+        double delta_sea = 1.0 - config.get<double>("optics.n_air");
+        delta_0 = delta_sea * Exp(-detect_elevation / scale_height);
     }
 
     Shower MonteCarlo::GenerateRandomShower()
@@ -64,7 +76,14 @@ namespace cherenkov_simulator
         TVector3 starting_position = impact_point + param * shower_axis;
 
         // Create a new shower with all of the randomly determined parameters.
-        return Shower(starting_position, shower_axis, x_0, x_max, n_max);
+        Shower::Params params;
+        params.x_0 = x_0;
+        params.x_max = x_max;
+        params.n_max = n_max;
+        params.rho_0 = rho_0;
+        params.scale_height = scale_height;
+        params.delta_0 = delta_0;
+        return Shower(params, starting_position, shower_axis);
     }
     
 }

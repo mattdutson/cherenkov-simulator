@@ -3,6 +3,10 @@
 //
 
 #include "data_analysis.h"
+#include <array>
+
+using std::array;
+using std::vector;
 
 namespace cherenkov_simulator
 {
@@ -29,10 +33,10 @@ namespace cherenkov_simulator
         }
     }
 
-    std::vector<int[2]> CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis)
+    vector<array<double, 2>> CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis)
     {
         // TODO: Adjust photon count data container so each channel has a vector of the same length.
-        std::vector<int[2]> collapsed_bins = std::vector<int[2]>();
+        vector<array<double, 2>> collapsed_bins = vector<array<double, 2>>();
         SignalIterator iter = data.Iterator();
         TVector3 norm = s_d_plane.Normal();
         TVector3 axis_project = shower_axis - shower_axis.Dot(norm) * norm;
@@ -49,7 +53,8 @@ namespace cherenkov_simulator
             {
                 angle = -projection.Angle(axis_project);
             }
-            collapsed_bins.push_back({angle, data.SumBins(iter)});
+            array<double, 2> point = {angle, (double) data.SumBins(iter)};
+            collapsed_bins.push_back(point);
         }
 
         // TODO: Figure out a way to bin photon counts in a way that doesn't lead to aliasing.

@@ -7,6 +7,7 @@
 
 #include "simulator.h"
 #include "boost/property_tree/ptree.hpp"
+#include "TRandom3.h"
 
 namespace cherenkov_simulator
 {
@@ -26,6 +27,14 @@ namespace cherenkov_simulator
         TF1 impact_distribution;
         TF1 interact_distribution;
         double n_max_ratio;
+
+        // A general-purpose random number generator
+        TRandom3 rng;
+
+        // Atmospheric parameters
+        double scale_height;
+        double rho_0;
+        double delta_0;
     };
 }
 
