@@ -60,4 +60,26 @@ namespace cherenkov_simulator
         // TODO: Figure out a way to bin photon counts in a way that doesn't lead to aliasing.
         return collapsed_bins;
     }
+
+    vector<array<double, 2>> SuperimposeTimes(PhotonCount data)
+    {
+        // Initialize the structure and find x-axis labels (times).
+        vector<array<double, 2>> superposition = vector<array<double, 2>>();
+        for (int i = 0; i < data.NBins(); i++)
+        {
+            superposition.push_back({data.Time(i), 0.0});
+        }
+
+        // Iterate over all time signals.
+        SignalIterator iter = data.Iterator();
+        while (iter.Next())
+        {
+            vector<int> signal = data.Signal(iter);
+            for (int i = 0; i < signal.size(); i++)
+            {
+                superposition[i][1] += signal[i];
+            }
+        }
+        return superposition;
+    };
 }

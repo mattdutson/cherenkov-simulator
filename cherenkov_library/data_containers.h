@@ -80,6 +80,21 @@ namespace cherenkov_simulator
                     double pmt_linear_size);
 
         /*
+         * Returns the total number of bins in the data structure.
+         */
+        int NBins();
+
+        /*
+         * Finds the time corresponding to the specified bin.
+         */
+        double Time(int bin);
+
+        /*
+         * Finds the bin corresponding to some time.
+         */
+        int Bin(double time);
+
+        /*
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
          * specified time is before the container's start time, nothing is done.
          */
@@ -98,6 +113,11 @@ namespace cherenkov_simulator
         TVector3 Direction(SignalIterator current);
 
         /*
+         * Gets the complete time signal at the current position of the iterator.
+         */
+        std::vector<int> Signal(SignalIterator current);
+
+        /*
          * Returns an object for iterating through the pixels.
          */
         SignalIterator Iterator();
@@ -113,11 +133,6 @@ namespace cherenkov_simulator
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
         bool ValidPixel(int x_index, int y_index);
-
-        /*
-         * Finds the bin for some double precision time.
-         */
-        int TimeBin(double time);
 
         /*
          * If the vector at indices (x, y) is smaller than the specified size, it is expanded. This method does NOT
@@ -138,7 +153,7 @@ namespace cherenkov_simulator
         double last_time;
 
         // The size of time bins
-        double time_bin;
+        double bin_size;
 
         // The angle viewed by each photomultiplier
         double pmt_angular_size;

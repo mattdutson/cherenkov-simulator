@@ -78,7 +78,7 @@ namespace cherenkov_simulator
     {
         // Copy parameters.
         this->start_time = start_time;
-        this->time_bin = time_bin;
+        this->bin_size = time_bin;
         this->pmt_angular_size = pmt_angular_size;
         this->pmt_linear_size = pmt_linear_size;
 
@@ -100,6 +100,21 @@ namespace cherenkov_simulator
         }
     }
 
+    int PhotonCount::NBins()
+    {
+        return Bin(last_time) + 1;
+    }
+
+    double PhotonCount::Time(int bin)
+    {
+        return bin * bin_size + start_time;
+    }
+
+    int PhotonCount::Bin(double time)
+    {
+        return Floor((time - start_time) / bin_size);
+    }
+
     void PhotonCount::AddPhoton(double time, TVector3 direction)
     {
         // If the time is earlier than the time of the first index, we would run into time binning errors.
@@ -116,10 +131,10 @@ namespace cherenkov_simulator
         int x_index = Floor(azimuth / (pmt_angular_size * Cos(elevation))) + photon_counts.size() + 1;
 
         // If the location is valid, add the pixel to the underlying data structure.
-        if (ValidPixel(x_index, y_index) && time)
+        if (ValidPixel(x_index, y_index))
         {
             // Make sure the vector is big enough.
-            int time_slot = TimeBin(time);
+            int time_slot = Bin(time);
             ExpandVector(x_index, y_index, time_slot + 1);
 
             // Add the photon.
@@ -136,11 +151,10 @@ namespace cherenkov_simulator
     void PhotonCount::AddNoise(double noise_rate, SignalIterator current, TRandom3 rng)
     {
         // Resize all channels so they have bins up through the last photon seen.
-        int min_size = TimeBin(last_time) + 1;
         SignalIterator iter = Iterator();
         while (iter.Next())
         {
-            ExpandVector(iter.X(), iter.Y(), min_size);
+            ExpandVector(iter.X(), iter.Y(), NBins());
         }
 
         // Calculate the number of noise photons per second from the number of photons per second per steradian per
@@ -150,7 +164,7 @@ namespace cherenkov_simulator
         double pixel_rate = noise_rate * solid_angle * area;
 
         // Determine the mean number of Poisson events in a single time bin.
-        double expected_photons = time_bin * pixel_rate;
+        double expected_photons = bin_size * pixel_rate;
 
         // Randomly determine the number of photons in each bin according to the Poisson distribution.
         vector<int> data = photon_counts[current.X()][current.Y()];
@@ -170,6 +184,12 @@ namespace cherenkov_simulator
         TVector3 direction = TVector3(0, 0, 1);
         direction.RotateX(elevation);
         direction.RotateY(azimuth);
+        return direction;
+    }
+
+    vector<int> PhotonCount::Signal(SignalIterator current)
+    {
+        return photon_counts[current.X()][current.Y()];
     }
 
     SignalIterator PhotonCount::Iterator()
@@ -197,11 +217,6 @@ namespace cherenkov_simulator
 
         // The radius of the valid circle is equal to half the number of valid pixels.
         return Sq(x_dist) + Sq(y_dist) < Sq(n_pixels / 2.0);
-    }
-
-    int PhotonCount::TimeBin(double time)
-    {
-        return Floor((time - start_time) / time_bin);
     }
 
     void PhotonCount::ExpandVector(int x_index, int y_index, int min_size)
