@@ -6,13 +6,10 @@
 //
 
 #include "utility.h"
-#include "TMath.h"
 #include "boost/property_tree/xml_parser.hpp"
 
-using namespace boost::program_options;
 using namespace std;
 using boost::property_tree::ptree;
-using namespace boost::property_tree;
 using namespace TMath;
 
 namespace cherenkov_simulator
