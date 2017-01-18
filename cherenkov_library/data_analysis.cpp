@@ -8,7 +8,7 @@
 using std::array;
 using std::vector;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     bool Above(TVector3 reference, TVector3 other)
     {

@@ -1,5 +1,5 @@
 // reconstruction.cpp
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -18,7 +18,7 @@ using boost::property_tree::ptree;
 using std::string;
 using namespace TMath;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     void Reconstructor::ParseFile(ptree config)
     {

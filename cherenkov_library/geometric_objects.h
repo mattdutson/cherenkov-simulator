@@ -10,7 +10,7 @@
 
 #include "TVector3.h"
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     /*
      * A class representing a plane in 3D space.
@@ -80,6 +80,11 @@ namespace cherenkov_simulator
          * Returns the current velocity of the ray.
          */
         TVector3 Velocity();
+
+        /*
+         * Returns a unit vector pointing in the direction of the shower's motion.
+         */
+        TVector3 Direction();
 
         /*
          * When possible, use this method to set direction instead of directly modifying the current_velocity member.

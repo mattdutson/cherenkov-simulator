@@ -8,7 +8,7 @@
 #include "data_containers.h"
 #include "geometric_objects.h"
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     bool Above(TVector3 reference, TVector3 other);
 

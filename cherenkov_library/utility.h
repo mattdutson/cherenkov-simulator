@@ -20,7 +20,7 @@
 #include "TRandom3.h"
 #include "boost/property_tree/ptree.hpp"
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     /*
      * Reads the string and converts it to a TVector3 object.

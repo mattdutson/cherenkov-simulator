@@ -1,5 +1,5 @@
 // main.cpp
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -11,7 +11,7 @@
 #include "cherenkov_library/utility.h"
 
 using namespace std;
-using namespace cherenkov_simulator;
+using namespace cherenkov_library;
 
 int main(int argc, const char* argv[])
 {
@@ -23,7 +23,7 @@ int main(int argc, const char* argv[])
     }
     try
     {
-        ptree config = cherenkov_simulator::ParseXMLFile(filename).child("configuration");
+        ptree config = cherenkov_library::ParseXMLFile(filename).child("configuration");
     }
     catch (exception e)
     {

@@ -1,5 +1,5 @@
 // simulator.h
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -17,7 +17,7 @@
 #include "TRotation.h"
 #include <istream>
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     class Simulator
     {

@@ -1,5 +1,5 @@
 // accuracy_estimator.cpp
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -9,7 +9,7 @@
 
 using namespace TMath;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     void MonteCarlo::ParseFile(boost::property_tree::ptree config)
     {

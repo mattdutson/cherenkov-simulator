@@ -14,7 +14,7 @@ using namespace TMath;
 using std::string;
 using boost::property_tree::ptree;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     void Simulator::ParseFile(ptree config)
     {

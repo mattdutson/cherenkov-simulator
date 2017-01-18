@@ -9,7 +9,7 @@
 #include "boost/property_tree/ptree.hpp"
 #include "TRandom3.h"
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     class MonteCarlo
     {

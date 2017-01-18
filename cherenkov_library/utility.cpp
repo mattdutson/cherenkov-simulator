@@ -1,5 +1,5 @@
 // common.cpp
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -13,7 +13,7 @@ using namespace std;
 using boost::property_tree::ptree;
 using namespace TMath;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     TVector3 ToVector(string s)
     {

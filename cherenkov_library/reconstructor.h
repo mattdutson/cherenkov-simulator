@@ -13,7 +13,7 @@
 #include <istream>
 #include "boost/property_tree/ptree.hpp"
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     class Reconstructor
     {

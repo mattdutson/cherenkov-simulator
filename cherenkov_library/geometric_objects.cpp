@@ -10,7 +10,7 @@
 
 using namespace TMath;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     Plane::Plane() : Plane(TVector3(), TVector3())
     {}
@@ -71,6 +71,11 @@ namespace cherenkov_simulator
     TVector3 Ray::Velocity()
     {
         return current_velocity;
+    }
+
+    TVector3 Ray::Direction()
+    {
+        return current_velocity.Unit();
     }
 
     void Ray::SetDirection(TVector3 direction)

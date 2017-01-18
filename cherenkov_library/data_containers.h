@@ -1,5 +1,5 @@
 // data_containers.h
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -12,7 +12,7 @@
 #include <TRandom3.h>
 #include <vector>
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     /*
      * An object used for keeping track of indices in the photon count container and iterating through the non-null

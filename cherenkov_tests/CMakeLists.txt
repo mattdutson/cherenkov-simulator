@@ -1,6 +1,6 @@
 # Define source files and add the executable.
 project(cherenkov_tests)
-set(SOURCE_FILES basic_tests.cpp)
+set(SOURCE_FILES basic_tests.cpp test_geometric_objects.cpp test_helper.h test_helper.cpp)
 add_executable(cherenkov_tests ${SOURCE_FILES})
 
 # Link to cherenkov_library and its dependencies.

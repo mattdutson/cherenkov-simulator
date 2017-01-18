@@ -1,5 +1,5 @@
 // data_containers.cpp
-// cherenkov_simulator
+// cherenkov_library
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -11,7 +11,7 @@
 using namespace TMath;
 using std::vector;
 
-namespace cherenkov_simulator
+namespace cherenkov_library
 {
     SignalIterator::SignalIterator(std::vector<std::vector<bool>> validPixels)
     {
