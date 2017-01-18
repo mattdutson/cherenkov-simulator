@@ -33,10 +33,10 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<array<double, 2>> CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis)
+    vector<vector<double>> CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis)
     {
         // TODO: Adjust photon count data container so each channel has a vector of the same length.
-        vector<array<double, 2>> collapsed_bins = vector<array<double, 2>>();
+        vector<vector<double>> collapsed_bins = vector<vector<double>>();
         SignalIterator iter = data.Iterator();
         TVector3 norm = s_d_plane.Normal();
         TVector3 axis_project = shower_axis - shower_axis.Dot(norm) * norm;
@@ -53,7 +53,7 @@ namespace cherenkov_simulator
             {
                 angle = -projection.Angle(axis_project);
             }
-            array<double, 2> point = {angle, (double) data.SumBins(iter)};
+            vector<double> point = {angle, (double) data.SumBins(iter)};
             collapsed_bins.push_back(point);
         }
 
@@ -61,10 +61,10 @@ namespace cherenkov_simulator
         return collapsed_bins;
     }
 
-    vector<array<double, 2>> SuperimposeTimes(PhotonCount data)
+    vector<vector<double>> SuperimposeTimes(PhotonCount data)
     {
         // Initialize the structure and find x-axis labels (times).
-        vector<array<double, 2>> superposition = vector<array<double, 2>>();
+        vector<vector<double>> superposition = vector<vector<double>>();
         for (int i = 0; i < data.NBins(); i++)
         {
             superposition.push_back({data.Time(i), 0.0});

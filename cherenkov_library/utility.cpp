@@ -7,6 +7,7 @@
 
 #include "utility.h"
 #include "boost/property_tree/xml_parser.hpp"
+#include <ostream>
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -68,6 +69,11 @@ namespace cherenkov_simulator
         }
     }
 
+    double CentC()
+    {
+        return TMath::C() * 100.0;
+    }
+
     bool WithinXYDisk(TVector3 vec, double radius)
     {
         double xy_radius = Sqrt(vec.X() * vec.X() + vec.Y() * vec.Y());
@@ -81,8 +87,40 @@ namespace cherenkov_simulator
         }
     }
 
-    double CentC()
+    void WriteCSV(vector<vector<double>> data, vector<string> header, string filename)
     {
-        return TMath::C() * 100.0;
+        // Open the file.
+        ofstream file = ofstream(filename);
+
+        // Write the header.
+        for (int i = 0; i < header.size(); i++)
+        {
+            file << header[i];
+            if (i < header.size() - 1)
+            {
+                file << ", ";
+            }
+        }
+        file << endl;
+
+        // Iterate over all rows.
+        for (vector<double> vec : data)
+        {
+            // Iterate over each row.
+            for (int i = 0; i < vec.size(); i++)
+            {
+                file << vec[i];
+                if (i < vec.size() - 1)
+                {
+                    file << ", ";
+                }
+            }
+
+            // Rows are delimited by newlines.
+            file << endl;
+        }
+
+        // Close the file.
+        file.close();
     }
 }

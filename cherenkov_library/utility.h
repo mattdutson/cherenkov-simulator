@@ -46,6 +46,10 @@ namespace cherenkov_simulator
 
     bool WithinXYDisk(TVector3 vec, double radius);
 
+    /*
+     * Writes the specified vector of arrays to a .csv file. Each array represents the contents of an individual row.
+     */
+    void WriteCSV(std::vector<std::vector<double>> data, std::vector<std::string> header, std::string filename);
 }
 
 
