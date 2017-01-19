@@ -50,6 +50,11 @@ namespace cherenkov_library
      * Writes the specified vector of arrays to a .csv file. Each array represents the contents of an individual row.
      */
     void WriteCSV(std::vector<std::vector<double>> data, std::vector<std::string> header, std::string filename);
+
+    /*
+     * Determines whether the xy projection of the vector lies within a disk centered at the origin.
+     */
+    bool WithinXYDisk(TVector3 vec, double radius);
 }
 
 

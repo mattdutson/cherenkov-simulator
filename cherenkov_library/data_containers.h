@@ -3,7 +3,7 @@
 //
 // Created by Matthew Dutson on 9/8/16.
 //
-//
+// Contains the definition of the photon count container as well as an iterator to move through it.
 
 #ifndef data_containers_h
 #define data_containers_h
