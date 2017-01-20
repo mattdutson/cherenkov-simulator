@@ -28,8 +28,7 @@ namespace cherenkov_library
         // share the same x-axis.
         ground_plane = Plane(ToVector(config.get<string>("ground_normal")),
                              ToVector(config.get<string>("ground_point")));
-        rotate_to_world = TRotation();
-        rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
+        rotate_to_world = MakeRotation(config.get<double>("elevation_angle"));
 
         // The constant temperature of the atmosphere
         atmosphere_temp = config.get<double>("atmosphere_temp");

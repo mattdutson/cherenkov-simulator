@@ -16,6 +16,9 @@ namespace cherenkov_library
 {
     void MonteCarlo::ParseFile(boost::property_tree::ptree config)
     {
+        TRotation rotate_to_world = MakeRotation(config.get<double>("elevation_angle"));
+        detector_axis = rotate_to_world * TVector3(0, 0, 1);
+
         // The distribution of shower energies
         std::string energy_formula = "x^(-" + std::to_string(config.get<double>("energy_pow")) + ")";
         energy_distribution = TF1("energy", energy_formula.c_str(), config.get<double>("e_min"),
@@ -33,14 +36,19 @@ namespace cherenkov_library
         interact_distribution = TF1("interact", interaction_formula.c_str(), 0, TMath::Infinity());
 
         // Parameters defining properties of the atmosphere
-        scale_height = config.get<double>("atmosphere.scale_height");
-        double rho_sea = config.get<double>("atmosphere.rho_sea");
-        double detect_elevation = config.get<double>("atmosphere.detect_elevation");
+        scale_height = config.get<double>("scale_height");
+        double rho_sea = config.get<double>("rho_sea");
+        double detect_elevation = config.get<double>("detect_elevation");
         rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
 
         // 1 - the index of refraction at the detector (proportional to atmospheric density)
-        double delta_sea = 1.0 - config.get<double>("optics.n_air");
+        double delta_sea = 1.0 - config.get<double>("refrac_sea");
         delta_0 = delta_sea * Exp(-detect_elevation / scale_height);
+
+        // Parameters used when determing the depth of the shower maximum
+        x_max_1 = config.get<double>("x_max_1");
+        x_max_2 = config.get<double>("x_max_2");
+        x_max_3 = config.get<double>("x_max_3");
     }
 
     Shower MonteCarlo::GenerateRandomShower()
@@ -58,25 +66,32 @@ namespace cherenkov_library
         // Find the Cartesian shower axis vector. This vector is in the world frame (z is normal to the surface of the
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
         // local ground.
-        TVector3 shower_axis = TVector3(cos(theta), sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower));
+        TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), cos(theta));
 
+        return GenerateSpecificShower(shower_axis, impact_param, rng.Uniform(TwoPi()));
+    }
+
+    Shower MonteCarlo::GenerateSpecificShower(TVector3 axis, double impact_param, double impact_angle, double energy,
+                                              double x_0)
+    {
         // We define the origin of both the world and detector frames to be the detector's center of curvature for
         // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction
         // vector. Let's find a random vector normal to the shower axis.
-        TVector3 impact_point = impact_param * RandomPerpendicularVector(shower_axis, rng);
+        TVector3 forward = TVector3(detector_axis);
+        forward.Rotate(impact_angle, axis);
+        TVector3 impact_point = impact_param * forward;
 
         // Find the depth of the first interaction, the depth of the maximum, and the size of the shower maximum (See
         // AbuZayyad 6.1-6.4). We assume a proton primary.
-        // TODO: Add specific numerical values to the configuration file.
-        double x_0 = interact_distribution.GetRandom();
-        double x_max = 725.0 + 55.0 * (Log(energy) - 18.0) - 70 + x_0;
+        double x_max = x_max_1 + x_max_2 * (Log(energy) - 18.0) - 70 + x_0;
         double n_max = energy / n_max_ratio;
 
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
         // the first interaction.
-        double interaction_height = -scale_height * cos(theta) * Log(x_0 / (rho_0 * scale_height * cos(theta)));
-        double param = (interaction_height - impact_point.Z()) / (shower_axis.Z());
-        TVector3 starting_position = impact_point + param * shower_axis;
+        double interaction_height =
+                -scale_height * axis.CosTheta() * Log(x_0 / (rho_0 * scale_height * axis.CosTheta()));
+        double param = (interaction_height - impact_point.Z()) / (axis.Z());
+        TVector3 starting_position = impact_point + param * axis;
 
         // Create a new shower with all of the randomly determined parameters.
         Shower::Params params;
@@ -86,7 +101,6 @@ namespace cherenkov_library
         params.rho_0 = rho_0;
         params.scale_height = scale_height;
         params.delta_0 = delta_0;
-        return Shower(params, starting_position, shower_axis);
+        return Shower(params, starting_position, axis);
     }
-    
 }

@@ -3,8 +3,9 @@
 //
 
 #include <gtest/gtest.h>
-#include "geometric_objects.h"
 #include <TMath.h>
+
+#include "geometric_objects.h"
 #include "test_helper.h"
 
 using namespace cherenkov_library;

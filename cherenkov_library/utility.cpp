@@ -5,9 +5,11 @@
 //
 //
 
-#include "utility.h"
-#include "boost/property_tree/xml_parser.hpp"
 #include <ostream>
+#include <boost/property_tree/xml_parser.hpp>
+#include <TRotation.h>
+
+#include "utility.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -33,7 +35,8 @@ namespace cherenkov_library
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
         {
             return TVector3(1, 0, 0);
-        } else
+        }
+        else
         {
             TVector3 other_vec = vec + TVector3(1, 0, 0);
             TVector3 normal = (vec.Cross(other_vec)).Unit();
@@ -122,5 +125,11 @@ namespace cherenkov_library
 
         // Close the file.
         file.close();
+    }
+
+    TRotation MakeRotation(double elevation_angle)
+    {
+        TRotation rotate = TRotation();
+        rotate.RotateX(-PiOver2() + elevation_angle);
     }
 }

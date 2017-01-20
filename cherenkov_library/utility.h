@@ -22,6 +22,7 @@
 
 namespace cherenkov_library
 {
+
     /*
      * Reads the string and converts it to a TVector3 object.
      */
@@ -55,6 +56,8 @@ namespace cherenkov_library
      * Determines whether the xy projection of the vector lies within a disk centered at the origin.
      */
     bool WithinXYDisk(TVector3 vec, double radius);
+
+    TRotation MakeRotation(double elevation_angle);
 }
 
 

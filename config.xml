@@ -183,4 +183,15 @@
         0
     </ground_noise>
 
+    <!-- Parameters used when determining the depth of the shower maximum -->
+    <x_max_1 desc="The first term in the expression for the depth of the shower maximum" unit="g/cm^2">
+        725
+    </x_max_1>
+    <x_max_2 desc="The value multiplying the second term in the expression for depth at maximum" unit="g/cm^2">
+        55
+    </x_max_2>
+    <x_max_3 desc="The value following log(E) in the expression for depth at maximum" unit="null">
+        18
+    </x_max_3>
+
 </configuration>

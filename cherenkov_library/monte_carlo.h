@@ -1,6 +1,9 @@
+// monte_carlo.h
+// cherenkov_library
 //
 // Created by Matthew Dutson on 1/8/17.
 //
+// Contains a class used to generate random showers and perform a Monte Carlo simulation.
 
 #ifndef monte_carlo_h
 #define monte_carlo_h
@@ -16,11 +19,30 @@ namespace cherenkov_library
     {
     public:
 
+        /*
+         * Takes a parsed XML object and attempts to extract required monte carlo parameters. If this fails, an
+         * exception is thrown which specifies the name of the missing parameter.
+         */
         void ParseFile(boost::property_tree::ptree config_file);
 
+        /*
+         * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and
+         * distribution parameters are set in the configuration file.
+         */
         Shower GenerateRandomShower();
 
+        /*
+         * Constructs a shower object given a user-defined direction, impact parameter, impact angle (the angle of the
+         * point of closest approach), energy, and depth of first interaction.
+         */
+        Shower GenerateSpecificShower(TVector3 axis, double impact_param, double impact_angle,
+                                      double energy = energy_distribution.GetRandom(),
+                                      double x_0 = interact_distribution.GetRandom());
+
     private:
+
+        // The axis of the detector
+        TVector3 detector_axis;
 
         // Parameters used to generate random showers in the Monte Carlo simulation
         TF1 energy_distribution;
@@ -36,6 +58,11 @@ namespace cherenkov_library
         double scale_height;
         double rho_0;
         double delta_0;
+
+        // Parameters used when determining the depth of the shower maximum
+        double x_max_1;
+        double x_max_2;
+        double x_max_3;
     };
 }
 
