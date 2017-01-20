@@ -215,12 +215,11 @@ namespace cherenkov_library
         return delta_0 * Exp(-current_position.Z() / scale_height);
     }
 
-    double Shower::IncrementDepth(double depth)
+    void Shower::IncrementDepth(double depth)
     {
         double vertical_distance =
                 -scale_height * Log(Exp(-current_position.Z() / scale_height) + scale_height * depth / rho_0);
         double total_distance = vertical_distance / Abs(current_velocity.CosTheta());
         IncrementPosition(total_distance);
-        return total_distance;
     }
 }

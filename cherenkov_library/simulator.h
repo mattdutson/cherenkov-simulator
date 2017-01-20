@@ -14,6 +14,7 @@
 #include <TRandom3.h>
 #include <TRotation.h>
 #include <Math/Transform3D.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "data_containers.h"
 #include "geometric_objects.h"
@@ -46,7 +47,7 @@ namespace cherenkov_library
         /*
          * Simulate the production and detection of the fluorescence photons.
          */
-        void ViewFluorescencePhotons(Shower shower, double distance, PhotonCount* photon_count);
+        void ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count);
 
         /*
          * Simulate the production and detection of the Cherenkov photons. Only Cherenkov photons reflected from the
@@ -101,8 +102,11 @@ namespace cherenkov_library
          * Determines the total number of Fluorescence photons produced by the shower at a particular point. Takes the
          * distance traveled by the shower due to the fact that the form for fluorescence yield (Stratton 4.2) gives the
          * number of photons per electron per unit length.
+         *
+         * EDIT: No longer takes the distance due to the fact that a modified version of the fluorescence yield formula
+         * is being used. See notes on unit consolidation.
          */
-        int NumberFluorescencePhotons(Shower shower, double distance);
+        int NumberFluorescencePhotons(Shower shower);
 
         /*
          * Determines the total number of Cherenkov photons produced by the shower at a particular point. This doesn't

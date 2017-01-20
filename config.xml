@@ -90,91 +90,96 @@
     </gh_lambda>
 
     <!-- Parameters used when calculating the fluorescence yield -->
-    <fluor_a1 desc="A parameter in the expression for fluorescence yield from Kakimoto (units of m^2 * kg^-1">
-        89.0)
+    <fluor_a1 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^2/g">
+        890)
     </fluor_a1>
-    <fluor_a2 desc="A parameter in the expression for fluorescence yield from Kakimoto (units of m^2 * kg^-1)">
-        55.0
+    <fluor_a2 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^2/g">
+        550
     </fluor_a2>
-    <fluor_b1 desc="A parameter in the expression for fluorescence yield from Kakimoto (units of m^3 * kg^-1 * K^-1/2">
-        1.85
+    <fluor_b1 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^3/(g*K^1/2)">
+        1850
     </fluor_b1>
-    <fluor_b2 desc="A parameter in the expression for fluorescence yield from Kakimoto (units of m^3 * kg^-1 * K^-1/2">
-        6.50
+    <fluor_b2 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^3/(g*K^1/2)">
+        6500
     </fluor_b2>
-    <dep_1_4 desc="The energy deposit from a single electron with energy 1.4 MeV (currently measured in photons/meter)">
-        3.2
+    <dep_1_4 desc="The energy deposit rate of a single electron with energy 1.4 MeV" unit="MeV*cm^2/g">
+        1.6
     </dep_1_4>
 
     <!-- Parameters used when calculating the effective ionization loss rate -->
-    <ion_c1 desc="A parameter in the expression for the effective ionization loss rate (unitless)">
+    <ion_c1 desc="A parameter in the expression for the effective ionization loss rate" unit="MeV*cm^2/g">
         3.90883
     </ion_c1>
-    <ion_c2 desc="A parameter in the expression for the effective ionization loss rate (unitless)">
+    <ion_c2 desc="A parameter in the expression for the effective ionization loss rate" unit="null">
         1.05301
     </ion_c2>
-    <ion_c3 desc="A parameter in the expression for the effective ionization loss rate (unitless)">
+    <ion_c3 desc="A parameter in the expression for the effective ionization loss rate (unitless)" unit="null">
         9.91717
     </ion_c3>
-    <ion_c4 desc="A parameter in the expression for the effective ionization loss rate (unitless)">
+    <ion_c4 desc="A parameter in the expression for the effective ionization loss rate (unitless)" unit="MeV*cm^2/g">
         2.41715
     </ion_c4>
-    <ion_c5 desc="A parameter in the expression for the effective ionization loss rate (unitless)">
+    <ion_c5 desc="A parameter in the expression for the effective ionization loss rate (unitless)" unit="MeV*cm^2/g">
         0.13180
     </ion_c5>
 
     <!-- Parameters used when calculating theta_c in the Cherenkov angular distribution -->
-    <ckv_k1 desc="The leading constant for theta_c in the Cherenkov angular distribution (Stratton 4.17)">
+    <ckv_k1 desc="The leading constant for theta_c in the Cherenkov angular distribution (Stratton 4.17)"
+            unit="MeV^-ckv_k2">
         0.83
     </ckv_k1>
-    <ckv_k2 desc="The constant in the exponent for theta_c in the Cherenkov angular distrubution (Stratton 4.17)">
+    <ckv_k2 desc="The constant in the exponent for theta_c in the Cherenkov angular distrubution (Stratton 4.17)"
+            unit="null">
         -0.67
     </ckv_k2>
 
     <!-- Parameters used when calculating the Cherenkov yield -->
-    <lambda_min desc="The minimum wavelength of Cherenkov photons being considered in cm">
+    <lambda_min desc="The minimum wavelength of Cherenkov photons being considered" unit="cm">
         3e-5
     </lambda_min>
-    <lambda_max desc="The maximum wavelength of Cherenkov photons being considered in cm">
+    <lambda_max desc="The maximum wavelength of Cherenkov photons being considered" unit="cm">
         4e-5
     </lambda_max>
 
     <!-- Parameters in the electron energy spectrum -->
-    <fe_a11 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)">
+    <fe_a11 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
         6.42522
     </fe_a11>
-    <fe_a12 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)">
+    <fe_a12 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
         1.53183
     </fe_a12>
-    <fe_a21 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)">
+    <fe_a21 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
         168.168
     </fe_a21>
-    <fe_a22 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)">
+    <fe_a22 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
         42.1368
     </fe_a22>
-    <fe_k0 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)">
+    <fe_k0 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
+           unit="MeV^-(age + 1)">
         1.48071e-1
     </fe_k0>
-    <fe_k1 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)">
+    <fe_k1 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
+           unit="null">
         6.22334
     </fe_k1>
-    <fe_k2 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)">
+    <fe_k2 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
+           unit="null">
         -5.89710e-1
     </fe_k2>
 
     <!-- Physics constants -->
-    <mass_e desc="The mass of the electron in grams">
-        9.10938e-28
+    <mass_e desc="The mass of the electron" unit="MeV/c^2">
+        0.510998928
     </mass_e>
-    <fine_struct desc="The fine structure constant">
+    <fine_struct desc="The fine structure constant" unit="null">
         0.0072973525664
     </fine_struct>
 
     <!-- Parameters defining the amount of night sky background noise -->
-    <sky_noise desc="Average number of noise photons per square centimeter per steradian per second above horizon">
+    <sky_noise desc="Average number of noise photons above horizon" unit="1/(cm^2*s*sr)">
         10
     </sky_noise>
-    <ground_noise desc="Average number of noise photons per square centimeter per steradian per second below horizon">
+    <ground_noise desc="Average number of noise photons below horizon" unit="1/(cm^2*s*sr)">
         0
     </ground_noise>
 

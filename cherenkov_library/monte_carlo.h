@@ -5,9 +5,10 @@
 #ifndef monte_carlo_h
 #define monte_carlo_h
 
+#include <boost/property_tree/ptree.hpp>
+#include <TRandom3.h>
+
 #include "simulator.h"
-#include "boost/property_tree/ptree.hpp"
-#include "TRandom3.h"
 
 namespace cherenkov_library
 {

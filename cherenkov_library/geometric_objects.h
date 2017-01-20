@@ -216,8 +216,11 @@ namespace cherenkov_library
 
         /*
          * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
+         *
+         * EDIT: No longer returns the distance traversed because it is not required to calculate the fluorescence
+         * yield.
          */
-        double IncrementDepth(double depth);
+        void IncrementDepth(double depth);
 
     private:
 

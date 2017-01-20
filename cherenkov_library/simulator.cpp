@@ -99,8 +99,8 @@ namespace cherenkov_library
         // Step the shower through its path.
         while (shower.TimeToPlane(ground_plane) > 0)
         {
-            double distance = shower.IncrementDepth(depth_step);
-            ViewFluorescencePhotons(shower, distance, &photon_count);
+            shower.IncrementDepth(depth_step);
+            ViewFluorescencePhotons(shower, &photon_count);
             ViewCherenkovPhotons(shower, ground_plane, &photon_count);
         }
 
@@ -108,9 +108,9 @@ namespace cherenkov_library
         return photon_count;
     }
 
-    void Simulator::ViewFluorescencePhotons(Shower shower, double distance, PhotonCount* photon_count)
+    void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count)
     {
-        int number_detected = NumberFluorescencePhotons(shower, distance);
+        int number_detected = NumberFluorescencePhotons(shower);
 
         for (int i = 0; i < number_detected; i++)
         {
@@ -253,7 +253,7 @@ namespace cherenkov_library
         return true;
     }
 
-    int Simulator::NumberFluorescencePhotons(Shower shower, double distance)
+    int Simulator::NumberFluorescencePhotons(Shower shower)
     {
         int n_charged = GaiserHilles(shower);
         double alpha_eff = IonizationLossRate(shower);
@@ -264,8 +264,8 @@ namespace cherenkov_library
 
         // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
         // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
-        double yield = alpha_eff / dep_1_4 * (term_1 + term_2);
-        double total_produced = yield * n_charged * distance;
+        double yield = alpha_eff / dep_1_4 * rho * (term_1 + term_2);
+        double total_produced = yield * n_charged * depth_step;
 
         // Find the fraction captured by the camera.
         return total_produced * SphereFraction(shower.Position());
@@ -278,8 +278,8 @@ namespace cherenkov_library
         double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
         double k_1 = k_out * 2 * shower.LocalDelta();
 
-        // TODO: Make sure the value for C is in units of cm/s.
-        double k_2 = k_out * Sq(mass_e) * Power(C(), 4);
+        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
+        double k_2 = k_out * Sq(mass_e);
 
         // Parameters in the electron energy distribution
         double age = shower.Age();
@@ -298,7 +298,7 @@ namespace cherenkov_library
 
         // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
         // not a full sphere.
-        return GaiserHilles(shower) * integral * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
+        return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
     }
 
     double Simulator::GaiserHilles(Shower shower)
@@ -320,7 +320,9 @@ namespace cherenkov_library
     double Simulator::EThresh(Shower shower)
     {
         double delta = shower.LocalDelta();
-        return mass_e * C() * C() / Sqrt(2 * delta);
+
+        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
+        return mass_e / Sqrt(2 * delta);
     }
 
     double Simulator::SphereFraction(TVector3 view_point)
