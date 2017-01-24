@@ -25,10 +25,20 @@ namespace cherenkov_library
 
     private:
 
+        /*
+         * A method to count the largest cluster of adjacent "true" values in a 2D array.
+         */
+        int LargestCluster(std::vector<std::vector<int>> not_counted);
+
+        /*
+         * A recursive method used by LargestCluster. Visits the item at the specified coordinates and any of its
+         * neighbors. Returns the total number of visited elements.
+         */
+        int Visit(int i, int j, std::vector<std::vector<int>>* not_counted);
+
         // Parameters relating to the position and orientation of the detector relative to its surroundings
         Plane ground_plane;
         TRotation rotate_to_world;
-
 
         // Parameters defining the amount of night sky background noise (used to subtract the average noise level from
         // the signal).

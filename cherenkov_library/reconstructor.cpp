@@ -72,4 +72,50 @@ namespace cherenkov_library
         TVector3 result = TVector3(eigen_vec[min_index][0], eigen_vec[min_index][1], eigen_vec[min_index][2]);
         return rotate_to_world * result;
     }
+
+    int Reconstructor::LargestCluster(std::vector<std::vector<int>> not_counted)
+    {
+        int largest = 0;
+        for (int i = 0; i < not_counted.size(); i++)
+        {
+            for (int j = 0; j < not_counted[i].size(); j++)
+            {
+                if (not_counted[i][j])
+                {
+                    int size = Visit(i, j, &not_counted);
+                    if (size > largest)
+                    {
+                        largest = size;
+                    }
+                }
+            }
+        }
+        return largest;
+    }
+
+    int Reconstructor::Visit(int i, int j, std::vector<std::vector<int>>* not_counted)
+    {
+        if (i > not_counted->size() - 1 || i < 0)
+        {
+            return 0;
+        }
+        else if (j > not_counted->at(i).size() - 1 || j < 0)
+        {
+            return 0;
+        }
+        else if (!not_counted->at(i)[j])
+        {
+            return 0;
+        }
+        else
+        {
+            not_counted->at(i)[j] = false;
+            int count = 1;
+            count += Visit(i + 1, j, not_counted);
+            count += Visit(i - 1, j, not_counted);
+            count += Visit(i, j + 1, not_counted);
+            count += Visit(i, j - 1, not_counted);
+            return count;
+        }
+    }
 }
