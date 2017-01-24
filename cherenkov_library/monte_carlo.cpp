@@ -76,10 +76,10 @@ namespace cherenkov_library
     {
         // We define the origin of both the world and detector frames to be the detector's center of curvature for
         // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction
-        // vector. Let's find a random vector normal to the shower axis.
-        TVector3 forward = TVector3(detector_axis);
-        forward.Rotate(impact_angle, axis);
-        TVector3 impact_point = impact_param * forward;
+        // vector.
+        TVector3 impact_direction = TVector3(1, 0, 0).Cross(axis);
+        impact_direction.Rotate(impact_angle, axis);
+        TVector3 impact_point = impact_param * impact_direction;
 
         // Find the depth of the first interaction, the depth of the maximum, and the size of the shower maximum (See
         // AbuZayyad 6.1-6.4). We assume a proton primary.
