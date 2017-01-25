@@ -53,6 +53,7 @@ namespace cherenkov_library
         TF1 cosine_distribution;
         TF1 impact_distribution;
         double first_interact;
+        double start_tracking;
         double n_max_ratio;
 
         // A general-purpose random number generator

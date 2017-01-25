@@ -33,6 +33,7 @@ namespace cherenkov_library
 
         // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
         first_interact = config.get<double>("first_interact");
+        start_tracking = config.get<double>("start_tracking");
 
         // Parameter for determining n_max for a shower.
         n_max_ratio = config.get<double>("n_max_ratio");
@@ -92,9 +93,9 @@ namespace cherenkov_library
         double n_max = energy / n_max_ratio;
 
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
-        // the first interaction.
-        double interaction_height =
-                -scale_height * axis.CosTheta() * Log(first_interact / (rho_0 * scale_height * axis.CosTheta()));
+        // the first interaction. See notes from 1/25.
+        double cos_theta = Abs(axis.CosTheta());
+        double interaction_height = -scale_height * Log(start_tracking * cos_theta / (rho_0 * scale_height));
         double param = (interaction_height - impact_point.Z()) / (axis.Z());
         TVector3 starting_position = impact_point + param * axis;
 
