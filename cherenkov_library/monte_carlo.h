@@ -41,7 +41,7 @@ namespace cherenkov_library
          * Constructs a shower object given a user-defined direction, impact parameter, impact angle (the angle of the
          * point of closest approach), energy, and depth of first interaction.
          */
-        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy, double x_0);
+        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy);
 
     private:
 
@@ -52,7 +52,7 @@ namespace cherenkov_library
         TF1 energy_distribution;
         TF1 cosine_distribution;
         TF1 impact_distribution;
-        double avg_interact;
+        double first_interact;
         double n_max_ratio;
 
         // A general-purpose random number generator

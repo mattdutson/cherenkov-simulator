@@ -32,7 +32,7 @@ namespace cherenkov_library
                                   config.get<double>("impact_max"));
 
         // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
-        avg_interact = config.get<double>("avg_interact");
+        first_interact = config.get<double>("first_interact");
 
         // Parameter for determining n_max for a shower.
         n_max_ratio = config.get<double>("n_max_ratio");
@@ -74,11 +74,10 @@ namespace cherenkov_library
 
     Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle)
     {
-        return GenerateShower(axis, impact_param, impact_angle, energy_distribution.GetRandom(), rng.Exp(avg_interact));
+        return GenerateShower(axis, impact_param, impact_angle, energy_distribution.GetRandom());
     }
 
-    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy,
-                                      double x_0)
+    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy)
     {
         // We define the origin of both the world and detector frames to be the detector's center of curvature for
         // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction
@@ -89,19 +88,19 @@ namespace cherenkov_library
 
         // Find the depth of the first interaction, the depth of the maximum, and the size of the shower maximum (See
         // AbuZayyad 6.1-6.4). We assume a proton primary.
-        double x_max = x_max_1 + x_max_2 * (Log(energy) - x_max_3) - avg_interact + x_0;
+        double x_max = x_max_1 + x_max_2 * (Log(energy) - x_max_3);
         double n_max = energy / n_max_ratio;
 
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
         // the first interaction.
         double interaction_height =
-                -scale_height * axis.CosTheta() * Log(x_0 / (rho_0 * scale_height * axis.CosTheta()));
+                -scale_height * axis.CosTheta() * Log(first_interact / (rho_0 * scale_height * axis.CosTheta()));
         double param = (interaction_height - impact_point.Z()) / (axis.Z());
         TVector3 starting_position = impact_point + param * axis;
 
         // Create a new shower with all of the randomly determined parameters.
         Shower::Params params;
-        params.x_0 = x_0;
+        params.x_0 = first_interact;
         params.x_max = x_max;
         params.n_max = n_max;
         params.rho_0 = rho_0;

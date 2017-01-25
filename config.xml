@@ -37,9 +37,9 @@
     <impact_max desc="The maximum impact parameter to simulate" unit="cm">
         1.0e6
     </impact_max>
-    <avg_interact desc="The average depth of the first interaction (a proton primary is assumed)" unit="cm">
-        70
-    </avg_interact>
+    <first_interact desc="The average depth of the first interaction (a proton primary is assumed)" unit="cm">
+        -70
+    </first_interact>
     <n_max_ratio desc="The constant used to determine the size of the shower at maximum from the primary energy"
                  unit="eV">
         1.3e9
