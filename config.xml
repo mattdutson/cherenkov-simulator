@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration>
+<config>
 
     <!-- Parameters related to the behavior of the simulation -->
     <depth_step desc="The slant depth of each step in the shower propagation" unit="g/cm^2">
@@ -91,7 +91,7 @@
 
     <!-- Parameters used when calculating the fluorescence yield -->
     <fluor_a1 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^2/g">
-        890)
+        890
     </fluor_a1>
     <fluor_a2 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^2/g">
         550
@@ -194,4 +194,4 @@
         18
     </x_max_3>
 
-</configuration>
+</config>

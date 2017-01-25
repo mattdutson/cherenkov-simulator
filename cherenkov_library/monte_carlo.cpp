@@ -31,9 +31,11 @@ namespace cherenkov_library
         impact_distribution = TF1("impact", "x", config.get<double>("impact_min"),
                                   config.get<double>("impact_max"));
 
-        // The distribution of first interaction depths (See AbuZayyad 6.1)
-        std::string interaction_formula = "e^(-x/ " + std::to_string(config.get<double>("avg_interact")) + ")";
-        interact_distribution = TF1("interact", interaction_formula.c_str(), 0, TMath::Infinity());
+        // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
+        avg_interact = config.get<double>("avg_interact");
+
+        // Parameter for determining n_max for a shower.
+        n_max_ratio = config.get<double>("n_max_ratio");
 
         // Parameters defining properties of the atmosphere
         scale_height = config.get<double>("scale_height");
@@ -51,7 +53,7 @@ namespace cherenkov_library
         x_max_3 = config.get<double>("x_max_3");
     }
 
-    Shower MonteCarlo::GenerateRandomShower()
+    Shower MonteCarlo::GenerateShower()
     {
         double energy = energy_distribution.GetRandom();
 
@@ -67,12 +69,16 @@ namespace cherenkov_library
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
         // local ground.
         TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), cos(theta));
-
-        return GenerateSpecificShower(shower_axis, impact_param, rng.Uniform(TwoPi()));
+        return GenerateShower(shower_axis, impact_param, rng.Uniform(TwoPi()));
     }
 
-    Shower MonteCarlo::GenerateSpecificShower(TVector3 axis, double impact_param, double impact_angle, double energy,
-                                              double x_0)
+    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle)
+    {
+        return GenerateShower(axis, impact_param, impact_angle, energy_distribution.GetRandom(), rng.Exp(avg_interact));
+    }
+
+    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy,
+                                      double x_0)
     {
         // We define the origin of both the world and detector frames to be the detector's center of curvature for
         // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction
@@ -83,7 +89,7 @@ namespace cherenkov_library
 
         // Find the depth of the first interaction, the depth of the maximum, and the size of the shower maximum (See
         // AbuZayyad 6.1-6.4). We assume a proton primary.
-        double x_max = x_max_1 + x_max_2 * (Log(energy) - 18.0) - 70 + x_0;
+        double x_max = x_max_1 + x_max_2 * (Log(energy) - x_max_3) - avg_interact + x_0;
         double n_max = energy / n_max_ratio;
 
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of

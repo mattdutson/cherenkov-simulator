@@ -29,6 +29,11 @@ namespace cherenkov_library
     TVector3 ToVector(std::string s);
 
     /*
+     * A helper method which parses to double everything from the beginning of the string to the first occurence of the
+     * specified character. The method then erases everything up to and including the specified character.
+     */
+
+    /*
      * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
      * returned.
      */

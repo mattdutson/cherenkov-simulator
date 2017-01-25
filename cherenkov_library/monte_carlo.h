@@ -29,15 +29,19 @@ namespace cherenkov_library
          * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and
          * distribution parameters are set in the configuration file.
          */
-        Shower GenerateRandomShower();
+        Shower GenerateShower();
+
+        /*
+         * Constructs a shower object given a user-defined direction, impact parameter, and impact angle (the angle of
+         * the point of closest approach).
+         */
+        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle);
 
         /*
          * Constructs a shower object given a user-defined direction, impact parameter, impact angle (the angle of the
          * point of closest approach), energy, and depth of first interaction.
          */
-        Shower GenerateSpecificShower(TVector3 axis, double impact_param, double impact_angle,
-                                      double energy = energy_distribution.GetRandom(),
-                                      double x_0 = interact_distribution.GetRandom());
+        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy, double x_0);
 
     private:
 
@@ -48,7 +52,7 @@ namespace cherenkov_library
         TF1 energy_distribution;
         TF1 cosine_distribution;
         TF1 impact_distribution;
-        TF1 interact_distribution;
+        double avg_interact;
         double n_max_ratio;
 
         // A general-purpose random number generator

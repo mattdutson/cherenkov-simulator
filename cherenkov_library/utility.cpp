@@ -17,16 +17,25 @@ using namespace TMath;
 
 namespace cherenkov_library
 {
+    double ParseTo(string* s, char c)
+    {
+        size_t index = s->find(c);
+        double out = stod(s->substr(0, index));
+        s->erase(0, index + 1);
+        return out;
+    }
+
     TVector3 ToVector(string s)
     {
+        // Clear out everything before the first parenthesis.
+        int current = s.find('(');
+        s.erase(0, current + 1);
+
+        // Pull double values from the vector.
         TVector3 output = TVector3();
-        int comma = s.find(',');
-        output.SetX(stod(s.substr(1, comma)));
-        s.erase(0, comma);
-        comma = s.find(',');
-        output.SetY(stod(s.substr(0, comma)));
-        s.erase(0, comma);
-        output.SetZ(stod(s.substr(0, s.size() - 1)));
+        output.SetX(ParseTo(&s, ','));
+        output.SetY(ParseTo(&s, ','));
+        output.SetZ(ParseTo(&s, ')'));
         return output;
     }
 
@@ -131,5 +140,6 @@ namespace cherenkov_library
     {
         TRotation rotate = TRotation();
         rotate.RotateX(-PiOver2() + elevation_angle);
+        return rotate;
     }
 }

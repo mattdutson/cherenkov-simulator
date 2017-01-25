@@ -9,7 +9,7 @@ endfunction()
 # Find and link to the ROOT libraries.
 function(link_root library_name)
     list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-    find_package(ROOT REQUIRED)
+    find_package(ROOT REQUIRED COMPONENTS MathMore)
     include(${ROOT_USE_FILE})
     target_link_libraries(${library_name} ${ROOT_LIBRARIES})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
