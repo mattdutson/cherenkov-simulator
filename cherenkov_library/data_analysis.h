@@ -5,6 +5,9 @@
 #ifndef analysis_h
 #define analysis_h
 
+#include <TH2C.h>
+#include <vector>
+
 #include "data_containers.h"
 #include "geometric_objects.h"
 
@@ -19,6 +22,11 @@ namespace cherenkov_library
      * same time length (if AddNoise wasn't called this won't be the case).
      */
     std::vector<std::vector<double>> SuperimposeTimes(PhotonCount data);
+
+    /*
+     * Creates a 2D histogram with a 1 for valid cells and a 0 for invalid cells.
+     */
+    TH2C GetValidMap(PhotonCount data);
 }
 
 #endif

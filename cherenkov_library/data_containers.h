@@ -119,6 +119,11 @@ namespace cherenkov_library
         std::vector<int> Signal(SignalIterator current);
 
         /*
+         * Returns the 2D array of valid pixel flags.
+         */
+        std::vector<std::vector<bool>> GetValid();
+
+        /*
          * Returns an object for iterating through the pixels.
          */
         SignalIterator Iterator();
@@ -136,6 +141,11 @@ namespace cherenkov_library
         bool ValidPixel(int x_index, int y_index);
 
         /*
+         * A private method which determines the direction of the photomultiplier at the specified indices.
+         */
+        TVector3 Direction(int x_index, int y_index);
+
+        /*
          * If the vector at indices (x, y) is smaller than the specified size, it is expanded. This method does NOT
          * check that the indices are valid.
          */
@@ -146,6 +156,9 @@ namespace cherenkov_library
 
         // A 2D vector of bools which can be used to determine which pixels are valid.
         std::vector<std::vector<bool>> valid_pixels;
+
+        // The number of pixels across
+        int n_pixels;
 
         // The time at the beginning of the zeroth bin
         double start_time;

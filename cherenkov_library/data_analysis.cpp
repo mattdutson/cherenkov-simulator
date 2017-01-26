@@ -82,4 +82,27 @@ namespace cherenkov_library
         }
         return superposition;
     };
+
+    TH2C GetValidMap(PhotonCount data)
+    {
+        std::vector<std::vector<bool>> valid = data.GetValid();
+        TH2C histo = TH2C("Valid", "Valid", valid.size(), 0, valid.size(), valid[0].size(), 0, valid[0].size());
+        for (int i = 0; i < valid.size(); i++)
+        {
+            for (int j = 0; j < valid[i].size(); j++)
+            {
+                if (valid[i][j])
+                {
+                    // The zeroth bin is the underflow, so start at 1.
+                    histo.SetBinContent(i + 1, j + 1, 1.0);
+                }
+                else
+                {
+                    // The zeroth bin is the underflow, so start at 1.
+                    histo.SetBinContent(i + 1, j + 1, 0.0);
+                }
+            }
+        }
+        return histo;
+    }
 }

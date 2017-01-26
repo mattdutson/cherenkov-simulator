@@ -7,6 +7,7 @@
 
 #include "data_containers.h"
 #include "TMath.h"
+#include "utility.h"
 
 using namespace TMath;
 using std::vector;
@@ -77,6 +78,7 @@ namespace cherenkov_library
                              double pmt_linear_size)
     {
         // Copy parameters.
+        this->n_pixels = n_pmt_across;
         this->start_time = start_time;
         this->bin_size = time_bin;
         this->pmt_angular_size = pmt_angular_size;
@@ -88,7 +90,7 @@ namespace cherenkov_library
         // Initialize the photon count and valid pixel structures.
         photon_counts = vector<vector<vector<int>>>();
         valid_pixels = vector<vector<bool>>();
-        for (int i = 0; i < n_pmt_across; i++)
+        for (int i = 0; i < n_pixels; i++)
         {
             photon_counts.push_back(vector<vector<int>>());
             valid_pixels.push_back(vector<bool>());
@@ -176,20 +178,17 @@ namespace cherenkov_library
 
     TVector3 PhotonCount::Direction(SignalIterator current)
     {
-        // Reverse the operations of AddPhoton. Add 0.5 to account for the Floor() operation.
-        double elevation = (current.Y() - 1.0 - photon_counts.size() + 0.5) * pmt_angular_size;
-        double azimuth = (current.X() - 1.0 - photon_counts.size() + 0.5) * pmt_angular_size * Cos(elevation);
-
-        // TODO: Check that these rotations are in the correct direction (perhaps with unit testing).
-        TVector3 direction = TVector3(0, 0, 1);
-        direction.RotateX(elevation);
-        direction.RotateY(azimuth);
-        return direction;
+        return Direction(current.X(), current.Y());
     }
 
     vector<int> PhotonCount::Signal(SignalIterator current)
     {
         return photon_counts[current.X()][current.Y()];
+    }
+
+    vector<vector<bool>> PhotonCount::GetValid()
+    {
+        return valid_pixels;
     }
 
     SignalIterator PhotonCount::Iterator()
@@ -210,13 +209,28 @@ namespace cherenkov_library
 
     bool PhotonCount::ValidPixel(int x_index, int y_index)
     {
-        int n_pixels = photon_counts.size();
-        double center_index = (n_pixels + 1) / 2;
-        double x_dist = x_index - center_index;
-        double y_dist = y_index - center_index;
+        int n_half = n_pixels / 2;
+        double arc_length = n_half * pmt_linear_size;
+        double angle = n_half * pmt_angular_size;
+        double radius = arc_length / angle;
+        double max_dev = radius * Sin(angle);
+        TVector3 direction = Direction(x_index, y_index) * radius;
+        return WithinXYDisk(direction, max_dev);
+    }
 
-        // The radius of the valid circle is equal to half the number of valid pixels.
-        return Sq(x_dist) + Sq(y_dist) < Sq(n_pixels / 2.0);
+    TVector3 PhotonCount::Direction(int x_index, int y_index)
+    {
+        // Reverse the operations of AddPhoton. Add 0.5 to account for the Floor() operation.
+        double pixels_up = (y_index - n_pixels / 2.0 + 0.5);
+        double elevation = pixels_up * pmt_angular_size;
+        double pixels_horiz = (x_index - n_pixels / 2.0 + 0.5);
+        double azimuth = pixels_horiz * pmt_angular_size * Cos(elevation);
+
+        // TODO: Check that these rotations are in the correct direction (perhaps with unit testing).
+        TVector3 direction = TVector3(0, 0, 1);
+        direction.RotateX(elevation);
+        direction.RotateY(azimuth);
+        return direction;
     }
 
     void PhotonCount::ExpandVector(int x_index, int y_index, int min_size)
