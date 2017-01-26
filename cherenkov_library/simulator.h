@@ -70,7 +70,7 @@ namespace cherenkov_library
         /*
          * Refracts a ray across the Schmidt corrector. The Schmidt corrector is assumed to have zero thickness.
          */
-        void DeflectFromLens(Ray* photon);
+        bool DeflectFromLens(Ray* photon);
 
         /*
          * Takes a ray which has just been refracted by the corrector. Finds the point on the mirror where that ray will
@@ -166,9 +166,9 @@ namespace cherenkov_library
         // Parameters defining properties of the detector optics
         double refrac_lens;
         double mirror_radius;
-        double stop_size;
+        double stop_diameter;
         double mirror_size;
-        double cluster_size;
+        double cluster_diameter;
         int n_pmt_across;
 
         // Parameters in the GH profile

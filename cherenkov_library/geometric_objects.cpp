@@ -78,6 +78,12 @@ namespace cherenkov_library
         return current_velocity.Unit();
     }
 
+    void Ray::Transform(TRotation rotation)
+    {
+        current_velocity = rotation * current_velocity;
+        current_position = rotation * current_position;
+    }
+
     void Ray::SetDirection(TVector3 direction)
     {
         // Use the speed of light in centimeters/second.
@@ -135,18 +141,30 @@ namespace cherenkov_library
         current_velocity -= 2 * current_velocity.Dot(normal) * normal;
     }
 
-    void Ray::Refract(TVector3 normal, double n_in, double n_out)
+    bool Ray::Refract(TVector3 normal, double n_in, double n_out)
     {
+        double angle_in = current_velocity.Angle(normal);
+
         // If the current velocity and normal vector are parallel, don't do anything.
-        if (normal.Cross(current_velocity) != TVector3(0, 0, 0))
+        if (angle_in == 0)
         {
-            // Apply Snell's law.
-            double angle_in = current_velocity.Angle(normal);
-            double angle_out = ASin(n_in * Sin(angle_in) / n_out);
+            return true;
+        }
+
+            // If we're more than 90 degrees from the normal, we're coming from the wrong side of the lens. This can
+            // occur when the shower is nearly 90 degrees off the detector axis.
+        else if (angle_in > PiOver2())
+        {
+            return false;
+        }
 
             // Refract and rotate around some vector perpendicular to both the ray and plane normal.
+        else
+        {
+            double angle_out = ASin(n_in * Sin(angle_in) / n_out);
             TVector3 mutual_norm = normal.Cross(current_velocity);
             current_velocity.Rotate(angle_out - angle_in, mutual_norm);
+            return true;
         }
     }
 
@@ -180,14 +198,9 @@ namespace cherenkov_library
 
     double Shower::X()
     {
-        // TODO: Should we be integrating from the shower's starting point or from the top of the atmosphere?
-        TVector3 point1 = Position();
-        TVector3 point2 = start_position;
-        TVector3 diff = point2 - point1;
-        double cosine = Abs(diff.Z() / diff.Mag());
-        double vertical_depth =
-                -rho_0 / scale_height * (Exp(-point2.Z() / scale_height) - Exp(-point1.Z() / scale_height));
-        return vertical_depth / cosine;
+        // See 1/25 depth integration notes.
+        double cos_theta = Abs(current_position.CosTheta());
+        return scale_height * rho_0 / cos_theta * Exp(-current_position.Z() / scale_height);
     }
 
     double Shower::X0()
@@ -217,9 +230,9 @@ namespace cherenkov_library
 
     void Shower::IncrementDepth(double depth)
     {
-        double vertical_distance =
-                -scale_height * Log(Exp(-current_position.Z() / scale_height) + scale_height * depth / rho_0);
-        double total_distance = vertical_distance / Abs(current_velocity.CosTheta());
-        IncrementPosition(total_distance);
+        // We make the simplifying assumption that the density of the atmosphere is approximately constant in the
+        // range of a single step.
+        // TODO: Use an exact formula (the integral of the atmospheric density is easy to find).
+        IncrementPosition(depth / LocalRho());
     }
 }

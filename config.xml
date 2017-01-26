@@ -7,7 +7,7 @@
         1
     </depth_step>
     <time_bin desc="The size of the time bins for the photons collected" unit="s">
-        1.0e-7
+        100e-9
     </time_bin>
 
     <!-- Parameters relating to the position and orientation of the detector relative to its surroundings -->
@@ -75,15 +75,15 @@
     <mirror_radius desc="The radius of curvature of the detector mirror" unit="cm">
         400
     </mirror_radius>
-    <stop_size desc="The diameter of the stop (corrector)" unit="cm">
+    <stop_diameter desc="The diameter of the stop (corrector)" unit="cm">
         200
-    </stop_size>
+    </stop_diameter>
     <mirror_size desc="The diameter of the mirror" unit="cm">
         200
     </mirror_size>
-    <cluster_size desc="The diameter of the photomultiplier array" unit="cm">
+    <cluster_diameter desc="The diameter of the photomultiplier array" unit="cm">
         100
-    </cluster_size>
+    </cluster_diameter>
     <n_pmt_across desc="The width/height of the photomultiplier grid in number of photomultipliers (should be even)"
                   unit="null">
         200

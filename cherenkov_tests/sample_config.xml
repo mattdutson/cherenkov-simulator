@@ -68,15 +68,15 @@
     <mirror_radius desc="The radius of curvature of the detector mirror in cm">
         400
     </mirror_radius>
-    <stop_size desc="The diameter of the stop (corrector) in cm">
+    <stop_diameter desc="The diameter of the stop (corrector) in cm">
         200
-    </stop_size>
+    </stop_diameter>
     <mirror_size desc="The diameter of the mirror in cm">
         200
     </mirror_size>
-    <cluster_size desc="The diameter of the photomultiplier array in cm">
+    <cluster_diameter desc="The diameter of the photomultiplier array in cm">
         100
-    </cluster_size>
+    </cluster_diameter>
     <n_pmt_across desc="The width/height of the photomultiplier grid in number of photomultipliers (should be even)">
         200
     </n_pmt_across>

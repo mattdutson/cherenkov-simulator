@@ -45,7 +45,7 @@ namespace cherenkov_library
         rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
 
         // 1 - the index of refraction at the detector (proportional to atmospheric density)
-        double delta_sea = 1.0 - config.get<double>("refrac_sea");
+        double delta_sea = config.get<double>("refrac_sea") - 1.0;
         delta_0 = delta_sea * Exp(-detect_elevation / scale_height);
 
         // Parameters used when determing the depth of the shower maximum

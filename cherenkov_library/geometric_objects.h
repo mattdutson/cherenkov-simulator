@@ -8,7 +8,8 @@
 #ifndef geometric_objects_h
 #define geometric_objects_h
 
-#include "TVector3.h"
+#include <TRotation.h>
+#include <TVector3.h>
 
 namespace cherenkov_library
 {
@@ -87,6 +88,11 @@ namespace cherenkov_library
         TVector3 Direction();
 
         /*
+         * Switches the the position and direction to a new, rotated reference frame.
+         */
+        void Transform(TRotation rotation);
+
+        /*
          * When possible, use this method to set direction instead of directly modifying the current_velocity member.
          * This method ensures that the velocity vector has a magnitude equal to the speed of light in a vacuum.
          */
@@ -126,7 +132,7 @@ namespace cherenkov_library
         /*
          * Refracts the ray across the normal vector using the incident and outward indices of refraction specified.
          */
-        void Refract(TVector3 normal, double n_in, double n_out);
+        bool Refract(TVector3 normal, double n_in, double n_out);
 
     protected:
 

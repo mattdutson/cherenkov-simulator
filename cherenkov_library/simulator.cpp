@@ -7,6 +7,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <Math/Polynomial.h>
+#include <iostream>
 
 #include "simulator.h"
 #include "utility.h"
@@ -36,9 +37,9 @@ namespace cherenkov_library
         // Parameters defining properties of the detector optics
         refrac_lens = config.get<double>("refrac_lens");
         mirror_radius = config.get<double>("mirror_radius");
-        stop_size = config.get<double>("stop_size");
+        stop_diameter = config.get<double>("stop_diameter");
         mirror_size = config.get<double>("mirror_size");
-        cluster_size = config.get<double>("cluster_size");
+        cluster_diameter = config.get<double>("cluster_diameter");
         n_pmt_across = config.get<int>("n_pmt_across");
 
         // Parameters in the GH profile
@@ -90,7 +91,7 @@ namespace cherenkov_library
     PhotonCount Simulator::SimulateShower(Shower shower)
     {
         // Arc length = angle * radius
-        double pmt_linear_size = cluster_size / n_pmt_across;
+        double pmt_linear_size = cluster_diameter / n_pmt_across;
         double pmt_angular_size = pmt_linear_size / (mirror_radius / 2.0);
         PhotonCount photon_count = PhotonCount(n_pmt_across, shower.Time(), time_bin, pmt_angular_size,
                                                pmt_linear_size);
@@ -113,7 +114,7 @@ namespace cherenkov_library
 
         for (int i = 0; i < number_detected; i++)
         {
-            TVector3 lens_impact = RandomStopImpact();
+            TVector3 lens_impact = rotate_to_world * RandomStopImpact();
             Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), shower.Time());
             photon.PropagateToPoint(lens_impact);
 
@@ -138,12 +139,15 @@ namespace cherenkov_library
 
     void Simulator::SimulateOptics(Ray photon, PhotonCount* photon_count)
     {
-        // Refract the ray over the corrector plate.
-        DeflectFromLens(&photon);
+        // Refract the ray over the corrector plate. For the transform, keep in mind that the y-axis in the detector
+        // frame points toward the ground.
+        photon.Transform(rotate_to_world.Inverse());
+        if (!DeflectFromLens(&photon)) return;
 
         // Check whether the ray hit the back of the camera.
         TVector3 reflect_point, camera_impact;
-        if (CameraImpactPoint(photon, &camera_impact)) return;
+        // TODO: This seems to be blocking ALL photons which would otherwise reach the camera
+//        if (CameraImpactPoint(photon, &camera_impact)) return;
 
         // Check whether the ray bounces off the mirror and then reflect it.
         if (!MirrorImpactPoint(photon, &reflect_point)) return;
@@ -164,37 +168,38 @@ namespace cherenkov_library
 
         // The probability that a random point on a circle will lie at radius r is proportional to r (area of slice is
         // 2*pi*r*dr).
-        TF1 radius_distribution = TF1("stop_impact", "x", 0, stop_size / 2.0);
+        TF1 radius_distribution = TF1("stop_impact", "x", 0, stop_diameter / 2.0);
         double r_rand = radius_distribution.GetRandom();
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
 
-    void Simulator::DeflectFromLens(Ray* photon)
+    bool Simulator::DeflectFromLens(Ray* photon)
     {
         TVector3 position = photon->Position();
 
         // Only deflect the photon if it's on the portion of the lens where the s^4 term dominates.
-        double photon_axis_dist = Sqrt(position.X() * position.X() + position.Y() * position.Y());
-        if (photon_axis_dist < Sqrt2() * stop_size / 2.0)
+        double photon_axis_dist = Sqrt(Sq(position.X()) + Sq(position.Y()));
+        double threshold = stop_diameter / (2.0 * Sqrt(2));
+        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2)))
         {
-            return;
+            return true;
         }
 
         double schmidt_coefficient = 1.0 / (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3));
 
         // Now let's find a vector normal to the lens surface. Start with the derivative.
         double deriv = 4 * schmidt_coefficient * Power(photon_axis_dist, 3);
-        double theta = ATan(1.0 / deriv);
+        double theta = ATan(deriv);
 
-        double phi = position.Phi();
+        // We want the normal vector to point outward.
+        double phi = position.Phi() + Pi();
 
-        TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(phi));
+        TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(theta));
 
         // TODO: Here we are assuming an index of refraction for the air of one. Should we change this?
-        photon->Refract(norm, 1, refrac_lens);
-
-        photon->Refract(TVector3(0, 0, 1), refrac_lens, 1);
-
+        // Return false if the ray was coming in from the back of the lens.
+        bool success = photon->Refract(norm, 1, refrac_lens);
+        return success && photon->Refract(TVector3(0, 0, 1), refrac_lens, 1);
     }
 
     bool Simulator::MirrorImpactPoint(Ray ray, TVector3* point)
@@ -215,16 +220,16 @@ namespace cherenkov_library
 
     bool Simulator::CameraImpactPoint(Ray ray, TVector3* point)
     {
-        BackOriginSphereImpact(ray, point, mirror_radius);
-        return WithinXYDisk(*point, cluster_size / 2.0) && point->Z() < 0;
+        BackOriginSphereImpact(ray, point, mirror_radius / 2.0);
+        return WithinXYDisk(*point, cluster_diameter / 2.0) && point->Z() < 0;
     }
 
     bool Simulator::BackOriginSphereImpact(Ray ray, TVector3* point, double radius)
     {
         // Solve for the time when the ray impacts a sphere centered at the origin. See notes for details.
-        double a = ray.Position().Dot(ray.Position()) - radius * radius;
+        double a = ray.Velocity().Mag2();
         double b = 2 * ray.Position().Dot(ray.Velocity());
-        double c = ray.Velocity().Dot(ray.Velocity());
+        double c = ray.Position().Mag2() - Sq(radius);
         ROOT::Math::Polynomial poly = ROOT::Math::Polynomial(a, b, c);
         std::vector<double> roots = poly.FindRealRoots();
         if (roots.size() == 0)
@@ -254,50 +259,56 @@ namespace cherenkov_library
 
     int Simulator::NumberFluorescencePhotons(Shower shower)
     {
-        int n_charged = GaiserHilles(shower);
-        double alpha_eff = IonizationLossRate(shower);
-
-        double rho = shower.LocalRho();
-        double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
-        double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
-
-        // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
-        // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
-        double yield = alpha_eff / dep_1_4 * rho * (term_1 + term_2);
-        double total_produced = yield * n_charged * depth_step;
-
-        // Find the fraction captured by the camera.
-        return total_produced * SphereFraction(shower.Position());
+//        double n_charged = GaiserHilles(shower);
+//        double alpha_eff = IonizationLossRate(shower);
+//
+//        double rho = shower.LocalRho();
+//        double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
+//        double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
+//
+//        // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
+//        // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
+//        double yield = alpha_eff / dep_1_4 * rho * (term_1 + term_2);
+//        double total_produced = yield * n_charged * depth_step;
+//
+//        // Find the fraction captured by the camera.
+//        return total_produced * SphereFraction(shower.Position());
+        return 10;
     }
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
     {
-        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
-        double rho = shower.LocalRho();
-        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
-        double k_1 = k_out * 2 * shower.LocalDelta();
-
-        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
-        double k_2 = k_out * Sq(mass_e);
-
-        // Parameters in the electron energy distribution
-        double age = shower.Age();
-        double a1 = fe_a11 - fe_a12 * age;
-        double a2 = fe_a21 - fe_a22 * age;
-        double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
-
-        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
-        // variable of integration is lnE.
-        std::stringstream func_string;
-        func_string << "(" << a0 << "* e^x / ((" << a1 << "+e^x)(" << a2 << "+e^x)^" << age << "))(" << k_1 << "-"
-                    << k_2 << "/e^x)";
-        double e_thresh = EThresh(shower);
-        TF1 func = TF1("integrand", func_string.str().c_str(), e_thresh, Infinity());
-        double integral = func.Integral(e_thresh, Infinity());
-
-        // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
-        // not a full sphere.
-        return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
+//        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
+//        double rho = shower.LocalRho();
+//        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
+//        double k_1 = k_out * 2 * shower.LocalDelta();
+//
+//        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
+//        double k_2 = k_out * Sq(mass_e);
+//
+//        // Parameters in the electron energy distribution
+//        double age = shower.Age();
+//        double a1 = fe_a11 - fe_a12 * age;
+//        double a2 = fe_a21 - fe_a22 * age;
+//        double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
+//
+//        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
+//        // variable of integration is lnE.
+//        std::stringstream func_string;
+//        func_string << "(" << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << ")))*(" << k_1 << "-"
+//                    << k_2 << "/exp(2*x))";
+//        std::string formula = func_string.str();
+//        double e_thresh = EThresh(shower);
+////        TF1 func = TF1("integrand", func_string.str().c_str(), Log(e_thresh), Infinity());
+////        double value = func.Eval(Log(e_thresh));
+////        std::cout << value << std::endl;
+////        double integral = func.Integral(Log(e_thresh), Infinity());
+//
+//        // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
+//        // not a full sphere.
+//        // TODO: This integral does not converge, even though the integrand does approach zero very quickly above 10^12.
+////        return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
+        return 10;
     }
 
     double Simulator::GaiserHilles(Shower shower)
@@ -307,7 +318,10 @@ namespace cherenkov_library
         double n_max = shower.NMax();
         double x_max = shower.XMax();
         double x_0 = shower.X0();
-        return n_max * Power((x - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda) * Exp((x_max - x) / gh_lambda);
+        double pow = Power((x - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda);
+        double exp = Exp((x_max - x) / gh_lambda);
+        double result = n_max * pow * exp;
+        return n_max * pow * exp;
     }
 
     double Simulator::IonizationLossRate(Shower shower)
@@ -329,16 +343,17 @@ namespace cherenkov_library
         TVector3 detector_axis = rotate_to_world * TVector3(0, 0, 1);
         double angle = detector_axis.Angle(view_point);
         double distance = view_point.Mag();
-        double area_fraction = Sq(stop_size / 2.0) / (4.0 * Sq(distance));
+        double area_fraction = Sq(stop_diameter / 2.0) / (4.0 * Sq(distance));
         return area_fraction * cos(angle);
     }
 
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
     {
         TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), rng);
-        std::string formula = "e^(-x/" + std::to_string(ThetaC(shower)) + ")/sin(x)";
+        std::string formula = "e^(-x/" + std::to_string(ThetaC(shower)) + ")";
         TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
         TVector3 direction = shower.Velocity().Unit();
+        double rotation_angle = angular_distribution.GetRandom();
         direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
         return Ray(shower.Position(), direction, shower.Time());
     }
