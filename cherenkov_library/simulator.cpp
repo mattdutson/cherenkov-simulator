@@ -117,7 +117,6 @@ namespace cherenkov_library
             TVector3 lens_impact = rotate_to_world * RandomStopImpact();
             Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), shower.Time());
             photon.PropagateToPoint(lens_impact);
-
             SimulateOptics(photon, photon_count);
         }
     }
@@ -130,9 +129,8 @@ namespace cherenkov_library
         {
             Ray photon = GenerateCherenkovPhoton(shower);
             photon.PropagateToPlane(ground_plane);
-            TVector3 stop_impact;
+            TVector3 stop_impact = rotate_to_world * RandomStopImpact();
             photon.PropagateToPoint(stop_impact);
-
             SimulateOptics(photon, photon_count);
         }
     }
@@ -146,8 +144,7 @@ namespace cherenkov_library
 
         // Check whether the ray hit the back of the camera.
         TVector3 reflect_point, camera_impact;
-        // TODO: This seems to be blocking ALL photons which would otherwise reach the camera
-//        if (CameraImpactPoint(photon, &camera_impact)) return;
+        if (CameraImpactPoint(photon, &camera_impact)) return;
 
         // Check whether the ray bounces off the mirror and then reflect it.
         if (!MirrorImpactPoint(photon, &reflect_point)) return;
@@ -215,7 +212,7 @@ namespace cherenkov_library
     {
         // For a spherical mirror, the normal vector will always point straight back to the center of curvature (the
         // origin in this case).
-        return -point;
+        return -point.Unit();
     }
 
     bool Simulator::CameraImpactPoint(Ray ray, TVector3* point)
@@ -259,21 +256,20 @@ namespace cherenkov_library
 
     int Simulator::NumberFluorescencePhotons(Shower shower)
     {
-//        double n_charged = GaiserHilles(shower);
-//        double alpha_eff = IonizationLossRate(shower);
-//
-//        double rho = shower.LocalRho();
-//        double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
-//        double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
-//
-//        // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
-//        // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
-//        double yield = alpha_eff / dep_1_4 * rho * (term_1 + term_2);
-//        double total_produced = yield * n_charged * depth_step;
-//
-//        // Find the fraction captured by the camera.
-//        return total_produced * SphereFraction(shower.Position());
-        return 10;
+        double n_charged = GaiserHilles(shower);
+        double alpha_eff = IonizationLossRate(shower);
+
+        double rho = shower.LocalRho();
+        double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
+        double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
+
+        // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
+        // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
+        double yield = alpha_eff / dep_1_4 * rho * (term_1 + term_2);
+        double total_produced = yield * n_charged * depth_step;
+
+        // Find the fraction captured by the camera.
+        return total_produced * SphereFraction(shower.Position());
     }
 
     int Simulator::NumberCherenkovPhotons(Shower shower)

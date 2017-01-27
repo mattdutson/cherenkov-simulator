@@ -81,6 +81,11 @@ namespace cherenkov_library
                     double pmt_linear_size);
 
         /*
+         * Returns the width/height of the 2D array
+         */
+        int Size();
+
+        /*
          * Returns the total number of bins in the data structure.
          */
         int NBins();

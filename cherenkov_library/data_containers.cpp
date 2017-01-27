@@ -102,6 +102,11 @@ namespace cherenkov_library
         }
     }
 
+    int PhotonCount::Size()
+    {
+        return n_pixels;
+    }
+
     int PhotonCount::NBins()
     {
         return Bin(last_time) + 1;
@@ -129,8 +134,8 @@ namespace cherenkov_library
         double azimuth = ATan(direction.X() / direction.Z());
 
         // The number of photomultipliers across is equal to the size of the data container.
-        int y_index = Floor(elevation / pmt_angular_size) + photon_counts.size() + 1;
-        int x_index = Floor(azimuth / (pmt_angular_size * Cos(elevation))) + photon_counts.size() + 1;
+        int y_index = Floor(elevation / pmt_angular_size) + n_pixels / 2;
+        int x_index = Floor(azimuth / (pmt_angular_size * Cos(elevation))) + n_pixels / 2;
 
         // If the location is valid, add the pixel to the underlying data structure.
         if (ValidPixel(x_index, y_index))

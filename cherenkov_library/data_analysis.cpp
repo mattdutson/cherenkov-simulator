@@ -80,7 +80,25 @@ namespace cherenkov_library
                 superposition[i][1] += signal[i];
             }
         }
-        return superposition;
+
+        // Trim any zeros from the profile.
+        int first_nonzero = 0;
+        int last_nonzero = 0;
+        bool started = false;
+        for (int i = 0; i < superposition.size(); i++)
+        {
+            double value = superposition[i][1];
+            if (value > 0)
+            {
+                if (!started)
+                {
+                    first_nonzero = i;
+                    started = true;
+                }
+                last_nonzero = i;
+            }
+        }
+        return vector<vector<double>>(superposition.begin() + first_nonzero, superposition.end() + last_nonzero + 1);
     };
 
     TH2C GetValidMap(PhotonCount data)
@@ -102,6 +120,32 @@ namespace cherenkov_library
                     histo.SetBinContent(i + 1, j + 1, 0.0);
                 }
             }
+        }
+        return histo;
+    }
+
+    TGraph MakeProfileGraph(PhotonCount data)
+    {
+        vector<vector<double>> profile = SuperimposeTimes(data);
+        double x[profile.size()];
+        double y[profile.size()];
+        for (int i = 0; i < profile.size(); i++)
+        {
+            x[i] = profile[i][0];
+            y[i] = profile[i][1];
+        }
+        return TGraph(profile.size(), x, y);
+    }
+
+    TH2C MakeSumMap(PhotonCount data)
+    {
+        int size = data.Size();
+        TH2C histo = TH2C("Sums", "Sums", size, 0, size, size, 0, size);
+        SignalIterator iter = data.Iterator();
+        while (iter.Next())
+        {
+            // The zeroth bin is the underflow, so start at 1.
+            histo.SetBinContent(iter.X() + 1, iter.Y() + 1, data.SumBins(iter));
         }
         return histo;
     }

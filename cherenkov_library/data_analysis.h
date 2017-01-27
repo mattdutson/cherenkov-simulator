@@ -7,6 +7,7 @@
 
 #include <TH2C.h>
 #include <vector>
+#include <TGraph.h>
 
 #include "data_containers.h"
 #include "geometric_objects.h"
@@ -27,6 +28,16 @@ namespace cherenkov_library
      * Creates a 2D histogram with a 1 for valid cells and a 0 for invalid cells.
      */
     TH2C GetValidMap(PhotonCount data);
+
+    /*
+     * Makes a TGraph of the collapsed time profile for the simulation.
+     */
+    TGraph MakeProfileGraph(PhotonCount data);
+
+    /*
+     * Makes a 2D histogram with the sum of each bin
+     */
+    TH2C MakeSumMap(PhotonCount data);
 }
 
 #endif

@@ -138,7 +138,7 @@ namespace cherenkov_library
 
     void Ray::Reflect(TVector3 normal)
     {
-        current_velocity -= 2 * current_velocity.Dot(normal) * normal;
+        current_velocity -= 2 * current_velocity.Dot(normal.Unit()) * normal.Unit();
     }
 
     bool Ray::Refract(TVector3 normal, double n_in, double n_out)

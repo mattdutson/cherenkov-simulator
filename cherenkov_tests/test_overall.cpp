@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <vector>
+#include <TFile.h>
 
 #include "test_helper.h"
 #include "utility.h"
@@ -34,8 +35,11 @@ namespace cherenkov_tests
         Shower shower = monte_carlo.GenerateShower(TVector3(0, 0, -1), 100000, 0);
         PhotonCount data = simulator.SimulateShower(shower);
 
-        // Output data to a CSV file.
-        vector<vector<double>> profile = SuperimposeTimes(data);
-        WriteCSV(profile, {"Time", "Count"}, "../../shower_output.csv");
+        // Make a TGraph of results and write it to a file.
+//        TGraph graph = MakeProfileGraph(data);
+        TH2C histo = MakeSumMap(data);
+        TFile file("../../cherenkov_tests/sample_shower.root", "RECREATE");
+//        graph.Write("profile");
+        histo.Write("shower_map");
     }
 }
