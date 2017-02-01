@@ -179,24 +179,20 @@ namespace cherenkov_library
 
         // Only deflect the photon if it's on the portion of the lens where the s^4 term dominates.
         double photon_axis_dist = Sqrt(Sq(position.X()) + Sq(position.Y()));
-        double threshold = stop_diameter / (2.0 * Sqrt(2));
         if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2)))
         {
             return true;
         }
-
-        double schmidt_coefficient = 1.0 / (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3));
-
+        
         // Now let's find a vector normal to the lens surface. Start with the derivative.
+        double schmidt_coefficient = 1.0 / (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3));
         double deriv = 4 * schmidt_coefficient * Power(photon_axis_dist, 3);
         double theta = ATan(deriv);
 
         // We want the normal vector to point outward.
         double phi = position.Phi() + Pi();
-
         TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(theta));
 
-        // TODO: Here we are assuming an index of refraction for the air of one. Should we change this?
         // Return false if the ray was coming in from the back of the lens.
         bool success = photon->Refract(norm, 1, refrac_lens);
         return success && photon->Refract(TVector3(0, 0, 1), refrac_lens, 1);
@@ -266,8 +262,6 @@ namespace cherenkov_library
         double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
         double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
 
-        double ideal_yield = rho * (term_1 + term_2);
-
         // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
         // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
         // Removed the rho from Kakimoto (1) to give a result with units of cm^2/g
@@ -298,24 +292,17 @@ namespace cherenkov_library
         // variable of integration is lnE.
         std::stringstream func_string;
         func_string << "(" << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << ")))*(" << k_1
-                    << "-"
-                    << k_2 << "/exp(2*x))";
-        std::string formula = func_string.str();
-        double e_thresh = EThresh(shower);
+                    << "-" << k_2 << "/exp(2*x))";
         TF1 func = TF1("integrand", func_string.str().c_str(), 0, Infinity());
 
         // The shower will not contain any electrons with an energy higher than the shower primary energy. We can also
         // assume that the electron energy spectrum will remain relatively well normalized even if we omit these
         // electrons. Setting this upper limit on the integral will keep it from diverging when the shower age is small.
-        double integral = func.Integral(Log(e_thresh), Log(shower.EnergyMeV()));
-
-        std::cout << GaiserHilles(shower) * integral << std::endl;
+        double integral = func.Integral(Log(EThresh(shower)), Log(shower.EnergyMeV()));
 
         // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
         // not a full sphere.
-        // TODO: This integral does not converge, even though the integrand does approach zero very quickly above 10^12.
         return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
-        return 10;
     }
 
     double Simulator::GaiserHilles(Shower shower)
@@ -327,7 +314,6 @@ namespace cherenkov_library
         double x_0 = shower.X0();
         double pow = Power((x - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda);
         double exp = Exp((x_max - x) / gh_lambda);
-        double result = n_max * pow * exp;
         return n_max * pow * exp;
     }
 
@@ -360,7 +346,6 @@ namespace cherenkov_library
         std::string formula = "e^(-x/" + std::to_string(ThetaC(shower)) + ")";
         TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
         TVector3 direction = shower.Velocity().Unit();
-        double rotation_angle = angular_distribution.GetRandom();
         direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
         return Ray(shower.Position(), direction, shower.Time());
     }
