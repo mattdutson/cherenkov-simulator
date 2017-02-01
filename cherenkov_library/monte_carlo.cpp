@@ -14,7 +14,7 @@ using namespace TMath;
 
 namespace cherenkov_library
 {
-    void MonteCarlo::ParseFile(boost::property_tree::ptree config)
+    MonteCarlo::MonteCarlo(boost::property_tree::ptree config)
     {
         TRotation rotate_to_world = MakeRotation(config.get<double>("elevation_angle"));
         detector_axis = rotate_to_world * TVector3(0, 0, 1);
@@ -101,6 +101,7 @@ namespace cherenkov_library
 
         // Create a new shower with all of the randomly determined parameters.
         Shower::Params params;
+        params.energy = energy;
         params.x_0 = first_interact;
         params.x_max = x_max;
         params.n_max = n_max;

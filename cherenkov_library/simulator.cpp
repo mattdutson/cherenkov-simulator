@@ -19,11 +19,13 @@ using boost::property_tree::ptree;
 
 namespace cherenkov_library
 {
-    void Simulator::ParseFile(ptree config)
+    Simulator::Simulator(ptree config)
     {
         // Parameters related to the behavior of the simulation
         depth_step = config.get<double>("depth_step");
         time_bin = config.get<double>("time_bin");
+        fluor_thin = config.get<double>("fluor_thin");
+        ckv_thin = config.get<double>("ckv_thin");
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings. The frames
         // share the same x-axis.
@@ -93,10 +95,13 @@ namespace cherenkov_library
         // Arc length = angle * radius
         double pmt_linear_size = cluster_diameter / n_pmt_across;
         double pmt_angular_size = pmt_linear_size / (mirror_radius / 2.0);
-        PhotonCount photon_count = PhotonCount(n_pmt_across, shower.Time(), time_bin, pmt_angular_size,
-                                               pmt_linear_size);
+
+        // Any photon will have to travel at least as far as the distance to a sphere of radius mirror_radius at origin.
+        double time = shower.Time() + (shower.Position().Mag() - mirror_radius) / CentC();
+        PhotonCount photon_count = PhotonCount(n_pmt_across, time, time_bin, pmt_angular_size, pmt_linear_size);
 
         // Step the shower through its path.
+        int counter = 0;
         while (shower.TimeToPlane(ground_plane) > 0)
         {
             shower.IncrementDepth(depth_step);
@@ -111,31 +116,29 @@ namespace cherenkov_library
     void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count)
     {
         int number_detected = NumberFluorescencePhotons(shower);
-
-        for (int i = 0; i < number_detected; i++)
+        for (int i = 0; i < number_detected / fluor_thin; i++)
         {
             TVector3 lens_impact = rotate_to_world * RandomStopImpact();
             Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), shower.Time());
             photon.PropagateToPoint(lens_impact);
-            SimulateOptics(photon, photon_count);
+            SimulateOptics(photon, photon_count, fluor_thin);
         }
     }
 
     void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount* photon_count)
     {
         int number_detected = NumberCherenkovPhotons(shower);
-
-        for (int i = 0; i < number_detected; i++)
+        for (int i = 0; i < number_detected / ckv_thin; i++)
         {
             Ray photon = GenerateCherenkovPhoton(shower);
             photon.PropagateToPlane(ground_plane);
             TVector3 stop_impact = rotate_to_world * RandomStopImpact();
             photon.PropagateToPoint(stop_impact);
-            SimulateOptics(photon, photon_count);
+            SimulateOptics(photon, photon_count, ckv_thin);
         }
     }
 
-    void Simulator::SimulateOptics(Ray photon, PhotonCount* photon_count)
+    void Simulator::SimulateOptics(Ray photon, PhotonCount* photon_count, double thinning)
     {
         // Refract the ray over the corrector plate. For the transform, keep in mind that the y-axis in the detector
         // frame points toward the ground.
@@ -156,7 +159,7 @@ namespace cherenkov_library
         photon.PropagateToPoint(camera_impact);
 
         // Record the detection position.
-        photon_count->AddPhoton(photon.Time(), camera_impact);
+        photon_count->AddPhoton(photon.Time(), camera_impact, thinning);
     }
 
     TVector3 Simulator::RandomStopImpact()
@@ -263,9 +266,12 @@ namespace cherenkov_library
         double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atmosphere_temp));
         double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atmosphere_temp));
 
+        double ideal_yield = rho * (term_1 + term_2);
+
         // This yield matches the form of Stratton 4.2 (from Kakimoto). The energy deposit rate for a single photon is
         // alpha_eff, so the deposit rate for all photons is alpha_eff * N.
-        double yield = alpha_eff / dep_1_4 * rho * (term_1 + term_2);
+        // Removed the rho from Kakimoto (1) to give a result with units of cm^2/g
+        double yield = alpha_eff / dep_1_4 * (term_1 + term_2);
         double total_produced = yield * n_charged * depth_step;
 
         // Find the fraction captured by the camera.
@@ -274,36 +280,41 @@ namespace cherenkov_library
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
     {
-//        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
-//        double rho = shower.LocalRho();
-//        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
-//        double k_1 = k_out * 2 * shower.LocalDelta();
-//
-//        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
-//        double k_2 = k_out * Sq(mass_e);
-//
-//        // Parameters in the electron energy distribution
-//        double age = shower.Age();
-//        double a1 = fe_a11 - fe_a12 * age;
-//        double a2 = fe_a21 - fe_a22 * age;
-//        double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
-//
-//        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
-//        // variable of integration is lnE.
-//        std::stringstream func_string;
-//        func_string << "(" << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << ")))*(" << k_1 << "-"
-//                    << k_2 << "/exp(2*x))";
-//        std::string formula = func_string.str();
-//        double e_thresh = EThresh(shower);
-////        TF1 func = TF1("integrand", func_string.str().c_str(), Log(e_thresh), Infinity());
-////        double value = func.Eval(Log(e_thresh));
-////        std::cout << value << std::endl;
-////        double integral = func.Integral(Log(e_thresh), Infinity());
-//
-//        // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
-//        // not a full sphere.
-//        // TODO: This integral does not converge, even though the integrand does approach zero very quickly above 10^12.
-////        return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
+        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
+        double rho = shower.LocalRho();
+        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
+        double k_1 = k_out * 2 * shower.LocalDelta();
+
+        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
+        double k_2 = k_out * Sq(mass_e);
+
+        // Parameters in the electron energy distribution
+        double age = shower.Age();
+        double a1 = fe_a11 - fe_a12 * age;
+        double a2 = fe_a21 - fe_a22 * age;
+        double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
+
+        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
+        // variable of integration is lnE.
+        std::stringstream func_string;
+        func_string << "(" << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << ")))*(" << k_1
+                    << "-"
+                    << k_2 << "/exp(2*x))";
+        std::string formula = func_string.str();
+        double e_thresh = EThresh(shower);
+        TF1 func = TF1("integrand", func_string.str().c_str(), 0, Infinity());
+
+        // The shower will not contain any electrons with an energy higher than the shower primary energy. We can also
+        // assume that the electron energy spectrum will remain relatively well normalized even if we omit these
+        // electrons. Setting this upper limit on the integral will keep it from diverging when the shower age is small.
+        double integral = func.Integral(Log(e_thresh), Log(shower.EnergyMeV()));
+
+        std::cout << GaiserHilles(shower) * integral << std::endl;
+
+        // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
+        // not a full sphere.
+        // TODO: This integral does not converge, even though the integrand does approach zero very quickly above 10^12.
+        return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
         return 10;
     }
 
@@ -365,7 +376,7 @@ namespace cherenkov_library
         while (iter.Next())
         {
             TVector3 direction = photon_count->Direction(iter);
-            Ray outward_ray = Ray(direction, TVector3(0, 0, 0), 0);
+            Ray outward_ray = Ray(TVector3(), direction, 0);
 
             // If the pixel is looking at the ground, use the noise rate for the ground. Otherwise, use the sky rate.
             double noise_rate;

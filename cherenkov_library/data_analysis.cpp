@@ -33,10 +33,12 @@ namespace cherenkov_library
         }
     }
 
-    vector<vector<double>> CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis)
+    void CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, vector<double>* angles,
+                           vector<double>* counts)
     {
-        // TODO: Adjust photon count data container so each channel has a vector of the same length.
-        vector<vector<double>> collapsed_bins = vector<vector<double>>();
+        // TODO: Figure out a way to bin photon counts in a way that doesn't lead to aliasing.
+        *angles = vector<double>();
+        *counts = vector<double>();
         SignalIterator iter = data.Iterator();
         TVector3 norm = s_d_plane.Normal();
         TVector3 axis_project = shower_axis - shower_axis.Dot(norm) * norm;
@@ -53,52 +55,32 @@ namespace cherenkov_library
             {
                 angle = -projection.Angle(axis_project);
             }
-            vector<double> point = {angle, (double) data.SumBins(iter)};
-            collapsed_bins.push_back(point);
+            angles->push_back(angle);
+            counts->push_back(data.SumBins(iter));
         }
-
-        // TODO: Figure out a way to bin photon counts in a way that doesn't lead to aliasing.
-        return collapsed_bins;
     }
 
-    vector<vector<double>> SuperimposeTimes(PhotonCount data)
+    void SuperimposeTimes(PhotonCount data, vector<double>* times, vector<double>* counts)
     {
         // Initialize the structure and find x-axis labels (times).
-        vector<vector<double>> superposition = vector<vector<double>>();
+        *times = vector<double>();
+        *counts = vector<double>();
         for (int i = 0; i < data.NBins(); i++)
         {
-            superposition.push_back({data.Time(i), 0.0});
+            times->push_back(data.Time(i));
+            counts->push_back(0.0);
         }
 
-        // Iterate over all time signals.
+        // Iterate over all pixels and add their time signals.
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
             vector<int> signal = data.Signal(iter);
             for (int i = 0; i < signal.size(); i++)
             {
-                superposition[i][1] += signal[i];
+                counts->at(i) += signal[i];
             }
         }
-
-        // Trim any zeros from the profile.
-        int first_nonzero = 0;
-        int last_nonzero = 0;
-        bool started = false;
-        for (int i = 0; i < superposition.size(); i++)
-        {
-            double value = superposition[i][1];
-            if (value > 0)
-            {
-                if (!started)
-                {
-                    first_nonzero = i;
-                    started = true;
-                }
-                last_nonzero = i;
-            }
-        }
-        return vector<vector<double>>(superposition.begin() + first_nonzero, superposition.end() + last_nonzero + 1);
     };
 
     TH2C GetValidMap(PhotonCount data)
@@ -126,21 +108,15 @@ namespace cherenkov_library
 
     TGraph MakeProfileGraph(PhotonCount data)
     {
-        vector<vector<double>> profile = SuperimposeTimes(data);
-        double x[profile.size()];
-        double y[profile.size()];
-        for (int i = 0; i < profile.size(); i++)
-        {
-            x[i] = profile[i][0];
-            y[i] = profile[i][1];
-        }
-        return TGraph(profile.size(), x, y);
+        vector<double> times, counts;
+        SuperimposeTimes(data, &times, &counts);
+        return TGraph(times.size(), &(times[0]), &(counts[0]));
     }
 
-    TH2C MakeSumMap(PhotonCount data)
+    TH2I MakeSumMap(PhotonCount data)
     {
         int size = data.Size();
-        TH2C histo = TH2C("Sums", "Sums", size, 0, size, size, 0, size);
+        TH2I histo = TH2I("Sums", "Sums", size, 0, size, size, 0, size);
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {

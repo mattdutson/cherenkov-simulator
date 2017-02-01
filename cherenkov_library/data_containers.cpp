@@ -122,7 +122,7 @@ namespace cherenkov_library
         return Floor((time - start_time) / bin_size);
     }
 
-    void PhotonCount::AddPhoton(double time, TVector3 direction)
+    void PhotonCount::AddPhoton(double time, TVector3 direction, double thinning)
     {
         // If the time is earlier than the time of the first index, we would run into time binning errors.
         if (time < start_time) return;
@@ -145,7 +145,7 @@ namespace cherenkov_library
             ExpandVector(x_index, y_index, time_slot + 1);
 
             // Add the photon.
-            photon_counts[x_index][y_index][time_slot]++;
+            photon_counts[x_index][y_index][time_slot] += thinning;
 
             // Keep track of the latest photon seen.
             if (time > last_time)

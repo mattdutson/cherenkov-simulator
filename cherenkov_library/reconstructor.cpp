@@ -20,7 +20,7 @@ using namespace TMath;
 
 namespace cherenkov_library
 {
-    void Reconstructor::ParseFile(ptree config)
+    Reconstructor::Reconstructor(ptree config)
     {
         // Construct the ground plane in the world frame.
         ground_plane = Plane(ToVector(config.get<string>("ground_normal")),

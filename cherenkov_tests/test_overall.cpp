@@ -26,20 +26,18 @@ namespace cherenkov_tests
     {
         // Parse the XML file and give it to the simulator and monte carlo.
         ptree config = ParseXMLFile("../../config.xml").get_child("config");
-        Simulator simulator = Simulator();
-        simulator.ParseFile(config);
-        MonteCarlo monte_carlo = MonteCarlo();
-        monte_carlo.ParseFile(config);
+        Simulator simulator = Simulator(config);
+        MonteCarlo monte_carlo = MonteCarlo(config);
 
-        // Construct and simulate a shower. The axis coordinates are in the world frame.
-        Shower shower = monte_carlo.GenerateShower(TVector3(0, 0, -1), 100000, 0);
+        // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame.
+        Shower shower = monte_carlo.GenerateShower(TVector3(0, 0, -1), 1000000, 0, 10e19);
         PhotonCount data = simulator.SimulateShower(shower);
 
-        // Make a TGraph of results and write it to a file.
-//        TGraph graph = MakeProfileGraph(data);
-        TH2C histo = MakeSumMap(data);
+        // Make some graphics and write them to a file.
+        TGraph graph = MakeProfileGraph(data);
+        TH2I histo = MakeSumMap(data);
         TFile file("../../cherenkov_tests/sample_shower.root", "RECREATE");
-//        graph.Write("profile");
+        graph.Write("profile");
         histo.Write("shower_map");
     }
 }

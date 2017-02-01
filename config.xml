@@ -9,6 +9,12 @@
     <time_bin desc="The size of the time bins for the photons collected" unit="s">
         100e-9
     </time_bin>
+    <fluor_thin desc="The rate of computational thinning for fluorescence photons" unit="null">
+        10
+    </fluor_thin>
+    <ckv_thin desc="The rate of computational thinning for Cherenkov photons" unit="null">
+        1000
+    </ckv_thin>
 
     <!-- Parameters relating to the position and orientation of the detector relative to its surroundings -->
     <ground_normal desc="A unit vector normal to the ground plane" unit="(null, null, null)">
@@ -140,10 +146,10 @@
 
     <!-- Parameters used when calculating the Cherenkov yield -->
     <lambda_min desc="The minimum wavelength of Cherenkov photons being considered" unit="cm">
-        3e-5
+        300e-7
     </lambda_min>
     <lambda_max desc="The maximum wavelength of Cherenkov photons being considered" unit="cm">
-        4e-5
+        400e-7
     </lambda_max>
 
     <!-- Parameters in the electron energy spectrum -->
@@ -161,15 +167,15 @@
     </fe_a22>
     <fe_k0 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
            unit="MeV^-(age + 1)">
-        1.48071e-1
+        1.45098e-1
     </fe_k0>
     <fe_k1 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
            unit="null">
-        6.22334
+        6.20114
     </fe_k1>
     <fe_k2 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
            unit="null">
-        -5.89710e-1
+        -5.96851e-1
     </fe_k2>
 
     <!-- Physics constants -->

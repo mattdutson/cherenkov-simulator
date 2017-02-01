@@ -33,7 +33,7 @@ namespace cherenkov_library
          * Takes a parsed XML object and attempts to extract required simulation parameters. If this fails, an
          * exception is thrown which specifies the name of the missing parameter.
          */
-        void ParseFile(boost::property_tree::ptree config);
+        Simulator(boost::property_tree::ptree config);
 
         /*
          * Simulate the motion of the shower from its current point to the ground, emitting fluorescence and Cherenkov
@@ -58,9 +58,11 @@ namespace cherenkov_library
         /*
          * Takes a photon which is assumed to lie at the corrector plate and simulates its motion through the detector
          * optics. If the photon is somehow blocked or doesn't reach the photomultiplier array, no change to the photon
-         * count structure is made. Otherwise, the appropriate bin of the photon counter is incremented.
+         * count structure is made. Otherwise, the appropriate bin of the photon counter is incremented. Takes a
+         * parameter which represents the rate of computational thinning. This is passed to the photon count container
+         * to allow it to increment bins by the correct amount.
          */
-        void SimulateOptics(Ray photon, PhotonCount* photon_count);
+        void SimulateOptics(Ray photon, PhotonCount* photon_count, double thinning);
 
         /*
          * Generates a random point on the circle of the refracting lens.
@@ -155,6 +157,8 @@ namespace cherenkov_library
         // Parameters related to the behavior of the simulation
         double depth_step;
         double time_bin;
+        double fluor_thin;
+        double ckv_thin;
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings
         Plane ground_plane;

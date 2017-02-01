@@ -16,13 +16,14 @@ namespace cherenkov_library
 {
     bool Above(TVector3 reference, TVector3 other);
 
-    std::vector<std::vector<double>> CollapseToProfile(PhotonCount data, Plane s_d_plane);
+    void CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, std::vector<double>* angles,
+                           std::vector<double>* counts);
 
     /*
      * Finds the superimposed time profile of all photomultiplier signals. It is assumed that all signals will have the
      * same time length (if AddNoise wasn't called this won't be the case).
      */
-    std::vector<std::vector<double>> SuperimposeTimes(PhotonCount data);
+    void SuperimposeTimes(PhotonCount data, std::vector<double>* times, std::vector<double>* counts);
 
     /*
      * Creates a 2D histogram with a 1 for valid cells and a 0 for invalid cells.
@@ -37,7 +38,7 @@ namespace cherenkov_library
     /*
      * Makes a 2D histogram with the sum of each bin
      */
-    TH2C MakeSumMap(PhotonCount data);
+    TH2I MakeSumMap(PhotonCount data);
 }
 
 #endif

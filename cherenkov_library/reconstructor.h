@@ -19,7 +19,7 @@ namespace cherenkov_library
     {
     public:
 
-        void ParseFile(boost::property_tree::ptree config);
+        Reconstructor(boost::property_tree::ptree config);
 
         TVector3 FitSDPlane(PhotonCount data);
 

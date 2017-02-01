@@ -169,6 +169,7 @@ namespace cherenkov_library
          */
         struct Params
         {
+            double energy;
             double x_0;
             double x_max;
             double n_max;
@@ -188,6 +189,11 @@ namespace cherenkov_library
          * Finds the age of the shower, given by 3 * X / (x + 2 * XMax).
          */
         double Age();
+
+        /*
+         * Returns the energy of the shower primary in MeV. Note that the energy is passed to the constructor in eV.
+         */
+        double EnergyMeV();
 
         /*
          * Returns the current slant depth of the shower (the integration of the atmospheric density along the path of
@@ -241,6 +247,9 @@ namespace cherenkov_library
 
         // The starting point of the shower. Used when calculating slant depth. This may be removed because we have x_0.
         TVector3 start_position;
+
+        // The energy of the shower primary in eV.
+        double energy;
 
         // The slant depth of the first interaction.
         double x_0;

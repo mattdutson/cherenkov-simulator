@@ -23,7 +23,7 @@ namespace cherenkov_library
          * Takes a parsed XML object and attempts to extract required monte carlo parameters. If this fails, an
          * exception is thrown which specifies the name of the missing parameter.
          */
-        void ParseFile(boost::property_tree::ptree config_file);
+        MonteCarlo(boost::property_tree::ptree config_file);
 
         /*
          * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and

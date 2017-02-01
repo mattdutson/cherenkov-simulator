@@ -183,6 +183,7 @@ namespace cherenkov_library
     Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
         start_position = position;
+        this->energy = params.energy;
         this->x_0 = params.x_0;
         this->x_max = params.x_max;
         this->n_max = params.n_max;
@@ -194,6 +195,11 @@ namespace cherenkov_library
     double Shower::Age()
     {
         return 3.0 * X() / (X() + 2.0 * XMax());
+    }
+
+    double Shower::EnergyMeV()
+    {
+        return energy / (10.0e6);
     }
 
     double Shower::X()
