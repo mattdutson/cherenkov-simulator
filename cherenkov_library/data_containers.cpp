@@ -164,20 +164,68 @@ namespace cherenkov_library
             ExpandVector(iter.X(), iter.Y(), NBins());
         }
 
-        // Calculate the number of noise photons per second from the number of photons per second per steradian per
-        // square centimeter.
-        double solid_angle = Sq(pmt_angular_size);
-        double area = Sq(pmt_linear_size);
-        double pixel_rate = noise_rate * solid_angle * area;
-
-        // Determine the mean number of Poisson events in a single time bin.
-        double expected_photons = bin_size * pixel_rate;
-
         // Randomly determine the number of photons in each bin according to the Poisson distribution.
+        double expected_photons = RealNoiseRate(noise_rate);
         vector<int> data = photon_counts[current.X()][current.Y()];
         for (int i = 0; i < data.size(); i++)
         {
             data[i] += rng.Poisson(expected_photons);
+        }
+    }
+
+    void PhotonCount::ClearNoise(SignalIterator current, double noise_rate, double hold_thresh)
+    {
+        // Determine the minimum threshold for non-noise signals.
+        double real_noise = RealNoiseRate(noise_rate);
+        double thresh = real_noise + hold_thresh * real_noise;
+
+        // Zero any measurements which are below the noise threshold.
+        vector<int> data = photon_counts[current.X()][current.Y()];
+        for (int i = 0; i < data.size(); i++)
+        {
+            if (data[i] < thresh)
+            {
+                data[i] = 0;
+            }
+        }
+    }
+
+    vector<bool> PhotonCount::FindTriggers(SignalIterator current, double noise_rate, double trigger_thresh)
+    {
+        // Determine the minimum threshold for triggering.
+        double real_noise = RealNoiseRate(noise_rate);
+        double thresh = real_noise + trigger_thresh * real_noise;
+
+        // Find all bins in which the count exceeded the triggering threshold.
+        vector<int> data = photon_counts[current.X()][current.Y()];
+        vector<bool> triggers = vector<bool>();
+        for (int i = 0; i < data.size(); i++)
+        {
+            if (data[i] > thresh)
+            {
+                triggers.push_back(true);
+            }
+            else
+            {
+                triggers.push_back(false);
+            }
+        }
+        return triggers;
+    }
+
+    void PhotonCount::EraseNonTriggered(vector<bool> good_bins)
+    {
+        SignalIterator iter = Iterator();
+        while (iter.Next())
+        {
+            vector<int> data = photon_counts[iter.X()][iter.Y()];
+            for (int i = 0; i < data.size(); i++)
+            {
+                if (!good_bins.at(i))
+                {
+                    data[i] = 0;
+                }
+            }
         }
     }
 
@@ -244,5 +292,17 @@ namespace cherenkov_library
         {
             photon_counts[x_index][y_index].resize(min_size, 0);
         }
+    }
+
+    double PhotonCount::RealNoiseRate(double universal_rate)
+    {
+        // Calculate the number of noise photons per second from the number of photons per second per steradian per
+        // square centimeter.
+        double solid_angle = Sq(pmt_angular_size);
+        double area = Sq(pmt_linear_size);
+        double pixel_rate = universal_rate * solid_angle * area;
+
+        // Determine the mean number of Poisson events in a single time bin.
+        return bin_size * pixel_rate;
     }
 }

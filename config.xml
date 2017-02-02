@@ -205,4 +205,16 @@
         18
     </x_max_3>
 
+    <!-- Number of standard deviations used when applying triggering logic -->
+    <trigger_thresh desc="The number of standard deviations required for a pixel to contribute to triggering"
+                    unit="null">
+        6.0
+    </trigger_thresh>
+    <hold_thresh desc="The number of standard deviations required for a pixel to not be thrown out" unit="null">
+        3.0
+    </hold_thresh>
+    <trigger_clust desc="The number of connected, triggered tubes required for a frame to be triggered" unit="null">
+        5
+    </trigger_clust>
+
 </config>

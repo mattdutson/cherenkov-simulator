@@ -114,6 +114,22 @@ namespace cherenkov_library
         void AddNoise(double noise_rate, SignalIterator current, TRandom3 rng);
 
         /*
+         * Clears any bins in the current pixel which are less than hold_thresh * sigma from the mean.
+         */
+        void ClearNoise(SignalIterator current, double noise_rate, double hold_thresh);
+
+        /*
+         * Returns a vector which contains "true" for each bin in the current pixel which contains more than
+         * trigger_thresh * sigma photon counts.
+         */
+        std::vector<bool> FindTriggers(SignalIterator current, double noise_rate, double trigger_thresh);
+
+        /*
+         * Erases any photon counts which are not in a time bin corresponding to a true value in the input vector.
+         */
+        void EraseNonTriggered(std::vector<bool> good_bins);
+
+        /*
          * Determines the direction of the photomultiplier referenced by the iterator.
          */
         TVector3 Direction(SignalIterator current);
@@ -155,6 +171,12 @@ namespace cherenkov_library
          * check that the indices are valid.
          */
         void ExpandVector(int x_index, int y_index, int min_size);
+
+        /*
+         * Determines the number of photons per bin observed by a single pixel given the number of photons per square
+         * centimeter per steradian in a given direction.
+         */
+        double RealNoiseRate(double universal_rate);
 
         // The underlying data structure to store photon counts
         std::vector<std::vector<std::vector<int>>> photon_counts;

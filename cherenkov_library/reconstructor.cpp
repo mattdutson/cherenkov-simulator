@@ -16,6 +16,7 @@
 
 using boost::property_tree::ptree;
 using std::string;
+using std::vector;
 using namespace TMath;
 
 namespace cherenkov_library
@@ -29,6 +30,15 @@ namespace cherenkov_library
         // The rotation from detector frame to world frame. The frames share the same x-axis.
         rotate_to_world = TRotation();
         rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
+
+        // Parameters defining the amount of night sky background noise
+        sky_noise = config.get<double>("sky_noise");
+        ground_noise = config.get<double>("ground_noise");
+
+        // Parameters used when applying triggering logic
+        trigger_thresh = config.get<double>("trigger_thresh");
+        hold_thresh = config.get<double>("hold_thresh");
+        trigger_clust = config.get<int>("trigger_clust");
     }
 
     TVector3 Reconstructor::FitSDPlane(PhotonCount data)
@@ -73,7 +83,69 @@ namespace cherenkov_library
         return rotate_to_world * result;
     }
 
-    int Reconstructor::LargestCluster(std::vector<std::vector<int>> not_counted)
+    bool Reconstructor::ApplyTriggering(PhotonCount* data)
+    {
+        // Initialize the structure to contain triggering values
+        int size = data->Size();
+        vector<vector<vector<bool>>> triggers = vector<vector<vector<bool>>>(size, vector<vector<bool>>(size));
+
+        SignalIterator iter = data->Iterator();
+        while (iter.Next())
+        {
+            // Determine whether a pixel is looking at the ground or sky.
+            int noise_rate;
+            Ray outward_ray = Ray(TVector3(), rotate_to_world * data->Direction(iter), 0);
+            if (outward_ray.TimeToPlane(ground_plane) > 0)
+            {
+                noise_rate = ground_noise;
+            }
+            else
+            {
+                noise_rate = sky_noise;
+            }
+
+            // Remove any below-threshold noise in each pixel.
+            data->ClearNoise(iter, noise_rate, hold_thresh);
+
+            // Find any trigger times in the pixel.
+            triggers[iter.X()][iter.Y()] = data->FindTriggers(iter, noise_rate, trigger_thresh);
+        }
+
+        // Determine which bins contain a sufficiently large cluster of triggered tubes
+        vector<bool> good_frames = vector<bool>();
+        bool triggered_found = false;
+        for (int i = 0; i < data->NBins(); i++)
+        {
+            // Copy the true/false triggering values into a structure to be passed to LargestCluster.
+            vector<vector<bool>> frame = vector<vector<bool>>(size, vector<bool>(size, false));
+            for (int x = 0; x < triggers.size(); x++)
+            {
+                for (int y = 0; y < triggers[x].size(); y++)
+                {
+                    frame[x][y] = triggers[x][y][i];
+                }
+            }
+
+            // Check whether there are any sufficiently large clusters of triggered tubes.
+            if (LargestCluster(frame) > trigger_clust)
+            {
+                triggered_found = true;
+                good_frames.push_back(true);
+            }
+            else
+            {
+                good_frames.push_back(false);
+            }
+        }
+
+        // Zero all time bins in which there was no system trigger.
+        data->EraseNonTriggered(good_frames);
+
+        // Return whether any time bins contained a trigger.
+        return triggered_found;
+    }
+
+    int Reconstructor::LargestCluster(std::vector<std::vector<bool>> not_counted)
     {
         int largest = 0;
         for (int i = 0; i < not_counted.size(); i++)
@@ -93,7 +165,7 @@ namespace cherenkov_library
         return largest;
     }
 
-    int Reconstructor::Visit(int i, int j, std::vector<std::vector<int>>* not_counted)
+    int Reconstructor::Visit(int i, int j, std::vector<std::vector<bool>>* not_counted)
     {
         if (i > not_counted->size() - 1 || i < 0)
         {
@@ -112,9 +184,13 @@ namespace cherenkov_library
             not_counted->at(i)[j] = false;
             int count = 1;
             count += Visit(i + 1, j, not_counted);
+            count += Visit(i + 1, j + 1, not_counted);
             count += Visit(i - 1, j, not_counted);
+            count += Visit(i - 1, j - 1, not_counted);
             count += Visit(i, j + 1, not_counted);
+            count += Visit(i - 1, j + 1, not_counted);
             count += Visit(i, j - 1, not_counted);
+            count += Visit(i + 1, j - 1, not_counted);
             return count;
         }
     }

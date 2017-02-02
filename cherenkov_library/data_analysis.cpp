@@ -121,7 +121,7 @@ namespace cherenkov_library
         while (iter.Next())
         {
             // The zeroth bin is the underflow, so start at 1.
-            histo.SetBinContent(iter.X() + 1, iter.Y() + 1, data.SumBins(iter));
+            histo.Fill(iter.X() + 1, iter.Y() + 1, data.SumBins(iter));
         }
         return histo;
     }

@@ -360,8 +360,7 @@ namespace cherenkov_library
         SignalIterator iter = photon_count->Iterator();
         while (iter.Next())
         {
-            TVector3 direction = photon_count->Direction(iter);
-            Ray outward_ray = Ray(TVector3(), direction, 0);
+            Ray outward_ray = Ray(TVector3(), rotate_to_world * photon_count->Direction(iter), 0);
 
             // If the pixel is looking at the ground, use the noise rate for the ground. Otherwise, use the sky rate.
             double noise_rate;
