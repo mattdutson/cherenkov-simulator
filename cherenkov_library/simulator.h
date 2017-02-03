@@ -139,6 +139,11 @@ namespace cherenkov_library
         double SphereFraction(TVector3 view_point);
 
         /*
+         * Returns the product of the quantum efficiency, filter transmittance, and mirror reflectance.
+         */
+        double DetectorEfficiency();
+
+        /*
          * Creates a Cherenkov photon with a randomly-assigned direction (the direction follows a e^-theta/sin(theta)
          * distribution.
          */
@@ -216,6 +221,11 @@ namespace cherenkov_library
         // Parameters defining the amount of night sky background noise
         double sky_noise;
         double ground_noise;
+
+        // Parameters which describe inefficiencies in the equipment
+        double mirror_reflect;
+        double filter_transmit;
+        double quantum_eff;
 
         // A general purpose random number generator
         TRandom3 rng;

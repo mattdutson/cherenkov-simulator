@@ -217,4 +217,15 @@
         5
     </trigger_clust>
 
+    <!-- Parameters which describe inefficiencies in the equipment -->
+    <mirror_reflect desc="The fraction of incident photons which are reflected from the mirror" unit="null">
+        0.80
+    </mirror_reflect>
+    <filter_transmit desc="The fraction of incident photons which are transmitted through the filter" unit="null">
+        1.0
+    </filter_transmit>
+    <quantum_eff desc="The fraction of photons incident on a photomultiplier which result in a signal" unit="null">
+        1.0
+    </quantum_eff>
+
 </config>

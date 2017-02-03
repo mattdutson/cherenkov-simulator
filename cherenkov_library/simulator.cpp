@@ -86,6 +86,11 @@ namespace cherenkov_library
         sky_noise = config.get<double>("sky_noise");
         ground_noise = config.get<double>("ground_noise");
 
+        // Parameters which describe inefficiencies in the equipment
+        mirror_reflect = config.get<double>("mirror_reflect");
+        filter_transmit = config.get<double>("filter_transmit");
+        quantum_eff = config.get<double>("quantum_eff");
+
         // A general-purpose random number generator
         rng = TRandom3();
     }
@@ -269,7 +274,7 @@ namespace cherenkov_library
         double total_produced = yield * n_charged * depth_step;
 
         // Find the fraction captured by the camera.
-        return total_produced * SphereFraction(shower.Position());
+        return total_produced * SphereFraction(shower.Position()) * DetectorEfficiency();
     }
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
@@ -300,9 +305,14 @@ namespace cherenkov_library
         // electrons. Setting this upper limit on the integral will keep it from diverging when the shower age is small.
         double integral = func.Integral(Log(EThresh(shower)), Log(shower.EnergyMeV()));
 
-        // Determine the number captured. Multiply the PhotonFraction by two because we're dealing with a half sphere,
-        // not a full sphere.
-        return GaiserHilles(shower) * integral * depth_step * SphereFraction(shower.PlaneImpact(ground_plane)) * 2;
+        // Determine the fraction of total photons captured. Apply a Lambertian reflectance model (see notes).
+        TVector3 ground_impact = shower.PlaneImpact(ground_plane);
+        double cos_theta = ground_impact.Dot(ground_plane.Normal());
+        double fraction = 4 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
+
+        // Return the product of the total number produced and the fraction captured.
+        double n_total = GaiserHilles(shower) * integral * depth_step;
+        return fraction * n_total;
     }
 
     double Simulator::GaiserHilles(Shower shower)
@@ -338,6 +348,11 @@ namespace cherenkov_library
         double distance = view_point.Mag();
         double area_fraction = Sq(stop_diameter / 2.0) / (4.0 * Sq(distance));
         return area_fraction * cos(angle);
+    }
+
+    double Simulator::DetectorEfficiency()
+    {
+        return quantum_eff * mirror_reflect * filter_transmit;
     }
 
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
