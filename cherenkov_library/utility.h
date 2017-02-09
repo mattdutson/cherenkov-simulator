@@ -59,6 +59,8 @@ namespace cherenkov_library
     bool WithinXYDisk(TVector3 vec, double radius);
 
     TRotation MakeRotation(double elevation_angle);
+
+    bool Above(TVector3 reference, TVector3 other);
 }
 
 

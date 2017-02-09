@@ -188,15 +188,12 @@ namespace cherenkov_library
         {
             return true;
         }
-        
-        // Now let's find a vector normal to the lens surface. Start with the derivative.
-        double schmidt_coefficient = 1.0 / (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3));
-        double deriv = 4 * schmidt_coefficient * Power(photon_axis_dist, 3);
-        double theta = ATan(deriv);
 
-        // We want the normal vector to point outward.
-        double phi = position.Phi() + Pi();
-        TVector3 norm = TVector3(Sin(theta) * Cos(phi), Sin(theta) * Sin(phi), Cos(theta));
+        // Find the deflector normal vector.
+        double x_pos = position.X();
+        double y_pos = position.Y();
+        double z_norm = (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3)) / (Sq(x_pos) + Sq(y_pos));
+        TVector3 norm = TVector3(-x_pos, -y_pos, z_norm).Unit();
 
         // Return false if the ray was coming in from the back of the lens.
         bool success = photon->Refract(norm, 1, refrac_lens);

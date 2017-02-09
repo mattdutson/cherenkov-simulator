@@ -154,6 +154,11 @@ namespace cherenkov_library
          */
         int SumBins(SignalIterator iter);
 
+        /*
+         * Finds the average time in the bin referenced by the iterator.
+         */
+        double AverageTime(SignalIterator iter);
+
     private:
 
         /*

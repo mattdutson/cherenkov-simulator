@@ -14,7 +14,7 @@
 
 namespace cherenkov_library
 {
-    bool Above(TVector3 reference, TVector3 other);
+
 
     void CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, std::vector<double>* angles,
                            std::vector<double>* counts);

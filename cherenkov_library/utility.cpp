@@ -17,6 +17,29 @@ using namespace TMath;
 
 namespace cherenkov_library
 {
+    bool Above(TVector3 reference, TVector3 other)
+    {
+        if (other.Z() > reference.Z())
+        {
+            return true;
+        }
+        else if (other.Z() < reference.Z())
+        {
+            return false;
+        }
+        else
+        {
+            if (other.Y() > reference.Y())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
     double ParseTo(string* s, char c)
     {
         size_t index = s->find(c);

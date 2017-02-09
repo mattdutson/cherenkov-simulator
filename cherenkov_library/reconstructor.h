@@ -17,11 +17,21 @@ namespace cherenkov_library
 {
     class Reconstructor
     {
+
     public:
 
         Reconstructor(boost::property_tree::ptree config);
 
-        TVector3 FitSDPlane(PhotonCount data);
+        /*
+         * Finds the shower-detector plane based on the distribution of data points.
+         */
+        Plane FitSDPlane(PhotonCount data);
+
+        /*
+         * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
+         * not used.
+         */
+        void TimeProfileFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle);
 
         /*
          * Apply triggering logic to the signal. Look for consecutive groups of pixels in each time bin which have

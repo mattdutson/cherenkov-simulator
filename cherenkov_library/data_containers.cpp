@@ -260,6 +260,18 @@ namespace cherenkov_library
         return sum;
     }
 
+    double PhotonCount::AverageTime(SignalIterator iter)
+    {
+        int sum = SumBins(iter);
+        double average = 0;
+        vector<int> pixel_data = photon_counts[iter.X()][iter.Y()];
+        for (int i = 0; i < pixel_data.size(); i++)
+        {
+            average += Time(i) * pixel_data[i] / (double) sum;
+        }
+        return average;
+    }
+
     bool PhotonCount::ValidPixel(int x_index, int y_index)
     {
         int n_half = n_pixels / 2;

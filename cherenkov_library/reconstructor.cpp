@@ -13,6 +13,10 @@
 #include "utility.h"
 #include <string>
 #include "TMath.h"
+#include <Math/Functor.h>
+#include <Math/GSLMinimizer.h>
+#include <TGraphErrors.h>
+#include <TF1.h>
 
 using boost::property_tree::ptree;
 using std::string;
@@ -41,13 +45,12 @@ namespace cherenkov_library
         trigger_clust = config.get<int>("trigger_clust");
     }
 
-    TVector3 Reconstructor::FitSDPlane(PhotonCount data)
+    Plane Reconstructor::FitSDPlane(PhotonCount data)
     {
-        // Compute the matrix specified in Stratton 3.4.
-        // TODO: Check that a TMatrixDSym doesn't have unexpected behavior when setting elements individually.
-        // Maybe just iterate over elements whose symmetric counterparts haven't been found yet.
+        // Compute the matrix specified in Stratton 3.4. Maybe just iterate over matrix elements whose symmetric
+        // counterparts haven't been found yet.
         SignalIterator iter = data.Iterator();
-        TMatrixDSym matrix(3, 3);
+        TMatrixDSym matrix(3);
         for (int j = 0; j < 3; j++)
         {
             for (int k = 0; k < 3; k++)
@@ -78,9 +81,69 @@ namespace cherenkov_library
                 min_index = i;
             }
         }
-        // TODO: Make sure this indexing on the matrix is correct.
-        TVector3 result = TVector3(eigen_vec[min_index][0], eigen_vec[min_index][1], eigen_vec[min_index][2]);
-        return rotate_to_world * result;
+
+        // Each eigenvector is stored as a column in the matrix. Matrices are indexed as [row][column].
+        TVector3 result = TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
+        return Plane(rotate_to_world * result, TVector3());
+    }
+
+    void
+    Reconstructor::TimeProfileFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle)
+    {
+        // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
+        vector<double> angles = vector<double>();
+        vector<double> times = vector<double>();
+        vector<double> time_err = vector<double>();
+        SignalIterator iter = data.Iterator();
+        while (iter.Next())
+        {
+            TVector3 direction = rotate_to_world * data.Direction(iter);
+
+            // Only consider pixels with a nonzero signal and those which point above the horizon.
+            Ray outward_ray = Ray(TVector3(), direction, 0);
+            if (outward_ray.TimeToPlane(ground_plane) > 0 && data.SumBins(iter) > 0)
+            {
+                // Project the direction vector onto the shower-detector plane and find the angle of the pixel.
+                TVector3 projection = (direction - direction.Dot(sd_plane.Normal()) * sd_plane.Normal()).Unit();
+                TVector3 horizontal = TVector3(0, 1, 0);
+
+                // Make sure the angle has the correct sign.
+                double angle = projection.Angle(horizontal);
+                if (Above(horizontal, projection))
+                {
+                    angle = Abs(angle);
+                }
+                else
+                {
+                    angle = -Abs(angle);
+                }
+
+                // Add data points to the arrays.
+                angles.push_back(angle);
+                times.push_back(data.AverageTime(iter));
+                time_err.push_back(1.0 / Sqrt((double) data.SumBins(iter)));
+            }
+        }
+
+        // Make arrays to pass to the TGraph constructor.
+        vector<double> angle_err = vector<double>(angles.size(), 0.0);
+        TGraphErrors graph = TGraphErrors(angles.size(), &angles[0], &times[0], &angle_err[0], &time_err[0]);
+
+        // The functional form of the time profile.
+        std::stringstream func_string = std::stringstream();
+        func_string << "[0] + [1] / (" << CentC() << ") * tan((" << Pi() << " - [2] - x) / 2)";
+        TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
+
+        // Set names and initial guesses for parameters.
+        func.SetParNames("t_0", "r_p", "psi");
+        func.SetParameters(0.0, 10e6, PiOver2());
+
+        // Perform the fit.
+        graph.Fit("profile_fit");
+        TF1* result = graph.GetFunction("profile_fit");
+        *t_0 = result->GetParameter("t_0");
+        *impact_param = result->GetParameter("r_p");
+        *angle = result->GetParameter("psi");
     }
 
     bool Reconstructor::ApplyTriggering(PhotonCount* data)

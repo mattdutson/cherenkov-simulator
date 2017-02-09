@@ -3,6 +3,7 @@
 //
 
 #include "data_analysis.h"
+#include "utility.h"
 #include <array>
 
 using std::array;
@@ -10,29 +11,6 @@ using std::vector;
 
 namespace cherenkov_library
 {
-    bool Above(TVector3 reference, TVector3 other)
-    {
-        if (other.Z() > reference.Z())
-        {
-            return true;
-        }
-        else if (other.Z() < reference.Z())
-        {
-            return false;
-        }
-        else
-        {
-            if (other.Y() > reference.Y())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
     void CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, vector<double>* angles,
                            vector<double>* counts)
     {
