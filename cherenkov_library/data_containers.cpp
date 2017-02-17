@@ -84,8 +84,9 @@ namespace cherenkov_library
         this->pmt_angular_size = pmt_angular_size;
         this->pmt_linear_size = pmt_linear_size;
 
-        // We haven't seen any non-noise photons yet, so the last time is the start time.
+        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are equalized.
         last_time = start_time;
+        equalized = true;
 
         // Initialize the photon count and valid pixel structures.
         photon_counts = vector<vector<vector<int>>>();
@@ -152,32 +153,67 @@ namespace cherenkov_library
             {
                 last_time = time;
             }
+
+            // We may have disrupted the equalization of the channels.
+            equalized = false;
+        }
+    }
+
+    void PhotonCount::EqualizeTimeSeries()
+    {
+        // If needed, resize all channels so they have bins up through the last photon seen.
+        if (equalized)
+        {
+            return;
+        }
+        else
+        {
+            SignalIterator iter = Iterator();
+            while (iter.Next())
+            {
+                ExpandVector(iter.X(), iter.Y(), NBins());
+            }
+            equalized = true;
         }
     }
 
     void PhotonCount::AddNoise(double noise_rate, SignalIterator current, TRandom3 rng)
     {
-        // Resize all channels so they have bins up through the last photon seen.
-        SignalIterator iter = Iterator();
-        while (iter.Next())
-        {
-            ExpandVector(iter.X(), iter.Y(), NBins());
-        }
+        // Ensure all channels have the same length.
+        EqualizeTimeSeries();
 
         // Randomly determine the number of photons in each bin according to the Poisson distribution.
         double expected_photons = RealNoiseRate(noise_rate);
-        vector<int> data = photon_counts[current.X()][current.Y()];
-        for (int i = 0; i < data.size(); i++)
+        for (int i = 0; i < NBins(); i++)
         {
-            data[i] += rng.Poisson(expected_photons);
+            photon_counts[current.X()][current.Y()][i] += rng.Poisson(expected_photons);
         }
+    }
+
+    void PhotonCount::SubtractNoise(double noise_rate, SignalIterator current)
+    {
+        double expected_photons = RealNoiseRate(noise_rate);
+        for (int i = 0; i < NBins(); i++)
+        {
+            photon_counts[current.X()][current.Y()][i] -= expected_photons;
+        }
+    }
+
+    double PhotonCount::RealNoiseRate(double universal_rate)
+    {
+        // Calculate the number of noise photons per second from the number of photons per second per steradian.
+        double solid_angle = Sq(pmt_angular_size);
+        double pixel_rate = universal_rate * solid_angle;
+
+        // Determine the mean number of Poisson events in a single time bin.
+        return bin_size * pixel_rate;
     }
 
     void PhotonCount::ClearNoise(SignalIterator current, double noise_rate, double hold_thresh)
     {
         // Determine the minimum threshold for non-noise signals.
         double real_noise = RealNoiseRate(noise_rate);
-        double thresh = real_noise + hold_thresh * real_noise;
+        double thresh = hold_thresh * Sqrt(real_noise);
 
         // Zero any measurements which are below the noise threshold.
         vector<int> data = photon_counts[current.X()][current.Y()];
@@ -194,7 +230,7 @@ namespace cherenkov_library
     {
         // Determine the minimum threshold for triggering.
         double real_noise = RealNoiseRate(noise_rate);
-        double thresh = real_noise + trigger_thresh * real_noise;
+        double thresh = trigger_thresh * Sqrt(real_noise);
 
         // Find all bins in which the count exceeded the triggering threshold.
         vector<int> data = photon_counts[current.X()][current.Y()];
@@ -292,10 +328,8 @@ namespace cherenkov_library
         double azimuth = pixels_horiz * pmt_angular_size * Cos(elevation);
 
         // TODO: Check that these rotations are in the correct direction (perhaps with unit testing).
-        TVector3 direction = TVector3(0, 0, 1);
-        direction.RotateX(elevation);
-        direction.RotateY(azimuth);
-        return direction;
+        // A positive azimuth should correspond to a positive x component.
+        return TVector3(Cos(elevation) * Sin(azimuth), Sin(elevation), Cos(elevation) * Cos(azimuth));
     }
 
     void PhotonCount::ExpandVector(int x_index, int y_index, int min_size)
@@ -304,17 +338,5 @@ namespace cherenkov_library
         {
             photon_counts[x_index][y_index].resize(min_size, 0);
         }
-    }
-
-    double PhotonCount::RealNoiseRate(double universal_rate)
-    {
-        // Calculate the number of noise photons per second from the number of photons per second per steradian per
-        // square centimeter.
-        double solid_angle = Sq(pmt_angular_size);
-        double area = Sq(pmt_linear_size);
-        double pixel_rate = universal_rate * solid_angle * area;
-
-        // Determine the mean number of Poisson events in a single time bin.
-        return bin_size * pixel_rate;
     }
 }

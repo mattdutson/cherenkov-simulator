@@ -12,6 +12,8 @@
 #include "TRotation.h"
 #include <istream>
 #include "boost/property_tree/ptree.hpp"
+#include <TGraph.h>
+#include <TGraphErrors.h>
 
 namespace cherenkov_library
 {
@@ -31,16 +33,38 @@ namespace cherenkov_library
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
          * not used.
          */
-        void TimeProfileFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle);
+        TGraph MonocularFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle);
+
+        /*
+         * Performs a time profile reconstruction, but using the constraint of an impact point.
+         */
+        TGraph HybridFit(PhotonCount data, TVector3 impact_point, Plane sd_plane, double* t_0, double* impact_param,
+                         double* angle);
 
         /*
          * Apply triggering logic to the signal. Look for consecutive groups of pixels in each time bin which have
-         * signals above some threshold. Also, elimiate any noise which is below some lower threshold. Return true if
+         * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
          * any frames were triggered.
          */
         bool ApplyTriggering(PhotonCount* data);
 
+        /*
+         * Performs the hybrid Cherenkov reconstruction. If the detector is not triggered, the "triggered" parameter is
+         * set to false. If no valid ground impact point is found, then a standard reconstruction is done and
+         * "ground_used" is set to false.
+         */
+        /*
+         * Performs a standard time profile reconstruction. If the detector is not triggered, the "triggered" parameter
+         * is set to false.
+         */
+        Shower Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used);
+
     private:
+
+        /*
+         * Constructs the fit graph from data points.
+         */
+        TGraphErrors GetFitGraph(PhotonCount data, Plane sd_plane);
 
         /*
          * A method to count the largest cluster of adjacent "true" values in a 2D array.
@@ -52,6 +76,19 @@ namespace cherenkov_library
          * neighbors. Returns the total number of visited elements.
          */
         int Visit(int i, int j, std::vector<std::vector<bool>>* not_counted);
+
+        /*
+         * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
+         * returned. We assume at this point that filters and triggering have been applied. Our condition is that some
+         * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
+         * would expect during that time frame.
+         */
+        bool FindGroundImpact(PhotonCount data, TVector3* impact);
+
+        /*
+         * Subtracts the average amount of noise from each pixel.
+         */
+        void SubtractNoise(PhotonCount* data);
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings
         Plane ground_plane;

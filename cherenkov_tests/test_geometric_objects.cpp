@@ -6,7 +6,7 @@
 #include <TMath.h>
 
 #include "geometric_objects.h"
-#include "test_helper.h"
+#include "helper.h"
 
 using namespace cherenkov_library;
 using namespace TMath;

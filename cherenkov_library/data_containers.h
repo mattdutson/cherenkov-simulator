@@ -114,7 +114,18 @@ namespace cherenkov_library
         void AddNoise(double noise_rate, SignalIterator current, TRandom3 rng);
 
         /*
-         * Clears any bins in the current pixel which are less than hold_thresh * sigma from the mean.
+         * Subtract the average noise rate from the signal in the pixel specified by the iterator.
+         */
+        void SubtractNoise(double noise_rate, SignalIterator current);
+
+        /*
+         * Determines the number of photons per bin observed by a single pixel given the number of photons per second
+         * per steradian in a given direction.
+         */
+        double RealNoiseRate(double universal_rate);
+
+        /*
+         * Clears any bins in the current pixel which are less than hold_thresh * sigma from zero.
          */
         void ClearNoise(SignalIterator current, double noise_rate, double hold_thresh);
 
@@ -172,16 +183,15 @@ namespace cherenkov_library
         TVector3 Direction(int x_index, int y_index);
 
         /*
+         * Resizes all channels so they have bins up through the last photon seen and all have the same size.
+         */
+        void EqualizeTimeSeries();
+
+        /*
          * If the vector at indices (x, y) is smaller than the specified size, it is expanded. This method does NOT
          * check that the indices are valid.
          */
         void ExpandVector(int x_index, int y_index, int min_size);
-
-        /*
-         * Determines the number of photons per bin observed by a single pixel given the number of photons per square
-         * centimeter per steradian in a given direction.
-         */
-        double RealNoiseRate(double universal_rate);
 
         // The underlying data structure to store photon counts
         std::vector<std::vector<std::vector<int>>> photon_counts;
@@ -206,6 +216,9 @@ namespace cherenkov_library
 
         // The side length of each photomultiplier
         double pmt_linear_size;
+
+        // Keeps track of whether we need to call EqualizeTimeSeries
+        bool equalized;
     };
 }
 

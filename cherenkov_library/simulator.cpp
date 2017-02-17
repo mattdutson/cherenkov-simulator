@@ -39,9 +39,9 @@ namespace cherenkov_library
         // Parameters defining properties of the detector optics
         refrac_lens = config.get<double>("refrac_lens");
         mirror_radius = config.get<double>("mirror_radius");
-        stop_diameter = config.get<double>("stop_diameter");
-        mirror_size = config.get<double>("mirror_size");
-        cluster_diameter = config.get<double>("cluster_diameter");
+        stop_diameter = mirror_radius / (2.0 * config.get<double>("f_number"));
+        mirror_size = stop_diameter + 2.0 * mirror_radius * Tan(config.get<double>("field_of_view") / 2.0);
+        cluster_diameter = mirror_radius * Sin(config.get<double>("field_of_view") / 2.0);
         n_pmt_across = config.get<int>("n_pmt_across");
 
         // Parameters in the GH profile
@@ -83,8 +83,8 @@ namespace cherenkov_library
         fine_struct = config.get<double>("fine_struct");
 
         // Parameters defining the amount of night sky background noise
-        sky_noise = config.get<double>("sky_noise");
-        ground_noise = config.get<double>("ground_noise");
+        sky_noise = config.get<double>("sky_noise") * Pi() * Sq(stop_diameter / 2.0);
+        ground_noise = config.get<double>("ground_noise") * Pi() * Sq(stop_diameter / 2.0);
 
         // Parameters which describe inefficiencies in the equipment
         mirror_reflect = config.get<double>("mirror_reflect");
@@ -106,7 +106,6 @@ namespace cherenkov_library
         PhotonCount photon_count = PhotonCount(n_pmt_across, time, time_bin, pmt_angular_size, pmt_linear_size);
 
         // Step the shower through its path.
-        int counter = 0;
         while (shower.TimeToPlane(ground_plane) > 0)
         {
             shower.IncrementDepth(depth_step);
@@ -280,8 +279,6 @@ namespace cherenkov_library
         double rho = shower.LocalRho();
         double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
         double k_1 = k_out * 2 * shower.LocalDelta();
-
-        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
         double k_2 = k_out * Sq(mass_e);
 
         // Parameters in the electron energy distribution
@@ -292,10 +289,10 @@ namespace cherenkov_library
 
         // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
         // variable of integration is lnE.
-        std::stringstream func_string;
-        func_string << "(" << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << ")))*(" << k_1
-                    << "-" << k_2 << "/exp(2*x))";
-        TF1 func = TF1("integrand", func_string.str().c_str(), 0, Infinity());
+        std::stringstream func_str = std::stringstream();
+        func_str << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << "))*(" << k_1 << "-" << k_2
+                 << "/exp(2*x))";
+        TF1 func = TF1("integrand", func_str.str().c_str(), 0, Infinity());
 
         // The shower will not contain any electrons with an energy higher than the shower primary energy. We can also
         // assume that the electron energy spectrum will remain relatively well normalized even if we omit these
@@ -304,7 +301,7 @@ namespace cherenkov_library
 
         // Determine the fraction of total photons captured. Apply a Lambertian reflectance model (see notes).
         TVector3 ground_impact = shower.PlaneImpact(ground_plane);
-        double cos_theta = ground_impact.Dot(ground_plane.Normal());
+        double cos_theta = Abs(Cos(ground_impact.Angle(ground_plane.Normal())));
         double fraction = 4 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
 
         // Return the product of the total number produced and the fraction captured.

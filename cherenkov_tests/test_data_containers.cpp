@@ -6,7 +6,7 @@
 #include <TFile.h>
 
 #include "data_containers.h"
-#include "test_helper.h"
+#include "helper.h"
 #include "data_analysis.h"
 
 using namespace cherenkov_library;

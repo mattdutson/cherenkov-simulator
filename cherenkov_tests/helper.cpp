@@ -2,7 +2,7 @@
 // Created by Matthew Dutson on 1/17/17.
 //
 
-#include "test_helper.h"
+#include "helper.h"
 #include <TMath.h>
 
 using namespace TMath;

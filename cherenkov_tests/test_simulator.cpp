@@ -6,7 +6,7 @@
 #include <vector>
 #include <TFile.h>
 
-#include "test_helper.h"
+#include "helper.h"
 #include "utility.h"
 #include "simulator.h"
 #include "monte_carlo.h"
@@ -22,7 +22,7 @@ namespace cherenkov_tests
     /*
      * Attempt to simulate the motion of a typical shower to check whether profiles match expectations.
      */
-    TEST(sample_shower, straight_down)
+    TEST(sample_shower, straight_shower)
     {
         // Parse the XML file and give it to the simulator and monte carlo.
         ptree config = ParseXMLFile("../../config.xml").get_child("config");
@@ -36,15 +36,15 @@ namespace cherenkov_tests
         // Make some graphics and write them to a file.
         TGraph graph = MakeProfileGraph(data);
         TH2I histo = MakeSumMap(data);
-        TFile file("../../cherenkov_tests/sample_shower.root", "RECREATE");
-        graph.Write("straight_down");
-        histo.Write("shower_map");
+        TFile file("../../cherenkov_tests/straight_shower_sim.root", "RECREATE");
+        graph.Write("straight_shower_graph");
+        histo.Write("straight_shower_map");
     }
 
     /*
      * Run a shower which goes sideways at some angle.
      */
-    TEST(sample_shower, angle_motion)
+    TEST(sample_shower, angle_shower)
     {
         // Parse the XML file and give it to the simulator and monte carlo.
         ptree config = ParseXMLFile("../../config.xml").get_child("config");
@@ -58,8 +58,8 @@ namespace cherenkov_tests
         // Draw a map of impacts.
         TGraph graph = MakeProfileGraph(data);
         TH2I histo = MakeSumMap(data);
-        TFile file("../../cherenkov_tests/angle_shower.root", "RECREATE");
+        TFile file("../../cherenkov_tests/angle_shower_sim.root", "RECREATE");
         graph.Write("angle_shower_graph");
-        histo.Write("angle_shower_histo");
+        histo.Write("angle_shower_map");
     }
 }

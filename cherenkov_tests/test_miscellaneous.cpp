@@ -7,7 +7,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "simulator.h"
 #include "utility.h"
-#include "test_helper.h"
+#include "helper.h"
 
 using namespace std;
 using namespace boost::property_tree;

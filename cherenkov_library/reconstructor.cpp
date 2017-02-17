@@ -36,8 +36,9 @@ namespace cherenkov_library
         rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
 
         // Parameters defining the amount of night sky background noise
-        sky_noise = config.get<double>("sky_noise");
-        ground_noise = config.get<double>("ground_noise");
+        double stop_diameter = config.get<double>("mirror_radius") / (2.0 * config.get<double>("f_number"));
+        sky_noise = config.get<double>("sky_noise") * Pi() * Sq(stop_diameter / 2.0);
+        ground_noise = config.get<double>("ground_noise") * Pi() * Sq(stop_diameter / 2.0);
 
         // Parameters used when applying triggering logic
         trigger_thresh = config.get<double>("trigger_thresh");
@@ -87,47 +88,10 @@ namespace cherenkov_library
         return Plane(rotate_to_world * result, TVector3());
     }
 
-    void
-    Reconstructor::TimeProfileFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle)
+    TGraph
+    Reconstructor::MonocularFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle)
     {
-        // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
-        vector<double> angles = vector<double>();
-        vector<double> times = vector<double>();
-        vector<double> time_err = vector<double>();
-        SignalIterator iter = data.Iterator();
-        while (iter.Next())
-        {
-            TVector3 direction = rotate_to_world * data.Direction(iter);
-
-            // Only consider pixels with a nonzero signal and those which point above the horizon.
-            Ray outward_ray = Ray(TVector3(), direction, 0);
-            if (outward_ray.TimeToPlane(ground_plane) > 0 && data.SumBins(iter) > 0)
-            {
-                // Project the direction vector onto the shower-detector plane and find the angle of the pixel.
-                TVector3 projection = (direction - direction.Dot(sd_plane.Normal()) * sd_plane.Normal()).Unit();
-                TVector3 horizontal = TVector3(0, 1, 0);
-
-                // Make sure the angle has the correct sign.
-                double angle = projection.Angle(horizontal);
-                if (Above(horizontal, projection))
-                {
-                    angle = Abs(angle);
-                }
-                else
-                {
-                    angle = -Abs(angle);
-                }
-
-                // Add data points to the arrays.
-                angles.push_back(angle);
-                times.push_back(data.AverageTime(iter));
-                time_err.push_back(1.0 / Sqrt((double) data.SumBins(iter)));
-            }
-        }
-
-        // Make arrays to pass to the TGraph constructor.
-        vector<double> angle_err = vector<double>(angles.size(), 0.0);
-        TGraphErrors graph = TGraphErrors(angles.size(), &angles[0], &times[0], &angle_err[0], &time_err[0]);
+        TGraphErrors data_graph = GetFitGraph(data, sd_plane);
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
@@ -139,11 +103,55 @@ namespace cherenkov_library
         func.SetParameters(0.0, 10e6, PiOver2());
 
         // Perform the fit.
-        graph.Fit("profile_fit");
-        TF1* result = graph.GetFunction("profile_fit");
+        data_graph.Fit("profile_fit");
+        TF1* result = data_graph.GetFunction("profile_fit");
         *t_0 = result->GetParameter("t_0");
         *impact_param = result->GetParameter("r_p");
         *angle = result->GetParameter("psi");
+
+        // Return a graph containing the data points with error bars.
+        return data_graph;
+    }
+
+    TGraph
+    Reconstructor::HybridFit(PhotonCount data, TVector3 impact_point, Plane sd_plane, double* t_0, double* impact_param,
+                             double* angle)
+    {
+        TGraphErrors data_graph = GetFitGraph(data, sd_plane);
+
+        // Find the angle defining the relationship between the impact angle and impact parameter.
+        double impact_distance = impact_point.Mag();
+        TVector3 horizontal = TVector3(0, 1, 0);
+        TVector3 projection = (horizontal - horizontal.Dot(sd_plane.Normal()) * sd_plane.Normal()).Unit();
+        double theta = impact_point.Angle(projection);
+        if (Above(horizontal, impact_point))
+        {
+            theta = Abs(theta);
+        }
+        else
+        {
+            theta = -Abs(theta);
+        }
+
+        // The functional form of the time profile.
+        std::stringstream func_string = std::stringstream();
+        func_string << "[0] + " << impact_distance << " * sin([1] - " << theta << ") / (" << CentC() << ") * tan(("
+                    << Pi() << " - [1] - x) / 2)";
+        TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
+
+        // Set names and initial guesses for parameters.
+        func.SetParNames("t_0", "psi");
+        func.SetParameters(0.0, PiOver2());
+
+        // Perform the fit.
+        data_graph.Fit("profile_fit");
+        TF1* result = data_graph.GetFunction("profile_fit");
+        *t_0 = result->GetParameter("t_0");
+        *angle = result->GetParameter("psi");
+        *impact_param = impact_distance * Sin(*angle);
+
+        // Return a graph containing the data points with error bars.
+        return data_graph;
     }
 
     bool Reconstructor::ApplyTriggering(PhotonCount* data)
@@ -208,6 +216,78 @@ namespace cherenkov_library
         return triggered_found;
     }
 
+    Shower Reconstructor::Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used)
+    {
+        SubtractNoise(&data);
+        *triggered = ApplyTriggering(&data);
+        if (*triggered)
+        {
+            Plane sd_plane = FitSDPlane(data);
+            double t_0, impact_param, angle;
+            if (try_ground)
+            {
+                TVector3 impact;
+                try_ground = FindGroundImpact(data, &impact);
+                if (try_ground)
+                {
+                    HybridFit(data, impact, sd_plane, &t_0, &impact_param, &angle);
+                }
+            }
+            if (!try_ground)
+            {
+                MonocularFit(data, sd_plane, &t_0, &impact_param, &angle);
+            }
+
+            // TODO: Reconstruct the impact point using the plane and fit parameters.
+        }
+        else
+        {
+            return Shower(Shower::Params(), TVector3(), TVector3());
+        }
+    }
+
+    TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, Plane sd_plane)
+    {
+        // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
+        vector<double> angles = vector<double>();
+        vector<double> times = vector<double>();
+        vector<double> time_err = vector<double>();
+        SignalIterator iter = data.Iterator();
+        while (iter.Next())
+        {
+            TVector3 direction = rotate_to_world * data.Direction(iter);
+
+            // Only consider pixels with a nonzero signal and those which point above the horizon.
+            Ray outward_ray = Ray(TVector3(), direction, 0);
+            if (outward_ray.TimeToPlane(ground_plane) < 0 && data.SumBins(iter) > 0)
+            {
+                // Project the direction vector onto the shower-detector plane and find the angle of the pixel.
+                TVector3 projection = (direction - direction.Dot(sd_plane.Normal()) * sd_plane.Normal()).Unit();
+                TVector3 horizontal = TVector3(0, 1, 0);
+
+                // Make sure the angle has the correct sign.
+                double chi = projection.Angle(horizontal);
+                if (Above(horizontal, projection))
+                {
+                    chi = Abs(chi);
+                }
+                else
+                {
+                    chi = -Abs(chi);
+                }
+
+                // Add data points to the arrays.
+                angles.push_back(chi);
+                times.push_back(data.AverageTime(iter));
+                time_err.push_back(1.0 / Sqrt((double) data.SumBins(iter)));
+            }
+        }
+
+        // Make arrays to pass to the TGraph constructor.
+        vector<double> angle_err = vector<double>(angles.size(), 0.0);
+        return TGraphErrors(angles.size(), &angles[0], &times[0], &angle_err[0], &time_err[0]);
+    }
+
     int Reconstructor::LargestCluster(std::vector<std::vector<bool>> not_counted)
     {
         int largest = 0;
@@ -256,5 +336,49 @@ namespace cherenkov_library
             count += Visit(i + 1, j - 1, not_counted);
             return count;
         }
+    }
+
+    void Reconstructor::SubtractNoise(PhotonCount* data)
+    {
+        SignalIterator iter = data->Iterator();
+        while (iter.Next())
+        {
+            Ray outward_ray = Ray(TVector3(), rotate_to_world * data->Direction(iter), 0);
+            if (outward_ray.TimeToPlane(ground_plane) > 0)
+            {
+                data->SubtractNoise(ground_noise, iter);
+            }
+            else
+            {
+                data->SubtractNoise(sky_noise, iter);
+            }
+        }
+    }
+
+    bool Reconstructor::FindGroundImpact(PhotonCount data, TVector3* impact)
+    {
+        // Find the brightest pixel below the horizon.
+        TVector3 impact_direction = TVector3();
+        int highest_count = 0;
+        SignalIterator iter = data.Iterator();
+        while (iter.Next())
+        {
+            int sum = data.SumBins(iter);
+            if (sum > highest_count)
+            {
+                highest_count = sum;
+                impact_direction = rotate_to_world * data.Direction(iter);
+            }
+        }
+
+        // Find the impact position by extending the direction to the ground.
+        Ray outward_ray = Ray(TVector3(), impact_direction, 0);
+        outward_ray.PropagateToPlane(ground_plane);
+        *impact = outward_ray.Position();
+
+        // Ensure that the number of photons seen in this brightest pixel exceeds some threshold.
+        double poisson = data.RealNoiseRate(ground_noise) * data.NBins();
+        double threshold = 3 * Sqrt(poisson);
+        return highest_count > threshold;
     }
 }

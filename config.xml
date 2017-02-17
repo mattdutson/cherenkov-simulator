@@ -4,7 +4,7 @@
 
     <!-- Parameters related to the behavior of the simulation -->
     <depth_step desc="The slant depth of each step in the shower propagation" unit="g/cm^2">
-        1
+        0.3
     </depth_step>
     <time_bin desc="The size of the time bins for the photons collected" unit="s">
         100e-9
@@ -13,7 +13,7 @@
         10
     </fluor_thin>
     <ckv_thin desc="The rate of computational thinning for Cherenkov photons" unit="null">
-        1000
+        10
     </ckv_thin>
 
     <!-- Parameters relating to the position and orientation of the detector relative to its surroundings -->
@@ -21,7 +21,7 @@
         (0, 0, 1)
     </ground_normal>
     <ground_point desc="A point on the ground plane" unit="(cm, cm, cm)">
-        (0, 0, -40)
+        (0, 0, -10000)
     </ground_point>
     <elevation_angle desc="The angle of the detector axis with respect to the horizon" unit="rad">
         0.125
@@ -81,15 +81,12 @@
     <mirror_radius desc="The radius of curvature of the detector mirror" unit="cm">
         400
     </mirror_radius>
-    <stop_diameter desc="The diameter of the stop (corrector)" unit="cm">
-        200
-    </stop_diameter>
-    <mirror_size desc="The diameter of the mirror" unit="cm">
-        200
-    </mirror_size>
-    <cluster_diameter desc="The diameter of the photomultiplier array" unit="cm">
-        100
-    </cluster_diameter>
+    <f_number desc="The f number of the detector (ratio of focal length to stop diameter)" unit="null">
+        1.0
+    </f_number>
+    <field_of_view desc="The telescope field of view" unit="rad">
+        0.3
+    </field_of_view>
     <n_pmt_across desc="The width/height of the photomultiplier grid in number of photomultipliers (should be even)"
                   unit="null">
         200
@@ -146,10 +143,10 @@
 
     <!-- Parameters used when calculating the Cherenkov yield -->
     <lambda_min desc="The minimum wavelength of Cherenkov photons being considered" unit="cm">
-        300e-7
+        3e-5
     </lambda_min>
     <lambda_max desc="The maximum wavelength of Cherenkov photons being considered" unit="cm">
-        400e-7
+        4e-5
     </lambda_max>
 
     <!-- Parameters in the electron energy spectrum -->
@@ -187,11 +184,11 @@
     </fine_struct>
 
     <!-- Parameters defining the amount of night sky background noise -->
-    <sky_noise desc="Average number of noise photons above horizon" unit="1/(cm^2*s*sr)">
-        10
+    <sky_noise desc="Average number of noise photons above horizon" unit="photoelectrons/(cm^2*s*sr)">
+        492421
     </sky_noise>
-    <ground_noise desc="Average number of noise photons below horizon" unit="1/(cm^2*s*sr)">
-        0
+    <ground_noise desc="Average number of noise photons below horizon" unit="photoelectrons/(cm^2*s*sr)">
+        49242
     </ground_noise>
 
     <!-- Parameters used when determining the depth of the shower maximum -->
