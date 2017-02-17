@@ -31,7 +31,7 @@ namespace cherenkov_tests
         // Attempt to reconstruct the shower plane and geometry.
         Plane plane = reconstructor.FitSDPlane(data);
         double t_0, impact, angle;
-        TGraph time_profile = reconstructor.TimeProfileFit(data, plane, &t_0, &impact, &angle);
+        TGraph time_profile = reconstructor.MonocularFit(data, plane, &t_0, &impact, &angle);
 
         // Write results to a file.
         TFile file("../../cherenkov_tests/straight_shower_recon.root", "RECREATE");
@@ -58,7 +58,7 @@ namespace cherenkov_tests
         // Attempt to reconstruct the shower plane and geometry.
         Plane plane = reconstructor.FitSDPlane(data);
         double t_0, impact, angle;
-        TGraph time_profile = reconstructor.TimeProfileFit(data, plane, &t_0, &impact, &angle);
+        TGraph time_profile = reconstructor.MonocularFit(data, plane, &t_0, &impact, &angle);
 
         // Draw a map of impacts.
         TFile file("../../cherenkov_tests/angle_shower_recon.root", "RECREATE");

@@ -59,9 +59,11 @@
     <!-- Parameters defining properties of the atmosphere -->
     <scale_height desc="The exponential atmosphere scale height" unit="cm">
         799000
+        <!-- 1000000 -->
     </scale_height>
     <rho_sea desc="The density of the atmosphere at sea level in" unit="g/cm^3">
         0.001225
+        <!-- 0.00100 -->
     </rho_sea>
     <detect_elevation desc="The elevation of the detector" unit="cm">
         141400

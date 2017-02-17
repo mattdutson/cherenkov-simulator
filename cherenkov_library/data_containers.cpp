@@ -177,7 +177,7 @@ namespace cherenkov_library
         }
     }
 
-    void PhotonCount::AddNoise(double noise_rate, SignalIterator current, TRandom3 rng)
+    void PhotonCount::AddNoise(double noise_rate, SignalIterator current, TRandom3* rng)
     {
         // Ensure all channels have the same length.
         EqualizeTimeSeries();
@@ -186,7 +186,7 @@ namespace cherenkov_library
         double expected_photons = RealNoiseRate(noise_rate);
         for (int i = 0; i < NBins(); i++)
         {
-            photon_counts[current.X()][current.Y()][i] += rng.Poisson(expected_photons);
+            photon_counts[current.X()][current.Y()][i] += rng->Poisson(expected_photons);
         }
     }
 

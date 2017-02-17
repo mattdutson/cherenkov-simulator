@@ -111,7 +111,7 @@ namespace cherenkov_library
          * number of photons per second per steradian per square centimeter. These photons are randomly scattered
          * throughout the time bins using the random number generator.
          */
-        void AddNoise(double noise_rate, SignalIterator current, TRandom3 rng);
+        void AddNoise(double noise_rate, SignalIterator current, TRandom3* rng);
 
         /*
          * Subtract the average noise rate from the signal in the pixel specified by the iterator.

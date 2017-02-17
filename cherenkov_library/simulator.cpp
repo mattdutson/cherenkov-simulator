@@ -381,7 +381,7 @@ namespace cherenkov_library
             {
                 noise_rate = sky_noise;
             }
-            photon_count->AddNoise(noise_rate, iter, rng);
+            photon_count->AddNoise(noise_rate, iter, &rng);
         }
     }
 }
