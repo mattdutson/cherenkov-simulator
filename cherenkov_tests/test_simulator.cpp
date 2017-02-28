@@ -19,47 +19,55 @@ using namespace cherenkov_library;
 
 namespace cherenkov_tests
 {
+    class SimulatorTest : public testing::Test
+    {
+
+    protected:
+
+        Simulator* simulator;
+        MonteCarlo* monte_carlo;
+
+        virtual void SetUp()
+        {
+            ptree config = ParseXMLFile("../../config.xml").get_child("config");
+            simulator = new Simulator(config);
+            monte_carlo = new MonteCarlo(config);
+        }
+
+        virtual void TearDown()
+        {
+            delete simulator;
+            delete monte_carlo;
+        }
+    };
+
     /*
      * Attempt to simulate the motion of a typical shower to check whether profiles match expectations.
      */
-    TEST(sample_shower, straight_shower)
+    TEST_F(SimulatorTest, StraightShower)
     {
-        // Parse the XML file and give it to the simulator and monte carlo.
-        ptree config = ParseXMLFile("../../config.xml").get_child("config");
-        Simulator simulator = Simulator(config);
-        MonteCarlo monte_carlo = MonteCarlo(config);
-
         // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame.
-        Shower shower = monte_carlo.GenerateShower(TVector3(0, 0, -1), 1000000, 0, 10e19);
-        PhotonCount data = simulator.SimulateShower(shower);
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1000000, 0, 10e19);
+        PhotonCount data = simulator->SimulateShower(shower);
 
         // Make some graphics and write them to a file.
-        TGraph graph = MakeProfileGraph(data);
-        TH2I histo = MakeSumMap(data);
         TFile file("../../cherenkov_tests/straight_shower_sim.root", "RECREATE");
-        graph.Write("straight_shower_graph");
-        histo.Write("straight_shower_map");
+        DataAnalysis::MakeProfileGraph(data).Write("straight_shower_graph");
+        DataAnalysis::MakeSumMap(data).Write("straight_shower_map");
     }
 
     /*
      * Run a shower which goes sideways at some angle.
      */
-    TEST(sample_shower, angle_shower)
+    TEST_F(SimulatorTest, AngleShower)
     {
-        // Parse the XML file and give it to the simulator and monte carlo.
-        ptree config = ParseXMLFile("../../config.xml").get_child("config");
-        Simulator simulator = Simulator(config);
-        MonteCarlo monte_carlo = MonteCarlo(config);
-
         // Construct and simulate a shower at 10km which is skewed at some angle.
-        Shower shower = monte_carlo.GenerateShower(TVector3(1, 0, -2), 1000000, 0, 10e19);
-        PhotonCount data = simulator.SimulateShower(shower);
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1000000, 0, 10e19);
+        PhotonCount data = simulator->SimulateShower(shower);
 
         // Draw a map of impacts.
-        TGraph graph = MakeProfileGraph(data);
-        TH2I histo = MakeSumMap(data);
         TFile file("../../cherenkov_tests/angle_shower_sim.root", "RECREATE");
-        graph.Write("angle_shower_graph");
-        histo.Write("angle_shower_map");
+        DataAnalysis::MakeProfileGraph(data).Write("angle_shower_graph");
+        DataAnalysis::MakeSumMap(data).Write("angle_shower_map");
     }
 }

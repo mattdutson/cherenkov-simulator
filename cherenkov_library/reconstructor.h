@@ -7,13 +7,14 @@
 #ifndef reconstructor_h
 #define reconstructor_h
 
-#include "data_containers.h"
-#include "geometric_objects.h"
-#include "TRotation.h"
+#include <TRotation.h>
 #include <istream>
-#include "boost/property_tree/ptree.hpp"
+#include <boost/property_tree/ptree.hpp>
 #include <TGraph.h>
 #include <TGraphErrors.h>
+
+#include "data_containers.h"
+#include "geometric_objects.h"
 
 namespace cherenkov_library
 {
@@ -49,15 +50,44 @@ namespace cherenkov_library
         bool ApplyTriggering(PhotonCount* data);
 
         /*
-         * Performs the hybrid Cherenkov reconstruction. If the detector is not triggered, the "triggered" parameter is
-         * set to false. If no valid ground impact point is found, then a standard reconstruction is done and
-         * "ground_used" is set to false.
+         * Determines whether the array of triggered tubes contains enough adjacent true values for the frame to be
+         * triggered.
          */
+        bool FrameTriggered(std::vector<std::vector<bool>>);
+
         /*
-         * Performs a standard time profile reconstruction. If the detector is not triggered, the "triggered" parameter
-         * is set to false.
+         * Returns an array of 2D arrays, each of which contains true values for triggered tubes and false values for
+         * untriggered tubes.
+         */
+        std::vector<std::vector<std::vector<bool>>> GetTriggeringMatrices(PhotonCount data);
+
+        /*
+         * Performs a reconstruction of the shower. If try_ground is true, then a hybrid Cherenkov reconstruction is
+         * attempted. Otherwise, an ordinary monocular reconstruction is attempted. If the PhotonCount data wouldn't
+         * result in the detector being triggered, then *triggered = false, and an empty shower is returned. If a valid
+         * ground Cherenkov impact point is not found, then *ground_used = false, and an ordinary monocular
+         * reconstruction is attempted.
          */
         Shower Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used);
+
+        /*
+         * Subtracts the average amount of noise from each pixel.
+         */
+        void SubtractAverageNoise(PhotonCount* data);
+
+        /*
+         * Filters out any signal below three sigma. Assumes that the mean of the signal is zero (the average noise rate
+         * has already been subtracted).
+         */
+        void ThreeSigmaFilter(PhotonCount* data);
+
+        /*
+         * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
+         * returned. We assume at this point that filters and triggering have been applied. Our condition is that some
+         * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
+         * would expect during that time frame.
+         */
+        bool FindGroundImpact(PhotonCount data, TVector3* impact);
 
     private:
 
@@ -76,19 +106,6 @@ namespace cherenkov_library
          * neighbors. Returns the total number of visited elements.
          */
         int Visit(int i, int j, std::vector<std::vector<bool>>* not_counted);
-
-        /*
-         * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
-         * returned. We assume at this point that filters and triggering have been applied. Our condition is that some
-         * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
-         * would expect during that time frame.
-         */
-        bool FindGroundImpact(PhotonCount data, TVector3* impact);
-
-        /*
-         * Subtracts the average amount of noise from each pixel.
-         */
-        void SubtractNoise(PhotonCount* data);
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings
         Plane ground_plane;

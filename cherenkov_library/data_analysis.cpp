@@ -11,8 +11,9 @@ using std::vector;
 
 namespace cherenkov_library
 {
-    void CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, vector<double>* angles,
-                           vector<double>* counts)
+    void
+    DataAnalysis::CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, vector<double>* angles,
+                                    vector<double>* counts)
     {
         // TODO: Figure out a way to bin photon counts in a way that doesn't lead to aliasing.
         *angles = vector<double>();
@@ -38,7 +39,7 @@ namespace cherenkov_library
         }
     }
 
-    void SuperimposeTimes(PhotonCount data, vector<double>* times, vector<double>* counts)
+    void DataAnalysis::SuperimposeTimes(PhotonCount data, vector<double>* times, vector<double>* counts)
     {
         // Initialize the structure and find x-axis labels (times).
         *times = vector<double>();
@@ -61,9 +62,13 @@ namespace cherenkov_library
         }
     };
 
-    TH2C GetValidMap(PhotonCount data)
+    TH2C DataAnalysis::GetValidMap(PhotonCount data)
     {
-        std::vector<std::vector<bool>> valid = data.GetValid();
+        return GetBooleanMap(data.GetValid());
+    }
+
+    TH2C DataAnalysis::GetBooleanMap(vector<vector<bool>> valid)
+    {
         TH2C histo = TH2C("Valid", "Valid", valid.size(), 0, valid.size(), valid[0].size(), 0, valid[0].size());
         for (int i = 0; i < valid.size(); i++)
         {
@@ -84,14 +89,14 @@ namespace cherenkov_library
         return histo;
     }
 
-    TGraph MakeProfileGraph(PhotonCount data)
+    TGraph DataAnalysis::MakeProfileGraph(PhotonCount data)
     {
         vector<double> times, counts;
         SuperimposeTimes(data, &times, &counts);
         return TGraph(times.size(), &(times[0]), &(counts[0]));
     }
 
-    TH2I MakeSumMap(PhotonCount data)
+    TH2I DataAnalysis::MakeSumMap(PhotonCount data)
     {
         int size = data.Size();
         TH2I histo = TH2I("Sums", "Sums", size, 0, size, size, 0, size);

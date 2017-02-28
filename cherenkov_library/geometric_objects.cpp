@@ -41,6 +41,12 @@ namespace cherenkov_library
         return coefficient;
     }
 
+    bool Plane::InFrontOf(TVector3 direction)
+    {
+        Ray outward_ray = Ray(TVector3(), direction, 0);
+        return outward_ray.TimeToPlane(*this) > 0;
+    }
+
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
         // If a zero direction vector is passed, use (0, 0, 1) instead.

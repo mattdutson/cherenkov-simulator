@@ -3,20 +3,18 @@
 //
 // Created by Matthew Dutson on 9/8/16.
 //
-//
+// Contains the implementation of
 
-#include "reconstructor.h"
-#include "data_containers.h"
-#include "TMatrixD.h"
-#include "TMatrixDSymEigen.h"
-#include "TVectorD.h"
-#include "utility.h"
-#include <string>
-#include "TMath.h"
-#include <Math/Functor.h>
+#include <TMatrixD.h>
+#include <TMatrixDSymEigen.h>
+#include <TMath.h>
 #include <Math/GSLMinimizer.h>
 #include <TGraphErrors.h>
 #include <TF1.h>
+
+#include "utility.h"
+#include "data_containers.h"
+#include "reconstructor.h"
 
 using boost::property_tree::ptree;
 using std::string;
@@ -156,49 +154,12 @@ namespace cherenkov_library
 
     bool Reconstructor::ApplyTriggering(PhotonCount* data)
     {
-        // Initialize the structure to contain triggering values
-        int size = data->Size();
-        vector<vector<vector<bool>>> triggers = vector<vector<vector<bool>>>(size, vector<vector<bool>>(size));
-
-        SignalIterator iter = data->Iterator();
-        while (iter.Next())
-        {
-            // Determine whether a pixel is looking at the ground or sky.
-            int noise_rate;
-            Ray outward_ray = Ray(TVector3(), rotate_to_world * data->Direction(iter), 0);
-            if (outward_ray.TimeToPlane(ground_plane) > 0)
-            {
-                noise_rate = ground_noise;
-            }
-            else
-            {
-                noise_rate = sky_noise;
-            }
-
-            // Remove any below-threshold noise in each pixel.
-            data->ClearNoise(iter, noise_rate, hold_thresh);
-
-            // Find any trigger times in the pixel.
-            triggers[iter.X()][iter.Y()] = data->FindTriggers(iter, noise_rate, trigger_thresh);
-        }
-
-        // Determine which bins contain a sufficiently large cluster of triggered tubes
+        vector<vector<vector<bool>>> triggering_matrices = GetTriggeringMatrices(*data);
         vector<bool> good_frames = vector<bool>();
         bool triggered_found = false;
-        for (int i = 0; i < data->NBins(); i++)
+        for (int i = 0; i < triggering_matrices.size(); i++)
         {
-            // Copy the true/false triggering values into a structure to be passed to LargestCluster.
-            vector<vector<bool>> frame = vector<vector<bool>>(size, vector<bool>(size, false));
-            for (int x = 0; x < triggers.size(); x++)
-            {
-                for (int y = 0; y < triggers[x].size(); y++)
-                {
-                    frame[x][y] = triggers[x][y][i];
-                }
-            }
-
-            // Check whether there are any sufficiently large clusters of triggered tubes.
-            if (LargestCluster(frame) > trigger_clust)
+            if (FrameTriggered(triggering_matrices[i]))
             {
                 triggered_found = true;
                 good_frames.push_back(true);
@@ -208,17 +169,61 @@ namespace cherenkov_library
                 good_frames.push_back(false);
             }
         }
-
-        // Zero all time bins in which there was no system trigger.
         data->EraseNonTriggered(good_frames);
-
-        // Return whether any time bins contained a trigger.
         return triggered_found;
+    }
+
+    bool Reconstructor::FrameTriggered(vector<vector<bool>> frame)
+    {
+        return LargestCluster(frame) > trigger_clust;
+    }
+
+    vector<vector<vector<bool>>> Reconstructor::GetTriggeringMatrices(PhotonCount data)
+    {
+        // Get the triggering time series for each pixel.
+        int size = data.Size();
+        vector<vector<vector<bool>>> position_triggers = vector<vector<vector<bool>>>(size, vector<vector<bool>>(size,
+                                                                                                                 vector<bool>(
+                                                                                                                         data.NBins(),
+                                                                                                                         false)));
+        SignalIterator iter = data.Iterator();
+        while (iter.Next())
+        {
+            double noise_rate;
+            if (ground_plane.InFrontOf(rotate_to_world * data.Direction(iter)))
+            {
+                noise_rate = ground_noise;
+            }
+            else
+            {
+                noise_rate = sky_noise;
+            }
+            position_triggers[iter.X()][iter.Y()] = data.FindTriggers(iter, noise_rate, trigger_thresh);
+        }
+
+        // Rearrange so each top-level bin represents the triggering state at a particular instant.
+        vector<vector<vector<bool>>> time_triggers = vector<vector<vector<bool>>>(data.NBins(),
+                                                                                  vector<vector<bool>>(size,
+                                                                                                       vector<bool>(
+                                                                                                               size,
+                                                                                                               false)));
+        for (int i = 0; i < position_triggers.size(); i++)
+        {
+            for (int j = 0; j < position_triggers[0].size(); j++)
+            {
+                for (int k = 0; k < position_triggers[0][0].size(); k++)
+                {
+                    time_triggers[k][i][j] = position_triggers[i][j][k];
+                }
+            }
+        }
+        return time_triggers;
     }
 
     Shower Reconstructor::Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used)
     {
-        SubtractNoise(&data);
+        SubtractAverageNoise(&data);
+        ThreeSigmaFilter(&data);
         *triggered = ApplyTriggering(&data);
         if (*triggered)
         {
@@ -231,11 +236,13 @@ namespace cherenkov_library
                 if (try_ground)
                 {
                     HybridFit(data, impact, sd_plane, &t_0, &impact_param, &angle);
+                    *ground_used = true;
                 }
             }
             if (!try_ground)
             {
                 MonocularFit(data, sd_plane, &t_0, &impact_param, &angle);
+                *ground_used = false;
             }
 
             // The direction in the shower-detector plane, with the y-axis defined to lie in the world's xy plane.
@@ -248,6 +255,40 @@ namespace cherenkov_library
         else
         {
             return Shower(Shower::Params(), TVector3(), TVector3());
+        }
+    }
+
+    void Reconstructor::SubtractAverageNoise(PhotonCount* data)
+    {
+        SignalIterator iter = data->Iterator();
+        while (iter.Next())
+        {
+            if (ground_plane.InFrontOf(rotate_to_world * data->Direction(iter)))
+            {
+                data->SubtractNoise(ground_noise, iter);
+            }
+            else
+            {
+                data->SubtractNoise(sky_noise, iter);
+            }
+        }
+    }
+
+    void Reconstructor::ThreeSigmaFilter(PhotonCount* data)
+    {
+        SignalIterator iter = data->Iterator();
+        while (iter.Next())
+        {
+            double noise_rate;
+            if (ground_plane.InFrontOf(rotate_to_world * data->Direction(iter)))
+            {
+                noise_rate = ground_noise;
+            }
+            else
+            {
+                noise_rate = sky_noise;
+            }
+            data->ClearNoise(iter, noise_rate, hold_thresh);
         }
     }
 
@@ -340,23 +381,6 @@ namespace cherenkov_library
             count += Visit(i, j - 1, not_counted);
             count += Visit(i + 1, j - 1, not_counted);
             return count;
-        }
-    }
-
-    void Reconstructor::SubtractNoise(PhotonCount* data)
-    {
-        SignalIterator iter = data->Iterator();
-        while (iter.Next())
-        {
-            Ray outward_ray = Ray(TVector3(), rotate_to_world * data->Direction(iter), 0);
-            if (outward_ray.TimeToPlane(ground_plane) > 0)
-            {
-                data->SubtractNoise(ground_noise, iter);
-            }
-            else
-            {
-                data->SubtractNoise(sky_noise, iter);
-            }
         }
     }
 

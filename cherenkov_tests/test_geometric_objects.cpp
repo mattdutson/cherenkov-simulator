@@ -16,7 +16,7 @@ namespace cherenkov_tests
     /*
      * Test the default constructor for a plane object.
      */
-    TEST(plane, default_construct)
+    TEST(GeometricObjectsTest, ConstructPlane)
     {
         Plane plane = Plane();
         ASSERT_EQ(plane.Normal(), TVector3(0, 0, 1));
@@ -26,7 +26,7 @@ namespace cherenkov_tests
     /*
      * Check that the normal vector is unit.
      */
-    TEST(plane, unit_normal)
+    TEST(GeometricObjectsTest, PlaneUnitNormal)
     {
         Plane plane = Plane(TVector3(0, 0, 12), TVector3(0, 0, 0));
         ASSERT_EQ(plane.Normal(), TVector3(0, 0, 1));
@@ -35,7 +35,7 @@ namespace cherenkov_tests
     /*
      * Test that the correct value of the coefficient is returned.
      */
-    TEST(plane, coefficient)
+    TEST(GeometricObjectsTest, PlaneCoefficient)
     {
         Plane plane = Plane(TVector3(0, 0, 1), TVector3(45, -12, 33));
         ASSERT_EQ(plane.Coefficient(), 33);
@@ -44,7 +44,7 @@ namespace cherenkov_tests
     /*
      * Set a non-default normal vector through the constructor.
      */
-    TEST(plane, set_normal)
+    TEST(GeometricObjectsTest, SetPlaneNormal)
     {
         Plane plane = Plane(TVector3(1, 1, 1), TVector3(45, -12, 33));
         ASSERT_EQ(plane.Normal(), TVector3(1 / Sqrt(3), 1 / Sqrt(3), 1 / Sqrt(3)));
@@ -53,7 +53,7 @@ namespace cherenkov_tests
     /*
      * Make sure the constructor corrects an invalid direction vector.
      */
-    TEST(ray, bad_direction)
+    TEST(GeometricObjectsTest, BadNormalDirection)
     {
         Ray ray = Ray(TVector3(10, 120, -11), TVector3(0, 0, 0), 0.04);
         ASSERT_TRUE(VectorsEqual(ray.Direction(), TVector3(0, 0, 1), 0.001));

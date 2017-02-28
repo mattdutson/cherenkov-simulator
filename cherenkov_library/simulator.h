@@ -42,6 +42,11 @@ namespace cherenkov_library
          */
         PhotonCount SimulateShower(Shower shower);
 
+        /*
+         * Adds Poisson-distributed background noise to the signal.
+         */
+        void AddNoise(PhotonCount* photon_count);
+
     private:
 
         /*
@@ -153,11 +158,6 @@ namespace cherenkov_library
          * Calculates the critical angle in the expression for the Cherenkov angular distribution.
          */
         double ThetaC(Shower shower);
-
-        /*
-         * Adds Poisson-distributed background noise to the signal.
-         */
-        void AddNoise(PhotonCount* photon_count);
 
         // Parameters related to the behavior of the simulation
         double depth_step;

@@ -16,10 +16,10 @@ namespace cherenkov_tests
     /*
      * Outputs a 2D histogram to a file. This histogram will contain a map of valid pixels.
      */
-    TEST(valid, make_valid_map)
+    TEST(DataContainersTest, MakeValidMap)
     {
         PhotonCount counter = PhotonCount(50, 0.0, 10.0e-9, 0.007, 1.0);
-        TH2C map = GetValidMap(counter);
+        TH2C map = DataAnalysis::GetValidMap(counter);
         TFile file("../../cherenkov_tests/pixel_map.root", "RECREATE");
         map.Write("valid");
     }

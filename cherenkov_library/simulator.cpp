@@ -113,7 +113,6 @@ namespace cherenkov_library
             ViewCherenkovPhotons(shower, ground_plane, &photon_count);
         }
 
-        AddNoise(&photon_count);
         return photon_count;
     }
 

@@ -43,6 +43,12 @@ namespace cherenkov_library
          */
         double Coefficient();
 
+        /*
+         * Returns true if a ray going outward from the origin in the specified direction would eventually strike the
+         * plane.
+         */
+        bool InFrontOf(TVector3 direction);
+
     private:
 
         // A unit vector normal to the plane
