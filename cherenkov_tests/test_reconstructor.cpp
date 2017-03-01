@@ -45,7 +45,7 @@ namespace cherenkov_tests
     TEST_F(ReconstructorTest, StraightShower)
     {
         // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame.
-        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e20);
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Attempt to reconstruct the shower plane and geometry.
@@ -66,7 +66,7 @@ namespace cherenkov_tests
     TEST_F(ReconstructorTest, AngleShower)
     {
         // Construct and simulate a shower at 10km which is skewed at some angle.
-        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e20);
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Attempt to reconstruct the shower plane and geometry.
@@ -87,7 +87,7 @@ namespace cherenkov_tests
     TEST_F(ReconstructorTest, AddSubtractNoise)
     {
         TFile file("../../cherenkov_tests/add_subtract_noise.root", "RECREATE");
-        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e20);
         PhotonCount data = simulator->SimulateShower(shower);
 
         DataAnalysis::MakeProfileGraph(data).Write("before_noise_graph");
@@ -101,6 +101,10 @@ namespace cherenkov_tests
         DataAnalysis::MakeProfileGraph(data).Write("after_subtract_graph");
         DataAnalysis::MakeSumMap(data).Write("after_subtract_map");
 
+        reconstructor->ThreeSigmaFilter(&data);
+        DataAnalysis::MakeProfileGraph(data).Write("three_sigma_graph");
+        DataAnalysis::MakeSumMap(data).Write("three_sigma_map");
+
         reconstructor->ApplyTriggering(&data);
         DataAnalysis::MakeProfileGraph(data).Write("after_trigger_graph");
         DataAnalysis::MakeSumMap(data).Write("after_trigger_map");
@@ -109,7 +113,7 @@ namespace cherenkov_tests
     TEST_F(ReconstructorTest, TriggeringMaps)
     {
         TFile file("../../cherenkov_tests/triggering_maps.root", "RECREATE");
-        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e20);
         PhotonCount data = simulator->SimulateShower(shower);
 
         std::vector<std::vector<std::vector<bool>>> triggering_matrices = reconstructor->GetTriggeringMatrices(data);
@@ -132,7 +136,7 @@ namespace cherenkov_tests
     TEST_F(ReconstructorTest, FindGroundImpact)
     {
         TFile file("../../cherenkov_tests/impact_point.root", "RECREATE");
-        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e20);
         PhotonCount data = simulator->SimulateShower(shower);
 
         TVector3 impact;
@@ -140,5 +144,17 @@ namespace cherenkov_tests
         {
             impact.Write("ground_impact");
         }
+    }
+
+    TEST_F(ReconstructorTest, StraightShowerGeometry)
+    {
+        TFile file("../../cherenkov_tests/straight_geometry.root", "RECREATE");
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e20);
+        PhotonCount data = simulator->SimulateShower(shower);
+
+        bool triggered, ground_used;
+        Shower reconstructed = reconstructor->Reconstruct(data, false, &triggered, &ground_used);
+        reconstructed.Position().Write("straight_shower_position");
+        reconstructed.Direction().Write("straight_shower_direction");
     }
 }

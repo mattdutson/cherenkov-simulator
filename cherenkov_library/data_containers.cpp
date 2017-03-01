@@ -193,8 +193,10 @@ namespace cherenkov_library
 
     void PhotonCount::SubtractNoise(double noise_rate, SignalIterator current)
     {
-        double expected_photons = RealNoiseRate(noise_rate);
-        for (int i = 0; i < NBins(); i++)
+        // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
+        // With the current configuration, mean < 1 seems like a reasonable assumption.
+        int expected_photons = (int) RealNoiseRate(noise_rate);
+        for (int i = 0; i < photon_counts[current.X()][current.Y()].size(); i++)
         {
             photon_counts[current.X()][current.Y()][i] -= expected_photons;
         }
@@ -217,12 +219,11 @@ namespace cherenkov_library
         double thresh = hold_thresh * Sqrt(real_noise);
 
         // Zero any measurements which are below the noise threshold.
-        vector<int> data = photon_counts[current.X()][current.Y()];
-        for (int i = 0; i < data.size(); i++)
+        for (int i = 0; i < photon_counts[current.X()][current.Y()].size(); i++)
         {
-            if (data[i] < thresh)
+            if (photon_counts[current.X()][current.Y()][i] < thresh)
             {
-                data[i] = 0;
+                photon_counts[current.X()][current.Y()][i] = 0;
             }
         }
     }
@@ -255,12 +256,11 @@ namespace cherenkov_library
         SignalIterator iter = Iterator();
         while (iter.Next())
         {
-            vector<int> data = photon_counts[iter.X()][iter.Y()];
-            for (int i = 0; i < data.size(); i++)
+            for (int i = 0; i < photon_counts[iter.X()][iter.Y()].size(); i++)
             {
                 if (!good_bins.at(i))
                 {
-                    data[i] = 0;
+                    photon_counts[iter.X()][iter.Y()][i] = 0;
                 }
             }
         }

@@ -187,10 +187,10 @@
 
     <!-- Parameters defining the amount of night sky background noise -->
     <sky_noise desc="Average number of noise photons above horizon" unit="photoelectrons/(cm^2*s*sr)">
-        492421
+        4.924e6
     </sky_noise>
     <ground_noise desc="Average number of noise photons below horizon" unit="photoelectrons/(cm^2*s*sr)">
-        49242
+        4.924e5
     </ground_noise>
 
     <!-- Parameters used when determining the depth of the shower maximum -->

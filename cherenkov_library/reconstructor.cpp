@@ -301,26 +301,18 @@ namespace cherenkov_library
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
-            TVector3 direction = rotate_to_world * data.Direction(iter);
-
             // Only consider pixels with a nonzero signal and those which point above the horizon.
-            Ray outward_ray = Ray(TVector3(), direction, 0);
-            if (outward_ray.TimeToPlane(ground_plane) < 0 && data.SumBins(iter) > 0)
+            TVector3 direction = rotate_to_world * data.Direction(iter);
+            if (ground_plane.InFrontOf(direction))
             {
-                // Project the direction vector onto the shower-detector plane and find the angle of the pixel.
-                TVector3 projection = (direction - direction.Dot(sd_plane.Normal()) * sd_plane.Normal()).Unit();
-                TVector3 horizontal = TVector3(0, 1, 0);
+                // This vector can be used to move to sd_plane frame (opposite used in Reconstruct method).
+                TVector3 to_sd_plane = TVector3(0, 0, 1);
+                to_sd_plane.RotateUz(sd_plane.Normal());
 
-                // Make sure the angle has the correct sign.
-                double chi = projection.Angle(horizontal);
-                if (Above(horizontal, projection))
-                {
-                    chi = Abs(chi);
-                }
-                else
-                {
-                    chi = -Abs(chi);
-                }
+                // Add pi/2 to the angle because the "horizontal" direction is the y axis of the plane frame.
+                // TODO: Check this transformation
+                direction.RotateUz(to_sd_plane);
+                double chi = direction.Phi() + PiOver2();
 
                 // Add data points to the arrays.
                 angles.push_back(chi);
