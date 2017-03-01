@@ -119,11 +119,11 @@ namespace cherenkov_tests
             std::string write_name;
             if (reconstructor->FrameTriggered(triggering_matrices[i]))
             {
-                write_name = std::to_string(i) + "_tr";
+                write_name = std::to_string(i) + "tr";
             }
             else
             {
-                write_name = std::to_string(i) + "_nt";
+                write_name = std::to_string(i) + "nt";
             }
             frame_map.Write(write_name.c_str());
         }

@@ -170,6 +170,11 @@ namespace cherenkov_library
          */
         double AverageTime(SignalIterator iter);
 
+        /*
+         * Resizes all channels so they have bins up through the last photon seen and all have the same size.
+         */
+        void EqualizeTimeSeries();
+
     private:
 
         /*
@@ -181,11 +186,6 @@ namespace cherenkov_library
          * A private method which determines the direction of the photomultiplier at the specified indices.
          */
         TVector3 Direction(int x_index, int y_index);
-
-        /*
-         * Resizes all channels so they have bins up through the last photon seen and all have the same size.
-         */
-        void EqualizeTimeSeries();
 
         /*
          * If the vector at indices (x, y) is smaller than the specified size, it is expanded. This method does NOT

@@ -113,6 +113,7 @@ namespace cherenkov_library
             ViewCherenkovPhotons(shower, ground_plane, &photon_count);
         }
 
+        photon_count.EqualizeTimeSeries();
         return photon_count;
     }
 

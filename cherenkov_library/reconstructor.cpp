@@ -209,9 +209,9 @@ namespace cherenkov_library
                                                                                                                false)));
         for (int i = 0; i < position_triggers.size(); i++)
         {
-            for (int j = 0; j < position_triggers[0].size(); j++)
+            for (int j = 0; j < position_triggers[i].size(); j++)
             {
-                for (int k = 0; k < position_triggers[0][0].size(); k++)
+                for (int k = 0; k < position_triggers[i][j].size(); k++)
                 {
                     time_triggers[k][i][j] = position_triggers[i][j][k];
                 }
@@ -392,11 +392,12 @@ namespace cherenkov_library
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
+            TVector3 direction = rotate_to_world * data.Direction(iter);
             int sum = data.SumBins(iter);
-            if (sum > highest_count)
+            if (sum > highest_count && ground_plane.InFrontOf(direction))
             {
                 highest_count = sum;
-                impact_direction = rotate_to_world * data.Direction(iter);
+                impact_direction = direction;
             }
         }
 
