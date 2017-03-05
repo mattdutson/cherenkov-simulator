@@ -123,7 +123,7 @@ namespace cherenkov_library
         for (int i = 0; i < number_detected / fluor_thin; i++)
         {
             TVector3 lens_impact = rotate_to_world * RandomStopImpact();
-            Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), shower.Time());
+            Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), JitteredTime(shower));
             photon.PropagateToPoint(lens_impact);
             SimulateOptics(photon, photon_count, fluor_thin);
         }
@@ -356,7 +356,7 @@ namespace cherenkov_library
         TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
         TVector3 direction = shower.Velocity().Unit();
         direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
-        return Ray(shower.Position(), direction, shower.Time());
+        return Ray(shower.Position(), direction, JitteredTime(shower));
     }
 
     double Simulator::ThetaC(Shower shower)
@@ -383,5 +383,11 @@ namespace cherenkov_library
             }
             photon_count->AddNoise(noise_rate, iter, &rng);
         }
+    }
+
+    double Simulator::JitteredTime(Shower shower)
+    {
+        double step_time = depth_step / shower.LocalRho() / CentC();
+        return shower.Time() + rng.Uniform(-step_time / 2.0, step_time / 2.0);
     }
 }

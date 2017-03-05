@@ -211,7 +211,7 @@ namespace cherenkov_library
     double Shower::X()
     {
         // See 1/25 depth integration notes.
-        double cos_theta = Abs(current_position.CosTheta());
+        double cos_theta = Abs(current_velocity.CosTheta());
         return scale_height * rho_0 / cos_theta * Exp(-current_position.Z() / scale_height);
     }
 

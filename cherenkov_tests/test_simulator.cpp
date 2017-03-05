@@ -47,7 +47,7 @@ namespace cherenkov_tests
     TEST_F(SimulatorTest, StraightShower)
     {
         // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame.
-        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1000000, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1000000, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Make some graphics and write them to a file.
@@ -62,12 +62,24 @@ namespace cherenkov_tests
     TEST_F(SimulatorTest, AngleShower)
     {
         // Construct and simulate a shower at 10km which is skewed at some angle.
-        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1000000, 0, 10e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1000000, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Draw a map of impacts.
         TFile file("../../cherenkov_tests/angle_shower_sim.root", "RECREATE");
         DataAnalysis::MakeProfileGraph(data).Write("angle_shower_graph");
         DataAnalysis::MakeSumMap(data).Write("angle_shower_map");
+    }
+
+    TEST_F(SimulatorTest, WholeProfile)
+    {
+        // Construct and simulate a shower at 30km.
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 3e6, 0, 1e19);
+        PhotonCount data = simulator->SimulateShower(shower);
+
+        // Make some graphics and write them to a file.
+        TFile file("../../cherenkov_tests/whole_profile_sim.root", "RECREATE");
+        DataAnalysis::MakeProfileGraph(data).Write("whole_shower_graph");
+        DataAnalysis::MakeSumMap(data).Write("whole_shower_map");
     }
 }

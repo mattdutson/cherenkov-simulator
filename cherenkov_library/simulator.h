@@ -159,6 +159,11 @@ namespace cherenkov_library
          */
         double ThetaC(Shower shower);
 
+        /*
+         * Generates a time which is randomly offset from the shower time.
+         */
+        double JitteredTime(Shower shower);
+
         // Parameters related to the behavior of the simulation
         double depth_step;
         double time_bin;

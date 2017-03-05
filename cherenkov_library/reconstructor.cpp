@@ -249,7 +249,7 @@ namespace cherenkov_library
             // TODO: Check the signs on this transformation, as well as the direction of sd_plane.Normal x impact_direction
             TVector3 impact_direction = TVector3(Sin(angle), Cos(angle), 0);
             impact_direction.RotateUz(sd_plane.Normal());
-            return Shower(Shower::Params(), sd_plane.Normal().Cross(impact_direction), impact_param * impact_direction,
+            return Shower(Shower::Params(), impact_param * impact_direction, sd_plane.Normal().Cross(impact_direction),
                           t_0);
         }
         else

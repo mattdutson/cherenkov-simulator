@@ -10,10 +10,10 @@
         100e-9
     </time_bin>
     <fluor_thin desc="The rate of computational thinning for fluorescence photons" unit="null">
-        10
+        1
     </fluor_thin>
     <ckv_thin desc="The rate of computational thinning for Cherenkov photons" unit="null">
-        10
+        1
     </ckv_thin>
 
     <!-- Parameters relating to the position and orientation of the detector relative to its surroundings -->
@@ -21,10 +21,10 @@
         (0, 0, 1)
     </ground_normal>
     <ground_point desc="A point on the ground plane" unit="(cm, cm, cm)">
-        (0, 0, -10000)
+        (0, 0, -20000)
     </ground_point>
     <elevation_angle desc="The angle of the detector axis with respect to the horizon" unit="rad">
-        0.125
+        0.12
     </elevation_angle>
 
     <!-- Parameters used to generate random showers in the Monte Carlo simulation -->
@@ -58,12 +58,11 @@
 
     <!-- Parameters defining properties of the atmosphere -->
     <scale_height desc="The exponential atmosphere scale height" unit="cm">
-        799000
-        <!-- 1000000 -->
+        841300
+        <!-- 799000 previously used based on ideal gas calculation -->
     </scale_height>
     <rho_sea desc="The density of the atmosphere at sea level in" unit="g/cm^3">
         0.001225
-        <!-- 0.00100 -->
     </rho_sea>
     <detect_elevation desc="The elevation of the detector" unit="cm">
         141400
@@ -73,7 +72,7 @@
     </atmosphere_temp>
     <refrac_sea desc="The index of refraction of air at sea level, proportional to the local atmospheric density"
                 unit="null">
-        1.0029
+        1.00029
     </refrac_sea>
 
     <!-- Parameters defining properties of the detector optics -->

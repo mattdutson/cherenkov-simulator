@@ -89,7 +89,7 @@ namespace cherenkov_library
 
         // Find the depth of the first interaction, the depth of the maximum, and the size of the shower maximum (See
         // AbuZayyad 6.1-6.4). We assume a proton primary.
-        double x_max = x_max_1 + x_max_2 * (Log(energy) - x_max_3);
+        double x_max = x_max_1 + x_max_2 * (Log10(energy) - x_max_3);
         double n_max = energy / n_max_ratio;
 
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
