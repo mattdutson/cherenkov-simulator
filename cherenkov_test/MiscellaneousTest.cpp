@@ -5,9 +5,9 @@
 #include <gtest/gtest.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include "Simulator1.h"
-#include "Utility1.h"
-#include "Helper1.h"
+#include "Simulator.h"
+#include "Utility.h"
+#include "Helper.h"
 
 using namespace std;
 using namespace boost::property_tree;

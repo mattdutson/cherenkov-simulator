@@ -2,16 +2,16 @@
 project(cherenkov_library)
 set(SOURCE_FILES
         MonteCarlo.cpp
-        Utility1.cpp
-        Utility1.h
+        Utility.cpp
+        Utility.h
         DataStructures.cpp
         DataStructures.h
         Geometric.cpp
         Geometric.h
-        Reconstructor1.cpp
-        Simulator1.cpp
-        Simulator1.h
-        Reconstructor1.h
+        Reconstructor.cpp
+        Simulator.cpp
+        Simulator.h
+        Reconstructor.h
         MonteCarlo.h
         Analysis.cpp
         Analysis.h)

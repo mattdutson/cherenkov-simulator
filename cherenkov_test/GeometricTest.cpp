@@ -6,7 +6,7 @@
 #include <TMath.h>
 
 #include "Geometric.h"
-#include "Helper1.h"
+#include "Helper.h"
 
 using namespace cherenkov_library;
 using namespace TMath;
@@ -56,6 +56,6 @@ namespace cherenkov_tests
     TEST(GeometricObjectsTest, BadNormalDirection)
     {
         Ray ray = Ray(TVector3(10, 120, -11), TVector3(0, 0, 0), 0.04);
-        ASSERT_TRUE(VectorsEqual(ray.Direction(), TVector3(0, 0, 1), 0.001));
+        ASSERT_TRUE(Helper::VectorsEqual(ray.Direction(), TVector3(0, 0, 1), 0.001));
     }
 }

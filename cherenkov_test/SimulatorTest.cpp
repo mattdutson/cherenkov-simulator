@@ -6,9 +6,9 @@
 #include <vector>
 #include <TFile.h>
 
-#include "Helper1.h"
-#include "Utility1.h"
-#include "Simulator1.h"
+#include "Helper.h"
+#include "Utility.h"
+#include "Simulator.h"
 #include "MonteCarlo.h"
 #include "Analysis.h"
 
@@ -29,7 +29,7 @@ namespace cherenkov_tests
 
         virtual void SetUp()
         {
-            ptree config = Utility::ParseXMLFile("../../Config1.xml").get_child("config");
+            ptree config = Utility::ParseXMLFile("../../Config.xml").get_child("config");
             simulator = new Simulator(config);
             monte_carlo = new MonteCarlo(config);
         }

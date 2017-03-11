@@ -6,7 +6,7 @@
 #include <TFile.h>
 
 #include "DataStructures.h"
-#include "Helper1.h"
+#include "Helper.h"
 #include "Analysis.h"
 
 using namespace cherenkov_library;

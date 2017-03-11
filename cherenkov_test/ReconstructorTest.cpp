@@ -5,10 +5,10 @@
 #include <gtest/gtest.h>
 #include <TFile.h>
 #include <TVectorD.h>
-#include "Reconstructor1.h"
-#include "Simulator1.h"
+#include "Reconstructor.h"
+#include "Simulator.h"
 #include "MonteCarlo.h"
-#include "Utility1.h"
+#include "Utility.h"
 #include "Analysis.h"
 
 using boost::property_tree::ptree;
@@ -28,7 +28,7 @@ namespace cherenkov_tests
 
         virtual void SetUp()
         {
-            ptree config = Utility::ParseXMLFile("../../Config1.xml").get_child("config");
+            ptree config = Utility::ParseXMLFile("../../Config.xml").get_child("config");
             simulator = new Simulator(config);
             monte_carlo = new MonteCarlo(config);
             reconstructor = new Reconstructor(config);

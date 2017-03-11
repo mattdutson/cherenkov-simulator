@@ -11,7 +11,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <TRandom3.h>
 
-#include "Simulator1.h"
+#include "Simulator.h"
 
 namespace cherenkov_library
 {
