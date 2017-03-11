@@ -26,7 +26,6 @@ namespace cherenkov_library
      */
     class Simulator
     {
-
     public:
 
         /*
@@ -48,6 +47,22 @@ namespace cherenkov_library
         void AddNoise(PhotonCount* photon_count);
 
     private:
+
+        class CherenkovFunc
+        {
+        public:
+
+            CherenkovFunc(Simulator* sim);
+
+            double operator()(double* x, double* p);
+
+        private:
+
+            Simulator* sim;
+
+        };
+
+        friend class CherenkovFunc;
 
         /*
          * Simulate the production and detection of the fluorescence photons.
@@ -234,6 +249,10 @@ namespace cherenkov_library
 
         // A general purpose random number generator
         TRandom3 rng;
+
+        // The Cherenkov functor and corresponding TF1 for integration
+        CherenkovFunc ckv_func;
+        TF1 ckv_integrator;
     };
 }
 

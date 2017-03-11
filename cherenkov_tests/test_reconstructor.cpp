@@ -49,9 +49,9 @@ namespace cherenkov_tests
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Attempt to reconstruct the shower plane and geometry.
-        Plane plane = reconstructor->FitSDPlane(data);
+        TRotation to_sd_plane = reconstructor->FitSDPlane(data);
         double t_0, impact, angle;
-        TGraph time_profile = reconstructor->MonocularFit(data, plane, &t_0, &impact, &angle);
+        TGraphErrors time_profile = reconstructor->MonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
 
         // Write results to a file.
         TFile file("../../cherenkov_tests/straight_shower_recon.root", "RECREATE");
@@ -70,9 +70,9 @@ namespace cherenkov_tests
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Attempt to reconstruct the shower plane and geometry.
-        Plane plane = reconstructor->FitSDPlane(data);
+        TRotation to_sd_plane = reconstructor->FitSDPlane(data);
         double t_0, impact, angle;
-        TGraph time_profile = reconstructor->MonocularFit(data, plane, &t_0, &impact, &angle);
+        TGraph time_profile = reconstructor->MonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
 
         // Draw a map of impacts.
         TFile file("../../cherenkov_tests/angle_shower_recon.root", "RECREATE");
@@ -121,7 +121,7 @@ namespace cherenkov_tests
         {
             TH2C frame_map = DataAnalysis::GetBooleanMap(triggering_matrices[i]);
             std::string write_name;
-            if (reconstructor->FrameTriggered(triggering_matrices[i]))
+            if (reconstructor->FrameTriggered(i, &triggering_matrices))
             {
                 write_name = std::to_string(i) + "tr";
             }

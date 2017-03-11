@@ -26,21 +26,25 @@ namespace cherenkov_library
         Reconstructor(boost::property_tree::ptree config);
 
         /*
-         * Finds the shower-detector plane based on the distribution of data points.
+         * Finds the shower-detector plane based on the distribution of data points. Returns a rotation to a frame in
+         * which the shower-detector plane is the xy-plane, with the x-axis lying in the original xy-plane. This
+         * rotation is assumed to start world frame, not the detector frame.
          */
-        Plane FitSDPlane(PhotonCount data);
+        TRotation FitSDPlane(PhotonCount data);
 
         /*
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
          * not used.
          */
-        TGraph MonocularFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle);
+        TGraphErrors
+        MonocularFit(PhotonCount data, TRotation to_sd_plane, double* t_0, double* impact_param, double* angle);
 
         /*
          * Performs a time profile reconstruction, but using the constraint of an impact point.
          */
-        TGraph HybridFit(PhotonCount data, TVector3 impact_point, Plane sd_plane, double* t_0, double* impact_param,
-                         double* angle);
+        TGraph
+        HybridFit(PhotonCount data, TVector3 impact_point, TRotation to_sd_plane, double* t_0, double* impact_param,
+                  double* angle);
 
         /*
          * Apply triggering logic to the signal. Look for consecutive groups of pixels in each time bin which have
@@ -53,10 +57,10 @@ namespace cherenkov_library
          * Determines whether the array of triggered tubes contains enough adjacent true values for the frame to be
          * triggered.
          */
-        bool FrameTriggered(std::vector<std::vector<bool>>);
+        bool FrameTriggered(int t, std::vector<std::vector<std::vector<bool>>>* triggers);
 
         /*
-         * Returns an array of 2D arrays, each of which contains true values for triggered tubes and false values for
+         * Returns a 2D array of arrays, each of which contains true values for triggered tubes and false values for
          * untriggered tubes.
          */
         std::vector<std::vector<std::vector<bool>>> GetTriggeringMatrices(PhotonCount data);
@@ -94,18 +98,18 @@ namespace cherenkov_library
         /*
          * Constructs the fit graph from data points.
          */
-        TGraphErrors GetFitGraph(PhotonCount data, Plane sd_plane);
+        TGraphErrors GetFitGraph(PhotonCount data, TRotation to_sd_plane);
 
         /*
-         * A method to count the largest cluster of adjacent "true" values in a 2D array.
+         * A method to count the largest cluster of adjacent "true" values in a 2D array at a specified time bin.
          */
-        int LargestCluster(std::vector<std::vector<bool>> not_counted);
+        int LargestCluster(int t, std::vector<std::vector<std::vector<bool>>>* not_counted);
 
         /*
          * A recursive method used by LargestCluster. Visits the item at the specified coordinates and any of its
          * neighbors. Returns the total number of visited elements.
          */
-        int Visit(int i, int j, std::vector<std::vector<bool>>* not_counted);
+        int Visit(int i, int j, int t, std::vector<std::vector<std::vector<bool>>>* not_counted);
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings
         Plane ground_plane;

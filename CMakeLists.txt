@@ -11,6 +11,9 @@ add_executable(cherenkov_simulator ${SOURCE_FILES})
 include_directories(cherenkov_library)
 add_subdirectory(cherenkov_library)
 add_subdirectory(cherenkov_tests)
+include(cherenkov_library/ExternalLibraries.cmake)
+link_boost(cherenkov_simulator)
+link_root(cherenkov_simulator)
 
 # Link to the contents of cherenkov_library.
 target_link_libraries(cherenkov_simulator cherenkov_library)

@@ -23,7 +23,7 @@ namespace cherenkov_library
         TVector3 axis_project = shower_axis - shower_axis.Dot(norm) * norm;
         while (iter.Next())
         {
-            TVector3 direction = data.Direction(iter);
+            TVector3 direction = data.Direction(&iter);
             TVector3 projection = direction - direction.Dot(norm) * norm;
             double angle;
             if (Above(axis_project, projection))
@@ -35,7 +35,7 @@ namespace cherenkov_library
                 angle = -projection.Angle(axis_project);
             }
             angles->push_back(angle);
-            counts->push_back(data.SumBins(iter));
+            counts->push_back(data.SumBins(&iter));
         }
     }
 
@@ -54,7 +54,7 @@ namespace cherenkov_library
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
-            vector<int> signal = data.Signal(iter);
+            vector<int> signal = data.Signal(&iter);
             for (int i = 0; i < signal.size(); i++)
             {
                 counts->at(i) += signal[i];
@@ -104,7 +104,7 @@ namespace cherenkov_library
         while (iter.Next())
         {
             // The zeroth bin is the underflow, so start at 1.
-            histo.Fill(iter.X() + 1, iter.Y() + 1, data.SumBins(iter));
+            histo.Fill(iter.X() + 1, iter.Y() + 1, data.SumBins(&iter));
         }
         return histo;
     }

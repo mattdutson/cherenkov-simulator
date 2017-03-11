@@ -62,7 +62,7 @@ namespace cherenkov_library
         return output;
     }
 
-    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3 rng)
+    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3* rng)
     {
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
         {
@@ -72,7 +72,7 @@ namespace cherenkov_library
         {
             TVector3 other_vec = vec + TVector3(1, 0, 0);
             TVector3 normal = (vec.Cross(other_vec)).Unit();
-            normal.Rotate(rng.Uniform(2 * TMath::Pi()), vec);
+            normal.Rotate(rng->Uniform(2 * TMath::Pi()), vec);
             return normal;
         }
     }
@@ -106,7 +106,7 @@ namespace cherenkov_library
 
     double CentC()
     {
-        return TMath::C() * 100.0;
+        return 2.99792458e10;
     }
 
     bool WithinXYDisk(TVector3 vec, double radius)
@@ -164,5 +164,10 @@ namespace cherenkov_library
         TRotation rotate = TRotation();
         rotate.RotateX(-PiOver2() + elevation_angle);
         return rotate;
+    }
+
+    double RandLinear(TRandom3* rng, double max)
+    {
+        return max * Sqrt(rng->Uniform());
     }
 }

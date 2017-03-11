@@ -44,7 +44,7 @@ namespace cherenkov_library
         trigger_clust = config.get<int>("trigger_clust");
     }
 
-    Plane Reconstructor::FitSDPlane(PhotonCount data)
+    TRotation Reconstructor::FitSDPlane(PhotonCount data)
     {
         // Compute the matrix specified in Stratton 3.4. Maybe just iterate over matrix elements whose symmetric
         // counterparts haven't been found yet.
@@ -58,8 +58,8 @@ namespace cherenkov_library
                 iter.Reset();
                 while (iter.Next())
                 {
-                    TVector3 direction = data.Direction(iter);
-                    int pmt_sum = data.SumBins(iter);
+                    TVector3 direction = data.Direction(&iter);
+                    int pmt_sum = data.SumBins(&iter);
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }
                 matrix[j][k] = mat_element;
@@ -82,18 +82,25 @@ namespace cherenkov_library
         }
 
         // Each eigenvector is stored as a column in the matrix. Matrices are indexed as [row][column].
-        TVector3 result = TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
-        return Plane(rotate_to_world * result, TVector3());
+        TVector3 normal = TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
+        normal = rotate_to_world * normal;
+        if (normal.X() < 0) normal = -normal;
+
+        // Construct a rotation which takes points to the frame where the shower-detector plane is the xy plane.
+        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : normal.Cross(TVector3(0, 0, 1));
+        TVector3 new_y = normal.Cross(new_x);
+        return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
     }
 
-    TGraph
-    Reconstructor::MonocularFit(PhotonCount data, Plane sd_plane, double* t_0, double* impact_param, double* angle)
+    TGraphErrors
+    Reconstructor::MonocularFit(PhotonCount data, TRotation to_sd_plane, double* t_0, double* impact_param,
+                                double* angle)
     {
-        TGraphErrors data_graph = GetFitGraph(data, sd_plane);
+        TGraphErrors data_graph = GetFitGraph(data, to_sd_plane);
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] + [1] / (" << CentC() << ") * tan((" << Pi() << " - [2] - x) / 2)";
+        func_string << "[0] - [1] / (" << CentC() << ") * tan(([2] + x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 
         // Set names and initial guesses for parameters.
@@ -112,29 +119,23 @@ namespace cherenkov_library
     }
 
     TGraph
-    Reconstructor::HybridFit(PhotonCount data, TVector3 impact_point, Plane sd_plane, double* t_0, double* impact_param,
+    Reconstructor::HybridFit(PhotonCount data, TVector3 impact_point, TRotation to_sd_plane, double* t_0,
+                             double* impact_param,
                              double* angle)
     {
-        TGraphErrors data_graph = GetFitGraph(data, sd_plane);
+        TGraphErrors data_graph = GetFitGraph(data, to_sd_plane);
 
-        // Find the angle defining the relationship between the impact angle and impact parameter.
+        // Find the angle of the impact direction with the shower-detector frame x-axis.
         double impact_distance = impact_point.Mag();
-        TVector3 horizontal = TVector3(0, 1, 0);
-        TVector3 projection = (horizontal - horizontal.Dot(sd_plane.Normal()) * sd_plane.Normal()).Unit();
-        double theta = impact_point.Angle(projection);
-        if (Above(horizontal, impact_point))
-        {
-            theta = Abs(theta);
-        }
-        else
-        {
-            theta = -Abs(theta);
-        }
+        TVector3 rotated_impact = to_sd_plane * impact_point;
+
+        // Take the projection into the shower-detector plane.
+        double theta = (rotated_impact - rotated_impact.Z() * rotated_impact).Angle(TVector3(1, 0, 0));
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] + " << impact_distance << " * sin([1] - " << theta << ") / (" << CentC() << ") * tan(("
-                    << Pi() << " - [1] - x) / 2)";
+        func_string << "[0] - " << impact_distance << " * sin([1] - " << theta << ") / (" << CentC()
+                    << ") * tan(([1] + x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 
         // Set names and initial guesses for parameters.
@@ -157,9 +158,9 @@ namespace cherenkov_library
         vector<vector<vector<bool>>> triggering_matrices = GetTriggeringMatrices(*data);
         vector<bool> good_frames = vector<bool>();
         bool triggered_found = false;
-        for (int i = 0; i < triggering_matrices.size(); i++)
+        for (int i = 0; i < data->NBins(); i++)
         {
-            if (FrameTriggered(triggering_matrices[i]))
+            if (FrameTriggered(i, &triggering_matrices))
             {
                 triggered_found = true;
                 good_frames.push_back(true);
@@ -173,51 +174,24 @@ namespace cherenkov_library
         return triggered_found;
     }
 
-    bool Reconstructor::FrameTriggered(vector<vector<bool>> frame)
+    bool Reconstructor::FrameTriggered(int t, vector<vector<vector<bool>>>* triggers)
     {
-        return LargestCluster(frame) > trigger_clust;
+        return LargestCluster(t, triggers) > trigger_clust;
     }
 
     vector<vector<vector<bool>>> Reconstructor::GetTriggeringMatrices(PhotonCount data)
     {
-        // Get the triggering time series for each pixel.
         int size = data.Size();
-        vector<vector<vector<bool>>> position_triggers = vector<vector<vector<bool>>>(size, vector<vector<bool>>(size,
-                                                                                                                 vector<bool>(
-                                                                                                                         data.NBins(),
-                                                                                                                         false)));
+        vector<vector<vector<bool>>> triggers =
+                vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(data.NBins(), false)));
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
-            double noise_rate;
-            if (ground_plane.InFrontOf(rotate_to_world * data.Direction(iter)))
-            {
-                noise_rate = ground_noise;
-            }
-            else
-            {
-                noise_rate = sky_noise;
-            }
-            position_triggers[iter.X()][iter.Y()] = data.FindTriggers(iter, noise_rate, trigger_thresh);
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data.Direction(&iter));
+            triggers[iter.X()][iter.Y()] =
+                    data.FindTriggers(&iter, toward_ground ? ground_noise : sky_noise, trigger_thresh);
         }
-
-        // Rearrange so each top-level bin represents the triggering state at a particular instant.
-        vector<vector<vector<bool>>> time_triggers = vector<vector<vector<bool>>>(data.NBins(),
-                                                                                  vector<vector<bool>>(size,
-                                                                                                       vector<bool>(
-                                                                                                               size,
-                                                                                                               false)));
-        for (int i = 0; i < position_triggers.size(); i++)
-        {
-            for (int j = 0; j < position_triggers[i].size(); j++)
-            {
-                for (int k = 0; k < position_triggers[i][j].size(); k++)
-                {
-                    time_triggers[k][i][j] = position_triggers[i][j][k];
-                }
-            }
-        }
-        return time_triggers;
+        return triggers;
     }
 
     Shower Reconstructor::Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used)
@@ -227,7 +201,7 @@ namespace cherenkov_library
         *triggered = ApplyTriggering(&data);
         if (*triggered)
         {
-            Plane sd_plane = FitSDPlane(data);
+            TRotation to_sd_plane = FitSDPlane(data);
             double t_0, impact_param, angle;
             if (try_ground)
             {
@@ -235,22 +209,22 @@ namespace cherenkov_library
                 try_ground = FindGroundImpact(data, &impact);
                 if (try_ground)
                 {
-                    HybridFit(data, impact, sd_plane, &t_0, &impact_param, &angle);
+                    HybridFit(data, impact, to_sd_plane, &t_0, &impact_param, &angle);
                     *ground_used = true;
                 }
             }
             if (!try_ground)
             {
-                MonocularFit(data, sd_plane, &t_0, &impact_param, &angle);
+                MonocularFit(data, to_sd_plane, &t_0, &impact_param, &angle);
                 *ground_used = false;
             }
 
-            // The direction in the shower-detector plane, with the y-axis defined to lie in the world's xy plane.
-            // TODO: Check the signs on this transformation, as well as the direction of sd_plane.Normal x impact_direction
-            TVector3 impact_direction = TVector3(Sin(angle), Cos(angle), 0);
-            impact_direction.RotateUz(sd_plane.Normal());
-            return Shower(Shower::Params(), impact_param * impact_direction, sd_plane.Normal().Cross(impact_direction),
-                          t_0);
+            // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame frame)
+            TVector3 shower_direction = to_sd_plane.Inverse() * TVector3(Cos(angle), -Sin(angle), 0);
+            if (shower_direction.Z() > 0.0) shower_direction = -shower_direction;
+            TVector3 plane_normal = to_sd_plane.Inverse() * TVector3(0, 0, 1);
+            TVector3 impact_direction = plane_normal.Cross(shower_direction);
+            return Shower(Shower::Params(), impact_param * impact_direction, shower_direction, t_0);
         }
         else
         {
@@ -263,14 +237,8 @@ namespace cherenkov_library
         SignalIterator iter = data->Iterator();
         while (iter.Next())
         {
-            if (ground_plane.InFrontOf(rotate_to_world * data->Direction(iter)))
-            {
-                data->SubtractNoise(ground_noise, iter);
-            }
-            else
-            {
-                data->SubtractNoise(sky_noise, iter);
-            }
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
+            data->SubtractNoise(toward_ground ? ground_noise : sky_noise, &iter);
         }
     }
 
@@ -279,20 +247,12 @@ namespace cherenkov_library
         SignalIterator iter = data->Iterator();
         while (iter.Next())
         {
-            double noise_rate;
-            if (ground_plane.InFrontOf(rotate_to_world * data->Direction(iter)))
-            {
-                noise_rate = ground_noise;
-            }
-            else
-            {
-                noise_rate = sky_noise;
-            }
-            data->ClearNoise(iter, noise_rate, hold_thresh);
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
+            data->ClearNoise(&iter, toward_ground ? ground_noise : sky_noise, hold_thresh);
         }
     }
 
-    TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, Plane sd_plane)
+    TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, TRotation to_sd_plane)
     {
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
         vector<double> angles = vector<double>();
@@ -301,52 +261,45 @@ namespace cherenkov_library
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
-            // Only consider pixels with a nonzero signal and those which point above the horizon.
-            TVector3 direction = rotate_to_world * data.Direction(iter);
-            if (ground_plane.InFrontOf(direction))
+            // Don't rotate to the world because the rotation goes from the detector frame to the shower-detector frame.
+            TVector3 direction = rotate_to_world * data.Direction(&iter);
+            int bin_sum = data.SumBins(&iter);
+            if (!ground_plane.InFrontOf(direction) && bin_sum > 0)
             {
-                // This vector can be used to move to sd_plane frame (opposite used in Reconstruct method).
-                TVector3 to_sd_plane = TVector3(0, 0, 1);
-                to_sd_plane.RotateUz(sd_plane.Normal());
+                angles.push_back((to_sd_plane * direction).Phi());
+                times.push_back(data.AverageTime(&iter));
 
-                // Add pi/2 to the angle because the "horizontal" direction is the y axis of the plane frame.
-                // TODO: Check this transformation
-                direction.RotateUz(to_sd_plane);
-                double chi = direction.Phi() + PiOver2();
-
-                // Add data points to the arrays.
-                angles.push_back(chi);
-                times.push_back(data.AverageTime(iter));
-                time_err.push_back(1.0 / Sqrt((double) data.SumBins(iter)));
+                // Assume the error in each average time is the error in an individual time (bin size) over sqrt(n)
+                time_err.push_back(data.BinSize() / Sqrt((double) bin_sum));
             }
         }
 
         // Make arrays to pass to the TGraph constructor.
         vector<double> angle_err = vector<double>(angles.size(), 0.0);
-        return TGraphErrors(angles.size(), &angles[0], &times[0], &angle_err[0], &time_err[0]);
+        TGraphErrors return_val = TGraphErrors(angles.size(), &(angles[0]), &(times[0]), &(angle_err[0]),
+                                               &(time_err[0]));
+        return_val.Sort();
+        return return_val;
     }
 
-    int Reconstructor::LargestCluster(std::vector<std::vector<bool>> not_counted)
+    int Reconstructor::LargestCluster(int t, vector<vector<vector<bool>>>* not_counted)
     {
         int largest = 0;
-        for (int i = 0; i < not_counted.size(); i++)
+        for (int i = 0; i < not_counted->size(); i++)
         {
-            for (int j = 0; j < not_counted[i].size(); j++)
+            for (int j = 0; j < not_counted->at(i).size(); j++)
             {
-                if (not_counted[i][j])
+                if (not_counted->at(i)[j][t])
                 {
-                    int size = Visit(i, j, &not_counted);
-                    if (size > largest)
-                    {
-                        largest = size;
-                    }
+                    int size = Visit(i, j, t, not_counted);
+                    if (size > largest) largest = size;
                 }
             }
         }
         return largest;
     }
 
-    int Reconstructor::Visit(int i, int j, std::vector<std::vector<bool>>* not_counted)
+    int Reconstructor::Visit(int i, int j, int t, vector<vector<vector<bool>>>* not_counted)
     {
         if (i > not_counted->size() - 1 || i < 0)
         {
@@ -356,22 +309,22 @@ namespace cherenkov_library
         {
             return 0;
         }
-        else if (!not_counted->at(i)[j])
+        else if (!not_counted->at(i)[j][t])
         {
             return 0;
         }
         else
         {
-            not_counted->at(i)[j] = false;
+            not_counted->at(i)[j][t] = false;
             int count = 1;
-            count += Visit(i + 1, j, not_counted);
-            count += Visit(i + 1, j + 1, not_counted);
-            count += Visit(i - 1, j, not_counted);
-            count += Visit(i - 1, j - 1, not_counted);
-            count += Visit(i, j + 1, not_counted);
-            count += Visit(i - 1, j + 1, not_counted);
-            count += Visit(i, j - 1, not_counted);
-            count += Visit(i + 1, j - 1, not_counted);
+            count += Visit(i + 1, j, t, not_counted);
+            count += Visit(i + 1, j + 1, t, not_counted);
+            count += Visit(i - 1, j, t, not_counted);
+            count += Visit(i - 1, j - 1, t, not_counted);
+            count += Visit(i, j + 1, t, not_counted);
+            count += Visit(i - 1, j + 1, t, not_counted);
+            count += Visit(i, j - 1, t, not_counted);
+            count += Visit(i + 1, j - 1, t, not_counted);
             return count;
         }
     }
@@ -384,8 +337,8 @@ namespace cherenkov_library
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
-            TVector3 direction = rotate_to_world * data.Direction(iter);
-            int sum = data.SumBins(iter);
+            TVector3 direction = rotate_to_world * data.Direction(&iter);
+            int sum = data.SumBins(&iter);
             if (sum > highest_count && ground_plane.InFrontOf(direction))
             {
                 highest_count = sum;

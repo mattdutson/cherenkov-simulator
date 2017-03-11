@@ -21,12 +21,12 @@ namespace cherenkov_library
         Reset();
     }
 
-    int SignalIterator::X()
+    int SignalIterator::X() const
     {
         return x_current;
     }
 
-    int SignalIterator::Y()
+    int SignalIterator::Y() const
     {
         return y_current;
     }
@@ -34,10 +34,7 @@ namespace cherenkov_library
     bool SignalIterator::Next()
     {
         // If the outer vector is empty, then there will never be anything to iterate through.
-        if (valid_pixels.size() == 0)
-        {
-            return false;
-        }
+        if (valid_pixels.size() == 0) return false;
 
         // Loop until we find a valid pixel.
         bool valid = false;
@@ -46,25 +43,15 @@ namespace cherenkov_library
             // If we're at the end of the current column, try to move to the next column. Otherwise, increment y.
             if (y_current == valid_pixels[x_current].size() - 1)
             {
-                // If we're at the end of the last column, return false. Otherwise, move to the next column.
-                if (x_current == valid_pixels.size() - 1)
-                {
-                    return false;
-                }
-                else
-                {
-                    x_current++;
-                    y_current = -1;
-                }
+                if (x_current == valid_pixels.size() - 1) return false;
+                x_current++;
+                y_current = -1;
             }
             else
             {
                 y_current++;
             }
-            if (y_current > -1)
-            {
-                valid = valid_pixels[x_current][y_current];
-            }
+            if (y_current > -1) valid = valid_pixels[x_current][y_current];
         }
         return true;
     }
@@ -114,6 +101,11 @@ namespace cherenkov_library
         return Bin(last_time) + 1;
     }
 
+    double PhotonCount::BinSize()
+    {
+        return bin_size;
+    }
+
     double PhotonCount::Time(int bin)
     {
         return bin * bin_size + start_time;
@@ -150,10 +142,7 @@ namespace cherenkov_library
             photon_counts[x_index][y_index][time_slot] += thinning;
 
             // Keep track of the latest photon seen.
-            if (time > last_time)
-            {
-                last_time = time;
-            }
+            if (time > last_time) last_time = time;
 
             // We may have disrupted the equalization of the channels.
             equalized = false;
@@ -162,23 +151,13 @@ namespace cherenkov_library
 
     void PhotonCount::EqualizeTimeSeries()
     {
-        // If needed, resize all channels so they have bins up through the last photon seen.
-        if (equalized)
-        {
-            return;
-        }
-        else
-        {
-            SignalIterator iter = Iterator();
-            while (iter.Next())
-            {
-                ExpandVector(iter.X(), iter.Y(), NBins());
-            }
-            equalized = true;
-        }
+        if (equalized) return;
+        SignalIterator iter = Iterator();
+        while (iter.Next()) ExpandVector(iter.X(), iter.Y(), NBins());
+        equalized = true;
     }
 
-    void PhotonCount::AddNoise(double noise_rate, SignalIterator current, TRandom3* rng)
+    void PhotonCount::AddNoise(double noise_rate, const SignalIterator* current, TRandom3* rng)
     {
         // Ensure all channels have the same length.
         EqualizeTimeSeries();
@@ -187,18 +166,18 @@ namespace cherenkov_library
         double expected_photons = RealNoiseRate(noise_rate);
         for (int i = 0; i < NBins(); i++)
         {
-            photon_counts[current.X()][current.Y()][i] += rng->Poisson(expected_photons);
+            photon_counts[current->X()][current->Y()][i] += rng->Poisson(expected_photons);
         }
     }
 
-    void PhotonCount::SubtractNoise(double noise_rate, SignalIterator current)
+    void PhotonCount::SubtractNoise(double noise_rate, const SignalIterator* current)
     {
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
         int expected_photons = (int) RealNoiseRate(noise_rate);
-        for (int i = 0; i < photon_counts[current.X()][current.Y()].size(); i++)
+        for (int i = 0; i < photon_counts[current->X()][current->Y()].size(); i++)
         {
-            photon_counts[current.X()][current.Y()][i] -= expected_photons;
+            photon_counts[current->X()][current->Y()][i] -= expected_photons;
         }
     }
 
@@ -212,42 +191,32 @@ namespace cherenkov_library
         return bin_size * pixel_rate;
     }
 
-    void PhotonCount::ClearNoise(SignalIterator current, double noise_rate, double hold_thresh)
+    void PhotonCount::ClearNoise(const SignalIterator* iter, double noise_rate, double hold_thresh)
     {
         // Determine the minimum threshold for non-noise signals.
         double real_noise = RealNoiseRate(noise_rate);
         double thresh = hold_thresh * Sqrt(real_noise);
 
         // Zero any measurements which are below the noise threshold.
-        for (int i = 0; i < photon_counts[current.X()][current.Y()].size(); i++)
+        for (int i = 0; i < photon_counts[iter->X()][iter->Y()].size(); i++)
         {
-            if (photon_counts[current.X()][current.Y()][i] < thresh)
+            if (photon_counts[iter->X()][iter->Y()][i] < thresh)
             {
-                photon_counts[current.X()][current.Y()][i] = 0;
+                photon_counts[iter->X()][iter->Y()][i] = 0;
             }
         }
     }
 
-    vector<bool> PhotonCount::FindTriggers(SignalIterator current, double noise_rate, double trigger_thresh)
+    vector<bool> PhotonCount::FindTriggers(const SignalIterator* current, double noise_rate, double trigger_thresh)
     {
         // Determine the minimum threshold for triggering.
         double real_noise = RealNoiseRate(noise_rate);
         double thresh = trigger_thresh * Sqrt(real_noise);
 
         // Find all bins in which the count exceeded the triggering threshold.
-        vector<int> data = photon_counts[current.X()][current.Y()];
+        vector<int> data = photon_counts[current->X()][current->Y()];
         vector<bool> triggers = vector<bool>();
-        for (int i = 0; i < data.size(); i++)
-        {
-            if (data[i] > thresh)
-            {
-                triggers.push_back(true);
-            }
-            else
-            {
-                triggers.push_back(false);
-            }
-        }
+        for (int i = 0; i < data.size(); i++) triggers.push_back(data[i] > thresh);
         return triggers;
     }
 
@@ -258,22 +227,19 @@ namespace cherenkov_library
         {
             for (int i = 0; i < photon_counts[iter.X()][iter.Y()].size(); i++)
             {
-                if (!good_bins.at(i))
-                {
-                    photon_counts[iter.X()][iter.Y()][i] = 0;
-                }
+                if (!good_bins.at(i)) photon_counts[iter.X()][iter.Y()][i] = 0;
             }
         }
     }
 
-    TVector3 PhotonCount::Direction(SignalIterator current)
+    TVector3 PhotonCount::Direction(const SignalIterator* current)
     {
-        return Direction(current.X(), current.Y());
+        return Direction(current->X(), current->Y());
     }
 
-    vector<int> PhotonCount::Signal(SignalIterator current)
+    vector<int> PhotonCount::Signal(const SignalIterator* current)
     {
-        return photon_counts[current.X()][current.Y()];
+        return photon_counts[current->X()][current->Y()];
     }
 
     vector<vector<bool>> PhotonCount::GetValid()
@@ -286,25 +252,20 @@ namespace cherenkov_library
         return SignalIterator(valid_pixels);
     }
 
-    int PhotonCount::SumBins(SignalIterator current)
+    int PhotonCount::SumBins(const SignalIterator* current)
     {
-        vector<int> data = photon_counts[current.X()][current.Y()];
         int sum = 0;
-        for (int count : data)
-        {
-            sum += count;
-        }
+        for (int count : photon_counts[current->X()][current->Y()]) sum += count;
         return sum;
     }
 
-    double PhotonCount::AverageTime(SignalIterator iter)
+    double PhotonCount::AverageTime(const SignalIterator* iter)
     {
         int sum = SumBins(iter);
         double average = 0;
-        vector<int> pixel_data = photon_counts[iter.X()][iter.Y()];
-        for (int i = 0; i < pixel_data.size(); i++)
+        for (int i = 0; i < photon_counts[iter->X()][iter->Y()].size(); i++)
         {
-            average += Time(i) * pixel_data[i] / (double) sum;
+            average += Time(i) * photon_counts[iter->X()][iter->Y()][i] / (double) sum;
         }
         return average;
     }
@@ -333,11 +294,8 @@ namespace cherenkov_library
         return TVector3(Cos(elevation) * Sin(azimuth), Sin(elevation), Cos(elevation) * Cos(azimuth));
     }
 
-    void PhotonCount::ExpandVector(int x_index, int y_index, int min_size)
+    void PhotonCount::ExpandVector(int x, int y, int size)
     {
-        if (photon_counts[x_index][y_index].size() < min_size)
-        {
-            photon_counts[x_index][y_index].resize(min_size, 0);
-        }
+        if (photon_counts[x][y].size() < size) photon_counts[x][y].resize(size, 0);
     }
 }

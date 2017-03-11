@@ -32,12 +32,12 @@ namespace cherenkov_library
         /*
          * Returns the current x index of the iterator.
          */
-        int X();
+        int X() const;
 
         /*
          * Returns the current y index of the iterator.
          */
-        int Y();
+        int Y() const;
 
         /*
          * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
@@ -91,6 +91,11 @@ namespace cherenkov_library
         int NBins();
 
         /*
+         * Returns the size, in seconds, of each time bin.
+         */
+        double BinSize();
+
+        /*
          * Finds the time corresponding to the specified bin.
          */
         double Time(int bin);
@@ -111,12 +116,12 @@ namespace cherenkov_library
          * number of photons per second per steradian per square centimeter. These photons are randomly scattered
          * throughout the time bins using the random number generator.
          */
-        void AddNoise(double noise_rate, SignalIterator current, TRandom3* rng);
+        void AddNoise(double noise_rate, const SignalIterator* current, TRandom3* rng);
 
         /*
          * Subtract the average noise rate from the signal in the pixel specified by the iterator.
          */
-        void SubtractNoise(double noise_rate, SignalIterator current);
+        void SubtractNoise(double noise_rate, const SignalIterator* current);
 
         /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second
@@ -127,13 +132,13 @@ namespace cherenkov_library
         /*
          * Clears any bins in the current pixel which are less than hold_thresh * sigma from zero.
          */
-        void ClearNoise(SignalIterator current, double noise_rate, double hold_thresh);
+        void ClearNoise(const SignalIterator* iter, double noise_rate, double hold_thresh);
 
         /*
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
          * trigger_thresh * sigma photon counts.
          */
-        std::vector<bool> FindTriggers(SignalIterator current, double noise_rate, double trigger_thresh);
+        std::vector<bool> FindTriggers(const SignalIterator* current, double noise_rate, double trigger_thresh);
 
         /*
          * Erases any photon counts which are not in a time bin corresponding to a true value in the input vector.
@@ -143,12 +148,12 @@ namespace cherenkov_library
         /*
          * Determines the direction of the photomultiplier referenced by the iterator.
          */
-        TVector3 Direction(SignalIterator current);
+        TVector3 Direction(const SignalIterator* current);
 
         /*
          * Gets the complete time signal at the current position of the iterator.
          */
-        std::vector<int> Signal(SignalIterator current);
+        std::vector<int> Signal(const SignalIterator* current);
 
         /*
          * Returns the 2D array of valid pixel flags.
@@ -163,12 +168,12 @@ namespace cherenkov_library
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(SignalIterator iter);
+        int SumBins(const SignalIterator* iter);
 
         /*
          * Finds the average time in the bin referenced by the iterator.
          */
-        double AverageTime(SignalIterator iter);
+        double AverageTime(const SignalIterator* iter);
 
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.

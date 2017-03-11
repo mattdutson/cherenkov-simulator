@@ -19,7 +19,7 @@ using boost::property_tree::ptree;
 
 namespace cherenkov_library
 {
-    Simulator::Simulator(ptree config)
+    Simulator::Simulator(ptree config) : ckv_func(this)
     {
         // Parameters related to the behavior of the simulation
         depth_step = config.get<double>("depth_step");
@@ -93,6 +93,10 @@ namespace cherenkov_library
 
         // A general-purpose random number generator
         rng = TRandom3();
+
+        // The TF1 for integration, with the last argument being the number of parameters
+        ckv_integrator = TF1("ckv_integrator", ckv_func, 0.0, Infinity(), 3);
+        ckv_integrator.SetParNames("age", "rho", "delta");
     }
 
     PhotonCount Simulator::SimulateShower(Shower shower)
@@ -115,6 +119,34 @@ namespace cherenkov_library
 
         photon_count.EqualizeTimeSeries();
         return photon_count;
+    }
+
+    Simulator::CherenkovFunc::CherenkovFunc(Simulator* sim)
+    {
+        this->sim = sim;
+    }
+
+    double Simulator::CherenkovFunc::operator()(double* x, double* p)
+    {
+        // Extract variables and parameters.
+        double xx = x[0];
+        double age = p[0];
+        double rho = p[1];
+        double delta = p[2];
+
+        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
+        double k_out = 2 * Pi() * sim->fine_struct / rho * (1 / sim->lambda_min - 1 / sim->lambda_max);
+        double k_1 = k_out * 2 * delta;
+        double k_2 = k_out * Sq(sim->mass_e);
+
+        // Parameters in the electron energy distribution
+        double a1 = sim->fe_a11 - sim->fe_a12 * age;
+        double a2 = sim->fe_a21 - sim->fe_a22 * age;
+        double a0 = sim->fe_k0 * Exp(sim->fe_k1 * age + sim->fe_k2 * Sq(age));
+
+        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
+        // variable of integration is lnE.
+        return a0 * Exp(xx) / ((a1 + Exp(xx)) * Power(a2 + Exp(xx), age)) * (k_1 - k_2 * Exp(-2.0 * xx));
     }
 
     void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count)
@@ -168,12 +200,9 @@ namespace cherenkov_library
 
     TVector3 Simulator::RandomStopImpact()
     {
+        // The probability that a random point on a circle will lie at radius r is proportional to r.
+        double r_rand = RandLinear(&rng, stop_diameter / 2.0);
         double phi_rand = rng.Uniform(TwoPi());
-
-        // The probability that a random point on a circle will lie at radius r is proportional to r (area of slice is
-        // 2*pi*r*dr).
-        TF1 radius_distribution = TF1("stop_impact", "x", 0, stop_diameter / 2.0);
-        double r_rand = radius_distribution.GetRandom();
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
 
@@ -183,10 +212,7 @@ namespace cherenkov_library
 
         // Only deflect the photon if it's on the portion of the lens where the s^4 term dominates.
         double photon_axis_dist = Sqrt(Sq(position.X()) + Sq(position.Y()));
-        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2)))
-        {
-            return true;
-        }
+        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return true;
 
         // Find the deflector normal vector.
         double x_pos = position.X();
@@ -223,7 +249,6 @@ namespace cherenkov_library
 
     bool Simulator::BackOriginSphereImpact(Ray ray, TVector3* point, double radius)
     {
-        // Solve for the time when the ray impacts a sphere centered at the origin. See notes for details.
         double a = ray.Velocity().Mag2();
         double b = 2 * ray.Position().Dot(ray.Velocity());
         double c = ray.Position().Mag2() - Sq(radius);
@@ -235,21 +260,8 @@ namespace cherenkov_library
             return false;
         }
         double time;
-        if (roots.size() == 1)
-        {
-            time = roots[0];
-        }
-        else
-        {
-            if (ray.Velocity().Z() < 0)
-            {
-                time = Max(roots[0], roots[1]);
-            }
-            else
-            {
-                time = Min(roots[0], roots[1]);
-            }
-        }
+        if (roots.size() == 1) time = roots[0];
+        else time = (ray.Velocity().Z() < 0) ? Max(roots[0], roots[1]) : Min(roots[0], roots[1]);
         *point = ray.Position() + time * ray.Velocity();
         return true;
     }
@@ -275,29 +287,14 @@ namespace cherenkov_library
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
     {
-        // 2 * pi * alpha * (1 / lambda1 - 1 / lambda2) / rho
-        double rho = shower.LocalRho();
-        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
-        double k_1 = k_out * 2 * shower.LocalDelta();
-        double k_2 = k_out * Sq(mass_e);
-
-        // Parameters in the electron energy distribution
-        double age = shower.Age();
-        double a1 = fe_a11 - fe_a12 * age;
-        double a2 = fe_a21 - fe_a22 * age;
-        double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
-
-        // See notes for details. Integrate over lnE from lnE_thresh to infinity. E terms turn to e^E because the
-        // variable of integration is lnE.
-        std::stringstream func_str = std::stringstream();
-        func_str << a0 << "*exp(x)/((" << a1 << "+exp(x))*(" << a2 << "+exp(x))^(" << age << "))*(" << k_1 << "-" << k_2
-                 << "/exp(2*x))";
-        TF1 func = TF1("integrand", func_str.str().c_str(), 0, Infinity());
+        ckv_integrator.SetParameter("age", shower.Age());
+        ckv_integrator.SetParameter("rho", shower.LocalRho());
+        ckv_integrator.SetParameter("delta", shower.LocalDelta());
 
         // The shower will not contain any electrons with an energy higher than the shower primary energy. We can also
         // assume that the electron energy spectrum will remain relatively well normalized even if we omit these
         // electrons. Setting this upper limit on the integral will keep it from diverging when the shower age is small.
-        double integral = func.Integral(Log(EThresh(shower)), Log(shower.EnergyMeV()));
+        double integral = ckv_integrator.Integral(Log(EThresh(shower)), Log(shower.EnergyMeV()));
 
         // Determine the fraction of total photons captured. Apply a Lambertian reflectance model (see notes).
         TVector3 ground_impact = shower.PlaneImpact(ground_plane);
@@ -311,14 +308,12 @@ namespace cherenkov_library
 
     double Simulator::GaiserHilles(Shower shower)
     {
-        // Use the Gaisser-Hilles profile to find the number of electrons.
         double x = shower.X();
-        double n_max = shower.NMax();
         double x_max = shower.XMax();
         double x_0 = shower.X0();
         double pow = Power((x - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda);
         double exp = Exp((x_max - x) / gh_lambda);
-        return n_max * pow * exp;
+        return shower.NMax() * pow * exp;
     }
 
     double Simulator::IonizationLossRate(Shower shower)
@@ -330,8 +325,6 @@ namespace cherenkov_library
     double Simulator::EThresh(Shower shower)
     {
         double delta = shower.LocalDelta();
-
-        // We don't need to multiply by c^2 here because our electron mass should already be in units of MeV/c^2.
         return mass_e / Sqrt(2 * delta);
     }
 
@@ -351,11 +344,9 @@ namespace cherenkov_library
 
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
     {
-        TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), rng);
-        std::string formula = "e^(-x/" + std::to_string(ThetaC(shower)) + ")";
-        TF1 angular_distribution = TF1("distro", formula.c_str(), 0, Pi());
-        TVector3 direction = shower.Velocity().Unit();
-        direction.Rotate(angular_distribution.GetRandom(), rotation_axis);
+        TVector3 direction = shower.Direction();
+        TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), &rng);
+        direction.Rotate(rng.Exp(ThetaC(shower)), rotation_axis);
         return Ray(shower.Position(), direction, JitteredTime(shower));
     }
 
@@ -369,19 +360,8 @@ namespace cherenkov_library
         SignalIterator iter = photon_count->Iterator();
         while (iter.Next())
         {
-            Ray outward_ray = Ray(TVector3(), rotate_to_world * photon_count->Direction(iter), 0);
-
-            // If the pixel is looking at the ground, use the noise rate for the ground. Otherwise, use the sky rate.
-            double noise_rate;
-            if (outward_ray.TimeToPlane(ground_plane) > 0)
-            {
-                noise_rate = ground_noise;
-            }
-            else
-            {
-                noise_rate = sky_noise;
-            }
-            photon_count->AddNoise(noise_rate, iter, &rng);
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * photon_count->Direction(&iter));
+            photon_count->AddNoise(toward_ground ? ground_noise : sky_noise, &iter, &rng);
         }
     }
 

@@ -18,7 +18,6 @@
 
 namespace cherenkov_library
 {
-
     /*
      * Reads the string and converts it to a TVector3 object.
      */
@@ -33,7 +32,7 @@ namespace cherenkov_library
      * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
      * returned.
      */
-    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3 rng);
+    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3* rng);
 
     /*
      * Reads the file with the specified filename and parses it to XML. Throws exceptions with an informative message if
@@ -61,6 +60,8 @@ namespace cherenkov_library
     TRotation MakeRotation(double elevation_angle);
 
     bool Above(TVector3 reference, TVector3 other);
+
+    double RandLinear(TRandom3* rng, double max);
 }
 
 

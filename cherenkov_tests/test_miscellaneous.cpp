@@ -52,6 +52,5 @@ namespace cherenkov_tests
         all_rows.push_back(row2);
         all_rows.push_back(row3);
         cherenkov_library::WriteCSV(all_rows, header, "../../cherenkov_tests/sample_csv.csv");
-
     }
 }
