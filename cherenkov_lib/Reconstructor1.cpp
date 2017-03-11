@@ -1,5 +1,5 @@
 // reconstruction.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -12,9 +12,9 @@
 #include <TGraphErrors.h>
 #include <TF1.h>
 
-#include "utility.h"
-#include "data_containers.h"
-#include "reconstructor.h"
+#include "Utility1.h"
+#include "DataStructures.h"
+#include "Reconstructor1.h"
 
 using boost::property_tree::ptree;
 using std::string;
@@ -26,8 +26,8 @@ namespace cherenkov_library
     Reconstructor::Reconstructor(ptree config)
     {
         // Construct the ground plane in the world frame.
-        ground_plane = Plane(ToVector(config.get<string>("ground_normal")),
-                             ToVector(config.get<string>("ground_point")));
+        ground_plane = Plane(Utility::ToVector(config.get<string>("ground_normal")),
+                             Utility::ToVector(config.get<string>("ground_point")));
 
         // The rotation from detector frame to world frame. The frames share the same x-axis.
         rotate_to_world = TRotation();
@@ -100,7 +100,7 @@ namespace cherenkov_library
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] - [1] / (" << CentC() << ") * tan(([2] + x) / 2)";
+        func_string << "[0] - [1] / (" << Utility::CentC() << ") * tan(([2] + x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 
         // Set names and initial guesses for parameters.
@@ -134,7 +134,7 @@ namespace cherenkov_library
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] - " << impact_distance << " * sin([1] - " << theta << ") / (" << CentC()
+        func_string << "[0] - " << impact_distance << " * sin([1] - " << theta << ") / (" << Utility::CentC()
                     << ") * tan(([1] + x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 

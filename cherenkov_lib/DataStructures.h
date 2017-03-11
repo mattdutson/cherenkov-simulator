@@ -1,5 +1,5 @@
 // data_containers.h
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //

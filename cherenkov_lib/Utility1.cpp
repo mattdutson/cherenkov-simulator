@@ -1,5 +1,5 @@
 // common.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -9,7 +9,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <TRotation.h>
 
-#include "utility.h"
+#include "Utility1.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -17,7 +17,7 @@ using namespace TMath;
 
 namespace cherenkov_library
 {
-    bool Above(TVector3 reference, TVector3 other)
+    bool Utility::Above(TVector3 reference, TVector3 other)
     {
         if (other.Z() > reference.Z())
         {
@@ -40,7 +40,7 @@ namespace cherenkov_library
         }
     }
 
-    double ParseTo(string* s, char c)
+    double Utility::ParseTo(string* s, char c)
     {
         size_t index = s->find(c);
         double out = stod(s->substr(0, index));
@@ -48,7 +48,7 @@ namespace cherenkov_library
         return out;
     }
 
-    TVector3 ToVector(string s)
+    TVector3 Utility::ToVector(string s)
     {
         // Clear out everything before the first parenthesis.
         int current = s.find('(');
@@ -62,7 +62,7 @@ namespace cherenkov_library
         return output;
     }
 
-    TVector3 RandomPerpendicularVector(TVector3 vec, TRandom3* rng)
+    TVector3 Utility::RandomPerpendicularVector(TVector3 vec, TRandom3* rng)
     {
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
         {
@@ -77,7 +77,7 @@ namespace cherenkov_library
         }
     }
 
-    ptree ParseXMLFile(string filename)
+    ptree Utility::ParseXMLFile(string filename)
     {
         // Try opening the specified file
         ifstream config_file = ifstream();
@@ -104,12 +104,12 @@ namespace cherenkov_library
         }
     }
 
-    double CentC()
+    double Utility::CentC()
     {
         return 2.99792458e10;
     }
 
-    bool WithinXYDisk(TVector3 vec, double radius)
+    bool Utility::WithinXYDisk(TVector3 vec, double radius)
     {
         double xy_radius = Sqrt(vec.X() * vec.X() + vec.Y() * vec.Y());
         if (xy_radius < radius)
@@ -122,7 +122,7 @@ namespace cherenkov_library
         }
     }
 
-    void WriteCSV(vector<vector<double>> data, vector<string> header, string filename)
+    void Utility::WriteCSV(vector<vector<double>> data, vector<string> header, string filename)
     {
         // Open the file.
         ofstream file = ofstream(filename);
@@ -159,14 +159,14 @@ namespace cherenkov_library
         file.close();
     }
 
-    TRotation MakeRotation(double elevation_angle)
+    TRotation Utility::MakeRotation(double elevation_angle)
     {
         TRotation rotate = TRotation();
         rotate.RotateX(-PiOver2() + elevation_angle);
         return rotate;
     }
 
-    double RandLinear(TRandom3* rng, double max)
+    double Utility::RandLinear(TRandom3* rng, double max)
     {
         return max * Sqrt(rng->Uniform());
     }

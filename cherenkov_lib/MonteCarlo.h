@@ -1,5 +1,5 @@
 // monte_carlo.h
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 1/8/17.
 //
@@ -11,7 +11,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <TRandom3.h>
 
-#include "simulator.h"
+#include "Simulator1.h"
 
 namespace cherenkov_library
 {

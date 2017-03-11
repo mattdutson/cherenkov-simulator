@@ -5,9 +5,9 @@
 #include <gtest/gtest.h>
 #include <TFile.h>
 
-#include "data_containers.h"
-#include "helper.h"
-#include "data_analysis.h"
+#include "DataStructures.h"
+#include "Helper1.h"
+#include "Analysis.h"
 
 using namespace cherenkov_library;
 
@@ -18,9 +18,9 @@ namespace cherenkov_tests
      */
     TEST(DataContainersTest, MakeValidMap)
     {
-        PhotonCount counter = PhotonCount(50, 0.0, 10.0e-9, 0.007, 1.0);
+    PhotonCount counter = PhotonCount(200, 0.0, 10.0e-9, 0.007, 1.0);
         TH2C map = DataAnalysis::GetValidMap(counter);
-        TFile file("../../cherenkov_tests/pixel_map.root", "RECREATE");
+    TFile file("../../cherenkov_test/pixel_map.root", "RECREATE");
         map.Write("valid");
     }
 }

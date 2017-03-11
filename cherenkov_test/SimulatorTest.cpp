@@ -6,11 +6,11 @@
 #include <vector>
 #include <TFile.h>
 
-#include "helper.h"
-#include "utility.h"
-#include "simulator.h"
-#include "monte_carlo.h"
-#include "data_analysis.h"
+#include "Helper1.h"
+#include "Utility1.h"
+#include "Simulator1.h"
+#include "MonteCarlo.h"
+#include "Analysis.h"
 
 using boost::property_tree::ptree;
 using std::vector;
@@ -29,7 +29,7 @@ namespace cherenkov_tests
 
         virtual void SetUp()
         {
-            ptree config = ParseXMLFile("../../config.xml").get_child("config");
+            ptree config = Utility::ParseXMLFile("../../Config1.xml").get_child("config");
             simulator = new Simulator(config);
             monte_carlo = new MonteCarlo(config);
         }
@@ -51,7 +51,7 @@ namespace cherenkov_tests
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Make some graphics and write them to a file.
-        TFile file("../../cherenkov_tests/straight_shower_sim.root", "RECREATE");
+        TFile file("../../cherenkov_test/straight_shower_sim.root", "RECREATE");
         DataAnalysis::MakeProfileGraph(data).Write("straight_shower_graph");
         DataAnalysis::MakeSumMap(data).Write("straight_shower_map");
     }
@@ -66,7 +66,7 @@ namespace cherenkov_tests
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Draw a map of impacts.
-        TFile file("../../cherenkov_tests/angle_shower_sim.root", "RECREATE");
+        TFile file("../../cherenkov_test/angle_shower_sim.root", "RECREATE");
         DataAnalysis::MakeProfileGraph(data).Write("angle_shower_graph");
         DataAnalysis::MakeSumMap(data).Write("angle_shower_map");
     }
@@ -78,7 +78,7 @@ namespace cherenkov_tests
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Make some graphics and write them to a file.
-        TFile file("../../cherenkov_tests/whole_profile_sim.root", "RECREATE");
+        TFile file("../../cherenkov_test/whole_profile_sim.root", "RECREATE");
         DataAnalysis::MakeProfileGraph(data).Write("whole_shower_graph");
         DataAnalysis::MakeSumMap(data).Write("whole_shower_map");
     }

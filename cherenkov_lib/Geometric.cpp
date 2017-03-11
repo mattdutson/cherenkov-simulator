@@ -1,12 +1,12 @@
 // geometric_objects.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
 // Contains the implementation of methods in geometric_objects.h.
 
-#include "geometric_objects.h"
-#include "utility.h"
+#include "Geometric.h"
+#include "Utility1.h"
 
 using namespace TMath;
 
@@ -79,7 +79,7 @@ namespace cherenkov_library
     void Ray::SetDirection(TVector3 direction)
     {
         // Use the speed of light in centimeters/second.
-        current_velocity = direction.Unit() * CentC();
+        current_velocity = direction.Unit() * Utility::CentC();
     }
 
     void Ray::PropagateToPoint(TVector3 destination)
@@ -143,7 +143,7 @@ namespace cherenkov_library
 
     void Ray::IncrementPosition(double distance)
     {
-        double time = distance / CentC();
+        double time = distance / Utility::CentC();
         IncrementTime(time);
     }
 

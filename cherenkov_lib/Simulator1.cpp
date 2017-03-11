@@ -1,5 +1,5 @@
 // shower_simulator.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -9,8 +9,8 @@
 #include <Math/Polynomial.h>
 #include <iostream>
 
-#include "simulator.h"
-#include "utility.h"
+#include "Simulator1.h"
+#include "Utility1.h"
 
 using namespace TMath;
 
@@ -29,9 +29,9 @@ namespace cherenkov_library
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings. The frames
         // share the same x-axis.
-        ground_plane = Plane(ToVector(config.get<string>("ground_normal")),
-                             ToVector(config.get<string>("ground_point")));
-        rotate_to_world = MakeRotation(config.get<double>("elevation_angle"));
+        ground_plane = Plane(Utility::ToVector(config.get<string>("ground_normal")),
+                             Utility::ToVector(config.get<string>("ground_point")));
+        rotate_to_world = Utility::MakeRotation(config.get<double>("elevation_angle"));
 
         // The constant temperature of the atmosphere
         atmosphere_temp = config.get<double>("atmosphere_temp");
@@ -106,7 +106,7 @@ namespace cherenkov_library
         double pmt_angular_size = pmt_linear_size / (mirror_radius / 2.0);
 
         // Any photon will have to travel at least as far as the distance to a sphere of radius mirror_radius at origin.
-        double time = shower.Time() + (shower.Position().Mag() - mirror_radius) / CentC();
+        double time = shower.Time() + (shower.Position().Mag() - mirror_radius) / Utility::CentC();
         PhotonCount photon_count = PhotonCount(n_pmt_across, time, time_bin, pmt_angular_size, pmt_linear_size);
 
         // Step the shower through its path.
@@ -201,7 +201,7 @@ namespace cherenkov_library
     TVector3 Simulator::RandomStopImpact()
     {
         // The probability that a random point on a circle will lie at radius r is proportional to r.
-        double r_rand = RandLinear(&rng, stop_diameter / 2.0);
+        double r_rand = Utility::RandLinear(&rng, stop_diameter / 2.0);
         double phi_rand = rng.Uniform(TwoPi());
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
@@ -231,7 +231,7 @@ namespace cherenkov_library
         BackOriginSphereImpact(ray, point, mirror_radius);
 
         // Ensure that the ray actually hits the mirror
-        return WithinXYDisk(*point, mirror_size / 2.0) && point->Z() < 0.0;
+        return Utility::WithinXYDisk(*point, mirror_size / 2.0) && point->Z() < 0.0;
     }
 
     TVector3 Simulator::MirrorNormal(TVector3 point)
@@ -244,7 +244,7 @@ namespace cherenkov_library
     bool Simulator::CameraImpactPoint(Ray ray, TVector3* point)
     {
         BackOriginSphereImpact(ray, point, mirror_radius / 2.0);
-        return WithinXYDisk(*point, cluster_diameter / 2.0) && point->Z() < 0;
+        return Utility::WithinXYDisk(*point, cluster_diameter / 2.0) && point->Z() < 0;
     }
 
     bool Simulator::BackOriginSphereImpact(Ray ray, TVector3* point, double radius)
@@ -345,7 +345,7 @@ namespace cherenkov_library
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
     {
         TVector3 direction = shower.Direction();
-        TVector3 rotation_axis = RandomPerpendicularVector(shower.Velocity().Unit(), &rng);
+        TVector3 rotation_axis = Utility::RandomPerpendicularVector(shower.Velocity().Unit(), &rng);
         direction.Rotate(rng.Exp(ThetaC(shower)), rotation_axis);
         return Ray(shower.Position(), direction, JitteredTime(shower));
     }
@@ -367,7 +367,7 @@ namespace cherenkov_library
 
     double Simulator::JitteredTime(Shower shower)
     {
-        double step_time = depth_step / shower.LocalRho() / CentC();
+        double step_time = depth_step / shower.LocalRho() / Utility::CentC();
         return shower.Time() + rng.Uniform(-step_time / 2.0, step_time / 2.0);
     }
 }

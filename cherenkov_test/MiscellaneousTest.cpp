@@ -5,9 +5,9 @@
 #include <gtest/gtest.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include "simulator.h"
-#include "utility.h"
-#include "helper.h"
+#include "Simulator1.h"
+#include "Utility1.h"
+#include "Helper1.h"
 
 using namespace std;
 using namespace boost::property_tree;
@@ -33,7 +33,7 @@ namespace cherenkov_tests
     TEST(config_file, read_file)
     {
         ptree prop_tree;
-        read_xml("../../cherenkov_tests/sample_config.xml", prop_tree);
+read_xml("../../cherenkov_test/sample_config.xml", prop_tree);
         ptree config = prop_tree.get_child("configuration");
         ASSERT_EQ(0.125, config.get<double>("elevation_angle"));
     }
@@ -51,6 +51,7 @@ namespace cherenkov_tests
         all_rows.push_back(row1);
         all_rows.push_back(row2);
         all_rows.push_back(row3);
-        cherenkov_library::WriteCSV(all_rows, header, "../../cherenkov_tests/sample_csv.csv");
+cherenkov_library::Utility::WriteCSV(all_rows, header,
+"../../cherenkov_test/sample_csv.csv");
     }
 }

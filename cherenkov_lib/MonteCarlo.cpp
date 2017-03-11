@@ -1,5 +1,5 @@
 // accuracy_estimator.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -7,8 +7,8 @@
 
 #include <TMath.h>
 
-#include "monte_carlo.h"
-#include "utility.h"
+#include "MonteCarlo.h"
+#include "Utility1.h"
 
 using namespace TMath;
 
@@ -16,7 +16,7 @@ namespace cherenkov_library
 {
     MonteCarlo::MonteCarlo(boost::property_tree::ptree config)
     {
-        TRotation rotate_to_world = MakeRotation(config.get<double>("elevation_angle"));
+        TRotation rotate_to_world = Utility::MakeRotation(config.get<double>("elevation_angle"));
         detector_axis = rotate_to_world * TVector3(0, 0, 1);
 
         // The distribution of shower energies

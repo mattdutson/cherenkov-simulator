@@ -1,5 +1,5 @@
 // data_containers.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -7,8 +7,8 @@
 
 #include <TMath.h>
 
-#include "data_containers.h"
-#include "utility.h"
+#include "DataStructures.h"
+#include "Utility1.h"
 
 using namespace TMath;
 using std::vector;
@@ -278,7 +278,7 @@ namespace cherenkov_library
         double radius = arc_length / angle;
         double max_dev = radius * Sin(angle);
         TVector3 direction = Direction(x_index, y_index) * radius;
-        return WithinXYDisk(direction, max_dev);
+        return Utility::WithinXYDisk(direction, max_dev);
     }
 
     TVector3 PhotonCount::Direction(int x_index, int y_index)

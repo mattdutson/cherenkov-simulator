@@ -1,5 +1,5 @@
 // main.cpp
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 9/8/16.
 //
@@ -22,7 +22,7 @@ using boost::property_tree::ptree;
 int main(int argc, const char* argv[])
 {
     // Get the filename from the first command-line argument
-    string filename = "config.xml";
+    string filename = "Config1.xml";
     if (argc > 0)
     {
         filename = string(argv[0]);

@@ -1,5 +1,5 @@
 // data_analysis.h
-// cherenkov_library
+// cherenkov_lib
 //
 // Created by Matthew Dutson on 1/9/17.
 //
@@ -13,8 +13,8 @@
 #include <vector>
 #include <TGraph.h>
 
-#include "data_containers.h"
-#include "geometric_objects.h"
+#include "DataStructures.h"
+#include "Geometric.h"
 
 namespace cherenkov_library
 {

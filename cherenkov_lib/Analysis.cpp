@@ -2,8 +2,8 @@
 // Created by Matthew Dutson on 1/9/17.
 //
 
-#include "data_analysis.h"
-#include "utility.h"
+#include "Analysis.h"
+#include "Utility1.h"
 #include <array>
 
 using std::array;
@@ -26,7 +26,7 @@ namespace cherenkov_library
             TVector3 direction = data.Direction(&iter);
             TVector3 projection = direction - direction.Dot(norm) * norm;
             double angle;
-            if (Above(axis_project, projection))
+            if (Utility::Above(axis_project, projection))
             {
                 angle = projection.Angle(axis_project);
             }
@@ -74,16 +74,9 @@ namespace cherenkov_library
         {
             for (int j = 0; j < valid[i].size(); j++)
             {
-                if (valid[i][j])
-                {
-                    // The zeroth bin is the underflow, so start at 1.
-                    histo.SetBinContent(i + 1, j + 1, 1.0);
-                }
-                else
-                {
-                    // The zeroth bin is the underflow, so start at 1.
-                    histo.SetBinContent(i + 1, j + 1, 0.0);
-                }
+                // The zeroth bin is the underflow, so start at 1.
+                histo.SetBinContent(i + 1, j + 1, valid[i][j] ? 1.0 : 0.0);
+
             }
         }
         return histo;
@@ -103,8 +96,8 @@ namespace cherenkov_library
         SignalIterator iter = data.Iterator();
         while (iter.Next())
         {
-            // The zeroth bin is the underflow, so start at 1.
-            histo.Fill(iter.X() + 1, iter.Y() + 1, data.SumBins(&iter));
+            // The underflow seems to be defined differently for the TH1I than for the TH1C
+            histo.Fill(iter.X(), iter.Y(), 1.0);
         }
         return histo;
     }

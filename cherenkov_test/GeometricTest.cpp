@@ -5,8 +5,8 @@
 #include <gtest/gtest.h>
 #include <TMath.h>
 
-#include "geometric_objects.h"
-#include "helper.h"
+#include "Geometric.h"
+#include "Helper1.h"
 
 using namespace cherenkov_library;
 using namespace TMath;
