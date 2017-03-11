@@ -1,13 +1,12 @@
-// shower_simulator.cpp
-// cherenkov_lib
+// Simulator.cpp
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains the implementation of methods in simulator.h
+// Implementation of Simulator.h
 
 #include <boost/property_tree/ptree.hpp>
 #include <Math/Polynomial.h>
-#include <iostream>
+#include <TMath.h>
 
 #include "Simulator.h"
 #include "Utility.h"
@@ -17,7 +16,7 @@ using namespace TMath;
 using std::string;
 using boost::property_tree::ptree;
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     Simulator::Simulator(ptree config) : ckv_func(this)
     {

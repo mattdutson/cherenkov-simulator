@@ -1,9 +1,10 @@
+// SimulatorTest.cpp
 //
-// Created by Matthew Dutson on 1/19/17.
+// Author: Matthew Dutson
 //
+// Tests of Simulator.h
 
 #include <gtest/gtest.h>
-#include <vector>
 #include <TFile.h>
 
 #include "Helper.h"
@@ -12,12 +13,11 @@
 #include "MonteCarlo.h"
 #include "Analysis.h"
 
+using namespace cherenkov_lib;
+
 using boost::property_tree::ptree;
-using std::vector;
 
-using namespace cherenkov_library;
-
-namespace cherenkov_tests
+namespace cherenkov_test
 {
     class SimulatorTest : public testing::Test
     {
@@ -52,8 +52,8 @@ namespace cherenkov_tests
 
         // Make some graphics and write them to a file.
         TFile file("../../cherenkov_test/straight_shower_sim.root", "RECREATE");
-        DataAnalysis::MakeProfileGraph(data).Write("straight_shower_graph");
-        DataAnalysis::MakeSumMap(data).Write("straight_shower_map");
+        Analysis::MakeProfileGraph(data).Write("straight_shower_graph");
+        Analysis::MakeSumMap(data).Write("straight_shower_map");
     }
 
     /*
@@ -67,8 +67,8 @@ namespace cherenkov_tests
 
         // Draw a map of impacts.
         TFile file("../../cherenkov_test/angle_shower_sim.root", "RECREATE");
-        DataAnalysis::MakeProfileGraph(data).Write("angle_shower_graph");
-        DataAnalysis::MakeSumMap(data).Write("angle_shower_map");
+        Analysis::MakeProfileGraph(data).Write("angle_shower_graph");
+        Analysis::MakeSumMap(data).Write("angle_shower_map");
     }
 
     TEST_F(SimulatorTest, WholeProfile)
@@ -79,7 +79,7 @@ namespace cherenkov_tests
 
         // Make some graphics and write them to a file.
         TFile file("../../cherenkov_test/whole_profile_sim.root", "RECREATE");
-        DataAnalysis::MakeProfileGraph(data).Write("whole_shower_graph");
-        DataAnalysis::MakeSumMap(data).Write("whole_shower_map");
+        Analysis::MakeProfileGraph(data).Write("whole_shower_graph");
+        Analysis::MakeSumMap(data).Write("whole_shower_map");
     }
 }

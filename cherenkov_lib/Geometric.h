@@ -1,17 +1,16 @@
-// geometric_objects.h
-// cherenkov_lib
+// Geometric.h
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains the definition of a plane class, a ray class, and a shower class.
+// Contains the definitions of the Plane, Shower, and Ray classes.
 
-#ifndef geometric_objects_h
-#define geometric_objects_h
+#ifndef geometric_h
+#define geometric_h
 
 #include <TRotation.h>
 #include <TVector3.h>
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     /*
      * A class representing a plane in 3D space.

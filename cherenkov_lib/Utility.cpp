@@ -1,21 +1,22 @@
-// common.cpp
-// cherenkov_lib
+// Utility.cpp
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-//
+// Implementation of Utility.h
 
-#include <ostream>
+#include <fstream>
 #include <boost/property_tree/xml_parser.hpp>
 #include <TRotation.h>
+#include <TMath.h>
 
 #include "Utility.h"
 
 using namespace std;
-using boost::property_tree::ptree;
 using namespace TMath;
 
-namespace cherenkov_library
+using boost::property_tree::ptree;
+
+namespace cherenkov_lib
 {
     bool Utility::Above(TVector3 reference, TVector3 other)
     {

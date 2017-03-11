@@ -1,25 +1,21 @@
-// simulator.h
-// cherenkov_lib
+// Simulator.h
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains the definition of the simulator class, which contains the majority of the parameters and performs most of
-// the ray tracing.
+// Contains the definition of the Simulator class, which performs shower simulation and ray tracing.
 
 #ifndef simulator_h
 #define simulator_h
 
-#include <istream>
+#include <boost/property_tree/ptree.hpp>
 #include <TF1.h>
 #include <TRandom3.h>
 #include <TRotation.h>
-#include <Math/Transform3D.h>
-#include <boost/property_tree/ptree.hpp>
 
 #include "DataStructures.h"
 #include "Geometric.h"
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     /*
      * A class which performs the majority of the shower simulation and contains most simulation parameters.

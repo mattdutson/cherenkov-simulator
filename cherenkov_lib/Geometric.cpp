@@ -1,16 +1,17 @@
-// geometric_objects.cpp
-// cherenkov_lib
+// Geometric.cpp
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains the implementation of methods in geometric_objects.h.
+// Implementation of Geometric.h
+
+#include <TMath.h>
 
 #include "Geometric.h"
 #include "Utility.h"
 
 using namespace TMath;
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     Plane::Plane() : Plane(TVector3(), TVector3())
     {}

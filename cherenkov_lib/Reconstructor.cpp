@@ -1,27 +1,25 @@
-// reconstruction.cpp
+// Reconstructor.cpp
 // cherenkov_lib
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains the implementation of
+// Implementation of Reconstructor.h
 
-#include <TMatrixD.h>
 #include <TMatrixDSymEigen.h>
 #include <TMath.h>
-#include <Math/GSLMinimizer.h>
 #include <TGraphErrors.h>
 #include <TF1.h>
 
-#include "Utility.h"
-#include "DataStructures.h"
 #include "Reconstructor.h"
+#include "Utility.h"
 
-using boost::property_tree::ptree;
-using std::string;
-using std::vector;
 using namespace TMath;
 
-namespace cherenkov_library
+using std::string;
+using std::vector;
+using boost::property_tree::ptree;
+
+namespace cherenkov_lib
 {
     Reconstructor::Reconstructor(ptree config)
     {
@@ -118,7 +116,7 @@ namespace cherenkov_library
         return data_graph;
     }
 
-    TGraph
+    TGraphErrors
     Reconstructor::HybridFit(PhotonCount data, TVector3 impact_point, TRotation to_sd_plane, double* t_0,
                              double* impact_param,
                              double* angle)

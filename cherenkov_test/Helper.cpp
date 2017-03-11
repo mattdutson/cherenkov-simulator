@@ -1,13 +1,14 @@
+// Helper.cpp
 //
-// Created by Matthew Dutson on 1/17/17.
+// Author: Matthew Dutson
 //
+// Implementation of Helper.h
 
 #include "Helper.h"
-#include <TMath.h>
 
 using namespace TMath;
 
-namespace cherenkov_tests
+namespace cherenkov_test
 {
     bool Helper::VectorsEqual(TVector3 actual, TVector3 expected, double fractional_err)
     {

@@ -1,13 +1,15 @@
+// Helper.h
 //
-// Created by Matthew Dutson on 1/17/17.
+// Author: Matthew Dutson
 //
+// Contains unit testing helper methods.
 
-#ifndef test_helper_h
-#define test_helper_h
+#ifndef helper_h
+#define helper_h
 
 #include <TVector3.h>
 
-namespace cherenkov_tests
+namespace cherenkov_test
 {
     class Helper
     {

@@ -1,9 +1,8 @@
-// monte_carlo.h
-// cherenkov_lib
+// MonteCarlo.h
 //
-// Created by Matthew Dutson on 1/8/17.
+// Author: Matthew Dutson
 //
-// Contains a class used to generate random showers and perform a Monte Carlo simulation.
+// Contains a class used to generate random showers for the Monte Carlo simulation.
 
 #ifndef monte_carlo_h
 #define monte_carlo_h
@@ -13,7 +12,7 @@
 
 #include "Simulator.h"
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     class MonteCarlo
     {

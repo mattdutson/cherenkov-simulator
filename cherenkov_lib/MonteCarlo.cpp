@@ -1,9 +1,8 @@
-// accuracy_estimator.cpp
-// cherenkov_lib
+// MonteCarlo.cpp
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-//
+// Implementation of MonteCarlo.h
 
 #include <TMath.h>
 
@@ -12,7 +11,7 @@
 
 using namespace TMath;
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     MonteCarlo::MonteCarlo(boost::property_tree::ptree config)
     {

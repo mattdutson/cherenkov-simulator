@@ -1,18 +1,17 @@
-// data_containers.h
-// cherenkov_lib
+// DataStructures.h
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains the definition of the photon count container as well as an iterator to move through it.
+// Contains the definition of the PhotonCount container as well as an iterator to move through it.
 
-#ifndef data_containers_h
-#define data_containers_h
+#ifndef data_structures_h
+#define data_structures_h
 
+#include <vector>
 #include <TVector3.h>
 #include <TRandom3.h>
-#include <vector>
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     /*
      * An object used for keeping track of indices in the photon count container and iterating through the non-null

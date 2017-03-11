@@ -1,24 +1,23 @@
-// data_analysis.h
-// cherenkov_lib
+// Analysis.h
 //
-// Created by Matthew Dutson on 1/9/17.
+// Author: Matthew Dutson
 //
 // Contains methods which may be useful for analyzing data produced by methods in the Simulator, MonteCarlo, and
-// Reconstructor classes. Declared separately from utility.h to prevent circular dependencies.
+// Reconstructor classes. Declared separately from Utility.h to prevent circular dependencies.
 
 #ifndef analysis_h
 #define analysis_h
 
-#include <TH2C.h>
 #include <vector>
+#include <TH2.h>
 #include <TGraph.h>
 
 #include "DataStructures.h"
 #include "Geometric.h"
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
-    class DataAnalysis
+    class Analysis
     {
 
     public:

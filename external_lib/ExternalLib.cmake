@@ -1,4 +1,4 @@
-# Find and link to the boost libraries.
+# Find and link to the Boost libraries.
 function(link_boost library_name)
     list(APPEND CMAKE_PREFIX_PATH /usr/local/boost)
     find_package(Boost COMPONENTS program_options REQUIRED)
@@ -13,10 +13,4 @@ function(link_root library_name)
     include(${ROOT_USE_FILE})
     target_link_libraries(${library_name} ${ROOT_LIBRARIES})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-endfunction()
-
-# Find and link to the FFTW libraries.
-function(link_fftw library_name)
-    target_link_libraries(${library_name} /usr/local/lib/libfftw3.a)
-    include_directories(/usr/local/include)
 endfunction()

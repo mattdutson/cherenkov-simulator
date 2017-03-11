@@ -1,9 +1,8 @@
-// data_containers.cpp
-// cherenkov_lib
+// DataStructures.cpp
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-//
+// Implementation of DataStructures.h
 
 #include <TMath.h>
 
@@ -11,9 +10,10 @@
 #include "Utility.h"
 
 using namespace TMath;
+
 using std::vector;
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     SignalIterator::SignalIterator(std::vector<std::vector<bool>> validPixels)
     {

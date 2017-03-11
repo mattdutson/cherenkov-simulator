@@ -1,22 +1,18 @@
-// common.h
-// cherenkov_lib
+// Utility.h
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// Contains a configuration manager and globally useful methods
+// Contains generally useful methods. Has no knowledge of Reconstructor, MonteCarlo, or Simulator.
 
 #ifndef utility_h
 #define utility_h
 
-#include <iostream>
-#include <fstream>
+#include <boost/property_tree/ptree.hpp>
 #include <string>
-#include "TVector3.h"
-#include "TMath.h"
-#include "TRandom3.h"
-#include "boost/property_tree/ptree.hpp"
+#include <TVector3.h>
+#include <TRandom3.h>
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     class Utility
     {

@@ -1,21 +1,17 @@
-// main.cpp
-// cherenkov_lib
+// Main.cpp
 //
-// Created by Matthew Dutson on 9/8/16.
+// Author: Matthew Dutson
 //
-// The entry point for the application
+// The entry point for the application.
 
-#include <fstream>
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include "cherenkov_library/simulator.h"
-#include "cherenkov_library/monte_carlo.h"
-#include "cherenkov_library/reconstructor.h"
-#include "cherenkov_library/utility.h"
+
+#include "cherenkov_lib/Utility.h"
 
 using namespace std;
-using namespace cherenkov_library;
+using namespace cherenkov_lib;
 
 using boost::property_tree::ptree;
 
@@ -33,7 +29,7 @@ int main(int argc, const char* argv[])
     }
     try
     {
-        ptree config = cherenkov_library::ParseXMLFile(filename).get_child("configuration");
+        ptree config = cherenkov_lib::Utility::ParseXMLFile(filename).get_child("configuration");
     }
     catch (exception e)
     {

@@ -1,21 +1,24 @@
+// ReconstructorTest.cpp
 //
-// Created by Matthew Dutson on 2/7/17.
+// Author: Matthew Dutson
 //
+// Tests of Reconstructr.h
 
 #include <gtest/gtest.h>
 #include <TFile.h>
 #include <TVectorD.h>
+
 #include "Reconstructor.h"
 #include "Simulator.h"
 #include "MonteCarlo.h"
 #include "Utility.h"
 #include "Analysis.h"
 
+using namespace cherenkov_lib;
+
 using boost::property_tree::ptree;
 
-using namespace cherenkov_library;
-
-namespace cherenkov_tests
+namespace cherenkov_test
 {
     class ReconstructorTest : public testing::Test
     {
@@ -90,24 +93,24 @@ TFile file("../../cherenkov_test/add_subtract_noise.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        DataAnalysis::MakeProfileGraph(data).Write("before_noise_graph");
-        DataAnalysis::MakeSumMap(data).Write("before_noise_map");
+        Analysis::MakeProfileGraph(data).Write("before_noise_graph");
+        Analysis::MakeSumMap(data).Write("before_noise_map");
 
         simulator->AddNoise(&data);
-        DataAnalysis::MakeProfileGraph(data).Write("after_noise_graph");
-        DataAnalysis::MakeSumMap(data).Write("after_noise_map");
+        Analysis::MakeProfileGraph(data).Write("after_noise_graph");
+        Analysis::MakeSumMap(data).Write("after_noise_map");
 
         reconstructor->SubtractAverageNoise(&data);
-        DataAnalysis::MakeProfileGraph(data).Write("after_subtract_graph");
-        DataAnalysis::MakeSumMap(data).Write("after_subtract_map");
+        Analysis::MakeProfileGraph(data).Write("after_subtract_graph");
+        Analysis::MakeSumMap(data).Write("after_subtract_map");
 
         reconstructor->ThreeSigmaFilter(&data);
-        DataAnalysis::MakeProfileGraph(data).Write("three_sigma_graph");
-        DataAnalysis::MakeSumMap(data).Write("three_sigma_map");
+        Analysis::MakeProfileGraph(data).Write("three_sigma_graph");
+        Analysis::MakeSumMap(data).Write("three_sigma_map");
 
         reconstructor->ApplyTriggering(&data);
-        DataAnalysis::MakeProfileGraph(data).Write("after_trigger_graph");
-        DataAnalysis::MakeSumMap(data).Write("after_trigger_map");
+        Analysis::MakeProfileGraph(data).Write("after_trigger_graph");
+        Analysis::MakeSumMap(data).Write("after_trigger_map");
     }
 
     TEST_F(ReconstructorTest, TriggeringMaps)
@@ -119,7 +122,7 @@ TFile file("../../cherenkov_test/triggering_maps.root", "RECREATE");
         std::vector<std::vector<std::vector<bool>>> triggering_matrices = reconstructor->GetTriggeringMatrices(data);
         for (int i = 0; i < triggering_matrices.size(); i++)
         {
-            TH2C frame_map = DataAnalysis::GetBooleanMap(triggering_matrices[i]);
+            TH2C frame_map = Analysis::GetBooleanMap(triggering_matrices[i]);
             std::string write_name;
             if (reconstructor->FrameTriggered(i, &triggering_matrices))
             {

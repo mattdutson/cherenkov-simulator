@@ -1,22 +1,20 @@
-// reconstructor.h
-// cherenkov_lib
+// Reconstructor.h
 //
-// Created by Matthew Dutson on 1/8/17.
+// Author: Matthew Dutson
 //
+// Contains a class used to reconstruct showers from photon arrival time data.
 
 #ifndef reconstructor_h
 #define reconstructor_h
 
-#include <TRotation.h>
-#include <istream>
 #include <boost/property_tree/ptree.hpp>
-#include <TGraph.h>
+#include <TRotation.h>
 #include <TGraphErrors.h>
 
 #include "DataStructures.h"
 #include "Geometric.h"
 
-namespace cherenkov_library
+namespace cherenkov_lib
 {
     class Reconstructor
     {
@@ -42,7 +40,7 @@ namespace cherenkov_library
         /*
          * Performs a time profile reconstruction, but using the constraint of an impact point.
          */
-        TGraph
+        TGraphErrors
         HybridFit(PhotonCount data, TVector3 impact_point, TRotation to_sd_plane, double* t_0, double* impact_param,
                   double* angle);
 
