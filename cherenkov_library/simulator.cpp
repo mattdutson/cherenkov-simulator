@@ -208,16 +208,16 @@ namespace cherenkov_library
 
     bool Simulator::DeflectFromLens(Ray* photon)
     {
-        TVector3 position = photon->Position();
-
         // Only deflect the photon if it's on the portion of the lens where the s^4 term dominates.
+        TVector3 position = photon->Position();
         double photon_axis_dist = Sqrt(Sq(position.X()) + Sq(position.Y()));
         if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return true;
 
         // Find the deflector normal vector.
         double x_pos = position.X();
         double y_pos = position.Y();
-        double z_norm = (4.0 * (refrac_lens - 1) * Power(mirror_radius, 3)) / (Sq(x_pos) + Sq(y_pos));
+        double c_lead = 4.0 * (refrac_lens - 1) * Power(mirror_radius, 3);
+        double z_norm = c_lead / (4.0 * (Sq(x_pos) + Sq(y_pos)) - stop_diameter);
         TVector3 norm = TVector3(-x_pos, -y_pos, z_norm).Unit();
 
         // Return false if the ray was coming in from the back of the lens.

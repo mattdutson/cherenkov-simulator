@@ -136,7 +136,9 @@ namespace cherenkov_library
         void Reflect(TVector3 normal);
 
         /*
-         * Refracts the ray across the normal vector using the incident and outward indices of refraction specified.
+         * Refracts the ray across the normal vector using the incident and outward indices of refraction specified. The
+         * normal vector should point outward from the refracting surface, and therefore be opposite to the direction of
+         * the ray's motion.
          */
         bool Refract(TVector3 normal, double n_in, double n_out);
 

@@ -121,13 +121,16 @@ namespace cherenkov_library
 
     bool Ray::Refract(TVector3 normal, double n_in, double n_out)
     {
+        // Reverse the normal vector so it points in the direction of the incoming ray
+        normal = -normal;
+
         double angle_in = current_velocity.Angle(normal);
 
         // If the current velocity and normal vector are parallel, don't do anything.
         if (angle_in == 0) return true;
 
-        // If we're more than 90 degrees from the normal, we're coming from the wrong side of the lens. This can
-        // occur when the shower is nearly 90 degrees off the detector axis.
+        // If we're more than 90 degrees from the normal, we're coming from the wrong side of the lens (reversed normal
+        // should point in the same direction as the incoming ray)
         if (angle_in > PiOver2()) return false;
 
         // Refract and rotate around some vector perpendicular to both the ray and plane normal.
