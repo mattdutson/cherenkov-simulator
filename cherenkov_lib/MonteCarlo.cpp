@@ -7,50 +7,37 @@
 #include <TMath.h>
 
 #include "MonteCarlo.h"
-#include "Utility.h"
 
 using namespace TMath;
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
     MonteCarlo::MonteCarlo(boost::property_tree::ptree config)
     {
-        TRotation rotate_to_world = Utility::MakeRotation(config.get<double>("elevation_angle"));
-        detector_axis = rotate_to_world * TVector3(0, 0, 1);
-
         // The distribution of shower energies
-        std::string energy_formula = "x^(-" + std::to_string(config.get<double>("energy_pow")) + ")";
-        energy_distribution = TF1("energy", energy_formula.c_str(), config.get<double>("e_min"),
-                                  config.get<double>("e_max"));
+        std::string energy_formula = "x^(-" + std::to_string(energy_pow) + ")";
+        double e_min = config.get<double>("monte_carlo.e_min");
+        double e_max = config.get<double>("monte_carlo.e_max");
+        energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
 
         // The distribution of shower vertical directions
         cosine_distribution = TF1("cosine", "cos(x)", -TMath::Pi() / 2, TMath::Pi() / 2);
 
         // The Monte Carlo distribution of impact parameters
-        impact_distribution = TF1("impact", "x", config.get<double>("impact_min"),
-                                  config.get<double>("impact_max"));
+        double impact_min = config.get<double>("monte_carlo.impact_min");
+        double impact_max = config.get<double>("monte_carlo.impact_max");
+        impact_distribution = TF1("impact", "x", impact_min, impact_max);
 
         // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
-        first_interact = config.get<double>("first_interact");
-        start_tracking = config.get<double>("start_tracking");
+        start_tracking = config.get<double>("monte_carlo.start_tracking");
 
-        // Parameter for determining n_max for a shower.
-        n_max_ratio = config.get<double>("n_max_ratio");
-
-        // Parameters defining properties of the atmosphere
-        scale_height = config.get<double>("scale_height");
-        double rho_sea = config.get<double>("rho_sea");
-        double detect_elevation = config.get<double>("detect_elevation");
+        // Determine the local atmosphere based on the elevation
+        double detect_elevation = config.get<double>("surroundings.detect_elevation");
         rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
+        delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
 
-        // 1 - the index of refraction at the detector (proportional to atmospheric density)
-        double delta_sea = config.get<double>("refrac_sea") - 1.0;
-        delta_0 = delta_sea * Exp(-detect_elevation / scale_height);
-
-        // Parameters used when determing the depth of the shower maximum
-        x_max_1 = config.get<double>("x_max_1");
-        x_max_2 = config.get<double>("x_max_2");
-        x_max_3 = config.get<double>("x_max_3");
+        // The random number generator
+        rng = TRandom3();
     }
 
     Shower MonteCarlo::GenerateShower()
@@ -69,12 +56,7 @@ namespace cherenkov_lib
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
         // local ground.
         TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), cos(theta));
-        return GenerateShower(shower_axis, impact_param, rng.Uniform(TwoPi()));
-    }
-
-    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle)
-    {
-        return GenerateShower(axis, impact_param, impact_angle, energy_distribution.GetRandom());
+        return GenerateShower(shower_axis, impact_param, rng.Uniform(TwoPi()), energy_distribution.GetRandom());
     }
 
     Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy)
@@ -101,7 +83,6 @@ namespace cherenkov_lib
         // Create a new shower with all of the randomly determined parameters.
         Shower::Params params;
         params.energy = energy;
-        params.x_0 = first_interact;
         params.x_max = x_max;
         params.n_max = n_max;
         params.rho_0 = rho_0;

@@ -16,39 +16,8 @@ using namespace TMath;
 
 using boost::property_tree::ptree;
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
-    bool Utility::Above(TVector3 reference, TVector3 other)
-    {
-        if (other.Z() > reference.Z())
-        {
-            return true;
-        }
-        else if (other.Z() < reference.Z())
-        {
-            return false;
-        }
-        else
-        {
-            if (other.Y() > reference.Y())
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-    double Utility::ParseTo(string* s, char c)
-    {
-        size_t index = s->find(c);
-        double out = stod(s->substr(0, index));
-        s->erase(0, index + 1);
-        return out;
-    }
-
     TVector3 Utility::ToVector(string s)
     {
         // Clear out everything before the first parenthesis.
@@ -63,7 +32,7 @@ namespace cherenkov_lib
         return output;
     }
 
-    TVector3 Utility::RandomPerpendicularVector(TVector3 vec, TRandom3* rng)
+    TVector3 Utility::RandNormal(TVector3 vec, TRandom3* rng)
     {
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
         {
@@ -105,11 +74,6 @@ namespace cherenkov_lib
         }
     }
 
-    double Utility::CentC()
-    {
-        return 2.99792458e10;
-    }
-
     bool Utility::WithinXYDisk(TVector3 vec, double radius)
     {
         double xy_radius = Sqrt(vec.X() * vec.X() + vec.Y() * vec.Y());
@@ -123,43 +87,6 @@ namespace cherenkov_lib
         }
     }
 
-    void Utility::WriteCSV(vector<vector<double>> data, vector<string> header, string filename)
-    {
-        // Open the file.
-        ofstream file = ofstream(filename);
-
-        // Write the header.
-        for (int i = 0; i < header.size(); i++)
-        {
-            file << header[i];
-            if (i < header.size() - 1)
-            {
-                file << ", ";
-            }
-        }
-        file << endl;
-
-        // Iterate over all rows.
-        for (vector<double> vec : data)
-        {
-            // Iterate over each row.
-            for (int i = 0; i < vec.size(); i++)
-            {
-                file << vec[i];
-                if (i < vec.size() - 1)
-                {
-                    file << ", ";
-                }
-            }
-
-            // Rows are delimited by newlines.
-            file << endl;
-        }
-
-        // Close the file.
-        file.close();
-    }
-
     TRotation Utility::MakeRotation(double elevation_angle)
     {
         TRotation rotate = TRotation();
@@ -170,5 +97,13 @@ namespace cherenkov_lib
     double Utility::RandLinear(TRandom3* rng, double max)
     {
         return max * Sqrt(rng->Uniform());
+    }
+
+    double Utility::ParseTo(string* s, char c)
+    {
+        size_t index = s->find(c);
+        double out = stod(s->substr(0, index));
+        s->erase(0, index + 1);
+        return out;
     }
 }

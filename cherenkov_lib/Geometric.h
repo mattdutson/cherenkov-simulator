@@ -4,20 +4,19 @@
 //
 // Contains the definitions of the Plane, Shower, and Ray classes.
 
-#ifndef geometric_h
-#define geometric_h
+#ifndef GEOMETRIC_H
+#define GEOMETRIC_H
 
 #include <TRotation.h>
 #include <TVector3.h>
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
     /*
      * A class representing a plane in 3D space.
      */
     class Plane
     {
-
     public:
 
         /*
@@ -50,10 +49,12 @@ namespace cherenkov_lib
 
     private:
 
+        friend class GeometricTest;
+
         // A unit vector normal to the plane
         TVector3 normal;
 
-        // The coefficient "d" in the equation a * x + b * y + c * z = d
+        // The coefficient "d" in the equation ax + by + cz = d
         double coefficient;
     };
 
@@ -63,7 +64,6 @@ namespace cherenkov_lib
      */
     class Ray
     {
-
     public:
 
         /*
@@ -71,11 +71,6 @@ namespace cherenkov_lib
          * given time. If (0, 0, 0) is passed as the direction vector, (0, 0, 1) is used instead.
          */
         Ray(TVector3 position, TVector3 direction, double time);
-
-        /*
-         * Returns the current time of the ray.
-         */
-        double Time();
 
         /*
          * Returns the current position of the ray.
@@ -93,15 +88,15 @@ namespace cherenkov_lib
         TVector3 Direction();
 
         /*
-         * Switches the the position and direction to a new, rotated reference frame.
-         */
-        void Transform(TRotation rotation);
-
-        /*
-         * When possible, use this method to set direction instead of directly modifying the current_velocity member.
+         * When possible, use this method to set direction instead of directly modifying the velocity member.
          * This method ensures that the velocity vector has a magnitude equal to the speed of light in a vacuum.
          */
         void SetDirection(TVector3 direction);
+
+        /*
+         * Returns the current time of the ray.
+         */
+        double Time();
 
         /*
          * Moves the ray from its current position to the destination point. If the destination point doesn't lie along
@@ -117,17 +112,17 @@ namespace cherenkov_lib
         void PropagateToPlane(Plane plane);
 
         /*
+         * Find the point where this ray will intersect with the plane. If the ray and the plane are exactly parallel,
+         * the current position of the ray is returned.
+         */
+        TVector3 PlaneImpact(Plane plane);
+
+        /*
          * Finds the amount of time it will take before the ray will collide with the specified Plane object. Negative
          * times are returned if the ray has already passed the plane. Infinity is returned if the ray and plane are
          * exactly parallel.
          */
         double TimeToPlane(Plane plane);
-
-        /*
-         * Find the point where this ray will intersect with the plane. If the ray and the plane are exactly parallel,
-         * the current position of the ray is returned.
-         */
-        TVector3 PlaneImpact(Plane plane);
 
         /*
          * Reflects the ray across the normal vector.
@@ -141,24 +136,29 @@ namespace cherenkov_lib
          */
         bool Refract(TVector3 normal, double n_in, double n_out);
 
+        /*
+         * Switches the the position and direction to a new, rotated reference frame.
+         */
+        void Transform(TRotation rotation);
+
     protected:
+
+        friend class GeometricTest;
+
+        // The current state of the Ray - cgs
+        double time;
+        TVector3 position;
+        TVector3 velocity;
 
         /*
          * Moves the ray forward by the specified distance.
          */
         void IncrementPosition(double distance);
 
-        // Move the time forward by some amount. This causes the ray to move forward according to its velocity.
-        void IncrementTime(double time);
-
-        // The current time for the ray
-        double current_time;
-
-        // The current position of the ray (units of cm)
-        TVector3 current_position;
-
-        // The current velocity of the ray (units of cm/s)
-        TVector3 current_velocity;
+        /*
+         * Move the time forward by some amount. This causes the ray to move forward according to its velocity.
+         */
+        void IncrementTime(double time_step);
     };
 
     /*
@@ -168,16 +168,14 @@ namespace cherenkov_lib
      */
     class Shower : public Ray
     {
-
     public:
 
         /*
-         * A container for shower parameters to be passed to the constructor.
+         * A container for Shower parameters to be passed to the constructor.
          */
         struct Params
         {
             double energy;
-            double x_0;
             double x_max;
             double n_max;
             double rho_0;
@@ -203,27 +201,6 @@ namespace cherenkov_lib
         double EnergyMeV();
 
         /*
-         * Returns the current slant depth of the shower (the integration of the atmospheric density along the path of
-         * the shower). Note that this will be NEGATIVE if the shower is moving up.
-         */
-        double X();
-
-        /*
-         * Returns the slant depth of the first shower interaction.
-         */
-        double X0();
-
-        /*
-         * Returns the slant depth of the shower maximum.
-         */
-        double XMax();
-
-        /*
-         * Returns the number of electrons at the shower maximum.
-         */
-        double NMax();
-
-        /*
          * Returns the atmospheric density at the shower's current position.
          */
         double LocalRho();
@@ -234,10 +211,17 @@ namespace cherenkov_lib
         double LocalDelta();
 
         /*
+         * Returns the number of particles in the shower at its current position.
+         */
+        double GaisserHillas();
+
+        /*
+         * Calculates the Cherenkov threshold energy of the shower.
+         */
+        double EThresh();
+
+        /*
          * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
-         *
-         * EDIT: No longer returns the distance traversed because it is not required to calculate the fluorescence
-         * yield.
          */
         void IncrementDepth(double depth);
 
@@ -252,29 +236,26 @@ namespace cherenkov_lib
         using Ray::PropagateToPoint;
         using Ray::PropagateToPlane;
 
-        // The starting point of the shower. Used when calculating slant depth. This may be removed because we have x_0.
-        TVector3 start_position;
+        friend class GeometricTest;
 
-        // The energy of the shower primary in eV.
+        // Parameters in the Gaisser-Hillas profile - cgs
+        constexpr static double x_0 = -70.0;
+        constexpr static double gh_lambda = 70.0;
+
+        // Variable parameters in the Gaisser-Hillas profile - eV, cgs
         double energy;
-
-        // The slant depth of the first interaction.
-        double x_0;
-
-        // The slant depth where the shower maximum occurs.
         double x_max;
-
-        // The number of charged particles at the shower maximum. Used in the Gaisser-Hilles profile.
         double n_max;
 
-        // The density of the atmosphere at the origin
+        // Properties of the atmosphere - cgs
         double rho_0;
-
-        // The atmospheric scale height
         double scale_height;
-
-        // 1 - n at the origin
         double delta_0;
+
+        /*
+         * Returns the current depth of the shower in the atmosphere.
+         */
+        double X();
     };
 }
 

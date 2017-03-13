@@ -8,7 +8,7 @@
 
 using namespace TMath;
 
-namespace cherenkov_test
+namespace cherenkov_simulator
 {
     bool Helper::VectorsEqual(TVector3 actual, TVector3 expected, double fractional_err)
     {
@@ -20,13 +20,6 @@ namespace cherenkov_test
 
     bool Helper::ValuesEqual(double actual, double expected, double fractional_err)
     {
-        if (expected == 0)
-        {
-            return Abs(actual) < fractional_err;
-        }
-        else
-        {
-            return Abs((actual - expected) / expected) < fractional_err;
-        }
+        return expected == 0 ? Abs(actual) < fractional_err : Abs((actual - expected) / expected) < fractional_err;
     }
 }

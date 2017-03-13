@@ -4,16 +4,17 @@
 //
 // Contains unit testing helper methods.
 
-#ifndef helper_h
-#define helper_h
+#ifndef HELPER_H
+#define HELPER_H
 
 #include <TVector3.h>
 
-namespace cherenkov_test
+namespace cherenkov_simulator
 {
     class Helper
     {
     public:
+
         /*
          * A function which will check whether two vectors are equal within acceptable error. The allowable fractional
          * between each component is specified.
@@ -25,7 +26,6 @@ namespace cherenkov_test
          */
         static bool ValuesEqual(double actual, double expected, double fractional_err);
     };
-
 }
 
 #endif

@@ -14,11 +14,10 @@
 #include "Utility.h"
 #include "Analysis.h"
 
-using namespace cherenkov_lib;
-
 using boost::property_tree::ptree;
+using std::vector;
 
-namespace cherenkov_test
+namespace cherenkov_simulator
 {
     class ReconstructorTest : public testing::Test
     {
@@ -31,7 +30,7 @@ namespace cherenkov_test
 
         virtual void SetUp()
         {
-            ptree config = Utility::ParseXMLFile("../../Config.xml").get_child("config");
+            ptree config = Utility::ParseXMLFile("../../../Config.xml").get_child("config");
             simulator = new Simulator(config);
             monte_carlo = new MonteCarlo(config);
             reconstructor = new Reconstructor(config);
@@ -42,6 +41,16 @@ namespace cherenkov_test
             delete simulator;
             delete monte_carlo;
             delete reconstructor;
+        }
+
+        bool FriendFrameTriggered(int i, vector<vector<vector<bool>>>* triggers)
+        {
+            return reconstructor->FrameTriggered(i, triggers);
+        }
+
+        vector<vector<vector<bool>>> FriendTriggeringMatrices(PhotonCount data)
+        {
+            return reconstructor->GetTriggeringMatrices(data);
         }
     };
 
@@ -57,7 +66,7 @@ namespace cherenkov_test
         TGraphErrors time_profile = reconstructor->MonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
 
         // Write results to a file.
-        TFile file("../../cherenkov_test/straight_shower_recon.root", "RECREATE");
+        TFile file("StraightShowerRecon.root", "RECREATE");
         time_profile.Write("straight_shower_profile");
         TVectorD reconstruction(3);
         reconstruction[0] = t_0;
@@ -78,7 +87,7 @@ namespace cherenkov_test
         TGraph time_profile = reconstructor->MonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
 
         // Draw a map of impacts.
-        TFile file("../../cherenkov_test/angle_shower_recon.root", "RECREATE");
+        TFile file("AngleShowerRecon.root", "RECREATE");
         time_profile.Write("angle_shower_profile");
         TVectorD reconstruction(3);
         reconstruction[0] = t_0;
@@ -89,14 +98,14 @@ namespace cherenkov_test
 
     TEST_F(ReconstructorTest, AddSubtractNoise)
     {
-TFile file("../../cherenkov_test/add_subtract_noise.root", "RECREATE");
+        TFile file("AddSubtractNoise.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
         Analysis::MakeProfileGraph(data).Write("before_noise_graph");
         Analysis::MakeSumMap(data).Write("before_noise_map");
 
-        simulator->AddNoise(&data);
+        reconstructor->AddNoise(&data);
         Analysis::MakeProfileGraph(data).Write("after_noise_graph");
         Analysis::MakeSumMap(data).Write("after_noise_map");
 
@@ -115,16 +124,16 @@ TFile file("../../cherenkov_test/add_subtract_noise.root", "RECREATE");
 
     TEST_F(ReconstructorTest, TriggeringMaps)
     {
-TFile file("../../cherenkov_test/triggering_maps.root", "RECREATE");
+        TFile file("TriggeringMaps.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        std::vector<std::vector<std::vector<bool>>> triggering_matrices = reconstructor->GetTriggeringMatrices(data);
+        std::vector<std::vector<std::vector<bool>>> triggering_matrices = FriendTriggeringMatrices(data);
         for (int i = 0; i < triggering_matrices.size(); i++)
         {
             TH2C frame_map = Analysis::GetBooleanMap(triggering_matrices[i]);
             std::string write_name;
-            if (reconstructor->FrameTriggered(i, &triggering_matrices))
+            if (FriendFrameTriggered(i, &triggering_matrices))
             {
                 write_name = std::to_string(i) + "tr";
             }
@@ -138,7 +147,7 @@ TFile file("../../cherenkov_test/triggering_maps.root", "RECREATE");
 
     TEST_F(ReconstructorTest, FindGroundImpact)
     {
-TFile file("../../cherenkov_test/impact_point.root", "RECREATE");
+        TFile file("ImpactPoint.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
@@ -151,7 +160,7 @@ TFile file("../../cherenkov_test/impact_point.root", "RECREATE");
 
     TEST_F(ReconstructorTest, StraightShowerGeometry)
     {
-TFile file("../../cherenkov_test/straight_geometry.root", "RECREATE");
+        TFile file("StraightGeometry.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 

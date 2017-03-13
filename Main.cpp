@@ -11,7 +11,7 @@
 #include "cherenkov_lib/Utility.h"
 
 using namespace std;
-using namespace cherenkov_lib;
+using namespace cherenkov_simulator;
 
 using boost::property_tree::ptree;
 
@@ -29,7 +29,7 @@ int main(int argc, const char* argv[])
     }
     try
     {
-        ptree config = cherenkov_lib::Utility::ParseXMLFile(filename).get_child("configuration");
+        ptree config = cherenkov_simulator::Utility::ParseXMLFile(filename).get_child("configuration");
     }
     catch (exception e)
     {

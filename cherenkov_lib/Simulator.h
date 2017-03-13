@@ -4,8 +4,8 @@
 //
 // Contains the definition of the Simulator class, which performs shower simulation and ray tracing.
 
-#ifndef simulator_h
-#define simulator_h
+#ifndef SIMULATOR_H
+#define SIMULATOR_H
 
 #include <boost/property_tree/ptree.hpp>
 #include <TF1.h>
@@ -15,7 +15,7 @@
 #include "DataStructures.h"
 #include "Geometric.h"
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
     /*
      * A class which performs the majority of the shower simulation and contains most simulation parameters.
@@ -25,8 +25,7 @@ namespace cherenkov_lib
     public:
 
         /*
-         * Takes a parsed XML object and attempts to extract required simulation parameters. If this fails, an
-         * exception is thrown which specifies the name of the missing parameter.
+         * Constructs the Simulator from values in the configuration tree.
          */
         Simulator(boost::property_tree::ptree config);
 
@@ -37,28 +36,84 @@ namespace cherenkov_lib
          */
         PhotonCount SimulateShower(Shower shower);
 
-        /*
-         * Adds Poisson-distributed background noise to the signal.
-         */
-        void AddNoise(PhotonCount* photon_count);
-
     private:
 
+        friend class SimulatorTest;
+
+        /*
+         * Represents the integrand of the Cherenkov yield.
+         */
         class CherenkovFunc
         {
         public:
 
-            CherenkovFunc(Simulator* sim);
-
+            /*
+             * Defined as required by TF1.Integral(). Returns the value of the integrand.
+             * p[0] = age, p[1] = rho, p[2] = delta
+             */
             double operator()(double* x, double* p);
 
         private:
 
-            Simulator* sim;
+            // Parameters in the Cherenkov yield - cgs
+            constexpr static double lambda_min = 3.0e-5;
+            constexpr static double lambda_max = 4.0e-5;
 
+            // Parameters in the electron energy spectrum - MeV
+            constexpr static double fe_a11 = 6.42522;
+            constexpr static double fe_a12 = 1.53183;
+            constexpr static double fe_a21 = 168.168;
+            constexpr static double fe_a22 = 42.1368;
+            constexpr static double fe_k0 = 1.45098e-1;
+            constexpr static double fe_k1 = 6.20114;
+            constexpr static double fe_k2 = -5.96851e-1;
         };
 
-        friend class CherenkovFunc;
+        // Miscellaneous parameters - K
+        constexpr static double atm_temp = 273.0;
+        constexpr static double refrac_lens = 1.52;
+
+        // Parameters in the fluorescence yield - MeV, cgs, K
+        constexpr static double fluor_a1 = 890.0;
+        constexpr static double fluor_a2 = 550.0;
+        constexpr static double fluor_b1 = 1850.0;
+        constexpr static double fluor_b2 = 6500.0;
+        constexpr static double dep_1_4 = 1.6;
+
+        // Parameters in the effective ionization loss rate - MeV, cgs
+        constexpr static double ion_c1 = 3.90883;
+        constexpr static double ion_c2 = 1.05301;
+        constexpr static double ion_c3 = 9.91717;
+        constexpr static double ion_c4 = 2.41715;
+        constexpr static double ion_c5 = 0.13180;
+
+        // Parameters used when calculating theta_c in the Cherenkov angular distribution - MeV
+        constexpr static double ckv_k1 = 0.83;
+        constexpr static double ckv_k2 = -0.67;
+
+        // Parameters which describe inefficiencies in the equipment
+        constexpr static double mirror_reflect = 0.80;
+        constexpr static double filter_transmit = 1.0;
+        constexpr static double quantum_eff = 0.15;
+
+        // Parameters related to the behavior of the simulation - cgs
+        double depth_step;
+        double fluor_thin;
+        double ckv_thin;
+
+        // Miscellaneous non-constant parameters
+        Plane ground_plane;
+        TRotation rotate_to_world;
+        TRandom3 rng;
+        CherenkovFunc ckv_func;
+        TF1 ckv_integrator;
+        PhotonCount::Params count_params;
+
+        // Setup of the detector - cgs
+        double mirror_radius;
+        double stop_diameter;
+        double mirror_size;
+        double cluster_diameter;
 
         /*
          * Simulate the production and detection of the fluorescence photons.
@@ -70,6 +125,20 @@ namespace cherenkov_lib
          * ground are recorded (no back scattering).
          */
         void ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount* photon_count);
+
+        /*
+         * Determines the total number of Fluorescence photons produced by the shower at a particular point. Takes the
+         * distance traveled by the shower due to the fact that the form for fluorescence yield (Stratton 4.2) gives the
+         * number of photons per electron per unit length.
+         */
+        int NumberFluorescencePhotons(Shower shower);
+
+        /*
+         * Determines the total number of Cherenkov photons produced by the shower at a particular point. This doesn't
+         * need the distance traveled because the form for Cherenkov yield gives the number of photons per electron per
+         * slant depth.
+         */
+        int NumberCherenkovPhotons(Shower shower);
 
         /*
          * Takes a photon which is assumed to lie at the corrector plate and simulates its motion through the detector
@@ -110,43 +179,9 @@ namespace cherenkov_lib
         bool CameraImpactPoint(Ray ray, TVector3* point);
 
         /*
-         * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
-         * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
-         * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
-         */
-        bool BackOriginSphereImpact(Ray ray, TVector3* point, double radius);
-
-        /*
-         * Determines the total number of Fluorescence photons produced by the shower at a particular point. Takes the
-         * distance traveled by the shower due to the fact that the form for fluorescence yield (Stratton 4.2) gives the
-         * number of photons per electron per unit length.
-         *
-         * EDIT: No longer takes the distance due to the fact that a modified version of the fluorescence yield formula
-         * is being used. See notes on unit consolidation.
-         */
-        int NumberFluorescencePhotons(Shower shower);
-
-        /*
-         * Determines the total number of Cherenkov photons produced by the shower at a particular point. This doesn't
-         * need the distance traveled because the form for Cherenkov yield gives the number of photons per electron per
-         * slant depth.
-         */
-        int NumberCherenkovPhotons(Shower shower);
-
-        /*
-         * Calculates the number of charged particles in the shower using the Gaiser-Hilles profile.
-         */
-        double GaiserHilles(Shower shower);
-
-        /*
          * Calculates the effective ionization loss rate for a shower (alpha_eff).
          */
         double IonizationLossRate(Shower shower);
-
-        /*
-         * Calculates the Cherenkov threshold energy at some height. Uses the AtmosphereDelta function.
-         */
-        double EThresh(Shower shower);
 
         /*
          * Calculates how large, as a fraction of a sphere, the detector stop appears from some point. This accounts
@@ -175,80 +210,12 @@ namespace cherenkov_lib
          */
         double JitteredTime(Shower shower);
 
-        // Parameters related to the behavior of the simulation
-        double depth_step;
-        double time_bin;
-        double fluor_thin;
-        double ckv_thin;
-
-        // Parameters relating to the position and orientation of the detector relative to its surroundings
-        Plane ground_plane;
-        TRotation rotate_to_world;
-
-        // The constant temperature of the atmosphere
-        double atmosphere_temp;
-
-        // Parameters defining properties of the detector optics
-        double refrac_lens;
-        double mirror_radius;
-        double stop_diameter;
-        double mirror_size;
-        double cluster_diameter;
-        int n_pmt_across;
-
-        // Parameters in the GH profile
-        double gh_lambda;
-
-        // Parameters used when calculating the fluorescence yield
-        double fluor_a1;
-        double fluor_a2;
-        double fluor_b1;
-        double fluor_b2;
-        double dep_1_4;
-
-        // Parameters used when calculating the effective ionization loss rate
-        double ion_c1;
-        double ion_c2;
-        double ion_c3;
-        double ion_c4;
-        double ion_c5;
-
-        // Parameters used when calculating theta_c in the Cherenkov angular distribution
-        double ckv_k1;
-        double ckv_k2;
-
-        // Parameters used when calculating the Cherenkov yield
-        double lambda_min;
-        double lambda_max;
-
-        // Parameters in the electron energy spectrum
-        double fe_a11;
-        double fe_a12;
-        double fe_a21;
-        double fe_a22;
-        double fe_k0;
-        double fe_k1;
-        double fe_k2;
-
-        // Physics constants
-        double mass_e;
-        double fine_struct;
-
-        // Parameters defining the amount of night sky background noise
-        double sky_noise;
-        double ground_noise;
-
-        // Parameters which describe inefficiencies in the equipment
-        double mirror_reflect;
-        double filter_transmit;
-        double quantum_eff;
-
-        // A general purpose random number generator
-        TRandom3 rng;
-
-        // The Cherenkov functor and corresponding TF1 for integration
-        CherenkovFunc ckv_func;
-        TF1 ckv_integrator;
+        /*
+         * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
+         * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
+         * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
+         */
+        static bool NegSphereImpact(Ray ray, TVector3* point, double radius);
     };
 }
 

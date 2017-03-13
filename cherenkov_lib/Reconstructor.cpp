@@ -19,34 +19,36 @@ using std::string;
 using std::vector;
 using boost::property_tree::ptree;
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
     Reconstructor::Reconstructor(ptree config)
     {
         // Construct the ground plane in the world frame.
-        ground_plane = Plane(Utility::ToVector(config.get<string>("ground_normal")),
-                             Utility::ToVector(config.get<string>("ground_point")));
+        TVector3 ground_normal = Utility::ToVector(config.get<string>("surroundings.ground_normal"));
+        TVector3 ground_point = Utility::ToVector(config.get<string>("surroundings.ground_point"));
+        ground_plane = Plane(ground_normal, ground_point);
 
         // The rotation from detector frame to world frame. The frames share the same x-axis.
-        rotate_to_world = TRotation();
-        rotate_to_world.RotateX(-PiOver2() + config.get<double>("elevation_angle"));
+        rotate_to_world = Utility::MakeRotation(config.get<double>("surroundings.elevation_angle"));
 
-        // Parameters defining the amount of night sky background noise
-        double stop_diameter = config.get<double>("mirror_radius") / (2.0 * config.get<double>("f_number"));
-        sky_noise = config.get<double>("sky_noise") * Pi() * Sq(stop_diameter / 2.0);
-        ground_noise = config.get<double>("ground_noise") * Pi() * Sq(stop_diameter / 2.0);
+        // The amount of night sky background noise
+        double stop_diameter = config.get<double>("detector.mirror_radius") / (2.0 * config.get<double>("detector.f_number"));
+        sky_noise = Sq(stop_diameter / 2.0) * Pi() * global_sky_noise;
+        ground_noise = Sq(stop_diameter / 2.0) * Pi() * global_ground_noise;
 
         // Parameters used when applying triggering logic
-        trigger_thresh = config.get<double>("trigger_thresh");
-        hold_thresh = config.get<double>("hold_thresh");
-        trigger_clust = config.get<int>("trigger_clust");
+        trigger_thresh = config.get<double>("triggering.trigger_thresh");
+        hold_thresh = config.get<double>("triggering.hold_thresh");
+        trigger_clust = config.get<int>("triggering.trigger_clust");
+
+        rng = TRandom3();
     }
 
     TRotation Reconstructor::FitSDPlane(PhotonCount data)
     {
         // Compute the matrix specified in Stratton 3.4. Maybe just iterate over matrix elements whose symmetric
         // counterparts haven't been found yet.
-        SignalIterator iter = data.Iterator();
+        PhotonCount::Iterator iter = data.GetIterator();
         TMatrixDSym matrix(3);
         for (int j = 0; j < 3; j++)
         {
@@ -90,108 +92,6 @@ namespace cherenkov_lib
         return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
     }
 
-    TGraphErrors
-    Reconstructor::MonocularFit(PhotonCount data, TRotation to_sd_plane, double* t_0, double* impact_param,
-                                double* angle)
-    {
-        TGraphErrors data_graph = GetFitGraph(data, to_sd_plane);
-
-        // The functional form of the time profile.
-        std::stringstream func_string = std::stringstream();
-        func_string << "[0] - [1] / (" << Utility::CentC() << ") * tan(([2] + x) / 2)";
-        TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
-
-        // Set names and initial guesses for parameters.
-        func.SetParNames("t_0", "r_p", "psi");
-        func.SetParameters(0.0, 10e6, PiOver2());
-
-        // Perform the fit.
-        data_graph.Fit("profile_fit");
-        TF1* result = data_graph.GetFunction("profile_fit");
-        *t_0 = result->GetParameter("t_0");
-        *impact_param = result->GetParameter("r_p");
-        *angle = result->GetParameter("psi");
-
-        // Return a graph containing the data points with error bars.
-        return data_graph;
-    }
-
-    TGraphErrors
-    Reconstructor::HybridFit(PhotonCount data, TVector3 impact_point, TRotation to_sd_plane, double* t_0,
-                             double* impact_param,
-                             double* angle)
-    {
-        TGraphErrors data_graph = GetFitGraph(data, to_sd_plane);
-
-        // Find the angle of the impact direction with the shower-detector frame x-axis.
-        double impact_distance = impact_point.Mag();
-        TVector3 rotated_impact = to_sd_plane * impact_point;
-
-        // Take the projection into the shower-detector plane.
-        double theta = (rotated_impact - rotated_impact.Z() * rotated_impact).Angle(TVector3(1, 0, 0));
-
-        // The functional form of the time profile.
-        std::stringstream func_string = std::stringstream();
-        func_string << "[0] - " << impact_distance << " * sin([1] - " << theta << ") / (" << Utility::CentC()
-                    << ") * tan(([1] + x) / 2)";
-        TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
-
-        // Set names and initial guesses for parameters.
-        func.SetParNames("t_0", "psi");
-        func.SetParameters(0.0, PiOver2());
-
-        // Perform the fit.
-        data_graph.Fit("profile_fit");
-        TF1* result = data_graph.GetFunction("profile_fit");
-        *t_0 = result->GetParameter("t_0");
-        *angle = result->GetParameter("psi");
-        *impact_param = impact_distance * Sin(*angle);
-
-        // Return a graph containing the data points with error bars.
-        return data_graph;
-    }
-
-    bool Reconstructor::ApplyTriggering(PhotonCount* data)
-    {
-        vector<vector<vector<bool>>> triggering_matrices = GetTriggeringMatrices(*data);
-        vector<bool> good_frames = vector<bool>();
-        bool triggered_found = false;
-        for (int i = 0; i < data->NBins(); i++)
-        {
-            if (FrameTriggered(i, &triggering_matrices))
-            {
-                triggered_found = true;
-                good_frames.push_back(true);
-            }
-            else
-            {
-                good_frames.push_back(false);
-            }
-        }
-        data->EraseNonTriggered(good_frames);
-        return triggered_found;
-    }
-
-    bool Reconstructor::FrameTriggered(int t, vector<vector<vector<bool>>>* triggers)
-    {
-        return LargestCluster(t, triggers) > trigger_clust;
-    }
-
-    vector<vector<vector<bool>>> Reconstructor::GetTriggeringMatrices(PhotonCount data)
-    {
-        int size = data.Size();
-        vector<vector<vector<bool>>> triggers =
-                vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(data.NBins(), false)));
-        SignalIterator iter = data.Iterator();
-        while (iter.Next())
-        {
-            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data.Direction(&iter));
-            triggers[iter.X()][iter.Y()] =
-                    data.FindTriggers(&iter, toward_ground ? ground_noise : sky_noise, trigger_thresh);
-        }
-        return triggers;
-    }
-
     Shower Reconstructor::Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used)
     {
         SubtractAverageNoise(&data);
@@ -230,9 +130,105 @@ namespace cherenkov_lib
         }
     }
 
+    TGraphErrors
+    Reconstructor::MonocularFit(PhotonCount data, TRotation to_sdp, double* t_0, double* r_p, double* psi)
+    {
+        TGraphErrors data_graph = GetFitGraph(data, to_sdp);
+
+        // The functional form of the time profile.
+        std::stringstream func_string = std::stringstream();
+        func_string << "[0] - [1] / (" << Utility::c_cent << ") * tan(([2] + x) / 2)";
+        TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
+
+        // Set names and initial guesses for parameters.
+        func.SetParNames("t_0", "r_p", "psi");
+        func.SetParameters(0.0, 10e6, PiOver2());
+
+        // Perform the fit.
+        data_graph.Fit("profile_fit");
+        TF1* result = data_graph.GetFunction("profile_fit");
+        *t_0 = result->GetParameter("t_0");
+        *r_p = result->GetParameter("r_p");
+        *psi = result->GetParameter("psi");
+
+        // Return a graph containing the data points with error bars.
+        return data_graph;
+    }
+
+    TGraphErrors
+    Reconstructor::HybridFit(PhotonCount data, TVector3 impact, TRotation to_sdp, double* t_0, double* r_p, double* psi)
+    {
+        TGraphErrors data_graph = GetFitGraph(data, to_sdp);
+
+        // Find the angle of the impact direction with the shower-detector frame x-axis.
+        double impact_distance = impact.Mag();
+        TVector3 rotated_impact = to_sdp * impact;
+
+        // Take the projection into the shower-detector plane.
+        double theta = (rotated_impact - rotated_impact.Z() * rotated_impact).Angle(TVector3(1, 0, 0));
+
+        // The functional form of the time profile.
+        std::stringstream func_string = std::stringstream();
+        func_string << "[0] - " << impact_distance << " * sin([1] - " << theta << ") / (" << Utility::c_cent
+                    << ") * tan(([1] + x) / 2)";
+        TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
+
+        // Set names and initial guesses for parameters.
+        func.SetParNames("t_0", "psi");
+        func.SetParameters(0.0, PiOver2());
+
+        // Perform the fit.
+        data_graph.Fit("profile_fit");
+        TF1* result = data_graph.GetFunction("profile_fit");
+        *t_0 = result->GetParameter("t_0");
+        *psi = result->GetParameter("psi");
+        *r_p = impact_distance * Sin(*psi);
+
+        // Return a graph containing the data points with error bars.
+        return data_graph;
+    }
+
+    bool Reconstructor::FindGroundImpact(PhotonCount data, TVector3* impact)
+    {
+        // Find the brightest pixel below the horizon.
+        TVector3 impact_direction = TVector3();
+        int highest_count = 0;
+        PhotonCount::Iterator iter = data.GetIterator();
+        while (iter.Next())
+        {
+            TVector3 direction = rotate_to_world * data.Direction(&iter);
+            int sum = data.SumBins(&iter);
+            if (sum > highest_count && ground_plane.InFrontOf(direction))
+            {
+                highest_count = sum;
+                impact_direction = direction;
+            }
+        }
+
+        // Find the impact position by extending the direction to the ground.
+        Ray outward_ray = Ray(TVector3(), impact_direction, 0);
+        outward_ray.PropagateToPlane(ground_plane);
+        *impact = outward_ray.Position();
+
+        // Ensure that the number of photons seen in this brightest pixel exceeds some threshold.
+        double poisson = data.RealNoiseRate(ground_noise) * data.NBins();
+        double threshold = 3 * Sqrt(poisson);
+        return highest_count > threshold;
+    }
+
+    void Reconstructor::AddNoise(PhotonCount* data)
+    {
+        PhotonCount::Iterator iter = data->GetIterator();
+        while (iter.Next())
+        {
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
+            data->AddNoise(toward_ground ? ground_noise : sky_noise, &iter, &rng);
+        }
+    }
+
     void Reconstructor::SubtractAverageNoise(PhotonCount* data)
     {
-        SignalIterator iter = data->Iterator();
+        PhotonCount::Iterator iter = data->GetIterator();
         while (iter.Next())
         {
             bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
@@ -242,7 +238,7 @@ namespace cherenkov_lib
 
     void Reconstructor::ThreeSigmaFilter(PhotonCount* data)
     {
-        SignalIterator iter = data->Iterator();
+        PhotonCount::Iterator iter = data->GetIterator();
         while (iter.Next())
         {
             bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
@@ -250,13 +246,34 @@ namespace cherenkov_lib
         }
     }
 
-    TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, TRotation to_sd_plane)
+    bool Reconstructor::ApplyTriggering(PhotonCount* data)
+    {
+        vector<vector<vector<bool>>> triggering_matrices = GetTriggeringMatrices(*data);
+        vector<bool> good_frames = vector<bool>();
+        bool triggered_found = false;
+        for (int i = 0; i < data->NBins(); i++)
+        {
+            if (FrameTriggered(i, &triggering_matrices))
+            {
+                triggered_found = true;
+                good_frames.push_back(true);
+            }
+            else
+            {
+                good_frames.push_back(false);
+            }
+        }
+        data->EraseNonTriggered(good_frames);
+        return triggered_found;
+    }
+
+    TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, TRotation to_sdp)
     {
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
         vector<double> angles = vector<double>();
         vector<double> times = vector<double>();
         vector<double> time_err = vector<double>();
-        SignalIterator iter = data.Iterator();
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
             // Don't rotate to the world because the rotation goes from the detector frame to the shower-detector frame.
@@ -264,7 +281,7 @@ namespace cherenkov_lib
             int bin_sum = data.SumBins(&iter);
             if (!ground_plane.InFrontOf(direction) && bin_sum > 0)
             {
-                angles.push_back((to_sd_plane * direction).Phi());
+                angles.push_back((to_sdp * direction).Phi());
                 times.push_back(data.AverageTime(&iter));
 
                 // Assume the error in each average time is the error in an individual time (bin size) over sqrt(n)
@@ -278,6 +295,26 @@ namespace cherenkov_lib
                                                &(time_err[0]));
         return_val.Sort();
         return return_val;
+    }
+
+    bool Reconstructor::FrameTriggered(int t, vector<vector<vector<bool>>>* triggers)
+    {
+        return LargestCluster(t, triggers) > trigger_clust;
+    }
+
+    vector<vector<vector<bool>>> Reconstructor::GetTriggeringMatrices(PhotonCount data)
+    {
+        int size = data.Size();
+        vector<vector<vector<bool>>> triggers =
+                vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(data.NBins(), false)));
+        PhotonCount::Iterator iter = data.GetIterator();
+        while (iter.Next())
+        {
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data.Direction(&iter));
+            triggers[iter.X()][iter.Y()] =
+                    data.FindTriggers(&iter, toward_ground ? ground_noise : sky_noise, trigger_thresh);
+        }
+        return triggers;
     }
 
     int Reconstructor::LargestCluster(int t, vector<vector<vector<bool>>>* not_counted)
@@ -325,33 +362,5 @@ namespace cherenkov_lib
             count += Visit(i + 1, j - 1, t, not_counted);
             return count;
         }
-    }
-
-    bool Reconstructor::FindGroundImpact(PhotonCount data, TVector3* impact)
-    {
-        // Find the brightest pixel below the horizon.
-        TVector3 impact_direction = TVector3();
-        int highest_count = 0;
-        SignalIterator iter = data.Iterator();
-        while (iter.Next())
-        {
-            TVector3 direction = rotate_to_world * data.Direction(&iter);
-            int sum = data.SumBins(&iter);
-            if (sum > highest_count && ground_plane.InFrontOf(direction))
-            {
-                highest_count = sum;
-                impact_direction = direction;
-            }
-        }
-
-        // Find the impact position by extending the direction to the ground.
-        Ray outward_ray = Ray(TVector3(), impact_direction, 0);
-        outward_ray.PropagateToPlane(ground_plane);
-        *impact = outward_ray.Position();
-
-        // Ensure that the number of photons seen in this brightest pixel exceeds some threshold.
-        double poisson = data.RealNoiseRate(ground_noise) * data.NBins();
-        double threshold = 3 * Sqrt(poisson);
-        return highest_count > threshold;
     }
 }

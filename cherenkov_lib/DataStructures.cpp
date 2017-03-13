@@ -13,82 +13,86 @@ using namespace TMath;
 
 using std::vector;
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
-    SignalIterator::SignalIterator(std::vector<std::vector<bool>> validPixels)
+    PhotonCount::Iterator::Iterator(std::vector<std::vector<bool>> validPixels)
     {
-        this->valid_pixels = validPixels;
+        this->valid = validPixels;
         Reset();
     }
 
-    int SignalIterator::X() const
+    int PhotonCount::Iterator::X() const
     {
-        return x_current;
+        return curr_x;
     }
 
-    int SignalIterator::Y() const
+    int PhotonCount::Iterator::Y() const
     {
-        return y_current;
+        return curr_y;
     }
 
-    bool SignalIterator::Next()
+    bool PhotonCount::Iterator::Next()
     {
         // If the outer vector is empty, then there will never be anything to iterate through.
-        if (valid_pixels.size() == 0) return false;
+        if (valid.size() == 0) return false;
 
         // Loop until we find a valid pixel.
-        bool valid = false;
-        while (!valid)
+        bool found = false;
+        while (!found)
         {
             // If we're at the end of the current column, try to move to the next column. Otherwise, increment y.
-            if (y_current == valid_pixels[x_current].size() - 1)
+            if (curr_y == valid[curr_x].size() - 1)
             {
-                if (x_current == valid_pixels.size() - 1) return false;
-                x_current++;
-                y_current = -1;
+                if (curr_x == valid.size() - 1) return false;
+                curr_x++;
+                curr_y = -1;
             }
             else
             {
-                y_current++;
+                curr_y++;
             }
-            if (y_current > -1) valid = valid_pixels[x_current][y_current];
+            if (curr_y > -1) found = valid[curr_x][curr_y];
         }
         return true;
     }
 
-    void SignalIterator::Reset()
+    void PhotonCount::Iterator::Reset()
     {
-        x_current = 0;
-        y_current = -1;
+        curr_x = 0;
+        curr_y = -1;
     }
 
-    PhotonCount::PhotonCount(int n_pmt_across, double start_time, double time_bin, double pmt_angular_size,
-                             double pmt_linear_size)
+    PhotonCount::PhotonCount(Params params, double start_time)
     {
-        // Copy parameters.
-        this->n_pixels = n_pmt_across;
+        // Copy parameters
+        this->n_pixels = params.n_pixels;
+        this->bin_size = params.bin_size;
+        this->angular_size = params.angular_size;
+        this->linear_size = params.linear_size;
         this->start_time = start_time;
-        this->bin_size = time_bin;
-        this->pmt_angular_size = pmt_angular_size;
-        this->pmt_linear_size = pmt_linear_size;
 
-        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are equalized.
+        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are equalized
         last_time = start_time;
         equalized = true;
 
         // Initialize the photon count and valid pixel structures.
-        photon_counts = vector<vector<vector<int>>>();
-        valid_pixels = vector<vector<bool>>();
+        counts = vector<vector<vector<int>>>();
+        valid = vector<vector<bool>>();
         for (int i = 0; i < n_pixels; i++)
         {
-            photon_counts.push_back(vector<vector<int>>());
-            valid_pixels.push_back(vector<bool>());
-            for (int j = 0; j < n_pmt_across; j++)
+            counts.push_back(vector<vector<int>>());
+            valid.push_back(vector<bool>());
+            for (int j = 0; j < n_pixels; j++)
             {
-                photon_counts[i].push_back(vector<int>());
-                valid_pixels[i].push_back(ValidPixel(i, j));
+                counts[i].push_back(vector<int>());
+                valid[i].push_back(ValidPixel(i, j));
             }
         }
+    }
+
+    vector<vector<bool>> PhotonCount::GetValid()
+    {
+        return valid;
     }
 
     int PhotonCount::Size()
@@ -113,108 +117,111 @@ namespace cherenkov_lib
 
     int PhotonCount::Bin(double time)
     {
-        return Floor((time - start_time) / bin_size);
+        return (int) Floor((time - start_time) / bin_size);
+    }
+
+    TVector3 PhotonCount::Direction(const Iterator* iter)
+    {
+        return Direction(iter->X(), iter->Y());
+    }
+
+    vector<int> PhotonCount::Signal(const Iterator* iter)
+    {
+        return counts[iter->X()][iter->Y()];
+    }
+
+    int PhotonCount::SumBins(const Iterator* iter)
+    {
+        int sum = 0;
+        for (int count : counts[iter->X()][iter->Y()]) sum += count;
+        return sum;
+    }
+
+    double PhotonCount::AverageTime(const Iterator* iter)
+    {
+        int sum = SumBins(iter);
+        double average = 0;
+        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
+        {
+            average += Time(i) * counts[iter->X()][iter->Y()][i] / (double) sum;
+        }
+        return average;
+    }
+
+    PhotonCount::Iterator PhotonCount::GetIterator()
+    {
+        return Iterator(valid);
     }
 
     void PhotonCount::AddPhoton(double time, TVector3 direction, double thinning)
     {
-        // If the time is earlier than the time of the first index, we would run into time binning errors.
         if (time < start_time) return;
 
-        // The angle of the yz projection with the z axis
+        // Determine the indices of the pixel based on its orientation
         double elevation = ATan(direction.Y() / direction.Z());
-
-        // The angle of the xz projection with the z axis
         double azimuth = ATan(direction.X() / direction.Z());
+        int y_index = (int) (Floor(elevation / angular_size) + n_pixels / 2);
+        int x_index = (int) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
 
-        // The number of photomultipliers across is equal to the size of the data container.
-        int y_index = Floor(elevation / pmt_angular_size) + n_pixels / 2;
-        int x_index = Floor(azimuth / (pmt_angular_size * Cos(elevation))) + n_pixels / 2;
-
-        // If the location is valid, add the pixel to the underlying data structure.
+        // If the location is valid, add the pixel to the underlying data structure
         if (ValidPixel(x_index, y_index))
         {
-            // Make sure the vector is big enough.
             int time_slot = Bin(time);
             ExpandVector(x_index, y_index, time_slot + 1);
-
-            // Add the photon.
-            photon_counts[x_index][y_index][time_slot] += thinning;
-
-            // Keep track of the latest photon seen.
+            counts[x_index][y_index][time_slot] += thinning;
             if (time > last_time) last_time = time;
-
-            // We may have disrupted the equalization of the channels.
             equalized = false;
         }
     }
 
-    void PhotonCount::EqualizeTimeSeries()
-    {
-        if (equalized) return;
-        SignalIterator iter = Iterator();
-        while (iter.Next()) ExpandVector(iter.X(), iter.Y(), NBins());
-        equalized = true;
-    }
-
-    void PhotonCount::AddNoise(double noise_rate, const SignalIterator* current, TRandom3* rng)
+    void PhotonCount::AddNoise(double noise_rate, const Iterator* iter, TRandom3* rng)
     {
         // Ensure all channels have the same length.
-        EqualizeTimeSeries();
+        Equalize();
 
         // Randomly determine the number of photons in each bin according to the Poisson distribution.
         double expected_photons = RealNoiseRate(noise_rate);
         for (int i = 0; i < NBins(); i++)
         {
-            photon_counts[current->X()][current->Y()][i] += rng->Poisson(expected_photons);
+            counts[iter->X()][iter->Y()][i] += rng->Poisson(expected_photons);
         }
     }
 
-    void PhotonCount::SubtractNoise(double noise_rate, const SignalIterator* current)
+    void PhotonCount::SubtractNoise(double noise_rate, const Iterator* iter)
     {
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
         int expected_photons = (int) RealNoiseRate(noise_rate);
-        for (int i = 0; i < photon_counts[current->X()][current->Y()].size(); i++)
+        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
         {
-            photon_counts[current->X()][current->Y()][i] -= expected_photons;
+            counts[iter->X()][iter->Y()][i] -= expected_photons;
         }
     }
 
-    double PhotonCount::RealNoiseRate(double universal_rate)
-    {
-        // Calculate the number of noise photons per second from the number of photons per second per steradian.
-        double solid_angle = Sq(pmt_angular_size);
-        double pixel_rate = universal_rate * solid_angle;
-
-        // Determine the mean number of Poisson events in a single time bin.
-        return bin_size * pixel_rate;
-    }
-
-    void PhotonCount::ClearNoise(const SignalIterator* iter, double noise_rate, double hold_thresh)
+    void PhotonCount::ClearNoise(const Iterator* iter, double noise_rate, double hold_thresh)
     {
         // Determine the minimum threshold for non-noise signals.
         double real_noise = RealNoiseRate(noise_rate);
         double thresh = hold_thresh * Sqrt(real_noise);
 
         // Zero any measurements which are below the noise threshold.
-        for (int i = 0; i < photon_counts[iter->X()][iter->Y()].size(); i++)
+        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
         {
-            if (photon_counts[iter->X()][iter->Y()][i] < thresh)
+            if (counts[iter->X()][iter->Y()][i] < thresh)
             {
-                photon_counts[iter->X()][iter->Y()][i] = 0;
+                counts[iter->X()][iter->Y()][i] = 0;
             }
         }
     }
 
-    vector<bool> PhotonCount::FindTriggers(const SignalIterator* current, double noise_rate, double trigger_thresh)
+    vector<bool> PhotonCount::FindTriggers(const Iterator* iter, double noise_rate, double trigger_thresh)
     {
         // Determine the minimum threshold for triggering.
         double real_noise = RealNoiseRate(noise_rate);
         double thresh = trigger_thresh * Sqrt(real_noise);
 
         // Find all bins in which the count exceeded the triggering threshold.
-        vector<int> data = photon_counts[current->X()][current->Y()];
+        vector<int> data = counts[iter->X()][iter->Y()];
         vector<bool> triggers = vector<bool>();
         for (int i = 0; i < data.size(); i++) triggers.push_back(data[i] > thresh);
         return triggers;
@@ -222,59 +229,39 @@ namespace cherenkov_lib
 
     void PhotonCount::EraseNonTriggered(vector<bool> good_bins)
     {
-        SignalIterator iter = Iterator();
+        Iterator iter = GetIterator();
         while (iter.Next())
         {
-            for (int i = 0; i < photon_counts[iter.X()][iter.Y()].size(); i++)
+            for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
             {
-                if (!good_bins.at(i)) photon_counts[iter.X()][iter.Y()][i] = 0;
+                if (!good_bins.at(i)) counts[iter.X()][iter.Y()][i] = 0;
             }
         }
     }
 
-    TVector3 PhotonCount::Direction(const SignalIterator* current)
+    double PhotonCount::RealNoiseRate(double universal_rate)
     {
-        return Direction(current->X(), current->Y());
+        // Calculate the number of noise photons per second from the number of photons per second per steradian.
+        double solid_angle = Sq(angular_size);
+        double pixel_rate = universal_rate * solid_angle;
+
+        // Determine the mean number of Poisson events in a single time bin.
+        return bin_size * pixel_rate;
     }
 
-    vector<int> PhotonCount::Signal(const SignalIterator* current)
+    void PhotonCount::Equalize()
     {
-        return photon_counts[current->X()][current->Y()];
-    }
-
-    vector<vector<bool>> PhotonCount::GetValid()
-    {
-        return valid_pixels;
-    }
-
-    SignalIterator PhotonCount::Iterator()
-    {
-        return SignalIterator(valid_pixels);
-    }
-
-    int PhotonCount::SumBins(const SignalIterator* current)
-    {
-        int sum = 0;
-        for (int count : photon_counts[current->X()][current->Y()]) sum += count;
-        return sum;
-    }
-
-    double PhotonCount::AverageTime(const SignalIterator* iter)
-    {
-        int sum = SumBins(iter);
-        double average = 0;
-        for (int i = 0; i < photon_counts[iter->X()][iter->Y()].size(); i++)
-        {
-            average += Time(i) * photon_counts[iter->X()][iter->Y()][i] / (double) sum;
-        }
-        return average;
+        if (equalized) return;
+        Iterator iter = GetIterator();
+        while (iter.Next()) ExpandVector(iter.X(), iter.Y(), NBins());
+        equalized = true;
     }
 
     bool PhotonCount::ValidPixel(int x_index, int y_index)
     {
         int n_half = n_pixels / 2;
-        double arc_length = n_half * pmt_linear_size;
-        double angle = n_half * pmt_angular_size;
+        double arc_length = n_half * linear_size;
+        double angle = n_half * angular_size;
         double radius = arc_length / angle;
         double max_dev = radius * Sin(angle);
         TVector3 direction = Direction(x_index, y_index) * radius;
@@ -285,17 +272,16 @@ namespace cherenkov_lib
     {
         // Reverse the operations of AddPhoton. Add 0.5 to account for the Floor() operation.
         double pixels_up = (y_index - n_pixels / 2.0 + 0.5);
-        double elevation = pixels_up * pmt_angular_size;
+        double elevation = pixels_up * angular_size;
         double pixels_horiz = (x_index - n_pixels / 2.0 + 0.5);
-        double azimuth = pixels_horiz * pmt_angular_size * Cos(elevation);
+        double azimuth = pixels_horiz * angular_size * Cos(elevation);
 
-        // TODO: Check that these rotations are in the correct direction (perhaps with unit testing).
         // A positive azimuth should correspond to a positive x component.
         return TVector3(Cos(elevation) * Sin(azimuth), Sin(elevation), Cos(elevation) * Cos(azimuth));
     }
 
-    void PhotonCount::ExpandVector(int x, int y, int size)
+    void PhotonCount::ExpandVector(int x_index, int y_index, int size)
     {
-        if (photon_counts[x][y].size() < size) photon_counts[x][y].resize(size, 0);
+        if (counts[x_index][y_index].size() < size) counts[x_index][y_index].resize(size, 0);
     }
 }

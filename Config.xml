@@ -2,228 +2,39 @@
 
 <config>
 
-    <!-- Parameters related to the behavior of the simulation -->
-    <depth_step desc="The slant depth of each step in the shower propagation" unit="g/cm^2">
-        0.3
-    </depth_step>
-    <time_bin desc="The size of the time bins for the photons collected" unit="s">
-        100e-9
-    </time_bin>
-    <fluor_thin desc="The rate of computational thinning for fluorescence photons" unit="null">
-        1
-    </fluor_thin>
-    <ckv_thin desc="The rate of computational thinning for Cherenkov photons" unit="null">
-        1
-    </ckv_thin>
+    <simulation note="Defines computational behavior of the simulation">
+        <depth_step unit="g/cm^2">0.3</depth_step>
+        <time_bin unit="s">100e-9</time_bin>
+        <fluor_thin unit="null">1</fluor_thin>
+        <ckv_thin unit="null">1</ckv_thin>
+    </simulation>
 
-    <!-- Parameters relating to the position and orientation of the detector relative to its surroundings -->
-    <ground_normal desc="A unit vector normal to the ground plane" unit="(null, null, null)">
-        (0, 0, 1)
-    </ground_normal>
-    <ground_point desc="A point on the ground plane" unit="(cm, cm, cm)">
-        (0, 0, -20000)
-    </ground_point>
-    <elevation_angle desc="The angle of the detector axis with respect to the horizon" unit="rad">
-        0.12
-    </elevation_angle>
+    <surroundings note="The orientation of the surroundings">
+        <ground_normal unit="(null, null, null)">(0, 0, 1)</ground_normal>
+        <ground_point unit="(cm, cm, cm)">(0, 0, -20000)</ground_point>
+        <elevation_angle unit="rad">0.12</elevation_angle>
+        <detect_elevation unit="cm">141400</detect_elevation>
+    </surroundings>
 
-    <!-- Parameters used to generate random showers in the Monte Carlo simulation -->
-    <energy_pow desc="The exponent in the negative power law of the energy distribution" unit="null">
-        3
-    </energy_pow>
-    <e_min desc="The minimum shower energy to simulate" unit="eV">
-        1.0e17
-    </e_min>
-    <e_max desc="The maximum shower energy to simulate" unit="eV">
-        1.0e21
-    </e_max>
-    <impact_min desc="The minimum impact parameter to simulate" unit="cm">
-        1.0e4
-    </impact_min>
-    <impact_max desc="The maximum impact parameter to simulate" unit="cm">
-        1.0e6
-    </impact_max>
-    <first_interact desc="The parameter x_0 in the GH profile (note that this may be negative)" unit="g/cm^2">
-        -70
-    </first_interact>
-    <start_tracking
-            desc="The depth where the simulation begins tracking the shower (this must be positive to make any physical sense)"
-            unit="g/cm^2">
-        50
-    </start_tracking>
-    <n_max_ratio desc="The constant used to determine the size of the shower at maximum from the primary energy"
-                 unit="eV">
-        1.3e9
-    </n_max_ratio>
+    <monte_carlo note="Defines properties of randomly generated showers">
+        <e_min unit="eV">1.0e17</e_min>
+        <e_max unit="eV">1.0e21</e_max>
+        <impact_min unit="cm">1.0e5</impact_min>
+        <impact_max unit="cm">1.0e6</impact_max>
+        <start_tracking unit="g/cm^2" note="Must be positive">50.0</start_tracking>
+    </monte_carlo>
 
-    <!-- Parameters defining properties of the atmosphere -->
-    <scale_height desc="The exponential atmosphere scale height" unit="cm">
-        841300
-        <!-- 799000 previously used based on ideal gas calculation -->
-    </scale_height>
-    <rho_sea desc="The density of the atmosphere at sea level" unit="g/cm^3">
-        0.001225
-    </rho_sea>
-    <detect_elevation desc="The elevation of the detector" unit="cm">
-        141400
-    </detect_elevation>
-    <atmosphere_temp desc="The constant temperature of the exponential atmosphere" unit="K">
-        273
-    </atmosphere_temp>
-    <refrac_sea desc="The index of refraction of air at sea level, proportional to the local atmospheric density"
-                unit="null">
-        1.00029
-    </refrac_sea>
+    <detector note="Properties of the optics and detector">
+        <mirror_radius unit="cm">400.0</mirror_radius>
+        <f_number unit="null">1.0</f_number>
+        <field_of_view unit="rad">0.3</field_of_view>
+        <n_pmt_across unit="null" note="Must be even">200</n_pmt_across>
+    </detector>
 
-    <!-- Parameters defining properties of the detector optics -->
-    <refrac_lens desc="The index of refraction for the corrector plate" unit="null">
-        1.52
-    </refrac_lens>
-    <mirror_radius desc="The radius of curvature of the detector mirror" unit="cm">
-        400
-    </mirror_radius>
-    <f_number desc="The f number of the detector (ratio of focal length to stop diameter)" unit="null">
-        1.0
-    </f_number>
-    <field_of_view desc="The telescope field of view" unit="rad">
-        0.3
-    </field_of_view>
-    <n_pmt_across desc="The width/height of the photomultiplier grid in number of photomultipliers (should be even)"
-                  unit="null">
-        200
-    </n_pmt_across>
-
-    <!-- Parameters in the GH profile -->
-    <gh_lambda desc="The lambda parameter in the GH distribution" unit="g/cm^2">
-        70
-    </gh_lambda>
-
-    <!-- Parameters used when calculating the fluorescence yield -->
-    <fluor_a1 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^2/g">
-        890
-    </fluor_a1>
-    <fluor_a2 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^2/g">
-        550
-    </fluor_a2>
-    <fluor_b1 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^3/(g*K^1/2)">
-        1850
-    </fluor_b1>
-    <fluor_b2 desc="A parameter in the expression for fluorescence yield from Kakimoto" unit="cm^3/(g*K^1/2)">
-        6500
-    </fluor_b2>
-    <dep_1_4 desc="The energy deposit rate of a single electron with energy 1.4 MeV" unit="MeV*cm^2/g">
-        1.6
-    </dep_1_4>
-
-    <!-- Parameters used when calculating the effective ionization loss rate -->
-    <ion_c1 desc="A parameter in the expression for the effective ionization loss rate" unit="MeV*cm^2/g">
-        3.90883
-    </ion_c1>
-    <ion_c2 desc="A parameter in the expression for the effective ionization loss rate" unit="null">
-        1.05301
-    </ion_c2>
-    <ion_c3 desc="A parameter in the expression for the effective ionization loss rate (unitless)" unit="null">
-        9.91717
-    </ion_c3>
-    <ion_c4 desc="A parameter in the expression for the effective ionization loss rate (unitless)" unit="MeV*cm^2/g">
-        2.41715
-    </ion_c4>
-    <ion_c5 desc="A parameter in the expression for the effective ionization loss rate (unitless)" unit="MeV*cm^2/g">
-        0.13180
-    </ion_c5>
-
-    <!-- Parameters used when calculating theta_c in the Cherenkov angular distribution -->
-    <ckv_k1 desc="The leading constant for theta_c in the Cherenkov angular distribution (Stratton 4.17)"
-            unit="MeV^-ckv_k2">
-        0.83
-    </ckv_k1>
-    <ckv_k2 desc="The constant in the exponent for theta_c in the Cherenkov angular distrubution (Stratton 4.17)"
-            unit="null">
-        -0.67
-    </ckv_k2>
-
-    <!-- Parameters used when calculating the Cherenkov yield -->
-    <lambda_min desc="The minimum wavelength of Cherenkov photons being considered" unit="cm">
-        3e-5
-    </lambda_min>
-    <lambda_max desc="The maximum wavelength of Cherenkov photons being considered" unit="cm">
-        4e-5
-    </lambda_max>
-
-    <!-- Parameters in the electron energy spectrum -->
-    <fe_a11 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
-        6.42522
-    </fe_a11>
-    <fe_a12 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
-        1.53183
-    </fe_a12>
-    <fe_a21 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
-        168.168
-    </fe_a21>
-    <fe_a22 desc="A parameter in the expression for the electron energy spectrum (Nerling Eq 18-21)" unit="MeV">
-        42.1368
-    </fe_a22>
-    <fe_k0 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
-           unit="MeV^-(age + 1)">
-        1.45098e-1
-    </fe_k0>
-    <fe_k1 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
-           unit="null">
-        6.20114
-    </fe_k1>
-    <fe_k2 desc="A parameter used to calculate the normalization constant in the electron spectrum (Nerling Eq 20)"
-           unit="null">
-        -5.96851e-1
-    </fe_k2>
-
-    <!-- Physics constants -->
-    <mass_e desc="The mass of the electron" unit="MeV/c^2">
-        0.510998928
-    </mass_e>
-    <fine_struct desc="The fine structure constant" unit="null">
-        0.0072973525664
-    </fine_struct>
-
-    <!-- Parameters defining the amount of night sky background noise -->
-    <sky_noise desc="Average number of noise photons above horizon" unit="photoelectrons/(cm^2*s*sr)">
-        4.924e6
-    </sky_noise>
-    <ground_noise desc="Average number of noise photons below horizon" unit="photoelectrons/(cm^2*s*sr)">
-        4.924e5
-    </ground_noise>
-
-    <!-- Parameters used when determining the depth of the shower maximum -->
-    <x_max_1 desc="The first term in the expression for the depth of the shower maximum" unit="g/cm^2">
-        725
-    </x_max_1>
-    <x_max_2 desc="The value multiplying the second term in the expression for depth at maximum" unit="g/cm^2">
-        55
-    </x_max_2>
-    <x_max_3 desc="The value following log(E) in the expression for depth at maximum" unit="null">
-        18
-    </x_max_3>
-
-    <!-- Number of standard deviations used when applying triggering logic -->
-    <trigger_thresh desc="The number of standard deviations required for a pixel to contribute to triggering"
-                    unit="null">
-        6.0
-    </trigger_thresh>
-    <hold_thresh desc="The number of standard deviations required for a pixel to not be thrown out" unit="null">
-        3.0
-    </hold_thresh>
-    <trigger_clust desc="The number of connected, triggered tubes required for a frame to be triggered" unit="null">
-        5
-    </trigger_clust>
-
-    <!-- Parameters which describe inefficiencies in the equipment -->
-    <mirror_reflect desc="The fraction of incident photons which are reflected from the mirror" unit="null">
-        0.80
-    </mirror_reflect>
-    <filter_transmit desc="The fraction of incident photons which are transmitted through the filter" unit="null">
-        1.0
-    </filter_transmit>
-    <quantum_eff desc="The fraction of photons incident on a photomultiplier which result in a signal" unit="null">
-        1.0
-    </quantum_eff>
+    <triggering note="Thresholds in filtering and triggering">
+        <trigger_thresh unit="null">6.0</trigger_thresh>
+        <hold_thresh unit="null">3.0</hold_thresh>
+        <trigger_clust unit="null">5</trigger_clust>
+    </triggering>
 
 </config>

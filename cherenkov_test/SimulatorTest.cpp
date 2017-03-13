@@ -13,11 +13,9 @@
 #include "MonteCarlo.h"
 #include "Analysis.h"
 
-using namespace cherenkov_lib;
-
 using boost::property_tree::ptree;
 
-namespace cherenkov_test
+namespace cherenkov_simulator
 {
     class SimulatorTest : public testing::Test
     {
@@ -29,7 +27,7 @@ namespace cherenkov_test
 
         virtual void SetUp()
         {
-            ptree config = Utility::ParseXMLFile("../../Config.xml").get_child("config");
+            ptree config = Utility::ParseXMLFile("../../../Config.xml").get_child("config");
             simulator = new Simulator(config);
             monte_carlo = new MonteCarlo(config);
         }
@@ -51,7 +49,7 @@ namespace cherenkov_test
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Make some graphics and write them to a file.
-        TFile file("../../cherenkov_test/straight_shower_sim.root", "RECREATE");
+        TFile file("StraightShowerSim.root", "RECREATE");
         Analysis::MakeProfileGraph(data).Write("straight_shower_graph");
         Analysis::MakeSumMap(data).Write("straight_shower_map");
     }
@@ -66,7 +64,7 @@ namespace cherenkov_test
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Draw a map of impacts.
-        TFile file("../../cherenkov_test/angle_shower_sim.root", "RECREATE");
+        TFile file("AngleShowerSim.root", "RECREATE");
         Analysis::MakeProfileGraph(data).Write("angle_shower_graph");
         Analysis::MakeSumMap(data).Write("angle_shower_map");
     }
@@ -78,7 +76,7 @@ namespace cherenkov_test
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Make some graphics and write them to a file.
-        TFile file("../../cherenkov_test/whole_profile_sim.root", "RECREATE");
+        TFile file("WholeProfileSim.root", "RECREATE");
         Analysis::MakeProfileGraph(data).Write("whole_shower_graph");
         Analysis::MakeSumMap(data).Write("whole_shower_map");
     }

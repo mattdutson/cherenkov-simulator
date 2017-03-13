@@ -4,23 +4,23 @@
 //
 // Contains a class used to generate random showers for the Monte Carlo simulation.
 
-#ifndef monte_carlo_h
-#define monte_carlo_h
+#ifndef MONTE_CARLO_H
+#define MONTE_CARLO_H
 
 #include <boost/property_tree/ptree.hpp>
+#include <TF1.h>
 #include <TRandom3.h>
 
-#include "Simulator.h"
+#include "Geometric.h"
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
     class MonteCarlo
     {
     public:
 
         /*
-         * Takes a parsed XML object and attempts to extract required monte carlo parameters. If this fails, an
-         * exception is thrown which specifies the name of the missing parameter.
+         * Constructs the MonteCarlo from values in the configuration tree.
          */
         MonteCarlo(boost::property_tree::ptree config_file);
 
@@ -31,12 +31,6 @@ namespace cherenkov_lib
         Shower GenerateShower();
 
         /*
-         * Constructs a shower object given a user-defined direction, impact parameter, and impact angle (the angle of
-         * the point of closest approach).
-         */
-        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle);
-
-        /*
          * Constructs a shower object given a user-defined direction, impact parameter, impact angle (the angle of the
          * point of closest approach), energy, and depth of first interaction.
          */
@@ -44,29 +38,32 @@ namespace cherenkov_lib
 
     private:
 
-        // The axis of the detector
-        TVector3 detector_axis;
+        // Miscellaneous Monte Carlo parameters - eV
+        constexpr static double n_max_ratio = 1.39e9;
+        constexpr static double energy_pow = 3.0;
 
-        // Parameters used to generate random showers in the Monte Carlo simulation
-        TF1 energy_distribution;
-        TF1 cosine_distribution;
-        TF1 impact_distribution;
-        double first_interact;
-        double start_tracking;
-        double n_max_ratio;
+        // Parameters used when determining the depth of the shower maximum - cgs
+        constexpr static double x_max_1 = 725.0;
+        constexpr static double x_max_2 = 55.0;
+        constexpr static double x_max_3 = 18.0;
 
-        // A general-purpose random number generator
-        TRandom3 rng;
+        // Atmospheric parameters - cgs
+        constexpr static double scale_height = 841300;
+        constexpr static double rho_sea = 0.001225;
+        constexpr static double refrac_sea = 1.00029;
 
-        // Atmospheric parameters
-        double scale_height;
+        // Non-constant atmospheric parameters (depend on the elevation) - cgs
         double rho_0;
         double delta_0;
 
-        // Parameters used when determining the depth of the shower maximum
-        double x_max_1;
-        double x_max_2;
-        double x_max_3;
+        // Parameters used to generate random showers in the Monte Carlo simulation - eV, cgs
+        TF1 energy_distribution;
+        TF1 cosine_distribution;
+        TF1 impact_distribution;
+        double start_tracking;
+
+        // A general-purpose random number generator
+        TRandom3 rng;
     };
 }
 

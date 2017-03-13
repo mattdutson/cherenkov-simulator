@@ -11,9 +11,8 @@
 #include "Helper.h"
 
 using namespace TMath;
-using namespace cherenkov_lib;
 
-namespace cherenkov_test
+namespace cherenkov_simulator
 {
     /*
      * Test the default constructor for a plane object.

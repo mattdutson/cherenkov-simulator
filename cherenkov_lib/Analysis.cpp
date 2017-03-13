@@ -9,58 +9,27 @@
 
 using std::vector;
 
-namespace cherenkov_lib
+namespace cherenkov_simulator
 {
-    void
-    Analysis::CollapseToProfile(PhotonCount data, Plane s_d_plane, TVector3 shower_axis, vector<double>* angles,
-                                vector<double>* counts)
+    TGraph Analysis::MakeProfileGraph(PhotonCount data)
     {
-        // TODO: Figure out a way to bin photon counts in a way that doesn't lead to aliasing.
-        *angles = vector<double>();
-        *counts = vector<double>();
-        SignalIterator iter = data.Iterator();
-        TVector3 norm = s_d_plane.Normal();
-        TVector3 axis_project = shower_axis - shower_axis.Dot(norm) * norm;
-        while (iter.Next())
-        {
-            TVector3 direction = data.Direction(&iter);
-            TVector3 projection = direction - direction.Dot(norm) * norm;
-            double angle;
-            if (Utility::Above(axis_project, projection))
-            {
-                angle = projection.Angle(axis_project);
-            }
-            else
-            {
-                angle = -projection.Angle(axis_project);
-            }
-            angles->push_back(angle);
-            counts->push_back(data.SumBins(&iter));
-        }
+        vector<double> times, counts;
+        SuperimposeTimes(data, &times, &counts);
+        return TGraph(times.size(), &(times[0]), &(counts[0]));
     }
 
-    void Analysis::SuperimposeTimes(PhotonCount data, vector<double>* times, vector<double>* counts)
+    TH2I Analysis::MakeSumMap(PhotonCount data)
     {
-        // Initialize the structure and find x-axis labels (times).
-        *times = vector<double>();
-        *counts = vector<double>();
-        for (int i = 0; i < data.NBins(); i++)
-        {
-            times->push_back(data.Time(i));
-            counts->push_back(0.0);
-        }
-
-        // Iterate over all pixels and add their time signals.
-        SignalIterator iter = data.Iterator();
+        int size = data.Size();
+        TH2I histo = TH2I("Sums", "Sums", size, 0, size, size, 0, size);
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            vector<int> signal = data.Signal(&iter);
-            for (int i = 0; i < signal.size(); i++)
-            {
-                counts->at(i) += signal[i];
-            }
+            // The underflow seems to be defined differently for the TH1I than for the TH1C
+            histo.Fill(iter.X(), iter.Y(), data.SumBins(&iter));
         }
-    };
+        return histo;
+    }
 
     TH2C Analysis::GetValidMap(PhotonCount data)
     {
@@ -82,23 +51,26 @@ namespace cherenkov_lib
         return histo;
     }
 
-    TGraph Analysis::MakeProfileGraph(PhotonCount data)
+    void Analysis::SuperimposeTimes(PhotonCount data, vector<double>* times, vector<double>* counts)
     {
-        vector<double> times, counts;
-        SuperimposeTimes(data, &times, &counts);
-        return TGraph(times.size(), &(times[0]), &(counts[0]));
-    }
+        // Initialize the structure and find x-axis labels (times).
+        *times = vector<double>();
+        *counts = vector<double>();
+        for (int i = 0; i < data.NBins(); i++)
+        {
+            times->push_back(data.Time(i));
+            counts->push_back(0.0);
+        }
 
-    TH2I Analysis::MakeSumMap(PhotonCount data)
-    {
-        int size = data.Size();
-        TH2I histo = TH2I("Sums", "Sums", size, 0, size, size, 0, size);
-        SignalIterator iter = data.Iterator();
+        // Iterate over all pixels and add their time signals.
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            // The underflow seems to be defined differently for the TH1I than for the TH1C
-            histo.Fill(iter.X(), iter.Y(), 1.0);
+            vector<int> signal = data.Signal(&iter);
+            for (int i = 0; i < signal.size(); i++)
+            {
+                counts->at(i) += signal[i];
+            }
         }
-        return histo;
-    }
+    };
 }
