@@ -102,7 +102,7 @@ namespace cherenkov_simulator
 
     int PhotonCount::NBins()
     {
-        return Bin(last_time) + 1;
+        return start_time == last_time ? 0 : Bin(last_time) + 1;
     }
 
     double PhotonCount::BinSize()

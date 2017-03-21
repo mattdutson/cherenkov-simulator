@@ -12,6 +12,8 @@
 #include <TRandom3.h>
 
 #include "Geometric.h"
+#include "Simulator.h"
+#include "Reconstructor.h"
 
 namespace cherenkov_simulator
 {
@@ -23,6 +25,11 @@ namespace cherenkov_simulator
          * Constructs the MonteCarlo from values in the configuration tree.
          */
         MonteCarlo(boost::property_tree::ptree config_file);
+
+        /*
+         * Performs the overall Monte Carlo simulation and writes results to the console.
+         */
+        void PerformMonteCarlo();
 
         /*
          * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and
@@ -62,8 +69,15 @@ namespace cherenkov_simulator
         TF1 impact_distribution;
         double start_tracking;
 
+        // The number of showers to simulate when PerformMonteCarlo is called
+        int n_showers;
+
         // A general-purpose random number generator
         TRandom3 rng;
+
+        // The Simulator and Reconstructor objects used when PerformMonteCarlo is called
+        Simulator simulator;
+        Reconstructor reconstructor;
     };
 }
 

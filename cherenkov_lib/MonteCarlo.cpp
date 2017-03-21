@@ -7,12 +7,16 @@
 #include <TMath.h>
 
 #include "MonteCarlo.h"
+#include "Utility.h"
 
 using namespace TMath;
 
+using std::cout;
+using std::endl;
+
 namespace cherenkov_simulator
 {
-    MonteCarlo::MonteCarlo(boost::property_tree::ptree config)
+    MonteCarlo::MonteCarlo(boost::property_tree::ptree config): simulator(config), reconstructor(config)
     {
         // The distribution of shower energies
         std::string energy_formula = "x^(-" + std::to_string(energy_pow) + ")";
@@ -21,7 +25,7 @@ namespace cherenkov_simulator
         energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
 
         // The distribution of shower vertical directions
-        cosine_distribution = TF1("cosine", "cos(x)", -TMath::Pi() / 2, TMath::Pi() / 2);
+        cosine_distribution = TF1("cosine", "cos(x)", 0.0, TMath::Pi() / 2);
 
         // The Monte Carlo distribution of impact parameters
         double impact_min = config.get<double>("monte_carlo.impact_min");
@@ -36,14 +40,58 @@ namespace cherenkov_simulator
         rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
         delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
 
+        // The number of showers to simulate in PerformMonteCarlo
+        n_showers = config.get<int>("simulation.n_showers");
+
         // The random number generator
         rng = TRandom3();
     }
 
+    void MonteCarlo::PerformMonteCarlo()
+    {
+        cout << "Running simulation";
+        int n_triggered = 0;
+        int n_ground_used = 0;
+        double mono_rp_err = 0.0, ckv_rp_err = 0.0;
+        double mono_psi_err = 0.0, ckv_psi_err = 0.0;
+        for (int i = 0; i < n_showers; i++)
+        {
+            cout << ".";
+            Shower shower = GenerateShower();
+            PhotonCount data = simulator.SimulateShower(shower);
+            reconstructor.AddNoise(&data);
+            bool triggered, ground_used;
+            Shower mono_shower = reconstructor.Reconstruct(data, false, &triggered, &ground_used);
+            Shower ckv_shower = reconstructor.Reconstruct(data, true, &triggered, &ground_used);
+            if (triggered)
+            {
+                n_triggered++;
+                mono_rp_err += Utility::PercentError(shower.Position().Mag(), mono_shower.Position().Mag());
+                mono_psi_err += shower.Direction().Angle(mono_shower.Direction());
+            }
+            if (triggered && ground_used)
+            {
+                n_ground_used++;
+                ckv_rp_err += Utility::PercentError(shower.Position().Mag(), ckv_shower.Position().Mag());
+                ckv_psi_err += shower.Direction().Angle(ckv_shower.Direction());
+            }
+        }
+        mono_psi_err /= (double) n_triggered;
+        ckv_psi_err /= (double) n_ground_used;
+        mono_rp_err /= (double) n_triggered;
+        ckv_rp_err /= (double) n_ground_used;
+
+        cout << endl << "Number simulated: \t" << n_showers << endl;
+        cout << "Number triggered: \t" << n_triggered << endl;
+        cout << "Number with ground point found: \t" << n_ground_used << endl;
+        cout << "Mean monocular impact error: \t" << mono_rp_err << " %" << endl;
+        cout << "Mean Cherenkov impact error: \t" << ckv_rp_err << " %" << endl;
+        cout << "Mean monocular angle error: \t" << mono_psi_err << " rad" << endl;
+        cout << "Mean Cherenkov angle error: \t" << ckv_psi_err << " rad" << endl;
+    }
+
     Shower MonteCarlo::GenerateShower()
     {
-        double energy = energy_distribution.GetRandom();
-
         // Determine the direction of the shower and its position relative to the detector. The angle of the shower
         // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
         double theta = cosine_distribution.GetRandom();
@@ -55,7 +103,7 @@ namespace cherenkov_simulator
         // Find the Cartesian shower axis vector. This vector is in the world frame (z is normal to the surface of the
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
         // local ground.
-        TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), cos(theta));
+        TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), -cos(theta));
         return GenerateShower(shower_axis, impact_param, rng.Uniform(TwoPi()), energy_distribution.GetRandom());
     }
 

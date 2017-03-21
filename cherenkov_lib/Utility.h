@@ -29,12 +29,6 @@ namespace cherenkov_simulator
         static TVector3 ToVector(std::string s);
 
         /*
-         * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
-         * returned.
-         */
-        static TVector3 RandNormal(TVector3 vec, TRandom3* rng);
-
-        /*
          * Reads the file with the specified filename and parses it to XML. Throws exceptions with an informative
          * message if there is a problem reading or parsing the XML file
          */
@@ -51,6 +45,12 @@ namespace cherenkov_simulator
         static TRotation MakeRotation(double elevation_angle);
 
         /*
+         * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
+         * returned.
+         */
+        static TVector3 RandNormal(TVector3 vec, TRandom3* rng);
+
+        /*
          * Returns a random, linearly distributed value constrained between zero and some maximum.
          */
         static double RandLinear(TRandom3* rng, double max);
@@ -60,6 +60,12 @@ namespace cherenkov_simulator
          * instance, 3.2 would be rounded up to 4 20% of the time and down to 3 80% of the time.
          */
         static int RandomRound(double value, TRandom3* rng);
+
+        /*
+         * Calculates the percent error between the actual and expected values. If the expected value is zero, the
+         * actual value is returned.
+         */
+        static double PercentError(double actual, double expected);
 
     private:
 

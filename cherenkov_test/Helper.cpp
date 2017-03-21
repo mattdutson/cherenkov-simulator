@@ -5,6 +5,7 @@
 // Implementation of Helper.h
 
 #include "Helper.h"
+#include "Utility.h"
 
 using namespace TMath;
 
@@ -20,6 +21,6 @@ namespace cherenkov_simulator
 
     bool Helper::ValuesEqual(double actual, double expected, double fractional_err)
     {
-        return expected == 0 ? Abs(actual) < fractional_err : Abs((actual - expected) / expected) < fractional_err;
+        return Utility::PercentError(actual, expected) < fractional_err;
     }
 }

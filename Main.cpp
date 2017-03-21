@@ -9,6 +9,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "cherenkov_lib/Utility.h"
+#include "cherenkov_lib/MonteCarlo.h"
 
 using namespace std;
 using namespace cherenkov_simulator;
@@ -19,22 +20,17 @@ int main(int argc, const char* argv[])
 {
     // Get the filename from the first command-line argument
     string filename = "Config.xml";
-    if (argc > 0)
-    {
-        filename = string(argv[0]);
-    }
-    else
-    {
-        return 0;
-    }
+    if (argc > 1) filename = string(argv[1]);
     try
     {
-        ptree config = cherenkov_simulator::Utility::ParseXMLFile(filename).get_child("configuration");
+        ptree config = cherenkov_simulator::Utility::ParseXMLFile(filename).get_child("config");
+        MonteCarlo monte_carlo = MonteCarlo(config);
+        monte_carlo.PerformMonteCarlo();
+        return 0;
     }
-    catch (exception e)
+    catch (runtime_error err)
     {
-        cout << e.what() << endl;
+        cout << err.what() << endl;
         return -1;
     }
-    return 0;
 }

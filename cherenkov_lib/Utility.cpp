@@ -32,6 +32,41 @@ namespace cherenkov_simulator
         return output;
     }
 
+    ptree Utility::ParseXMLFile(string filename)
+    {
+        // Try opening the specified file
+        ifstream config_file = ifstream(filename);
+        if (config_file.fail())
+        {
+            std::string message = "The file " + filename + " could not be opened. Check the path.";
+            throw std::runtime_error(message);
+        }
+
+        // Parse the file to XML.
+        try
+        {
+            ptree xml_file = ptree();
+            read_xml(config_file, xml_file);
+            return xml_file;
+        }
+        catch (boost::property_tree::xml_parser_error)
+        {
+            throw std::runtime_error("There was a problem parsing the file to XML. Check for syntax errors.");
+        }
+    }
+
+    TRotation Utility::MakeRotation(double elevation_angle)
+    {
+        TRotation rotate = TRotation();
+        rotate.RotateX(-PiOver2() + elevation_angle);
+        return rotate;
+    }
+
+    bool Utility::WithinXYDisk(TVector3 vec, double radius)
+    {
+        return Sqrt(Sq(vec.X()) + Sq(vec.Y())) < radius;
+    }
+
     TVector3 Utility::RandNormal(TVector3 vec, TRandom3* rng)
     {
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
@@ -45,45 +80,6 @@ namespace cherenkov_simulator
             normal.Rotate(rng->Uniform(2 * TMath::Pi()), vec);
             return normal;
         }
-    }
-
-    ptree Utility::ParseXMLFile(string filename)
-    {
-        // Try opening the specified file
-        ifstream config_file = ifstream();
-        try
-        {
-            config_file.open(filename);
-        }
-        catch (...)
-        {
-            std::string message = "The file " + filename + " could not be opened. Check the path.";
-            throw std::runtime_error(message);
-        }
-
-        // Parse the file to XML.
-        try
-        {
-            ptree xml_file = ptree();
-            read_xml(config_file, xml_file);
-            return xml_file;
-        }
-        catch (...)
-        {
-            throw std::runtime_error("There was a problem parsing the file to XML. Check for syntax errors.");
-        }
-    }
-
-    bool Utility::WithinXYDisk(TVector3 vec, double radius)
-    {
-        return Sqrt(Sq(vec.X()) + Sq(vec.Y())) < radius;
-    }
-
-    TRotation Utility::MakeRotation(double elevation_angle)
-    {
-        TRotation rotate = TRotation();
-        rotate.RotateX(-PiOver2() + elevation_angle);
-        return rotate;
     }
 
     double Utility::RandLinear(TRandom3* rng, double max)
@@ -105,5 +101,10 @@ namespace cherenkov_simulator
         double out = stod(s->substr(0, index));
         s->erase(0, index + 1);
         return out;
+    }
+
+    double Utility::PercentError(double actual, double expected)
+    {
+        return expected == 0 ? Abs(actual) : Abs((actual - expected) / expected);
     }
 }
