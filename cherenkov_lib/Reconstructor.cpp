@@ -87,8 +87,8 @@ namespace cherenkov_simulator
         if (normal.X() < 0) normal = -normal;
 
         // Construct a rotation which takes points to the frame where the shower-detector plane is the xy plane.
-        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : normal.Cross(TVector3(0, 0, 1));
-        TVector3 new_y = normal.Cross(new_x);
+        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : TVector3(0, 0, 1).Cross(normal).Unit();
+        TVector3 new_y = normal.Cross(new_x).Unit();
         return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
     }
 
@@ -100,7 +100,7 @@ namespace cherenkov_simulator
         if (*triggered)
         {
             TRotation to_sd_plane = FitSDPlane(data);
-            double t_0, impact_param, angle;
+            double t_0 = 0.0, impact_param = 0.0, angle = 0.0;
             if (try_ground)
             {
                 TVector3 impact;
@@ -137,12 +137,12 @@ namespace cherenkov_simulator
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] - [1] / (" << Utility::c_cent << ") * tan(([2] + x) / 2)";
+        func_string << "[0] + [1] / (" << Utility::c_cent << ") * tan((pi - [2] - x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 
         // Set names and initial guesses for parameters.
         func.SetParNames("t_0", "r_p", "psi");
-        func.SetParameters(0.0, 10e6, PiOver2());
+        func.SetParameters(0.0, 1e6, PiOver2());
 
         // Perform the fit.
         data_graph.Fit("profile_fit");
@@ -162,15 +162,11 @@ namespace cherenkov_simulator
 
         // Find the angle of the impact direction with the shower-detector frame x-axis.
         double impact_distance = impact.Mag();
-        TVector3 rotated_impact = to_sdp * impact;
-
-        // Take the projection into the shower-detector plane.
-        double theta = (rotated_impact - rotated_impact.Z() * rotated_impact).Angle(TVector3(1, 0, 0));
+        double theta = (to_sdp * impact).Phi();
 
         // The functional form of the time profile.
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] - " << impact_distance << " * sin([1] - " << theta << ") / (" << Utility::c_cent
-                    << ") * tan(([1] + x) / 2)";
+        func_string << "[0] +" << impact_distance << " * sin([1] + " << theta << ") / (" << Utility::c_cent << ") * tan((pi - [1] - x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 
         // Set names and initial guesses for parameters.
@@ -272,7 +268,7 @@ namespace cherenkov_simulator
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
         vector<double> angles = vector<double>();
         vector<double> times = vector<double>();
-        vector<double> time_err = vector<double>();
+        vector<double> time_er = vector<double>();
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
@@ -285,16 +281,15 @@ namespace cherenkov_simulator
                 times.push_back(data.AverageTime(&iter));
 
                 // Assume the error in each average time is the error in an individual time (bin size) over sqrt(n)
-                time_err.push_back(data.BinSize() / Sqrt((double) bin_sum));
+                time_er.push_back(data.BinSize() / Sqrt((double) bin_sum));
             }
         }
 
         // Make arrays to pass to the TGraph constructor.
-        vector<double> angle_err = vector<double>(angles.size(), 0.0);
-        TGraphErrors return_val = TGraphErrors(angles.size(), &(angles[0]), &(times[0]), &(angle_err[0]),
-                                               &(time_err[0]));
-        return_val.Sort();
-        return return_val;
+        vector<double> angle_er = vector<double>(angles.size(), 0.0);
+        TGraphErrors graph = TGraphErrors(angles.size(), &(angles[0]), &(times[0]), &(angle_er[0]), &(time_er[0]));
+        graph.Sort();
+        return graph;
     }
 
     bool Reconstructor::FrameTriggered(int t, vector<vector<vector<bool>>>* triggers)
@@ -352,14 +347,14 @@ namespace cherenkov_simulator
         {
             not_counted->at(i)[j][t] = false;
             int count = 1;
-            count += Visit(i + 1, j, t, not_counted);
-            count += Visit(i + 1, j + 1, t, not_counted);
-            count += Visit(i - 1, j, t, not_counted);
             count += Visit(i - 1, j - 1, t, not_counted);
-            count += Visit(i, j + 1, t, not_counted);
+            count += Visit(i - 1, j, t, not_counted);
             count += Visit(i - 1, j + 1, t, not_counted);
             count += Visit(i, j - 1, t, not_counted);
+            count += Visit(i, j + 1, t, not_counted);
             count += Visit(i + 1, j - 1, t, not_counted);
+            count += Visit(i + 1, j, t, not_counted);
+            count += Visit(i + 1, j + 1, t, not_counted);
             return count;
         }
     }

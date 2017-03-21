@@ -169,4 +169,40 @@ namespace cherenkov_simulator
         reconstructed.Position().Write("straight_shower_position");
         reconstructed.Direction().Write("straight_shower_direction");
     }
+
+    TEST_F(ReconstructorTest, AngleShowerGeometry)
+    {
+        TFile file("AngleGeometry.root", "RECREATE");
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
+        PhotonCount data = simulator->SimulateShower(shower);
+
+        bool triggered, ground_used;
+        Shower reconstructed = reconstructor->Reconstruct(data, false, &triggered, &ground_used);
+        reconstructed.Position().Write("angle_shower_position");
+        reconstructed.Direction().Write("angle_shower_direction");
+    }
+
+    TEST_F(ReconstructorTest, StraightCherenkovRecon)
+    {
+        TFile file("StraightCherenkovRecon.root", "RECREATE");
+        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
+        PhotonCount data = simulator->SimulateShower(shower);
+
+        bool triggered, ground_used;
+        Shower reconstructed = reconstructor->Reconstruct(data, true, &triggered, &ground_used);
+        reconstructed.Position().Write("straight_shower_position");
+        reconstructed.Direction().Write("straight_shower_direction");
+    }
+
+    TEST_F(ReconstructorTest, AngleCherenkovRecon)
+    {
+        TFile file("AngleCherenkovRecon.root", "RECREATE");
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
+        PhotonCount data = simulator->SimulateShower(shower);
+
+        bool triggered, ground_used;
+        Shower reconstructed = reconstructor->Reconstruct(data, true, &triggered, &ground_used);
+        reconstructed.Position().Write("angle_shower_position");
+        reconstructed.Direction().Write("angle_shower_direction");
+    }
 }

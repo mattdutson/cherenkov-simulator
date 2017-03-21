@@ -64,7 +64,7 @@ namespace cherenkov_simulator
         // We define the origin of both the world and detector frames to be the detector's center of curvature for
         // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction
         // vector.
-        TVector3 impact_direction = TVector3(1, 0, 0).Cross(axis);
+        TVector3 impact_direction = TVector3(1, 0, 0).Cross(axis).Unit();
         impact_direction.Rotate(impact_angle, axis);
         TVector3 impact_point = impact_param * impact_direction;
 

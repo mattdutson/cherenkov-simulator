@@ -76,15 +76,7 @@ namespace cherenkov_simulator
 
     bool Utility::WithinXYDisk(TVector3 vec, double radius)
     {
-        double xy_radius = Sqrt(vec.X() * vec.X() + vec.Y() * vec.Y());
-        if (xy_radius < radius)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return Sqrt(Sq(vec.X()) + Sq(vec.Y())) < radius;
     }
 
     TRotation Utility::MakeRotation(double elevation_angle)
@@ -97,6 +89,14 @@ namespace cherenkov_simulator
     double Utility::RandLinear(TRandom3* rng, double max)
     {
         return max * Sqrt(rng->Uniform());
+    }
+
+    int Utility::RandomRound(double value, TRandom3* rng)
+    {
+        double decimal = value - Floor(value);
+        int base = (int) (value - decimal);
+        if (rng->Rndm() < decimal) return base + 1;
+        else return base;
     }
 
     double Utility::ParseTo(string* s, char c)

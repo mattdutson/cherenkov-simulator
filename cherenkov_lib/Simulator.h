@@ -92,9 +92,9 @@ namespace cherenkov_simulator
         constexpr static double ckv_k2 = -0.67;
 
         // Parameters which describe inefficiencies in the equipment
-        constexpr static double mirror_reflect = 0.80;
+        constexpr static double mirror_reflect = 0.80; // 1.0; // 0.80
         constexpr static double filter_transmit = 1.0;
-        constexpr static double quantum_eff = 0.15;
+        constexpr static double quantum_eff = 0.15; // 1.0; // 0.15
 
         // Parameters related to the behavior of the simulation - cgs
         double depth_step;

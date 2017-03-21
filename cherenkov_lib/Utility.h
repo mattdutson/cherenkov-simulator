@@ -55,6 +55,12 @@ namespace cherenkov_simulator
          */
         static double RandLinear(TRandom3* rng, double max);
 
+        /*
+         * Returns an integer which is randomly rounded up or down from the input double based on its decimal. For
+         * instance, 3.2 would be rounded up to 4 20% of the time and down to 3 80% of the time.
+         */
+        static int RandomRound(double value, TRandom3* rng);
+
     private:
 
         /*
