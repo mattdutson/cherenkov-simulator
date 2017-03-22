@@ -218,6 +218,7 @@ namespace cherenkov_simulator
     {
         TVector3 detector_axis = rotate_to_world * TVector3(0, 0, 1);
         double cosine = Cos(detector_axis.Angle(view_point));
+        cosine = cosine < 0.0 ? 0.0 : cosine;
         double area_fraction = Sq(stop_diameter / 2.0) / (4.0 * view_point.Mag2());
         return area_fraction * cosine;
     }

@@ -97,6 +97,7 @@ namespace cherenkov_simulator
         SubtractAverageNoise(&data);
         ThreeSigmaFilter(&data);
         *triggered = ApplyTriggering(&data);
+        *ground_used = false;
         if (*triggered)
         {
             TRotation to_sd_plane = FitSDPlane(data);
@@ -114,7 +115,6 @@ namespace cherenkov_simulator
             if (!try_ground)
             {
                 MonocularFit(data, to_sd_plane, &t_0, &impact_param, &angle);
-                *ground_used = false;
             }
 
             // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame frame)

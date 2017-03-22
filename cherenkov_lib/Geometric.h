@@ -191,7 +191,7 @@ namespace cherenkov_simulator
         Shower(Params params, TVector3 position, TVector3 direction, double time = 0);
 
         /*
-         * Finds the age of the shower, given by 3 * X / (x + 2 * XMax).
+         * Finds the age of the shower, given by 3 * X / (X + 2 * XMax).
          */
         double Age();
 

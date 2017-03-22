@@ -5,9 +5,11 @@
 // Implementation of MonteCarlo.h
 
 #include <TMath.h>
+#include <TFile.h>
 
 #include "MonteCarlo.h"
 #include "Utility.h"
+#include "Analysis.h"
 
 using namespace TMath;
 
@@ -47,46 +49,64 @@ namespace cherenkov_simulator
         rng = TRandom3();
     }
 
-    void MonteCarlo::PerformMonteCarlo()
+    void MonteCarlo::PerformMonteCarlo(std::string out_file)
     {
-        cout << "Running simulation";
-        int n_triggered = 0;
-        int n_ground_used = 0;
-        double mono_rp_err = 0.0, ckv_rp_err = 0.0;
-        double mono_psi_err = 0.0, ckv_psi_err = 0.0;
+        // Open a ROOT file to store information about each shower
+        TFile file(out_file.c_str(), "RECREATE");
+        cout << "Running simulation..." << endl;
+
+        // Start tracking averages
+        int n_recon = 0;
+        double mon_rp_err = 0.0, mon_psi_err = 0.0;
+        double ckv_rp_err = 0.0, ckv_psi_err = 0.0;
+
+        // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers; i++)
         {
-            cout << ".";
+            // Generate and store the shower properties
             Shower shower = GenerateShower();
+            shower.Direction().Write((std::to_string(i) + "_direction").c_str());
+            shower.Position().Write((std::to_string(i) + "_position").c_str());
+
+            // Simulate the shower and record photon counts before noise is added
             PhotonCount data = simulator.SimulateShower(shower);
+            Analysis::MakeSumMap(data).Write((std::to_string(i) + "before_noise_map").c_str());
+            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "before_noise_graph").c_str());
+
+            // Add noise and record the new photon counts
             reconstructor.AddNoise(&data);
+            Analysis::MakeSumMap(data).Write((std::to_string(i) + "after_noise_map").c_str());
+            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "after_noise_graph").c_str());
+
+            // Attempt both monocular and hybrid reconstruction of the shower
             bool triggered, ground_used;
             Shower mono_shower = reconstructor.Reconstruct(data, false, &triggered, &ground_used);
             Shower ckv_shower = reconstructor.Reconstruct(data, true, &triggered, &ground_used);
-            if (triggered)
-            {
-                n_triggered++;
-                mono_rp_err += Utility::PercentError(shower.Position().Mag(), mono_shower.Position().Mag());
-                mono_psi_err += shower.Direction().Angle(mono_shower.Direction());
-            }
+            cout << "Shower: \t" << i << ", Triggered: \t" << triggered << ", Impact: \t" << ground_used << endl;
+
+            // Update averages
             if (triggered && ground_used)
             {
-                n_ground_used++;
+                n_recon++;
+                mon_rp_err += Utility::PercentError(shower.Position().Mag(), mono_shower.Position().Mag());
+                mon_psi_err += shower.Direction().Angle(mono_shower.Direction());
                 ckv_rp_err += Utility::PercentError(shower.Position().Mag(), ckv_shower.Position().Mag());
                 ckv_psi_err += shower.Direction().Angle(ckv_shower.Direction());
             }
         }
-        mono_psi_err /= (double) n_triggered;
-        ckv_psi_err /= (double) n_ground_used;
-        mono_rp_err /= (double) n_triggered;
-        ckv_rp_err /= (double) n_ground_used;
 
-        cout << endl << "Number simulated: \t" << n_showers << endl;
-        cout << "Number triggered: \t" << n_triggered << endl;
-        cout << "Number with ground point found: \t" << n_ground_used << endl;
-        cout << "Mean monocular impact error: \t" << mono_rp_err << " %" << endl;
+        // Finish updating averages
+        mon_rp_err /= (double) n_recon;
+        mon_psi_err /= (double) n_recon;
+        ckv_rp_err /= (double) n_recon;
+        ckv_psi_err /= (double) n_recon;
+
+        // Print a summary of the Monte Carlo simulation
+        cout << "Number simulated: \t" << n_showers << endl;
+        cout << "Number reconstructed: \t" << n_recon << endl;
+        cout << "Mean monocular impact error: \t" << mon_rp_err << " %" << endl;
         cout << "Mean Cherenkov impact error: \t" << ckv_rp_err << " %" << endl;
-        cout << "Mean monocular angle error: \t" << mono_psi_err << " rad" << endl;
+        cout << "Mean monocular angle error: \t" << mon_psi_err << " rad" << endl;
         cout << "Mean Cherenkov angle error: \t" << ckv_psi_err << " rad" << endl;
     }
 

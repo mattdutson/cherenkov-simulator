@@ -19,13 +19,19 @@ using boost::property_tree::ptree;
 int main(int argc, const char* argv[])
 {
     // Get the filename from the first command-line argument
-    string filename = "Config.xml";
-    if (argc > 1) filename = string(argv[1]);
+    if (argc < 2)
+    {
+        cout << "Must specify output file as command line argument" << endl;
+        return -1;
+    }
+    string out_file = argv[1];
+    string config_file = "Config.xml";
+    if (argc > 2) config_file = string(argv[2]);
     try
     {
-        ptree config = cherenkov_simulator::Utility::ParseXMLFile(filename).get_child("config");
+        ptree config = cherenkov_simulator::Utility::ParseXMLFile(config_file).get_child("config");
         MonteCarlo monte_carlo = MonteCarlo(config);
-        monte_carlo.PerformMonteCarlo();
+        monte_carlo.PerformMonteCarlo(out_file);
         return 0;
     }
     catch (runtime_error err)

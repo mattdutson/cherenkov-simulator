@@ -29,7 +29,7 @@ namespace cherenkov_simulator
         /*
          * Performs the overall Monte Carlo simulation and writes results to the console.
          */
-        void PerformMonteCarlo();
+        void PerformMonteCarlo(std::string out_file);
 
         /*
          * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and
