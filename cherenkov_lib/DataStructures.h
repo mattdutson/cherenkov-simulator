@@ -118,6 +118,11 @@ namespace cherenkov_simulator
         int Bin(double time);
 
         /*
+         * The angular size of the detector, from axis to the outside of the detector surface.
+         */
+        double DetectorAxisAngle();
+
+        /*
          * Determines the direction of the photomultiplier referenced by the iterator.
          */
         TVector3 Direction(const Iterator* iter);
@@ -143,6 +148,12 @@ namespace cherenkov_simulator
         Iterator GetIterator();
 
         /*
+         * Returns a 3D matrix of false values, with the same dimensions as the underlying vector of the PhotonCount
+         * class.
+         */
+        std::vector<std::vector<std::vector<bool>>> GetFalseMatrix();
+
+        /*
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
          * specified time is before the container's start time, nothing is done.
          */
@@ -161,7 +172,7 @@ namespace cherenkov_simulator
         void SubtractNoise(double noise_rate, const Iterator* iter);
 
         /*
-         * Clears any bins in the current pixel which are less than hold_thresh * sigma from zero.
+         * Clears any bins in the current pixel which are less than noise_thresh * sigma from zero.
          */
         void ClearNoise(const Iterator* iter, double noise_rate, double hold_thresh);
 
@@ -169,12 +180,17 @@ namespace cherenkov_simulator
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
          * trigger_thresh * sigma photon counts.
          */
-        std::vector<bool> FindTriggers(const Iterator* iter, double noise_rate, double trigger_thresh);
+        std::vector<bool> AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh);
+
+        /*
+         * Erases any photon counts which do not correspond to a true value in the 3D input vector.
+         */
+        void Subset(std::vector<std::vector<std::vector<bool>>> good_pixels);
 
         /*
          * Erases any photon counts which are not in a time bin corresponding to a true value in the input vector.
          */
-        void EraseNonTriggered(std::vector<bool> good_bins);
+        void TimeSubset(std::vector<bool> good_bins);
 
         /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second

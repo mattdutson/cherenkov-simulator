@@ -120,6 +120,11 @@ namespace cherenkov_simulator
         return (int) Floor((time - start_time) / bin_size);
     }
 
+    double PhotonCount::DetectorAxisAngle()
+    {
+        return ((double) n_pixels / 2) * angular_size;
+    }
+
     TVector3 PhotonCount::Direction(const Iterator* iter)
     {
         return Direction(iter->X(), iter->Y());
@@ -151,6 +156,12 @@ namespace cherenkov_simulator
     PhotonCount::Iterator PhotonCount::GetIterator()
     {
         return Iterator(valid);
+    }
+
+    vector<vector<vector<bool>>> PhotonCount::GetFalseMatrix()
+    {
+        int size = Size();
+        return vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(NBins(), false)));
     }
 
     void PhotonCount::AddPhoton(double time, TVector3 direction, double thinning)
@@ -214,7 +225,7 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<bool> PhotonCount::FindTriggers(const Iterator* iter, double noise_rate, double trigger_thresh)
+    vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh)
     {
         // Determine the minimum threshold for triggering.
         double real_noise = RealNoiseRate(noise_rate);
@@ -227,7 +238,21 @@ namespace cherenkov_simulator
         return triggers;
     }
 
-    void PhotonCount::EraseNonTriggered(vector<bool> good_bins)
+    void PhotonCount::Subset(vector<vector<vector<bool>>> good_bins)
+    {
+        for (int i = 0; i < counts.size(); i++)
+        {
+            for (int j = 0; j < counts[i].size(); j++)
+            {
+                for (int t = 0; t < counts[i][j].size(); t++)
+                {
+                    if (!good_bins[i][j][t]) counts[i][j][t] = 0;
+                }
+            }
+        }
+    }
+
+    void PhotonCount::TimeSubset(vector<bool> good_bins)
     {
         Iterator iter = GetIterator();
         while (iter.Next())

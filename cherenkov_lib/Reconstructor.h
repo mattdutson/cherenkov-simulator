@@ -20,17 +20,12 @@ namespace cherenkov_simulator
     {
     public:
 
+        typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
+
         /*
          * Constructs the Reconstructor from values in the configuration tree.
          */
         Reconstructor(boost::property_tree::ptree config);
-
-        /*
-         * Finds the shower-detector plane based on the distribution of data points. Returns a rotation to a frame in
-         * which the shower-detector plane is the xy-plane, with the x-axis lying in the original xy-plane. This
-         * rotation is assumed to start world frame, not the detector frame.
-         */
-        TRotation FitSDPlane(PhotonCount data);
 
         /*
          * Performs a reconstruction of the shower. If try_ground is true, then a hybrid Cherenkov reconstruction is
@@ -42,47 +37,15 @@ namespace cherenkov_simulator
         Shower Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used);
 
         /*
-         * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
-         * not used.
-         */
-        TGraphErrors MonocularFit(PhotonCount data, TRotation to_sdp, double* t_0, double* r_p, double* psi);
-
-        /*
-         * Performs a time profile reconstruction, but using the constraint of an impact point.
-         */
-        TGraphErrors
-        HybridFit(PhotonCount data, TVector3 impact, TRotation to_sdp, double* t_0, double* r_p, double* psi);
-
-        /*
-         * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
-         * returned. We assume at this point that filters and triggering have been applied. Our condition is that some
-         * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
-         * would expect during that time frame.
-         */
-        bool FindGroundImpact(PhotonCount data, TVector3* impact);
-
-        /*
          * Adds Poisson-distributed background noise to the signal.
          */
         void AddNoise(PhotonCount* data);
 
         /*
-         * Subtracts the average amount of noise from each pixel.
+         * Attempts to isolate signal from noise by subtracting the background level, applying triggering, removing
+         * anything below three sigma, and performing a recursive search from triggered pixels.
          */
-        void SubtractAverageNoise(PhotonCount* data);
-
-        /*
-         * Filters out any signal below three sigma. Assumes that the mean of the signal is zero (the average noise rate
-         * has already been subtracted).
-         */
-        void ThreeSigmaFilter(PhotonCount* data);
-
-        /*
-         * Apply triggering logic to the signal. Look for consecutive groups of pixels in each time bin which have
-         * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
-         * any frames were triggered.
-         */
-        bool ApplyTriggering(PhotonCount* data);
+        void ClearNoise(PhotonCount* data);
 
     private:
 
@@ -102,11 +65,41 @@ namespace cherenkov_simulator
 
         // Parameters used when applying triggering logic
         double trigger_thresh;
-        double hold_thresh;
+        double noise_thresh;
         int trigger_clust;
+
+        // Used when deciding whether to attempt Cherenkov-assisted reconstruction based on the estimated impact point.
+        double impact_buffer;
 
         // A general-purpose random number generator
         TRandom3 rng;
+
+        /*
+         * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
+         * not used.
+         */
+        TGraphErrors MonocularFit(PhotonCount data, TRotation to_sdp, double* t_0, double* r_p, double* psi);
+
+        /*
+         * Performs a time profile reconstruction, but using the constraint of an impact point.
+         */
+        TGraphErrors
+        HybridFit(PhotonCount data, TVector3 impact, TRotation to_sdp, double* t_0, double* r_p, double* psi);
+
+        /*
+         * Finds the shower-detector plane based on the distribution of data points. Returns a rotation to a frame in
+         * which the shower-detector plane is the xy-plane, with the x-axis lying in the original xy-plane. This
+         * rotation is assumed to start world frame, not the detector frame.
+         */
+        TRotation FitSDPlane(PhotonCount data);
+
+        /*
+         * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
+         * returned. We assume at this point that filters and triggering have been applied. Our condition is that some
+         * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
+         * would expect during that time frame.
+         */
+        bool FindGroundImpact(PhotonCount data, TVector3* impact);
 
         /*
          * Constructs the fit graph from data points.
@@ -114,27 +107,75 @@ namespace cherenkov_simulator
         TGraphErrors GetFitGraph(PhotonCount data, TRotation to_sdp);
 
         /*
+         * Subtracts the average amount of noise from each pixel.
+         */
+        void SubtractAverageNoise(PhotonCount* data);
+
+        /*
+         * Filters out any signal below three sigma. Assumes that the mean of the signal is zero (the average noise rate
+         * has already been subtracted).
+         */
+        void ThreeSigmaFilter(PhotonCount* data);
+
+        /*
+         * Apply triggering logic to the signal. Look for consecutive groups of pixels in each time bin which have
+         * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
+         * any frames were triggered.
+         */
+        std::vector<bool> GetTriggeringState(Bool3D trig_matrices);
+
+        /*
+         * Performs a recursive search, starting from triggered pixels and moving to adjacent pixels in space and time.
+         * Only signals which are adjacent to another non-noise signal are considered.
+         */
+        void RecursiveSearch(PhotonCount* data);
+
+        /*
+         * Determines whether the detector was triggered by iterating through trig_state and determining if there are
+         * any "true" values.
+         */
+        bool DetectorTriggered(std::vector<bool> trig_state);
+
+        /*
          * Determines whether the array of triggered tubes contains enough adjacent true values for the frame to be
          * triggered.
          */
-        bool FrameTriggered(int t, std::vector<std::vector<std::vector<bool>>>* triggers);
+        bool FrameTriggered(int t, Bool3D* triggers);
 
         /*
-         * Returns a 2D array of arrays, each of which contains true values for triggered tubes and false values for
-         * untriggered tubes.
+         * Returns a 2D array of arrays, each of which contains true values for tubes above the specified multiple of
+         * sigma, and false values for all those below.
          */
-        std::vector<std::vector<std::vector<bool>>> GetTriggeringMatrices(PhotonCount data);
+        Bool3D GetThresholdMatrices(PhotonCount data, double sigma_mult, bool use_below_horiz = true);
 
         /*
          * A method to count the largest cluster of adjacent "true" values in a 2D array at a specified time bin.
          */
-        int LargestCluster(int t, std::vector<std::vector<std::vector<bool>>>* not_counted);
+        int LargestCluster(int t, Bool3D* not_counted);
 
         /*
          * A recursive method used by LargestCluster. Visits the item at the specified coordinates and any of its
          * neighbors. Returns the total number of visited elements.
          */
-        int Visit(int i, int j, int t, std::vector<std::vector<std::vector<bool>>>* not_counted);
+        int Visit(int i, int j, int t, Bool3D* not_counted);
+
+        /*
+         * A recursive method used by RecursiveSearch. Visits the item at the specified coordinates and travels outward,
+         * searching for any spatially or temporally adjacent pixels which are above the noise threshold. If any
+         * neighbors are non-noise, they are also "bled" outward until they reach a below-noise boundary.
+         */
+        void BleedTrigger(int i, int j, int t, const Bool3D* three_sigma, Bool3D* good_pixels);
+
+        /*
+         * Constructs a shower based on the results of the time profile reconstruction.
+         */
+        Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane);
+
+        /*
+         * Checks whether the specified point lies within the field of minus some buffer defined in the config. Assumes
+         * the direction is in the detector frame.
+         */
+        bool PointWithinView(TVector3 direction, PhotonCount data);
     };
 }
 

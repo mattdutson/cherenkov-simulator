@@ -201,6 +201,11 @@ namespace cherenkov_simulator
         double EnergyMeV();
 
         /*
+         * Calculates the impact parameter of the shower from the origin.
+         */
+        double ImpactParam();
+
+        /*
          * Returns the atmospheric density at the shower's current position.
          */
         double LocalRho();

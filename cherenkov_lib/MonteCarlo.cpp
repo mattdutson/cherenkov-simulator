@@ -70,27 +70,30 @@ namespace cherenkov_simulator
 
             // Simulate the shower and record photon counts before noise is added
             PhotonCount data = simulator.SimulateShower(shower);
-            Analysis::MakeSumMap(data).Write((std::to_string(i) + "before_noise_map").c_str());
-            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "before_noise_graph").c_str());
+            Analysis::MakeSumMap(data).Write((std::to_string(i) + "_before_noise_map").c_str());
+            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_before_noise_graph").c_str());
 
             // Add noise and record the new photon counts
             reconstructor.AddNoise(&data);
-            Analysis::MakeSumMap(data).Write((std::to_string(i) + "after_noise_map").c_str());
-            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "after_noise_graph").c_str());
+            Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_noise_map").c_str());
+            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_noise_graph").c_str());
 
             // Attempt both monocular and hybrid reconstruction of the shower
             bool triggered, ground_used;
             Shower mono_shower = reconstructor.Reconstruct(data, false, &triggered, &ground_used);
             Shower ckv_shower = reconstructor.Reconstruct(data, true, &triggered, &ground_used);
-            cout << "Shower: \t" << i << ", Triggered: \t" << triggered << ", Impact: \t" << ground_used << endl;
+            cout << "Shower: " << i << " \tTriggered: " << triggered << "\tImpact: " << ground_used << endl;
 
             // Update averages
             if (triggered && ground_used)
             {
+                // TODO: DEBUGGING ONLY
+                cout << "Error: " << Utility::PercentError(shower.Position().Mag(), mono_shower.Position().Mag()) << endl;
+
                 n_recon++;
-                mon_rp_err += Utility::PercentError(shower.Position().Mag(), mono_shower.Position().Mag());
+                mon_rp_err += Utility::PercentError(shower.ImpactParam(), mono_shower.ImpactParam());
                 mon_psi_err += shower.Direction().Angle(mono_shower.Direction());
-                ckv_rp_err += Utility::PercentError(shower.Position().Mag(), ckv_shower.Position().Mag());
+                ckv_rp_err += Utility::PercentError(shower.ImpactParam(), ckv_shower.ImpactParam());
                 ckv_psi_err += shower.Direction().Angle(ckv_shower.Direction());
             }
         }

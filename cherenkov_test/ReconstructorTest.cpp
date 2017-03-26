@@ -14,6 +14,8 @@
 #include "Utility.h"
 #include "Analysis.h"
 
+using namespace TMath;
+
 using boost::property_tree::ptree;
 using std::vector;
 
@@ -23,6 +25,8 @@ namespace cherenkov_simulator
     {
 
     protected:
+
+        typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
 
         Simulator* simulator;
         MonteCarlo* monte_carlo;
@@ -43,15 +47,22 @@ namespace cherenkov_simulator
             delete reconstructor;
         }
 
-        bool FriendFrameTriggered(int i, vector<vector<vector<bool>>>* triggers)
+        bool FriendFrameTriggered(int i, Bool3D* triggers) {return reconstructor->FrameTriggered(i, triggers);}
+
+        Bool3D FriendTriggeringMatrices(PhotonCount data) {return reconstructor->GetThresholdMatrices(data, 0);}
+
+        TRotation FriendFitSDPlane(PhotonCount data) {return reconstructor->FitSDPlane(data);}
+
+        TGraphErrors FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, double* t_0, double* impact, double* angle)
         {
-            return reconstructor->FrameTriggered(i, triggers);
+            return reconstructor->MonocularFit(data, to_sd_plane, t_0, impact, angle);
         }
 
-        vector<vector<vector<bool>>> FriendTriggeringMatrices(PhotonCount data)
-        {
-            return reconstructor->GetTriggeringMatrices(data);
-        }
+        void FriendSubtractAverageNoise(PhotonCount* data) {reconstructor->SubtractAverageNoise(data);}
+
+        void FriendThreeSigmaFilter(PhotonCount* data) {reconstructor->ThreeSigmaFilter(data);}
+
+        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact) {return reconstructor->FindGroundImpact(data, impact);}
     };
 
     TEST_F(ReconstructorTest, StraightShower)
@@ -61,9 +72,9 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Attempt to reconstruct the shower plane and geometry.
-        TRotation to_sd_plane = reconstructor->FitSDPlane(data);
+        TRotation to_sd_plane = FriendFitSDPlane(data);
         double t_0, impact, angle;
-        TGraphErrors time_profile = reconstructor->MonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
+        TGraphErrors time_profile = FriendMonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
 
         // Write results to a file.
         TFile file("StraightShowerRecon.root", "RECREATE");
@@ -82,9 +93,9 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
 
         // Attempt to reconstruct the shower plane and geometry.
-        TRotation to_sd_plane = reconstructor->FitSDPlane(data);
+        TRotation to_sd_plane = FriendFitSDPlane(data);
         double t_0, impact, angle;
-        TGraph time_profile = reconstructor->MonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
+        TGraph time_profile = FriendMonocularFit(data, to_sd_plane, &t_0, &impact, &angle);
 
         // Draw a map of impacts.
         TFile file("AngleShowerRecon.root", "RECREATE");
@@ -109,17 +120,13 @@ namespace cherenkov_simulator
         Analysis::MakeProfileGraph(data).Write("after_noise_graph");
         Analysis::MakeSumMap(data).Write("after_noise_map");
 
-        reconstructor->SubtractAverageNoise(&data);
+        FriendSubtractAverageNoise(&data);
         Analysis::MakeProfileGraph(data).Write("after_subtract_graph");
         Analysis::MakeSumMap(data).Write("after_subtract_map");
 
-        reconstructor->ThreeSigmaFilter(&data);
+        FriendThreeSigmaFilter(&data);
         Analysis::MakeProfileGraph(data).Write("three_sigma_graph");
         Analysis::MakeSumMap(data).Write("three_sigma_map");
-
-        reconstructor->ApplyTriggering(&data);
-        Analysis::MakeProfileGraph(data).Write("after_trigger_graph");
-        Analysis::MakeSumMap(data).Write("after_trigger_map");
     }
 
     TEST_F(ReconstructorTest, TriggeringMaps)
@@ -152,7 +159,7 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
 
         TVector3 impact;
-        if (reconstructor->FindGroundImpact(data, &impact))
+        if (FriendFindGroundImpact(data, &impact))
         {
             impact.Write("ground_impact");
         }
@@ -187,11 +194,17 @@ namespace cherenkov_simulator
         TFile file("StraightCherenkovRecon.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
+//        reconstructor->AddNoise(&data);
 
         bool triggered, ground_used;
-        Shower reconstructed = reconstructor->Reconstruct(data, true, &triggered, &ground_used);
-        reconstructed.Position().Write("straight_shower_position");
-        reconstructed.Direction().Write("straight_shower_direction");
+        Shower mono_recon = reconstructor->Reconstruct(data, false, &triggered, &ground_used);
+        Shower cherenkov_recon = reconstructor->Reconstruct(data, true, &triggered, &ground_used);
+        cherenkov_recon.Position().Write("straight_shower_position");
+        cherenkov_recon.Direction().Write("straight_shower_direction");
+        std::cout << "Mono Direction Error: " << mono_recon.Direction().Angle(shower.Direction()) << std::endl;
+        std::cout << "Mono Impact Error: " << Abs(mono_recon.Position().Mag() - 1e6) << std::endl;
+        std::cout << "Cherenkov Direction Error: " << cherenkov_recon.Direction().Angle(shower.Direction()) << std::endl;
+        std::cout << "Cherenkov Impact Error: " << Abs(cherenkov_recon.Position().Mag() - 1e6) << std::endl;
     }
 
     TEST_F(ReconstructorTest, AngleCherenkovRecon)
@@ -199,10 +212,16 @@ namespace cherenkov_simulator
         TFile file("AngleCherenkovRecon.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
+//        reconstructor->AddNoise(&data);
 
         bool triggered, ground_used;
-        Shower reconstructed = reconstructor->Reconstruct(data, true, &triggered, &ground_used);
-        reconstructed.Position().Write("angle_shower_position");
-        reconstructed.Direction().Write("angle_shower_direction");
+        Shower mono_recon = reconstructor->Reconstruct(data, false, &triggered, &ground_used);
+        Shower cherenkov_recon = reconstructor->Reconstruct(data, true, &triggered, &ground_used);
+        cherenkov_recon.Position().Write("angle_shower_position");
+        cherenkov_recon.Direction().Write("angle_shower_direction");
+        std::cout << "Mono Direction Error: " << mono_recon.Direction().Angle(shower.Direction()) << std::endl;
+        std::cout << "Mono Impact Error: " << Abs(mono_recon.Position().Mag() - 1e6) << std::endl;
+        std::cout << "Cherenkov Direction Error: " << cherenkov_recon.Direction().Angle(shower.Direction()) << std::endl;
+        std::cout << "Cherenkov Impact Error: " << Abs(cherenkov_recon.Position().Mag() - 1e6) << std::endl;
     }
 }

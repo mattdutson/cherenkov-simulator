@@ -173,6 +173,14 @@ namespace cherenkov_simulator
         return energy / (10.0e6);
     }
 
+    double Shower::ImpactParam()
+    {
+        // See http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+        TVector3 point1 = Position();
+        TVector3 point2 = Position() + Direction();
+        return (point1.Cross(point2)).Mag();
+    }
+
     double Shower::LocalRho()
     {
         return rho_0 * Exp(-position.Z() / scale_height);

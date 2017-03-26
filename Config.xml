@@ -20,8 +20,8 @@
     <monte_carlo note="Defines properties of randomly generated showers">
         <e_min unit="eV">1.0e17</e_min>
         <e_max unit="eV">1.0e21</e_max>
-        <impact_min unit="cm">1.0e5</impact_min>
-        <impact_max unit="cm">1.0e6</impact_max>
+        <impact_min unit="cm">3.0e5</impact_min>
+        <impact_max unit="cm">4.0e6</impact_max>
         <start_tracking unit="g/cm^2" note="Must be positive">50.0</start_tracking>
     </monte_carlo>
 
@@ -34,8 +34,9 @@
 
     <triggering note="Thresholds in filtering and triggering">
         <trigger_thresh unit="null">6.0</trigger_thresh>
-        <hold_thresh unit="null">3.0</hold_thresh>
+        <noise_thresh unit="null">3.0</noise_thresh>
         <trigger_clust unit="null">5</trigger_clust>
+        <impact_buffer unit="rad">0.02</impact_buffer>
     </triggering>
 
 </config>

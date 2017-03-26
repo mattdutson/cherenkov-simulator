@@ -38,96 +38,62 @@ namespace cherenkov_simulator
 
         // Parameters used when applying triggering logic
         trigger_thresh = config.get<double>("triggering.trigger_thresh");
-        hold_thresh = config.get<double>("triggering.hold_thresh");
+        noise_thresh = config.get<double>("triggering.noise_thresh");
         trigger_clust = config.get<int>("triggering.trigger_clust");
 
+        impact_buffer = config.get<double>("triggering.impact_buffer");
         rng = TRandom3();
-    }
-
-    TRotation Reconstructor::FitSDPlane(PhotonCount data)
-    {
-        // Compute the matrix specified in Stratton 3.4. Maybe just iterate over matrix elements whose symmetric
-        // counterparts haven't been found yet.
-        PhotonCount::Iterator iter = data.GetIterator();
-        TMatrixDSym matrix(3);
-        for (int j = 0; j < 3; j++)
-        {
-            for (int k = 0; k < 3; k++)
-            {
-                double mat_element = 0;
-                iter.Reset();
-                while (iter.Next())
-                {
-                    TVector3 direction = data.Direction(&iter);
-                    int pmt_sum = data.SumBins(&iter);
-                    mat_element += direction[j] * direction[k] * pmt_sum;
-                }
-                matrix[j][k] = mat_element;
-            }
-        }
-
-        // Find the eigenvector corresponding to the minimum eigenvalue.
-        TMatrixDSymEigen eigen = TMatrixDSymEigen(matrix);
-        TVectorD eigen_val = eigen.GetEigenValues();
-        TMatrixD eigen_vec = eigen.GetEigenVectors();
-        double min_val = eigen_val[0];
-        int min_index = 0;
-        for (int i = 0; i < eigen_val.GetNoElements(); i++)
-        {
-            if (eigen_val[i] < min_val)
-            {
-                min_val = eigen_val[i];
-                min_index = i;
-            }
-        }
-
-        // Each eigenvector is stored as a column in the matrix. Matrices are indexed as [row][column].
-        TVector3 normal = TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
-        normal = rotate_to_world * normal;
-        if (normal.X() < 0) normal = -normal;
-
-        // Construct a rotation which takes points to the frame where the shower-detector plane is the xy plane.
-        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : TVector3(0, 0, 1).Cross(normal).Unit();
-        TVector3 new_y = normal.Cross(new_x).Unit();
-        return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
     }
 
     Shower Reconstructor::Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used)
     {
-        SubtractAverageNoise(&data);
-        ThreeSigmaFilter(&data);
-        *triggered = ApplyTriggering(&data);
+        *triggered = DetectorTriggered(GetTriggeringState(GetThresholdMatrices(data, trigger_thresh)));
         *ground_used = false;
         if (*triggered)
         {
             TRotation to_sd_plane = FitSDPlane(data);
             double t_0 = 0.0, impact_param = 0.0, angle = 0.0;
+            MonocularFit(data, to_sd_plane, &t_0, &impact_param, &angle);
+            Shower output = MakeShower(t_0, impact_param, angle, to_sd_plane);
+            try_ground = PointWithinView(rotate_to_world.Inverse() * output.PlaneImpact(ground_plane), data);
             if (try_ground)
             {
                 TVector3 impact;
                 try_ground = FindGroundImpact(data, &impact);
                 if (try_ground)
                 {
-                    HybridFit(data, impact, to_sd_plane, &t_0, &impact_param, &angle);
-                    *ground_used = true;
+                    try_ground = PointWithinView(impact, data);
+                    if (try_ground)
+                    {
+                        HybridFit(data, impact, to_sd_plane, &t_0, &impact_param, &angle);
+                        output = MakeShower(t_0, impact_param, angle, to_sd_plane);
+                        *ground_used = true;
+                    }
                 }
             }
-            if (!try_ground)
-            {
-                MonocularFit(data, to_sd_plane, &t_0, &impact_param, &angle);
-            }
-
-            // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame frame)
-            TVector3 shower_direction = to_sd_plane.Inverse() * TVector3(Cos(angle), -Sin(angle), 0);
-            if (shower_direction.Z() > 0.0) shower_direction = -shower_direction;
-            TVector3 plane_normal = to_sd_plane.Inverse() * TVector3(0, 0, 1);
-            TVector3 impact_direction = plane_normal.Cross(shower_direction);
-            return Shower(Shower::Params(), impact_param * impact_direction, shower_direction, t_0);
+            return output;
         }
         else
         {
             return Shower(Shower::Params(), TVector3(), TVector3());
         }
+    }
+
+    void Reconstructor::AddNoise(PhotonCount* data)
+    {
+        PhotonCount::Iterator iter = data->GetIterator();
+        while (iter.Next())
+        {
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
+            data->AddNoise(toward_ground ? ground_noise : sky_noise, &iter, &rng);
+        }
+    }
+
+    void Reconstructor::ClearNoise(PhotonCount* data)
+    {
+        SubtractAverageNoise(data);
+        ThreeSigmaFilter(data);
+        RecursiveSearch(data);
     }
 
     TGraphErrors
@@ -184,6 +150,54 @@ namespace cherenkov_simulator
         return data_graph;
     }
 
+    TRotation Reconstructor::FitSDPlane(PhotonCount data)
+    {
+        // Compute the matrix specified in Stratton 3.4. Maybe just iterate over matrix elements whose symmetric
+        // counterparts haven't been found yet.
+        PhotonCount::Iterator iter = data.GetIterator();
+        TMatrixDSym matrix(3);
+        for (int j = 0; j < 3; j++)
+        {
+            for (int k = 0; k < 3; k++)
+            {
+                double mat_element = 0;
+                iter.Reset();
+                while (iter.Next())
+                {
+                    TVector3 direction = data.Direction(&iter);
+                    int pmt_sum = data.SumBins(&iter);
+                    mat_element += direction[j] * direction[k] * pmt_sum;
+                }
+                matrix[j][k] = mat_element;
+            }
+        }
+
+        // Find the eigenvector corresponding to the minimum eigenvalue.
+        TMatrixDSymEigen eigen = TMatrixDSymEigen(matrix);
+        TVectorD eigen_val = eigen.GetEigenValues();
+        TMatrixD eigen_vec = eigen.GetEigenVectors();
+        double min_val = eigen_val[0];
+        int min_index = 0;
+        for (int i = 0; i < eigen_val.GetNoElements(); i++)
+        {
+            if (eigen_val[i] < min_val)
+            {
+                min_val = eigen_val[i];
+                min_index = i;
+            }
+        }
+
+        // Each eigenvector is stored as a column in the matrix. Matrices are indexed as [row][column].
+        TVector3 normal = TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
+        normal = rotate_to_world * normal;
+        if (normal.X() < 0) normal = -normal;
+
+        // Construct a rotation which takes points to the frame where the shower-detector plane is the xy plane.
+        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : TVector3(0, 0, 1).Cross(normal).Unit();
+        TVector3 new_y = normal.Cross(new_x).Unit();
+        return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
+    }
+
     bool Reconstructor::FindGroundImpact(PhotonCount data, TVector3* impact)
     {
         // Find the brightest pixel below the horizon.
@@ -210,57 +224,6 @@ namespace cherenkov_simulator
         double poisson = data.RealNoiseRate(ground_noise) * data.NBins();
         double threshold = 3 * Sqrt(poisson);
         return highest_count > threshold;
-    }
-
-    void Reconstructor::AddNoise(PhotonCount* data)
-    {
-        PhotonCount::Iterator iter = data->GetIterator();
-        while (iter.Next())
-        {
-            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
-            data->AddNoise(toward_ground ? ground_noise : sky_noise, &iter, &rng);
-        }
-    }
-
-    void Reconstructor::SubtractAverageNoise(PhotonCount* data)
-    {
-        PhotonCount::Iterator iter = data->GetIterator();
-        while (iter.Next())
-        {
-            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
-            data->SubtractNoise(toward_ground ? ground_noise : sky_noise, &iter);
-        }
-    }
-
-    void Reconstructor::ThreeSigmaFilter(PhotonCount* data)
-    {
-        PhotonCount::Iterator iter = data->GetIterator();
-        while (iter.Next())
-        {
-            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
-            data->ClearNoise(&iter, toward_ground ? ground_noise : sky_noise, hold_thresh);
-        }
-    }
-
-    bool Reconstructor::ApplyTriggering(PhotonCount* data)
-    {
-        vector<vector<vector<bool>>> triggering_matrices = GetTriggeringMatrices(*data);
-        vector<bool> good_frames = vector<bool>();
-        bool triggered_found = false;
-        for (int i = 0; i < data->NBins(); i++)
-        {
-            if (FrameTriggered(i, &triggering_matrices))
-            {
-                triggered_found = true;
-                good_frames.push_back(true);
-            }
-            else
-            {
-                good_frames.push_back(false);
-            }
-        }
-        data->EraseNonTriggered(good_frames);
-        return triggered_found;
     }
 
     TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, TRotation to_sdp)
@@ -292,27 +255,85 @@ namespace cherenkov_simulator
         return graph;
     }
 
-    bool Reconstructor::FrameTriggered(int t, vector<vector<vector<bool>>>* triggers)
+    void Reconstructor::SubtractAverageNoise(PhotonCount* data)
+    {
+        PhotonCount::Iterator iter = data->GetIterator();
+        while (iter.Next())
+        {
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
+            data->SubtractNoise(toward_ground ? ground_noise : sky_noise, &iter);
+        }
+    }
+
+    void Reconstructor::ThreeSigmaFilter(PhotonCount* data)
+    {
+        PhotonCount::Iterator iter = data->GetIterator();
+        while (iter.Next())
+        {
+            bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data->Direction(&iter));
+            data->ClearNoise(&iter, toward_ground ? ground_noise : sky_noise, noise_thresh);
+        }
+    }
+
+    std::vector<bool> Reconstructor::GetTriggeringState(Bool3D trig_matrices)
+    {
+        vector<bool> good_frames = vector<bool>();
+        for (int i = 0; i < trig_matrices[0][0].size(); i++) good_frames.push_back(FrameTriggered(i, &trig_matrices));
+        return good_frames;
+    }
+
+    void Reconstructor::RecursiveSearch(PhotonCount* data)
+    {
+        // Find the pixels and times where triggers occured as well as pixels and times above the noise threshold
+        Bool3D triggered = GetThresholdMatrices(*data, trigger_thresh);
+        Bool3D three_sigma = GetThresholdMatrices(*data, noise_thresh);
+        Bool3D good_pixels = data->GetFalseMatrix();
+        vector<bool> trig_state = GetTriggeringState(GetThresholdMatrices(*data, trigger_thresh));
+
+        // Start the recursive bleed from triggered pixels
+        for (int i = 0; i < triggered.size(); i++)
+        {
+            for (int j = 0; j < triggered[i].size(); j++)
+            {
+                for (int t = 0; t < triggered[i][j].size(); t++)
+                {
+                    if (triggered[i][j][t] && trig_state[t])
+                    {
+                        BleedTrigger(i, j, t, &three_sigma, &good_pixels);
+                    }
+                }
+            }
+        }
+
+        // Erase any pixels we determined to be non-valid
+        data->Subset(good_pixels);
+    }
+
+    bool Reconstructor::DetectorTriggered(vector<bool> trig_state)
+    {
+        for (int i = 0; i < trig_state.size(); i++) if (trig_state[i]) return true;
+        return false;
+    }
+
+    bool Reconstructor::FrameTriggered(int t, Bool3D* triggers)
     {
         return LargestCluster(t, triggers) > trigger_clust;
     }
 
-    vector<vector<vector<bool>>> Reconstructor::GetTriggeringMatrices(PhotonCount data)
+    Reconstructor::Bool3D Reconstructor::GetThresholdMatrices(PhotonCount data, double sigma_mult, bool use_below_horiz)
     {
-        int size = data.Size();
-        vector<vector<vector<bool>>> triggers =
-                vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(data.NBins(), false)));
+        Bool3D pass = data.GetFalseMatrix();
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
             bool toward_ground = ground_plane.InFrontOf(rotate_to_world * data.Direction(&iter));
-            triggers[iter.X()][iter.Y()] =
-                    data.FindTriggers(&iter, toward_ground ? ground_noise : sky_noise, trigger_thresh);
+            if (toward_ground && !use_below_horiz) continue;
+            pass[iter.X()][iter.Y()] = data.AboveThreshold(&iter, toward_ground ? ground_noise : sky_noise, sigma_mult);
         }
-        return triggers;
+        return pass;
     }
 
-    int Reconstructor::LargestCluster(int t, vector<vector<vector<bool>>>* not_counted)
+    int Reconstructor::LargestCluster(int t, Bool3D* not_counted)
     {
         int largest = 0;
         for (int i = 0; i < not_counted->size(); i++)
@@ -329,7 +350,7 @@ namespace cherenkov_simulator
         return largest;
     }
 
-    int Reconstructor::Visit(int i, int j, int t, vector<vector<vector<bool>>>* not_counted)
+    int Reconstructor::Visit(int i, int j, int t, Bool3D* not_counted)
     {
         if (i > not_counted->size() - 1 || i < 0)
         {
@@ -357,5 +378,54 @@ namespace cherenkov_simulator
             count += Visit(i + 1, j + 1, t, not_counted);
             return count;
         }
+    }
+
+    void Reconstructor::BleedTrigger(int i, int j, int t, const Bool3D* three_sigma, Bool3D* good_pixels)
+    {
+        if (i > three_sigma->size() - 1 || i < 0)
+        {
+            return;
+        }
+        else if (j > three_sigma->at(i).size() - 1 || j < 0)
+        {
+            return;
+        }
+        else if (t > three_sigma->at(i)[j].size() - 1 || t < 0)
+        {
+            return;
+        }
+        else if (!three_sigma->at(i)[j][t])
+        {
+            return;
+        }
+        else
+        {
+            good_pixels->at(i)[j][t] = true;
+            BleedTrigger(i - 1, j - 1, t, three_sigma, good_pixels);
+            BleedTrigger(i - 1, j, t, three_sigma, good_pixels);
+            BleedTrigger(i - 1, j + 1, t, three_sigma, good_pixels);
+            BleedTrigger(i, j - 1, t, three_sigma, good_pixels);
+            BleedTrigger(i, j + 1, t, three_sigma, good_pixels);
+            BleedTrigger(i + 1, j - 1, t, three_sigma, good_pixels);
+            BleedTrigger(i + 1, j, t, three_sigma, good_pixels);
+            BleedTrigger(i + 1, j + 1, t, three_sigma, good_pixels);
+            BleedTrigger(i, j, t - 1, three_sigma, good_pixels);
+            BleedTrigger(i, j, t + 1, three_sigma, good_pixels);
+        }
+    }
+
+    Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane)
+    {
+        // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame frame)
+        TVector3 shower_direction = to_sd_plane.Inverse() * TVector3(Cos(psi), -Sin(psi), 0);
+        if (shower_direction.Z() > 0.0) shower_direction = -shower_direction;
+        TVector3 plane_normal = to_sd_plane.Inverse() * TVector3(0, 0, 1);
+        TVector3 impact_direction = plane_normal.Cross(shower_direction);
+        return Shower(Shower::Params(), r_p * impact_direction, shower_direction, t_0);
+    }
+
+    bool Reconstructor::PointWithinView(TVector3 direction, PhotonCount data)
+    {
+        return direction.Theta() < data.DetectorAxisAngle() - impact_buffer;
     }
 }
