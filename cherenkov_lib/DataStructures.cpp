@@ -158,6 +158,19 @@ namespace cherenkov_simulator
         return average;
     }
 
+    double PhotonCount::TimeError(const Iterator* iter) const
+    {
+        double mean = AverageTime(iter);
+        double variance = 0;
+        for (int i = 0; i < NBins(); i++)
+        {
+            variance += counts[iter->X()][iter->Y()][i]* Sq(Time(i) - mean);
+        }
+        variance /= SumBins(iter);
+        variance -= Sq(bin_size) / 12.0;
+        return Sqrt(variance);
+    }
+
     PhotonCount::Iterator PhotonCount::GetIterator() const
     {
         return Iterator(valid);

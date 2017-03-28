@@ -138,9 +138,15 @@ namespace cherenkov_simulator
         int SumBins(const Iterator* iter, const std::vector<bool>* mask = nullptr) const;
 
         /*
-         * Finds the average time in the bin referenced by the iterator.
+         * Finds the average time in the pixel referenced by the iterator.
          */
         double AverageTime(const Iterator* iter) const;
+
+        /*
+         * Finds the standard deviation of the times in the pixel referenced by the iterator, applying Sheppard's
+         * correction because the data is binned.
+         */
+        double TimeError(const Iterator* iter) const;
 
         /*
          * Returns an object for iterating through the pixels.

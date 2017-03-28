@@ -248,9 +248,7 @@ namespace cherenkov_simulator
             {
                 angles.push_back((to_sdp * direction).Phi());
                 times.push_back(data.AverageTime(&iter));
-
-                // Assume the error in each average time is the error in an individual time (bin size) over sqrt(n)
-                time_er.push_back(data.BinSize() / Sqrt((double) bin_sum));
+                time_er.push_back(data.TimeError(&iter));
             }
         }
 
