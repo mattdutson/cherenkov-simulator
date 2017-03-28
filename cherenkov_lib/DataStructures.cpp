@@ -90,59 +90,64 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<vector<bool>> PhotonCount::GetValid()
+    vector<vector<bool>> PhotonCount::GetValid() const
     {
         return valid;
     }
 
-    int PhotonCount::Size()
+    int PhotonCount::Size() const
     {
         return n_pixels;
     }
 
-    int PhotonCount::NBins()
+    int PhotonCount::NBins() const
     {
         return start_time == last_time ? 0 : Bin(last_time) + 1;
     }
 
-    double PhotonCount::BinSize()
+    double PhotonCount::BinSize() const
     {
         return bin_size;
     }
 
-    double PhotonCount::Time(int bin)
+    double PhotonCount::Time(int bin) const
     {
         return bin * bin_size + start_time;
     }
 
-    int PhotonCount::Bin(double time)
+    int PhotonCount::Bin(double time) const
     {
         return (int) Floor((time - start_time) / bin_size);
     }
 
-    double PhotonCount::DetectorAxisAngle()
+    double PhotonCount::DetectorAxisAngle() const
     {
         return ((double) n_pixels / 2) * angular_size;
     }
 
-    TVector3 PhotonCount::Direction(const Iterator* iter)
+    TVector3 PhotonCount::Direction(const Iterator* iter) const
     {
         return Direction(iter->X(), iter->Y());
     }
 
-    vector<int> PhotonCount::Signal(const Iterator* iter)
+    vector<int> PhotonCount::Signal(const Iterator* iter) const
     {
         return counts[iter->X()][iter->Y()];
     }
 
-    int PhotonCount::SumBins(const Iterator* iter)
+    int PhotonCount::SumBins(const Iterator* iter, const std::vector<bool>* mask) const
     {
         int sum = 0;
-        for (int count : counts[iter->X()][iter->Y()]) sum += count;
+        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
+        {
+            int count = counts[iter->X()][iter->Y()][i];
+            if (mask != nullptr) sum += mask->at(i) ? count : 0;
+            else sum += count;
+        }
         return sum;
     }
 
-    double PhotonCount::AverageTime(const Iterator* iter)
+    double PhotonCount::AverageTime(const Iterator* iter) const
     {
         int sum = SumBins(iter);
         double average = 0;
@@ -153,12 +158,12 @@ namespace cherenkov_simulator
         return average;
     }
 
-    PhotonCount::Iterator PhotonCount::GetIterator()
+    PhotonCount::Iterator PhotonCount::GetIterator() const
     {
         return Iterator(valid);
     }
 
-    vector<vector<vector<bool>>> PhotonCount::GetFalseMatrix()
+    vector<vector<vector<bool>>> PhotonCount::GetFalseMatrix() const
     {
         int size = Size();
         return vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(NBins(), false)));
@@ -225,7 +230,7 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh)
+    vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh) const
     {
         // Determine the minimum threshold for triggering.
         double real_noise = RealNoiseRate(noise_rate);
@@ -264,7 +269,7 @@ namespace cherenkov_simulator
         }
     }
 
-    double PhotonCount::RealNoiseRate(double universal_rate)
+    double PhotonCount::RealNoiseRate(double universal_rate) const
     {
         // Calculate the number of noise photons per second from the number of photons per second per steradian.
         double solid_angle = Sq(angular_size);
@@ -282,7 +287,7 @@ namespace cherenkov_simulator
         equalized = true;
     }
 
-    bool PhotonCount::ValidPixel(int x_index, int y_index)
+    bool PhotonCount::ValidPixel(int x_index, int y_index) const
     {
         int n_half = n_pixels / 2;
         double arc_length = n_half * linear_size;
@@ -293,7 +298,7 @@ namespace cherenkov_simulator
         return Utility::WithinXYDisk(direction, max_dev);
     }
 
-    TVector3 PhotonCount::Direction(int x_index, int y_index)
+    TVector3 PhotonCount::Direction(int x_index, int y_index) const
     {
         // Reverse the operations of AddPhoton. Add 0.5 to account for the Floor() operation.
         double pixels_up = (y_index - n_pixels / 2.0 + 0.5);

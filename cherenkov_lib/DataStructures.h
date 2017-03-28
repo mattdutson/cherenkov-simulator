@@ -90,68 +90,68 @@ namespace cherenkov_simulator
         /*
          * Returns the 2D array of valid pixel flags.
          */
-        std::vector<std::vector<bool>> GetValid();
+        std::vector<std::vector<bool>> GetValid() const;
 
         /*
          * Returns the width/height of the 2D array
          */
-        int Size();
+        int Size() const;
 
         /*
          * Returns the total number of time bins in the data structure.
          */
-        int NBins();
+        int NBins() const;
 
         /*
          * Returns the size, in seconds, of each time bin.
          */
-        double BinSize();
+        double BinSize() const;
 
         /*
          * Finds the time corresponding to the specified bin.
          */
-        double Time(int bin);
+        double Time(int bin) const;
 
         /*
          * Finds the bin corresponding to some time.
          */
-        int Bin(double time);
+        int Bin(double time) const;
 
         /*
          * The angular size of the detector, from axis to the outside of the detector surface.
          */
-        double DetectorAxisAngle();
+        double DetectorAxisAngle() const;
 
         /*
          * Determines the direction of the photomultiplier referenced by the iterator.
          */
-        TVector3 Direction(const Iterator* iter);
+        TVector3 Direction(const Iterator* iter) const;
 
         /*
          * Gets the complete time signal at the current position of the iterator.
          */
-        std::vector<int> Signal(const Iterator* iter);
+        std::vector<int> Signal(const Iterator* iter) const;
 
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(const Iterator* iter);
+        int SumBins(const Iterator* iter, const std::vector<bool>* mask = nullptr) const;
 
         /*
          * Finds the average time in the bin referenced by the iterator.
          */
-        double AverageTime(const Iterator* iter);
+        double AverageTime(const Iterator* iter) const;
 
         /*
          * Returns an object for iterating through the pixels.
          */
-        Iterator GetIterator();
+        Iterator GetIterator() const;
 
         /*
          * Returns a 3D matrix of false values, with the same dimensions as the underlying vector of the PhotonCount
          * class.
          */
-        std::vector<std::vector<std::vector<bool>>> GetFalseMatrix();
+        std::vector<std::vector<std::vector<bool>>> GetFalseMatrix() const;
 
         /*
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
@@ -180,7 +180,7 @@ namespace cherenkov_simulator
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
          * trigger_thresh * sigma photon counts.
          */
-        std::vector<bool> AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh);
+        std::vector<bool> AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh) const;
 
         /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
@@ -196,7 +196,7 @@ namespace cherenkov_simulator
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second
          * per steradian in a given direction.
          */
-        double RealNoiseRate(double universal_rate);
+        double RealNoiseRate(double universal_rate) const;
 
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.
@@ -227,12 +227,12 @@ namespace cherenkov_simulator
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
-        bool ValidPixel(int x_index, int y_index);
+        bool ValidPixel(int x_index, int y_index) const;
 
         /*
          * A private method which is functionally equivalent to Direction(const Iterator*).
          */
-        TVector3 Direction(int x_index, int y_index);
+        TVector3 Direction(int x_index, int y_index) const;
 
         /*
          * If the vector at index (x, y) is smaller than the specified size, it is expanded. This method does NOT

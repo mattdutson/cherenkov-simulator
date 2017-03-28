@@ -10,6 +10,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <TRotation.h>
 #include <TGraphErrors.h>
+#include <TMatrixDSym.h>
 
 #include "DataStructures.h"
 #include "Geometric.h"
@@ -63,13 +64,12 @@ namespace cherenkov_simulator
         double sky_noise;
         double ground_noise;
 
-        // Parameters used when applying triggering logic
+        // Parameters used when applying triggering logic and noise reduction
         double trigger_thresh;
         double noise_thresh;
         int trigger_clust;
-
-        // Used when deciding whether to attempt Cherenkov-assisted reconstruction based on the estimated impact point.
         double impact_buffer;
+        double plane_dev;
 
         // A general-purpose random number generator
         TRandom3 rng;
@@ -91,7 +91,12 @@ namespace cherenkov_simulator
          * which the shower-detector plane is the xy-plane, with the x-axis lying in the original xy-plane. This
          * rotation is assumed to start world frame, not the detector frame.
          */
-        TRotation FitSDPlane(PhotonCount data);
+        TRotation FitSDPlane(PhotonCount data, const Bool3D* mask = nullptr);
+
+        /*
+         * Finds the eigenvector of the symmetric matrix with the smallest eigenvalue.
+         */
+        TVector3 MinValVec(TMatrixDSym matrix);
 
         /*
          * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
@@ -129,6 +134,18 @@ namespace cherenkov_simulator
          * Only signals which are adjacent to another non-noise signal are considered.
          */
         void RecursiveSearch(PhotonCount* data);
+
+        /*
+         * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within
+         * some angle of an estimated shower-detector plane.
+         */
+        void FindPlaneSubset(const PhotonCount* data, Bool3D* triggered);
+
+        /*
+         * Determines whether the input direction is near enough to the plane. The maximum angular deviation from the
+         * plane is defined in the config.
+         */
+        bool NearPlane(TRotation to_plane, TVector3 direction);
 
         /*
          * Determines whether the detector was triggered by iterating through trig_state and determining if there are

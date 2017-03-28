@@ -5,10 +5,10 @@
 //
 // Implementation of Reconstructor.h
 
-#include <TMatrixDSymEigen.h>
 #include <TMath.h>
 #include <TGraphErrors.h>
 #include <TF1.h>
+#include <TMatrixDSymEigen.h>
 
 #include "Reconstructor.h"
 #include "Utility.h"
@@ -36,12 +36,14 @@ namespace cherenkov_simulator
         sky_noise = Sq(stop_diameter / 2.0) * Pi() * global_sky_noise;
         ground_noise = Sq(stop_diameter / 2.0) * Pi() * global_ground_noise;
 
-        // Parameters used when applying triggering logic
+        // Parameters used when applying triggering logic and noise reduction
         trigger_thresh = config.get<double>("triggering.trigger_thresh");
         noise_thresh = config.get<double>("triggering.noise_thresh");
         trigger_clust = config.get<int>("triggering.trigger_clust");
-
         impact_buffer = config.get<double>("triggering.impact_buffer");
+        plane_dev = config.get<double>("triggering.plane_dev");
+
+        // The random number generator
         rng = TRandom3();
     }
 
@@ -150,28 +152,39 @@ namespace cherenkov_simulator
         return data_graph;
     }
 
-    TRotation Reconstructor::FitSDPlane(PhotonCount data)
+    TRotation Reconstructor::FitSDPlane(PhotonCount data, const Bool3D* mask) // TODO: Update
     {
-        // Compute the matrix specified in Stratton 3.4. Maybe just iterate over matrix elements whose symmetric
-        // counterparts haven't been found yet.
+        // Construct the symmetric matrix for finding eigenvectors
         PhotonCount::Iterator iter = data.GetIterator();
+        vector<bool> curr_mask = vector<bool>(data.NBins(), true);
         TMatrixDSym matrix(3);
         for (int j = 0; j < 3; j++)
         {
-            for (int k = 0; k < 3; k++)
+            for (int k = j; k < 3; k++)
             {
                 double mat_element = 0;
                 iter.Reset();
                 while (iter.Next())
                 {
+                    if (mask != nullptr) curr_mask = mask->at(iter.X())[iter.Y()];
                     TVector3 direction = data.Direction(&iter);
-                    int pmt_sum = data.SumBins(&iter);
+                    int pmt_sum = data.SumBins(&iter, &curr_mask);
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }
                 matrix[j][k] = mat_element;
             }
         }
 
+        // Construct a rotation which takes points to the frame where the shower-detector plane is the xy plane.
+        TVector3 normal = rotate_to_world * MinValVec(matrix);
+        if (normal.X() < 0) normal = -normal;
+        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : TVector3(0, 0, 1).Cross(normal).Unit();
+        TVector3 new_y = normal.Cross(new_x).Unit();
+        return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
+    }
+
+    TVector3 Reconstructor::MinValVec(TMatrixDSym matrix)
+    {
         // Find the eigenvector corresponding to the minimum eigenvalue.
         TMatrixDSymEigen eigen = TMatrixDSymEigen(matrix);
         TVectorD eigen_val = eigen.GetEigenValues();
@@ -188,14 +201,7 @@ namespace cherenkov_simulator
         }
 
         // Each eigenvector is stored as a column in the matrix. Matrices are indexed as [row][column].
-        TVector3 normal = TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
-        normal = rotate_to_world * normal;
-        if (normal.X() < 0) normal = -normal;
-
-        // Construct a rotation which takes points to the frame where the shower-detector plane is the xy plane.
-        TVector3 new_x = (normal == TVector3(0, 0, 1)) ? TVector3(1, 0, 0) : TVector3(0, 0, 1).Cross(normal).Unit();
-        TVector3 new_y = normal.Cross(new_x).Unit();
-        return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
+        return TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
     }
 
     bool Reconstructor::FindGroundImpact(PhotonCount data, TVector3* impact)
@@ -286,6 +292,7 @@ namespace cherenkov_simulator
     {
         // Find the pixels and times where triggers occured as well as pixels and times above the noise threshold
         Bool3D triggered = GetThresholdMatrices(*data, trigger_thresh);
+        FindPlaneSubset(data, &triggered);
         Bool3D three_sigma = GetThresholdMatrices(*data, noise_thresh);
         Bool3D good_pixels = data->GetFalseMatrix();
         vector<bool> trig_state = GetTriggeringState(GetThresholdMatrices(*data, trigger_thresh));
@@ -307,6 +314,26 @@ namespace cherenkov_simulator
 
         // Erase any pixels we determined to be non-valid
         data->Subset(good_pixels);
+    }
+
+    void Reconstructor::FindPlaneSubset(const PhotonCount* data, Bool3D* triggered)
+    {
+        TRotation to_sd_plane = FitSDPlane(*data, triggered);
+        PhotonCount::Iterator iter = data->GetIterator();
+        while (iter.Next())
+        {
+            if (!NearPlane(to_sd_plane, data->Direction(&iter)))
+            {
+                triggered->at(iter.X())[iter.Y()] = vector<bool>(data->NBins(), false);
+            }
+        }
+    }
+
+    bool Reconstructor::NearPlane(TRotation to_plane, TVector3 direction)
+    {
+        TVector3 dir_rotated = to_plane * direction;
+        double angle = ASin(dir_rotated.Z() / Sqrt(Sq(dir_rotated.X()) + Sq(dir_rotated.Y())));
+        return angle < plane_dev;
     }
 
     bool Reconstructor::DetectorTriggered(vector<bool> trig_state)
@@ -394,7 +421,7 @@ namespace cherenkov_simulator
         {
             return;
         }
-        else if (!three_sigma->at(i)[j][t])
+        else if (!three_sigma->at(i)[j][t] || good_pixels->at(i)[j][t])
         {
             return;
         }

@@ -37,6 +37,7 @@
         <noise_thresh unit="null">3.0</noise_thresh>
         <trigger_clust unit="null">5</trigger_clust>
         <impact_buffer unit="rad">0.02</impact_buffer>
+        <plane_dev unit="rad">0.05</plane_dev>
     </triggering>
 
 </config>
