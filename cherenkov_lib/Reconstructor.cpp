@@ -152,7 +152,7 @@ namespace cherenkov_simulator
         return data_graph;
     }
 
-    TRotation Reconstructor::FitSDPlane(PhotonCount data, const Bool3D* mask) // TODO: Update
+    TRotation Reconstructor::FitSDPlane(PhotonCount data, const Bool3D* mask)
     {
         // Construct the symmetric matrix for finding eigenvectors
         PhotonCount::Iterator iter = data.GetIterator();
@@ -172,6 +172,7 @@ namespace cherenkov_simulator
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }
                 matrix[j][k] = mat_element;
+                matrix[k][j] = mat_element;
             }
         }
 
@@ -185,7 +186,6 @@ namespace cherenkov_simulator
 
     TVector3 Reconstructor::MinValVec(TMatrixDSym matrix)
     {
-        // Find the eigenvector corresponding to the minimum eigenvalue.
         TMatrixDSymEigen eigen = TMatrixDSymEigen(matrix);
         TVectorD eigen_val = eigen.GetEigenValues();
         TMatrixD eigen_vec = eigen.GetEigenVectors();
@@ -199,8 +199,6 @@ namespace cherenkov_simulator
                 min_index = i;
             }
         }
-
-        // Each eigenvector is stored as a column in the matrix. Matrices are indexed as [row][column].
         return TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
     }
 
@@ -246,9 +244,12 @@ namespace cherenkov_simulator
             int bin_sum = data.SumBins(&iter);
             if (!ground_plane.InFrontOf(direction) && bin_sum > 0)
             {
-                angles.push_back((to_sdp * direction).Phi());
-                times.push_back(data.AverageTime(&iter));
-                time_er.push_back(data.TimeError(&iter));
+                for (int i = 0; i < bin_sum; i++)
+                {
+                    angles.push_back((to_sdp * direction).Phi());
+                    times.push_back(data.AverageTime(&iter));
+                    time_er.push_back(data.TimeError(&iter));
+                }
             }
         }
 
@@ -320,7 +321,7 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data->GetIterator();
         while (iter.Next())
         {
-            if (!NearPlane(to_sd_plane, data->Direction(&iter)))
+            if (!NearPlane(to_sd_plane, rotate_to_world * data->Direction(&iter)))
             {
                 triggered->at(iter.X())[iter.Y()] = vector<bool>(data->NBins(), false);
             }
@@ -330,8 +331,8 @@ namespace cherenkov_simulator
     bool Reconstructor::NearPlane(TRotation to_plane, TVector3 direction)
     {
         TVector3 dir_rotated = to_plane * direction;
-        double angle = ASin(dir_rotated.Z() / Sqrt(Sq(dir_rotated.X()) + Sq(dir_rotated.Y())));
-        return angle < plane_dev;
+        double angle = ASin(dir_rotated.Z() / dir_rotated.Mag());
+        return Abs(angle) < plane_dev;
     }
 
     bool Reconstructor::DetectorTriggered(vector<bool> trig_state)

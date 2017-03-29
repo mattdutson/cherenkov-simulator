@@ -62,6 +62,8 @@ namespace cherenkov_simulator
 
         void FriendThreeSigmaFilter(PhotonCount* data) {reconstructor->ThreeSigmaFilter(data);}
 
+        void FriendRecursiveSearch(PhotonCount* data) {reconstructor->RecursiveSearch(data);}
+
         bool FriendFindGroundImpact(PhotonCount data, TVector3* impact) {return reconstructor->FindGroundImpact(data, impact);}
     };
 
@@ -70,6 +72,8 @@ namespace cherenkov_simulator
         // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame.
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
+        reconstructor->AddNoise(&data);
+        reconstructor->ClearNoise(&data);
 
         // Attempt to reconstruct the shower plane and geometry.
         TRotation to_sd_plane = FriendFitSDPlane(data);
@@ -91,6 +95,8 @@ namespace cherenkov_simulator
         // Construct and simulate a shower at 10km which is skewed at some angle.
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
+        reconstructor->AddNoise(&data);
+        reconstructor->ClearNoise(&data);
 
         // Attempt to reconstruct the shower plane and geometry.
         TRotation to_sd_plane = FriendFitSDPlane(data);
@@ -110,7 +116,7 @@ namespace cherenkov_simulator
     TEST_F(ReconstructorTest, AddSubtractNoise)
     {
         TFile file("AddSubtractNoise.root", "RECREATE");
-        Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
         Analysis::MakeProfileGraph(data).Write("before_noise_graph");
@@ -127,6 +133,10 @@ namespace cherenkov_simulator
         FriendThreeSigmaFilter(&data);
         Analysis::MakeProfileGraph(data).Write("three_sigma_graph");
         Analysis::MakeSumMap(data).Write("three_sigma_map");
+
+        FriendRecursiveSearch(&data);
+        Analysis::MakeProfileGraph(data).Write("recursive_search_graph");
+        Analysis::MakeSumMap(data).Write("recursive_search_map");
     }
 
     TEST_F(ReconstructorTest, TriggeringMaps)
