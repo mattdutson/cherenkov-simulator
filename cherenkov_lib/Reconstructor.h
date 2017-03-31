@@ -23,19 +23,35 @@ namespace cherenkov_simulator
 
         typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
 
+        struct Result
+        {
+            bool trigger;
+            bool impact;
+            Shower mono;
+            Shower ckv;
+
+            /*
+             * Creates a header for rows of data created with ToString().
+             */
+            static std::string Header();
+
+            /*
+             * Creates a string with comma separated fields, with Shower represented by Shower.ToString().
+             */
+            std::string ToString();
+        };
+
         /*
          * Constructs the Reconstructor from values in the configuration tree.
          */
         Reconstructor(boost::property_tree::ptree config);
 
         /*
-         * Performs a reconstruction of the shower. If try_ground is true, then a hybrid Cherenkov reconstruction is
-         * attempted. Otherwise, an ordinary monocular reconstruction is attempted. If the PhotonCount data wouldn't
-         * result in the detector being triggered, then *triggered = false, and an empty shower is returned. If a valid
-         * ground Cherenkov impact point is not found, then *ground_used = false, and an ordinary monocular
-         * reconstruction is attempted.
+         * Performs both a monocular and Cherenkov reconstruction, storing output in a Result data structure. If the
+         * detector was not triggered, Result.triggered = false. If there was not visible impact point,
+         * Result.cherenkov = false.
          */
-        Shower Reconstruct(PhotonCount data, bool try_ground, bool* triggered, bool* ground_used);
+        Result Reconstruct(PhotonCount data);
 
         /*
          * Adds Poisson-distributed background noise to the signal.
@@ -57,8 +73,8 @@ namespace cherenkov_simulator
         constexpr static double global_ground_noise = 4.924e5;
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings - cgs
-        Plane ground_plane;
-        TRotation rotate_to_world;
+        Plane ground;
+        TRotation to_world;
 
         // Detector-specific levels of night sky background noise - cgs, sr
         double sky_noise;
@@ -78,13 +94,12 @@ namespace cherenkov_simulator
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
          * not used.
          */
-        TGraphErrors MonocularFit(PhotonCount data, TRotation to_sdp, double* t_0, double* r_p, double* psi);
+        Shower MonocularFit(PhotonCount data, TRotation to_sdp, std::string graph_file = "");
 
         /*
          * Performs a time profile reconstruction, but using the constraint of an impact point.
          */
-        TGraphErrors
-        HybridFit(PhotonCount data, TVector3 impact, TRotation to_sdp, double* t_0, double* r_p, double* psi);
+        Shower HybridFit(PhotonCount data, TVector3 impact, TRotation to_sdp, std::string graph_file = "");
 
         /*
          * Finds the shower-detector plane based on the distribution of data points. Returns a rotation to a frame in

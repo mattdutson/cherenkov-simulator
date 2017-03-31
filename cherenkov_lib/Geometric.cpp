@@ -10,6 +10,7 @@
 #include "Utility.h"
 
 using namespace TMath;
+using namespace std;
 
 namespace cherenkov_simulator
 {
@@ -40,6 +41,8 @@ namespace cherenkov_simulator
         Ray outward_ray = Ray(TVector3(), direction, 0);
         return outward_ray.TimeToPlane(*this) > 0;
     }
+
+    Ray::Ray() {}
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
@@ -153,6 +156,8 @@ namespace cherenkov_simulator
         position += time_step * velocity;
     }
 
+    Shower::Shower() : Ray() {}
+
     Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
         this->energy = params.energy;
@@ -173,12 +178,22 @@ namespace cherenkov_simulator
         return energy / (10.0e6);
     }
 
+    double Shower::EnergyeV()
+    {
+        return energy;
+    }
+
     double Shower::ImpactParam()
     {
         // See http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
         TVector3 point1 = Position();
         TVector3 point2 = Position() + Direction();
         return (point1.Cross(point2)).Mag();
+    }
+
+    double Shower::ImpactAngle()
+    {
+        return Pi() - Direction().Angle(TVector3(0, 1, 0));
     }
 
     double Shower::LocalRho()
@@ -207,6 +222,17 @@ namespace cherenkov_simulator
     {
         // We make the simplifying assumption that the atmospheric density is constant over a single step
         IncrementPosition(depth / LocalRho());
+    }
+
+    string Shower::Header()
+    {
+        return "Psi, Impact, Dir x, Dir y, Dir z, Psi";
+    }
+
+    string Shower::ToString()
+    {
+        return to_string(ImpactAngle()) + ", " + to_string(ImpactParam()) + ", " + to_string(Direction().X()) + ", " +
+                to_string(Direction().Y()) + ", " + to_string(Direction().Z());
     }
 
     double Shower::X()

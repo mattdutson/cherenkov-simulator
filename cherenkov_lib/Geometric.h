@@ -67,8 +67,13 @@ namespace cherenkov_simulator
     public:
 
         /*
-         * The only constructor. Constructs a ray at the specified position, moving in the specified direction, at the
-         * given time. If (0, 0, 0) is passed as the direction vector, (0, 0, 1) is used instead.
+         * The default constructor.
+         */
+        Ray();
+
+        /*
+         * Constructs a ray at the specified position, moving in the specified direction, at the given time. If
+         * (0, 0, 0) is passed as the direction vector, (0, 0, 1) is used instead.
          */
         Ray(TVector3 position, TVector3 direction, double time);
 
@@ -184,9 +189,14 @@ namespace cherenkov_simulator
         };
 
         /*
-         * The only constructor. Takes all of the parameters used in the Ray class, as well as three shower-specific
-         * parameters (x_0, x_max, n_max). Also takes two atmospheric parameters (rho_0 and scale_height). The starting
-         * time is assumed to be zero by default.
+         * The default constructor.
+         */
+        Shower();
+
+        /*
+         * Takes all of the parameters used in the Ray class, as well as three shower-specificparameters (x_0, x_max,
+         * n_max). Also takes two atmospheric parameters (rho_0 and scale_height). The startingtime is assumed to be
+         * zero by default.
          */
         Shower(Params params, TVector3 position, TVector3 direction, double time = 0);
 
@@ -201,9 +211,19 @@ namespace cherenkov_simulator
         double EnergyMeV();
 
         /*
+         * Returns the energy of the shower primary in eV.
+         */
+        double EnergyeV();
+
+        /*
          * Calculates the impact parameter of the shower from the origin.
          */
         double ImpactParam();
+
+        /*
+         * Calculates the angle psi of the shower in the shower-detector plane.
+         */
+        double ImpactAngle();
 
         /*
          * Returns the atmospheric density at the shower's current position.
@@ -229,6 +249,16 @@ namespace cherenkov_simulator
          * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
          */
         void IncrementDepth(double depth);
+
+        /*
+         * Creates a header for rows of data created with ToString().
+         */
+        static std::string Header();
+
+        /*
+         * Creates a string with comma-separated impact parameter, impact angle, and shower direction.
+         */
+        std::string ToString();
 
     private:
 

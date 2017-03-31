@@ -10,6 +10,7 @@
 #include <vector>
 #include <TVector3.h>
 #include <TRandom3.h>
+#include <TF1.h>
 
 namespace cherenkov_simulator
 {
@@ -103,6 +104,11 @@ namespace cherenkov_simulator
         int NBins() const;
 
         /*
+         * Returns true if no photons were added.
+         */
+        bool Empty() const;
+
+        /*
          * Returns the size, in seconds, of each time bin.
          */
         double BinSize() const;
@@ -175,18 +181,12 @@ namespace cherenkov_simulator
         /*
          * Subtract the average noise rate from the signal in the pixel specified by the iterator.
          */
-        void SubtractNoise(double noise_rate, const Iterator* iter);
+        void Subtract(const Iterator *iter, double rate);
 
         /*
          * Clears any bins in the current pixel which are less than noise_thresh * sigma from zero.
          */
-        void ClearNoise(const Iterator* iter, double noise_rate, double hold_thresh);
-
-        /*
-         * Returns a vector which contains "true" for each bin in the current pixel which contains more than
-         * trigger_thresh * sigma photon counts.
-         */
-        std::vector<bool> AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh) const;
+        void Threshold(const Iterator *iter, int threshold);
 
         /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
@@ -194,15 +194,17 @@ namespace cherenkov_simulator
         void Subset(std::vector<std::vector<std::vector<bool>>> good_pixels);
 
         /*
-         * Erases any photon counts which are not in a time bin corresponding to a true value in the input vector.
+         * Returns a vector which contains "true" for each bin in the current pixel which contains more than
+         * trigger_thresh * sigma photon counts.
          */
-        void TimeSubset(std::vector<bool> good_bins);
+        std::vector<bool> AboveThreshold(const Iterator* iter, int threshold) const;
 
         /*
-         * Determines the number of photons per bin observed by a single pixel given the number of photons per second
-         * per steradian in a given direction.
+         * Determines the appropriate threshold given the global noise rate (Poisson distributed), and the number of
+         * standard deviations above the mean where the threshold should lie. Any signals at or above this threshold are
+         * considered "good".
          */
-        double RealNoiseRate(double universal_rate) const;
+        int FindThreshold(double global_rate, double sigma);
 
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.
@@ -230,6 +232,9 @@ namespace cherenkov_simulator
         // Keeps track of whether we need to call Equalize
         bool equalized;
 
+        // Used when calculating thresholds
+        TF1 gauss;
+
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
@@ -245,6 +250,23 @@ namespace cherenkov_simulator
          * check that the indices are valid.
          */
         void ExpandVector(int x_index, int y_index, int size);
+
+        /*
+         * Determines the number of photons per bin observed by a single pixel given the number of photons per second
+         * per steradian in a given direction.
+         */
+        double RealNoiseRate(double universal_rate) const;
+
+        /*
+         * Approximates the sum of the specified Poisson distribution from some minimum value to infinity. The summation
+         * stops when the value of the distribution is less than 10^-6 of the value at the starting point.
+         */
+        double PoissonSum(double mean, int min);
+
+        /*
+         * Calculates the value of the Poisson distribution with specified mean at the specified value.
+         */
+        double Poisson(double mean, int x);
     };
 }
 

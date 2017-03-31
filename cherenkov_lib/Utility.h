@@ -67,6 +67,11 @@ namespace cherenkov_simulator
          */
         static double PercentError(double actual, double expected);
 
+        /*
+         * Converts a bool to the string "TRUE" or "FALSE".
+         */
+        static std::string BoolString(bool b);
+
     private:
 
         /*

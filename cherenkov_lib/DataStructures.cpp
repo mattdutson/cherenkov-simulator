@@ -88,6 +88,9 @@ namespace cherenkov_simulator
                 valid[i].push_back(ValidPixel(i, j));
             }
         }
+
+        // Initialize the gaussian used to calculate threhsolds.
+        gauss = TF1("gauss", "e^(-0.5 * x^2) / sqrt(2 * pi)", -Infinity(), Infinity());
     }
 
     vector<vector<bool>> PhotonCount::GetValid() const
@@ -103,6 +106,11 @@ namespace cherenkov_simulator
     int PhotonCount::NBins() const
     {
         return start_time == last_time ? 0 : Bin(last_time) + 1;
+    }
+
+    bool PhotonCount::Empty() const
+    {
+        return NBins() == 0;
     }
 
     double PhotonCount::BinSize() const
@@ -166,9 +174,10 @@ namespace cherenkov_simulator
         {
             variance += counts[iter->X()][iter->Y()][i]* Sq(Time(i) - mean);
         }
-        variance /= SumBins(iter);
-        variance -= Sq(bin_size) / 12.0;
-        return Sqrt(variance);
+        double count = SumBins(iter);
+        variance /= count;
+        variance += Sq(bin_size) / 12.0;
+        return Sqrt(variance / count);
     }
 
     PhotonCount::Iterator PhotonCount::GetIterator() const
@@ -216,44 +225,43 @@ namespace cherenkov_simulator
         }
     }
 
-    void PhotonCount::SubtractNoise(double noise_rate, const Iterator* iter)
+    void PhotonCount::Subtract(const Iterator *iter, double rate)
     {
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
-        int expected_photons = (int) RealNoiseRate(noise_rate);
+        int expected_photons = (int) RealNoiseRate(rate);
         for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
         {
             counts[iter->X()][iter->Y()][i] -= expected_photons;
         }
     }
 
-    void PhotonCount::ClearNoise(const Iterator* iter, double noise_rate, double hold_thresh)
+    void PhotonCount::Threshold(const Iterator *iter, int threshold)
     {
-        // Determine the minimum threshold for non-noise signals.
-        double real_noise = RealNoiseRate(noise_rate);
-        double thresh = hold_thresh * Sqrt(real_noise);
-
-        // Zero any measurements which are below the noise threshold.
         for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
         {
-            if (counts[iter->X()][iter->Y()][i] < thresh)
+            if (counts[iter->X()][iter->Y()][i] < threshold)
             {
                 counts[iter->X()][iter->Y()][i] = 0;
             }
         }
     }
 
-    vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, double noise_rate, double trigger_thresh) const
+    vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, int threshold) const
     {
-        // Determine the minimum threshold for triggering.
-        double real_noise = RealNoiseRate(noise_rate);
-        double thresh = trigger_thresh * Sqrt(real_noise);
-
-        // Find all bins in which the count exceeded the triggering threshold.
         vector<int> data = counts[iter->X()][iter->Y()];
         vector<bool> triggers = vector<bool>();
-        for (int i = 0; i < data.size(); i++) triggers.push_back(data[i] > thresh);
+        for (int i = 0; i < data.size(); i++) triggers.push_back(data[i] > threshold);
         return triggers;
+    }
+
+    int PhotonCount::FindThreshold(double global_rate, double sigma)
+    {
+        double max_prob = gauss.Integral(sigma, Infinity());
+        double mean = RealNoiseRate(global_rate);
+        int thresh = (int) Floor(sigma * Sqrt(mean));
+        while(PoissonSum(mean, thresh) > max_prob) thresh++;
+        return thresh;
     }
 
     void PhotonCount::Subset(vector<vector<vector<bool>>> good_bins)
@@ -268,28 +276,6 @@ namespace cherenkov_simulator
                 }
             }
         }
-    }
-
-    void PhotonCount::TimeSubset(vector<bool> good_bins)
-    {
-        Iterator iter = GetIterator();
-        while (iter.Next())
-        {
-            for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
-            {
-                if (!good_bins.at(i)) counts[iter.X()][iter.Y()][i] = 0;
-            }
-        }
-    }
-
-    double PhotonCount::RealNoiseRate(double universal_rate) const
-    {
-        // Calculate the number of noise photons per second from the number of photons per second per steradian.
-        double solid_angle = Sq(angular_size);
-        double pixel_rate = universal_rate * solid_angle;
-
-        // Determine the mean number of Poisson events in a single time bin.
-        return bin_size * pixel_rate;
     }
 
     void PhotonCount::Equalize()
@@ -326,5 +312,30 @@ namespace cherenkov_simulator
     void PhotonCount::ExpandVector(int x_index, int y_index, int size)
     {
         if (counts[x_index][y_index].size() < size) counts[x_index][y_index].resize(size, 0);
+    }
+
+    double PhotonCount::RealNoiseRate(double universal_rate) const
+    {
+        // Calculate the number of noise photons per second from the number of photons per second per steradian.
+        double solid_angle = Sq(angular_size);
+        double pixel_rate = universal_rate * solid_angle;
+
+        // Determine the mean number of Poisson events in a single time bin.
+        return bin_size * pixel_rate;
+    }
+
+    double PhotonCount::PoissonSum(double mean, int min)
+    {
+        double sum = 0.0;
+        for (int i = 0; Poisson(mean, i) > 10e-6 * Poisson(mean, min); i++)
+        {
+            sum += Poisson(mean, i);
+        }
+        return sum;
+    }
+
+    double PhotonCount::Poisson(double mean, int x)
+    {
+        return Exp(-mean) * Power(x, mean) / Factorial(x);
     }
 }

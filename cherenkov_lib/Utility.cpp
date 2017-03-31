@@ -107,4 +107,9 @@ namespace cherenkov_simulator
     {
         return expected == 0 ? Abs(actual) : Abs((actual - expected) / expected);
     }
+
+    string Utility::BoolString(bool b)
+    {
+        return b ? "TRUE" : "FALSE";
+    }
 }

@@ -4,6 +4,7 @@
 //
 // Implementation of MonteCarlo.h
 
+#include <fstream>
 #include <TMath.h>
 #include <TFile.h>
 
@@ -52,24 +53,21 @@ namespace cherenkov_simulator
     void MonteCarlo::PerformMonteCarlo(std::string out_file)
     {
         // Open a ROOT file to store information about each shower
-        TFile file(out_file.c_str(), "RECREATE");
-        cout << "Running simulation..." << endl;
-
-        // Start tracking averages
-        int n_recon = 0;
-        double mon_rp_err = 0.0, mon_psi_err = 0.0;
-        double ckv_rp_err = 0.0, ckv_psi_err = 0.0;
+        TFile file((out_file + ".root").c_str(), "RECREATE");
+        std::ofstream fout = std::ofstream(out_file + ".csv");
+        fout << "Energy - Original - Mono - Cherenkov" << endl;
+        fout << "ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
         // Simulate a user-defined number of showers
-        for (int i = 0; i < n_showers; i++)
+        for (int i = 0; i < n_showers;)
         {
-            // Generate and store the shower properties
-            Shower shower = GenerateShower();
-            shower.Direction().Write((std::to_string(i) + "_direction").c_str());
-            shower.Position().Write((std::to_string(i) + "_position").c_str());
-
             // Simulate the shower and record photon counts before noise is added
+            Shower shower = GenerateShower();
             PhotonCount data = simulator.SimulateShower(shower);
+            if (data.Empty()) continue;
+            else i++;
+
+            // Write a map of the initial shower track
             Analysis::MakeSumMap(data).Write((std::to_string(i) + "_before_noise_map").c_str());
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_before_noise_graph").c_str());
 
@@ -78,39 +76,15 @@ namespace cherenkov_simulator
             Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_noise_map").c_str());
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_noise_graph").c_str());
 
+            // Clear noise and record the new photon counts
+            reconstructor.ClearNoise(&data);
+            Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_clear_map").c_str());
+            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_clear_graph").c_str());
+
             // Attempt both monocular and hybrid reconstruction of the shower
-            bool triggered, ground_used;
-            Shower mono_shower = reconstructor.Reconstruct(data, false, &triggered, &ground_used);
-            Shower ckv_shower = reconstructor.Reconstruct(data, true, &triggered, &ground_used);
-            cout << "Shower: " << i << " \tTriggered: " << triggered << "\tImpact: " << ground_used << endl;
-
-            // Update averages
-            if (triggered && ground_used)
-            {
-                // TODO: DEBUGGING ONLY
-                cout << "Error: " << Utility::PercentError(shower.Position().Mag(), mono_shower.Position().Mag()) << endl;
-
-                n_recon++;
-                mon_rp_err += Utility::PercentError(shower.ImpactParam(), mono_shower.ImpactParam());
-                mon_psi_err += shower.Direction().Angle(mono_shower.Direction());
-                ckv_rp_err += Utility::PercentError(shower.ImpactParam(), ckv_shower.ImpactParam());
-                ckv_psi_err += shower.Direction().Angle(ckv_shower.Direction());
-            }
+            Reconstructor::Result result = reconstructor.Reconstruct(data);
+            fout << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
         }
-
-        // Finish updating averages
-        mon_rp_err /= (double) n_recon;
-        mon_psi_err /= (double) n_recon;
-        ckv_rp_err /= (double) n_recon;
-        ckv_psi_err /= (double) n_recon;
-
-        // Print a summary of the Monte Carlo simulation
-        cout << "Number simulated: \t" << n_showers << endl;
-        cout << "Number reconstructed: \t" << n_recon << endl;
-        cout << "Mean monocular impact error: \t" << mon_rp_err << " %" << endl;
-        cout << "Mean Cherenkov impact error: \t" << ckv_rp_err << " %" << endl;
-        cout << "Mean monocular angle error: \t" << mon_psi_err << " rad" << endl;
-        cout << "Mean Cherenkov angle error: \t" << ckv_psi_err << " rad" << endl;
     }
 
     Shower MonteCarlo::GenerateShower()
