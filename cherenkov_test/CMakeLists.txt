@@ -11,7 +11,7 @@ set(SOURCE_FILES
 add_executable(cherenkov_test ${SOURCE_FILES})
 
 # Link to cherenkov_lib and its dependencies.
-include(../external_lib/ExternalLib.cmake)
+include(../ExternalLib.cmake)
 link_boost(cherenkov_test)
 link_root(cherenkov_test)
 include_directories(../cherenkov_lib)

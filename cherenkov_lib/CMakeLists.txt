@@ -18,6 +18,6 @@ set(SOURCE_FILES
 add_library(cherenkov_lib STATIC ${SOURCE_FILES})
 
 # Link to external libraries.
-include(../external_lib/ExternalLib.cmake)
+include(../ExternalLib.cmake)
 link_boost(cherenkov_lib)
 link_root(cherenkov_lib)

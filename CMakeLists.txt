@@ -8,7 +8,7 @@ set(SOURCE_FILES Main.cpp)
 add_executable(cherenkov_simulator ${SOURCE_FILES})
 
 # Link to cherenkov_lib and its dependencies.
-include(external_lib/ExternalLib.cmake)
+include(ExternalLib.cmake)
 link_boost(cherenkov_simulator)
 link_root(cherenkov_simulator)
 add_subdirectory(cherenkov_lib)
