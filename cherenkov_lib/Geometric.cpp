@@ -193,7 +193,7 @@ namespace cherenkov_simulator
 
     double Shower::ImpactAngle()
     {
-        return Pi() - Direction().Angle(TVector3(0, 1, 0));
+        return Direction().Angle(TVector3(0, 1, 0));
     }
 
     double Shower::LocalRho()
@@ -226,13 +226,13 @@ namespace cherenkov_simulator
 
     string Shower::Header()
     {
-        return "Psi, Impact, Dir x, Dir y, Dir z, Psi";
+        return "Psi (rad), Impact (km), Dir x, Dir y, Dir z";
     }
 
     string Shower::ToString()
     {
-        return to_string(ImpactAngle()) + ", " + to_string(ImpactParam()) + ", " + to_string(Direction().X()) + ", " +
-                to_string(Direction().Y()) + ", " + to_string(Direction().Z());
+        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam()) + ", " +
+                to_string(Direction().X()) + ", " + to_string(Direction().Y()) + ", " + to_string(Direction().Z());
     }
 
     double Shower::X()

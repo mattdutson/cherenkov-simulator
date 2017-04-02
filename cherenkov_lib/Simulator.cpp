@@ -179,7 +179,7 @@ namespace cherenkov_simulator
         double x = photon->Position().X();
         double y = photon->Position().Y();
         double photon_axis_dist = Sqrt(Sq(x) + Sq(y));
-        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return true;
+        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return photon->Direction().Z() < 0;
 
         // Find the normal to the corrector
         double c_lead = 4.0 * (refrac_lens - 1) * Power(mirror_radius, 3);

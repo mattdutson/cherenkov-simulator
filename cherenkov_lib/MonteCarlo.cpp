@@ -9,7 +9,6 @@
 #include <TFile.h>
 
 #include "MonteCarlo.h"
-#include "Utility.h"
 #include "Analysis.h"
 
 using namespace TMath;
@@ -22,7 +21,7 @@ namespace cherenkov_simulator
     MonteCarlo::MonteCarlo(boost::property_tree::ptree config): simulator(config), reconstructor(config)
     {
         // The distribution of shower energies
-        std::string energy_formula = "x^(-" + std::to_string(energy_pow) + ")";
+        std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
         double e_min = config.get<double>("monte_carlo.e_min");
         double e_max = config.get<double>("monte_carlo.e_max");
         energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
@@ -55,8 +54,7 @@ namespace cherenkov_simulator
         // Open a ROOT file to store information about each shower
         TFile file((out_file + ".root").c_str(), "RECREATE");
         std::ofstream fout = std::ofstream(out_file + ".csv");
-        fout << "Energy - Original - Mono - Cherenkov" << endl;
-        fout << "ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
+        fout << "ID, Energy (eV), " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
         // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers;)
@@ -83,6 +81,7 @@ namespace cherenkov_simulator
 
             // Attempt both monocular and hybrid reconstruction of the shower
             Reconstructor::Result result = reconstructor.Reconstruct(data);
+            cout << "Shower " << i << " finished" << endl;
             fout << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
         }
     }

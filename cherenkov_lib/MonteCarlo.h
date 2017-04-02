@@ -45,9 +45,8 @@ namespace cherenkov_simulator
 
     private:
 
-        // Miscellaneous Monte Carlo parameters - eV
+        // Used to calculate N_max from the energy - eV
         constexpr static double n_max_ratio = 1.39e9;
-        constexpr static double energy_pow = 3.0;
 
         // Parameters used when determining the depth of the shower maximum - cgs
         constexpr static double x_max_1 = 725.0;

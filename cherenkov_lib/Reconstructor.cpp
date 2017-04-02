@@ -24,12 +24,12 @@ namespace cherenkov_simulator
 {
     string Reconstructor::Result::Header()
     {
-        return "Triggered, Cherenkov, " + Shower::Header() + ", " + Shower::Header();
+        return "Triggered, " + Shower::Header() + ", Cherenkov, " + Shower::Header();
     }
 
     string Reconstructor::Result::ToString()
     {
-        return Utility::BoolString(trigger) + ", " + Utility::BoolString(impact) + ", " + mono.ToString() +
+        return Utility::BoolString(trigger) + ", " + mono.ToString() + ", " + Utility::BoolString(impact) +
                 ", " + ckv.ToString();
     }
 
@@ -62,7 +62,7 @@ namespace cherenkov_simulator
     Reconstructor::Result Reconstructor::Reconstruct(PhotonCount data)
     {
         Result result = Result();
-        result.trigger = DetectorTriggered(GetTriggeringState(GetThresholdMatrices(data, trigger_thresh)));
+        result.trigger = DetectorTriggered(GetTriggeringState(GetThresholdMatrices(data, trigger_thresh, false)));
         if (result.trigger)
         {
             TRotation to_sdp = FitSDPlane(data);
@@ -292,13 +292,13 @@ namespace cherenkov_simulator
     void Reconstructor::RecursiveSearch(PhotonCount* data)
     {
         // Find the pixels and times where triggers occured as well as pixels and times above the noise threshold
+        Bool3D three_sigma = GetThresholdMatrices(*data, noise_thresh);
         Bool3D triggered = GetThresholdMatrices(*data, trigger_thresh);
         FindPlaneSubset(data, &triggered);
-        Bool3D three_sigma = GetThresholdMatrices(*data, noise_thresh);
-        Bool3D good_pixels = data->GetFalseMatrix();
-        vector<bool> trig_state = GetTriggeringState(GetThresholdMatrices(*data, trigger_thresh));
+        vector<bool> trig_state = GetTriggeringState(triggered);
 
         // Start the recursive bleed from triggered pixels
+        Bool3D good_pixels = data->GetFalseMatrix();
         for (int i = 0; i < triggered.size(); i++)
         {
             for (int j = 0; j < triggered[i].size(); j++)
@@ -358,7 +358,7 @@ namespace cherenkov_simulator
         {
             bool toward_ground = ground.InFrontOf(to_world * data.Direction(&iter));
             if (toward_ground && !use_below_horiz) continue;
-            pass[iter.X()][iter.Y()] = data.AboveThreshold(&iter, toward_ground ? ground_thresh : ground_thresh);
+            pass[iter.X()][iter.Y()] = data.AboveThreshold(&iter, toward_ground ? ground_thresh : sky_thresh);
         }
         return pass;
     }
@@ -446,7 +446,7 @@ namespace cherenkov_simulator
 
     Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane)
     {
-        // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame frame)
+        // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame)
         TVector3 shower_direction = to_sd_plane.Inverse() * TVector3(Cos(psi), -Sin(psi), 0);
         if (shower_direction.Z() > 0.0) shower_direction = -shower_direction;
         TVector3 plane_normal = to_sd_plane.Inverse() * TVector3(0, 0, 1);

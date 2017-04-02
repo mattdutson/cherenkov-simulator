@@ -112,4 +112,9 @@ namespace cherenkov_simulator
     {
         return b ? "TRUE" : "FALSE";
     }
+
+    string Utility::KmString(double cent)
+    {
+        return to_string(cent / 1e5);
+    }
 }

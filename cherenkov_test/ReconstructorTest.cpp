@@ -56,6 +56,8 @@ namespace cherenkov_simulator
 
         Shower FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, string graph_file = "") {return reconstructor->MonocularFit(data, to_sd_plane, graph_file);}
 
+        Shower FriendHybridFit(PhotonCount data, TVector3 impact, TRotation to_sd_plane, string graph_file = "") {return reconstructor->HybridFit(data, impact, to_sd_plane, graph_file);}
+
         void FriendSubtractAverageNoise(PhotonCount* data) {reconstructor->SubtractAverageNoise(data);}
 
         void FriendThreeSigmaFilter(PhotonCount* data) {reconstructor->ThreeSigmaFilter(data);}
@@ -94,7 +96,7 @@ namespace cherenkov_simulator
     TEST_F(ReconstructorTest, AddSubtractNoise)
     {
         TFile file("AddSubtractNoise.root", "RECREATE");
-        Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
+        Shower shower = monte_carlo->GenerateShower(TVector3(1, 1, -3), 1e6, -0.1, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
         Analysis::MakeProfileGraph(data).Write("before_noise_graph");
@@ -104,17 +106,9 @@ namespace cherenkov_simulator
         Analysis::MakeProfileGraph(data).Write("after_noise_graph");
         Analysis::MakeSumMap(data).Write("after_noise_map");
 
-        FriendSubtractAverageNoise(&data);
-        Analysis::MakeProfileGraph(data).Write("after_subtract_graph");
-        Analysis::MakeSumMap(data).Write("after_subtract_map");
-
-        FriendThreeSigmaFilter(&data);
-        Analysis::MakeProfileGraph(data).Write("three_sigma_graph");
-        Analysis::MakeSumMap(data).Write("three_sigma_map");
-
-        FriendRecursiveSearch(&data);
-        Analysis::MakeProfileGraph(data).Write("recursive_search_graph");
-        Analysis::MakeSumMap(data).Write("recursive_search_map");
+        reconstructor->ClearNoise(&data);
+        Analysis::MakeProfileGraph(data).Write("after_clear_graph");
+        Analysis::MakeSumMap(data).Write("after_clear_map");
     }
 
     TEST_F(ReconstructorTest, TriggeringMaps)

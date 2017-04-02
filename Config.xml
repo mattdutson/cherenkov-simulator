@@ -18,6 +18,7 @@
     </surroundings>
 
     <monte_carlo note="Defines properties of randomly generated showers">
+        <energy_pow unit="null">-1.0</energy_pow>
         <e_min unit="eV">1.0e17</e_min>
         <e_max unit="eV">1.0e21</e_max>
         <impact_min unit="cm">3.0e5</impact_min>

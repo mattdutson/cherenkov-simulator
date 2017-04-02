@@ -72,6 +72,11 @@ namespace cherenkov_simulator
          */
         static std::string BoolString(bool b);
 
+        /*
+         * Converts a centimeter double into a kilometer string.
+         */
+        static std::string KmString(double cent);
+
     private:
 
         /*

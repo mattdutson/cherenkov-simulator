@@ -15,13 +15,19 @@ namespace cherenkov_simulator
     {
         vector<double> times, counts;
         SuperimposeTimes(data, &times, &counts);
-        return TGraph(times.size(), &(times[0]), &(counts[0]));
+        TGraph output = TGraph(times.size(), &(times[0]), &(counts[0]));
+        output.SetTitle("Detector Time Profile");
+        output.GetXaxis()->SetTitle("Time (s)");
+        output.GetYaxis()->SetTitle("Total Photons Seen");
+        return output;
     }
 
     TH2I Analysis::MakeSumMap(PhotonCount data)
     {
         int size = data.Size();
-        TH2I histo = TH2I("Sums", "Sums", size, 0, size, size, 0, size);
+        TH2I histo = TH2I("sum_map", "Bin Signal Sums", size, 0, size, size, 0, size);
+        histo.SetXTitle("x Bin");
+        histo.SetYTitle("y Bin");
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
@@ -38,7 +44,9 @@ namespace cherenkov_simulator
 
     TH2C Analysis::GetBooleanMap(vector<vector<bool>> valid)
     {
-        TH2C histo = TH2C("Valid", "Valid", valid.size(), 0, valid.size(), valid[0].size(), 0, valid[0].size());
+        TH2C histo = TH2C("valid_map", "Valid Pixels", valid.size(), 0, valid.size(), valid[0].size(), 0, valid[0].size());
+        histo.SetXTitle("x Bin");
+        histo.SetYTitle("y Bin");
         for (int i = 0; i < valid.size(); i++)
         {
             for (int j = 0; j < valid[i].size(); j++)

@@ -250,8 +250,8 @@ namespace cherenkov_simulator
     vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, int threshold) const
     {
         vector<int> data = counts[iter->X()][iter->Y()];
-        vector<bool> triggers = vector<bool>();
-        for (int i = 0; i < data.size(); i++) triggers.push_back(data[i] > threshold);
+        vector<bool> triggers = vector<bool>(data.size());
+        for (int i = 0; i < data.size(); i++) triggers[i] = data[i] > threshold;
         return triggers;
     }
 
@@ -327,7 +327,7 @@ namespace cherenkov_simulator
     double PhotonCount::PoissonSum(double mean, int min)
     {
         double sum = 0.0;
-        for (int i = 0; Poisson(mean, i) > 10e-6 * Poisson(mean, min); i++)
+        for (int i = min; Poisson(mean, i) > 10e-6 * Poisson(mean, min); i++)
         {
             sum += Poisson(mean, i);
         }
@@ -336,6 +336,6 @@ namespace cherenkov_simulator
 
     double PhotonCount::Poisson(double mean, int x)
     {
-        return Exp(-mean) * Power(x, mean) / Factorial(x);
+        return Exp(-mean) * Power(mean, x) / Factorial(x);
     }
 }
