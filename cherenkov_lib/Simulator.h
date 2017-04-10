@@ -12,6 +12,7 @@
 #include <TRandom3.h>
 #include <TRotation.h>
 
+#include "Utility.h"
 #include "DataStructures.h"
 #include "Geometric.h"
 
@@ -100,6 +101,7 @@ namespace cherenkov_simulator
         double depth_step;
         double fluor_thin;
         double ckv_thin;
+        double back_toler;
 
         // Miscellaneous non-constant parameters
         Plane ground_plane;
@@ -208,7 +210,7 @@ namespace cherenkov_simulator
         /*
          * Generates a time which is randomly offset from the shower time.
          */
-        double JitteredTime(Shower shower);
+        Ray JitteredRay(Shower shower, TVector3 direction);
 
         /*
          * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
@@ -216,6 +218,10 @@ namespace cherenkov_simulator
          * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
          */
         static bool NegSphereImpact(Ray ray, TVector3* point, double radius);
+
+        double MinTime(Shower shower);
+
+        double MaxTime(Shower shower);
     };
 }
 

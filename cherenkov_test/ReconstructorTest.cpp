@@ -6,7 +6,6 @@
 
 #include <gtest/gtest.h>
 #include <TFile.h>
-#include <TVectorD.h>
 
 #include "Reconstructor.h"
 #include "Simulator.h"
@@ -27,8 +26,6 @@ namespace cherenkov_simulator
 
     protected:
 
-        typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
-
         Simulator* simulator;
         MonteCarlo* monte_carlo;
         Reconstructor* reconstructor;
@@ -48,23 +45,30 @@ namespace cherenkov_simulator
             delete reconstructor;
         }
 
-        bool FriendFrameTriggered(int i, Bool3D* triggers) {return reconstructor->FrameTriggered(i, triggers);}
+        Bool1D FriendTriggeringState(PhotonCount& data)
+        {
+            return reconstructor->GetTriggeringState(data);
+        }
 
-        Bool3D FriendTriggeringMatrices(PhotonCount data) {return reconstructor->GetThresholdMatrices(data, 0);}
+        Bool3D FriendSixSigma(PhotonCount& data)
+        {
+            return reconstructor->GetThresholdMatrices(data, 6, true);
+        }
 
-        TRotation FriendFitSDPlane(PhotonCount data) {return reconstructor->FitSDPlane(data);}
+        TRotation FriendFitSDPlane(PhotonCount& data)
+        {
+            return reconstructor->FitSDPlane(data);
+        }
 
-        Shower FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, string graph_file = "") {return reconstructor->MonocularFit(data, to_sd_plane, graph_file);}
+        Shower FriendMonocularFit(PhotonCount& data, TRotation to_sd_plane, string graph_file = "")
+        {
+            return reconstructor->MonocularFit(data, to_sd_plane, graph_file);
+        }
 
-        Shower FriendHybridFit(PhotonCount data, TVector3 impact, TRotation to_sd_plane, string graph_file = "") {return reconstructor->HybridFit(data, impact, to_sd_plane, graph_file);}
-
-        void FriendSubtractAverageNoise(PhotonCount* data) {reconstructor->SubtractAverageNoise(data);}
-
-        void FriendThreeSigmaFilter(PhotonCount* data) {reconstructor->ThreeSigmaFilter(data);}
-
-        void FriendRecursiveSearch(PhotonCount* data) {reconstructor->RecursiveSearch(data);}
-
-        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact) {return reconstructor->FindGroundImpact(data, impact);}
+        bool FriendFindGroundImpact(PhotonCount& data, TVector3& impact)
+        {
+            return reconstructor->FindGroundImpact(data, impact);
+        }
     };
 
     TEST_F(ReconstructorTest, StraightShower)
@@ -72,8 +76,8 @@ namespace cherenkov_simulator
         // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
-        reconstructor->AddNoise(&data);
-        reconstructor->ClearNoise(&data);
+        reconstructor->AddNoise(data);
+        reconstructor->ClearNoise(data);
 
         // Attempt to reconstruct the shower plane and geometry, writing the fit graph to a file
         TRotation to_sd_plane = FriendFitSDPlane(data);
@@ -85,8 +89,8 @@ namespace cherenkov_simulator
         // Construct and simulate a shower at 10km which is skewed at some angle.
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
-        reconstructor->AddNoise(&data);
-        reconstructor->ClearNoise(&data);
+        reconstructor->AddNoise(data);
+        reconstructor->ClearNoise(data);
 
         // Attempt to reconstruct the shower plane and geometry, writing the fit graph to a file
         TRotation to_sd_plane = FriendFitSDPlane(data);
@@ -102,11 +106,11 @@ namespace cherenkov_simulator
         Analysis::MakeProfileGraph(data).Write("before_noise_graph");
         Analysis::MakeSumMap(data).Write("before_noise_map");
 
-        reconstructor->AddNoise(&data);
+        reconstructor->AddNoise(data);
         Analysis::MakeProfileGraph(data).Write("after_noise_graph");
         Analysis::MakeSumMap(data).Write("after_noise_map");
 
-        reconstructor->ClearNoise(&data);
+        reconstructor->ClearNoise(data);
         Analysis::MakeProfileGraph(data).Write("after_clear_graph");
         Analysis::MakeSumMap(data).Write("after_clear_map");
     }
@@ -117,12 +121,13 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        std::vector<std::vector<std::vector<bool>>> triggering_matrices = FriendTriggeringMatrices(data);
-        for (int i = 0; i < triggering_matrices.size(); i++)
+        Bool3D triggering_matrices = FriendSixSigma(data);
+        Bool1D triggering_state = FriendTriggeringState(data);
+        for (int i = 0; i < triggering_state.size(); i++)
         {
             TH2C frame_map = Analysis::GetBooleanMap(triggering_matrices[i]);
             std::string write_name;
-            if (FriendFrameTriggered(i, &triggering_matrices))
+            if (triggering_state[i])
             {
                 write_name = std::to_string(i) + "tr";
             }
@@ -141,7 +146,7 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
 
         TVector3 impact;
-        if (FriendFindGroundImpact(data, &impact))
+        if (FriendFindGroundImpact(data, impact))
         {
             impact.Write("ground_impact");
         }
@@ -174,7 +179,7 @@ namespace cherenkov_simulator
         TFile file("StraightCherenkovRecon.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
-        reconstructor->AddNoise(&data);
+        reconstructor->AddNoise(data);
 
         Reconstructor::Result result = reconstructor->Reconstruct(data);
         result.ckv.Position().Write("straight_shower_position");
@@ -190,7 +195,7 @@ namespace cherenkov_simulator
         TFile file("AngleCherenkovRecon.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
-        reconstructor->AddNoise(&data);
+        reconstructor->AddNoise(data);
 
         Reconstructor::Result result = reconstructor->Reconstruct(data);
         result.ckv.Position().Write("angle_shower_position");
@@ -199,5 +204,27 @@ namespace cherenkov_simulator
         std::cout << "Mono Impact Error: " << Abs(result.mono.Position().Mag() - 1e6) << std::endl;
         std::cout << "Cherenkov Direction Error: " << result.ckv.Direction().Angle(shower.Direction()) << std::endl;
         std::cout << "Cherenkov Impact Error: " << Abs(result.ckv.Position().Mag() - 1e6) << std::endl;
+    }
+
+    TEST_F(ReconstructorTest, StackOverflow)
+    {
+        // Rebuild shower 97 (i = 1196)
+        Shower::Params params = Shower::Params();
+        params.energy = 9.7224104168849578e20;
+        params.x_max= 889.32756726164371;
+        params.n_max = 699453986826.25598;
+        params.rho_0 = 0.0010354826266577842;
+        params.scale_height = 841300;
+        params.delta_0 = 0.0002451346626372697;
+        TVector3 position = TVector3(-405043.23971585685, -3832795.7567525646, 3526742.1184894536);
+        TVector3 direction = TVector3(471764977.74197131, 28917762299.766682, -7895622925.3915901);
+        Shower shower = Shower(params, position, direction);
+
+        // Simulate and attempt reconstruction on the shower. There may be a memory access error (caused by a stack
+        // overflow) during the ClearNoise step.
+        PhotonCount data = simulator->SimulateShower(shower);
+        reconstructor->AddNoise(data);
+        reconstructor->ClearNoise(data);
+        reconstructor->Reconstruct(data);
     }
 }

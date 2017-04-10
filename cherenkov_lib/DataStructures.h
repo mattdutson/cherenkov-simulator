@@ -12,6 +12,8 @@
 #include <TRandom3.h>
 #include <TF1.h>
 
+#include "Utility.h"
+
 namespace cherenkov_simulator
 {
     /*
@@ -35,17 +37,17 @@ namespace cherenkov_simulator
              * The only constructor. Takes a 2D vector of bools which can be used to determine which pixels are valid. The
              * user is responsible for ensuring that all sub-vectors are non-null.
              */
-            Iterator(std::vector<std::vector<bool>> validPixels);
+            Iterator(Bool2D valid_pixels);
 
             /*
              * Returns the current x index of the iterator.
              */
-            int X() const;
+            ULong X() const;
 
             /*
              * Returns the current y index of the iterator.
              */
-            int Y() const;
+            ULong Y() const;
 
             /*
              * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
@@ -63,11 +65,11 @@ namespace cherenkov_simulator
             friend class DataStructuresTest;
 
             // Defines the subset of pixels which the iterator is allowed to stop at
-            std::vector<std::vector<bool>> valid;
+            Bool2D valid;
 
             // The current indices of the iterator
-            int curr_x;
-            int curr_y;
+            long curr_x;
+            long curr_y;
         };
 
         /*
@@ -75,7 +77,7 @@ namespace cherenkov_simulator
          */
         struct Params
         {
-            int n_pixels;
+            ULong n_pixels;
             double bin_size;
             double angular_size;
             double linear_size;
@@ -86,32 +88,27 @@ namespace cherenkov_simulator
          * series for a particular photomultiplier. Takes the width/height of the array in number of photomultipliers,
          * the starting time for the series, the width of a time bin, and the angular width of a photomultiplier.
          */
-        PhotonCount(Params params, double start_time);
+        PhotonCount(Params params, double min_time, double max_time);
 
         /*
          * Returns the 2D array of valid pixel flags.
          */
-        std::vector<std::vector<bool>> GetValid() const;
+        Bool2D GetValid() const;
 
         /*
          * Returns the width/height of the 2D array
          */
-        int Size() const;
+        ULong Size() const;
 
         /*
          * Returns the total number of time bins in the data structure.
          */
-        int NBins() const;
+        ULong NBins() const;
 
         /*
          * Returns true if no photons were added.
          */
         bool Empty() const;
-
-        /*
-         * Returns the size, in seconds, of each time bin.
-         */
-        double BinSize() const;
 
         /*
          * Finds the time corresponding to the specified bin.
@@ -121,7 +118,7 @@ namespace cherenkov_simulator
         /*
          * Finds the bin corresponding to some time.
          */
-        int Bin(double time) const;
+        ULong Bin(double time) const;
 
         /*
          * The angular size of the detector, from axis to the outside of the detector surface.
@@ -131,28 +128,33 @@ namespace cherenkov_simulator
         /*
          * Determines the direction of the photomultiplier referenced by the iterator.
          */
-        TVector3 Direction(const Iterator* iter) const;
+        TVector3 Direction(const Iterator& iter) const;
 
         /*
          * Gets the complete time signal at the current position of the iterator.
          */
-        std::vector<int> Signal(const Iterator* iter) const;
+        Int1D Signal(const Iterator& iter) const;
 
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(const Iterator* iter, const std::vector<bool>* mask = nullptr) const;
+        int SumBins(const Iterator& iter) const;
+
+        /*
+         * Sums all bins in the channel referenced by the iterator for which the mask contains a true value.
+         */
+        int FilteredSum(const Iterator& iter, const Bool1D& mask) const;
 
         /*
          * Finds the average time in the pixel referenced by the iterator.
          */
-        double AverageTime(const Iterator* iter) const;
+        double AverageTime(const Iterator& iter) const;
 
         /*
          * Finds the standard deviation of the times in the pixel referenced by the iterator, applying Sheppard's
          * correction because the data is binned.
          */
-        double TimeError(const Iterator* iter) const;
+        double TimeError(const Iterator& iter) const;
 
         /*
          * Returns an object for iterating through the pixels.
@@ -163,7 +165,7 @@ namespace cherenkov_simulator
          * Returns a 3D matrix of false values, with the same dimensions as the underlying vector of the PhotonCount
          * class.
          */
-        std::vector<std::vector<std::vector<bool>>> GetFalseMatrix() const;
+        Bool3D GetFalseMatrix() const;
 
         /*
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
@@ -176,28 +178,23 @@ namespace cherenkov_simulator
          * number of photons per second per steradian per square centimeter. These photons are randomly scattered
          * throughout the time bins using the random number generator.
          */
-        void AddNoise(double noise_rate, const Iterator* iter, TRandom3* rng);
+        void AddNoise(double noise_rate, const Iterator& iter, TRandom3& rng);
 
         /*
          * Subtract the average noise rate from the signal in the pixel specified by the iterator.
          */
-        void Subtract(const Iterator *iter, double rate);
-
-        /*
-         * Clears any bins in the current pixel which are less than noise_thresh * sigma from zero.
-         */
-        void Threshold(const Iterator *iter, int threshold);
+        void Subtract(const Iterator& iter, double rate);
 
         /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
          */
-        void Subset(std::vector<std::vector<std::vector<bool>>> good_pixels);
+        void Subset(Bool3D& good_pixels);
 
         /*
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
          * trigger_thresh * sigma photon counts.
          */
-        std::vector<bool> AboveThreshold(const Iterator* iter, int threshold) const;
+        Bool1D AboveThreshold(const Iterator& iter, int threshold) const;
 
         /*
          * Determines the appropriate threshold given the global noise rate (Poisson distributed), and the number of
@@ -209,28 +206,30 @@ namespace cherenkov_simulator
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.
          */
-        void Equalize();
+        void Trim();
 
     private:
 
         friend class DataStructuresTest;
 
-        // The underlying data structure and its validity mask
-        std::vector<std::vector<std::vector<int>>> counts;
-        std::vector<std::vector<bool>> valid;
+        // The underlying data structure and its validity mask, along with a vector to track sums for fast access
+        Int3D counts;
+        Bool2D valid;
 
         // The number and size of each pixel - cgs, sr
-        int n_pixels;
+        ULong n_pixels;
         double angular_size;
         double linear_size;
 
         // The time at the beginning of the zeroth bin - cgs
         double bin_size;
-        double start_time;
+        double min_time;
+        double max_time;
+        double first_time;
         double last_time;
 
         // Keeps track of whether we need to call Equalize
-        bool equalized;
+        bool trimmed;
 
         // Used when calculating thresholds
         TF1 gauss;
@@ -243,13 +242,7 @@ namespace cherenkov_simulator
         /*
          * A private method which is functionally equivalent to Direction(const Iterator*).
          */
-        TVector3 Direction(int x_index, int y_index) const;
-
-        /*
-         * If the vector at index (x, y) is smaller than the specified size, it is expanded. This method does NOT
-         * check that the indices are valid.
-         */
-        void ExpandVector(int x_index, int y_index, int size);
+        TVector3 Direction(ULong x_index, ULong y_index) const;
 
         /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second
@@ -261,12 +254,12 @@ namespace cherenkov_simulator
          * Approximates the sum of the specified Poisson distribution from some minimum value to infinity. The summation
          * stops when the value of the distribution is less than 10^-6 of the value at the starting point.
          */
-        double PoissonSum(double mean, int min);
+        static double PoissonSum(double mean, int min);
 
         /*
          * Calculates the value of the Poisson distribution with specified mean at the specified value.
          */
-        double Poisson(double mean, int x);
+        static double Poisson(double mean, int x);
     };
 }
 

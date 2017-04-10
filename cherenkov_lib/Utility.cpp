@@ -21,7 +21,7 @@ namespace cherenkov_simulator
     TVector3 Utility::ToVector(string s)
     {
         // Clear out everything before the first parenthesis.
-        int current = s.find('(');
+        unsigned long current = s.find('(');
         s.erase(0, current + 1);
 
         // Pull double values from the vector.

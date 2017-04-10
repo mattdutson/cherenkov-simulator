@@ -18,7 +18,7 @@ using std::endl;
 
 namespace cherenkov_simulator
 {
-    MonteCarlo::MonteCarlo(boost::property_tree::ptree config): simulator(config), reconstructor(config)
+    MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config): simulator(config), reconstructor(config)
     {
         // The distribution of shower energies
         std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
@@ -47,6 +47,7 @@ namespace cherenkov_simulator
 
         // The random number generator
         rng = TRandom3();
+        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
     void MonteCarlo::PerformMonteCarlo(std::string out_file)
@@ -70,12 +71,12 @@ namespace cherenkov_simulator
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_before_noise_graph").c_str());
 
             // Add noise and record the new photon counts
-            reconstructor.AddNoise(&data);
+            reconstructor.AddNoise(data);
             Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_noise_map").c_str());
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_noise_graph").c_str());
 
             // Clear noise and record the new photon counts
-            reconstructor.ClearNoise(&data);
+            reconstructor.ClearNoise(data);
             Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_clear_map").c_str());
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_clear_graph").c_str());
 

@@ -14,6 +14,18 @@
 
 namespace cherenkov_simulator
 {
+    typedef unsigned long ULong;
+
+    typedef std::vector<bool> Bool1D;
+    typedef std::vector<Bool1D> Bool2D;
+    typedef std::vector<Bool2D> Bool3D;
+
+    typedef std::vector<int> Int1D;
+    typedef std::vector<Int1D> Int2D;
+    typedef std::vector<Int2D> Int3D;
+
+    typedef std::vector<double> Double1D;
+
     class Utility
     {
     public:

@@ -29,7 +29,7 @@ namespace cherenkov_simulator
         params.bin_size = 10.0e-9;
         params.angular_size = 0.007;
         params.linear_size = 1.0;
-        PhotonCount counter = PhotonCount(params, 0.0);
+        PhotonCount counter = PhotonCount(params, 0.0, 1.0);
         TH2C map = Analysis::GetValidMap(counter);
         TFile file("pixel_map.root", "RECREATE");
         map.Write("valid");
