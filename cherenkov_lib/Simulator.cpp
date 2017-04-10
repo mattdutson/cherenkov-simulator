@@ -48,6 +48,7 @@ namespace cherenkov_simulator
         ckv_integrator = TF1("ckv_integrator", ckv_func, 0.0, Infinity(), 3);
         ckv_integrator.SetParNames("age", "rho", "delta");
         rng = TRandom3();
+        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
     PhotonCount Simulator::SimulateShower(Shower shower)

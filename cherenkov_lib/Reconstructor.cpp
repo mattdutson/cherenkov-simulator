@@ -57,6 +57,7 @@ namespace cherenkov_simulator
 
         // The random number generator
         rng = TRandom3();
+        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
     Reconstructor::Result Reconstructor::Reconstruct(PhotonCount data)

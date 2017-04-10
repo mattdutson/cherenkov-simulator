@@ -47,6 +47,7 @@ namespace cherenkov_simulator
 
         // The random number generator
         rng = TRandom3();
+        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
     void MonteCarlo::PerformMonteCarlo(std::string out_file)
