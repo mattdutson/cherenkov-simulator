@@ -144,9 +144,9 @@ namespace cherenkov_simulator
 
     void Reconstructor::VisitPush(unsigned long x, unsigned long y, unsigned long t,
                                   std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
-        if (x > not_visited.size()) return;
-        else if (y > not_visited.at(x).size()) return;
-        else if (t > not_visited.at(x)[y].size()) return;
+        if (x > not_visited.size() - 1) return;
+        else if (y > not_visited.at(x).size() - 1) return;
+        else if (t > not_visited.at(x)[y].size() - 1) return;
         else if (not_visited.at(x)[y][t]) {
             front.push({x, y, t});
             not_visited[x][y][t] = false;
@@ -343,10 +343,11 @@ namespace cherenkov_simulator
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
         vector<bool> good_frames = vector<bool>(data.NBins(), false);
 
-        for (unsigned long x_trig = 0; x_trig < trig_matrices.size(); x_trig++) {
-            for (unsigned long y_trig = 0; y_trig < trig_matrices.at(x_trig).size(); y_trig++) {
-                for (unsigned long t_trig = 0;
-                     t_trig < trig_matrices.at(x_trig)[y_trig].size() && !good_frames[t_trig]; t_trig++) {
+        for (unsigned long t_trig = 0; t_trig < data.NBins(); t_trig++) {
+            bool found = false;
+            for (unsigned long x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++) {
+                for (unsigned long y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++) {
+
                     std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
                     if (trig_matrices.at(x_trig)[y_trig][t_trig]) {
                         frontier.push({x_trig, y_trig, t_trig});
@@ -355,18 +356,20 @@ namespace cherenkov_simulator
                     int adjacent = 0;
                     while (!frontier.empty()) {
                         std::array<unsigned long, 3> curr = frontier.front();
+                        frontier.pop();
                         unsigned long x = curr[0];
                         unsigned long y = curr[1];
                         unsigned long t = curr[2];
                         adjacent++;
                         if (adjacent > trigger_clust) {
-                            good_frames[t_trig] = true;
+                            found = true;
                             break;
                         }
                         VisitSpaceAdj(x, y, t, frontier, trig_matrices);
                     }
                 }
             }
+            good_frames[t_trig] = found;
         }
         return good_frames;
     }
