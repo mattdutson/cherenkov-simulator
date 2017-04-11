@@ -62,30 +62,30 @@ namespace cherenkov_simulator
         curr_y = -1;
     }
 
-    PhotonCount::PhotonCount(Params params, double start_time)
+    PhotonCount::PhotonCount(Params params, double min_time, double max_time)
     {
         // Copy parameters
-        this->n_pixels = params.n_pixels;
-        this->bin_size = params.bin_size;
-        this->angular_size = params.angular_size;
-        this->linear_size = params.linear_size;
-        this->start_time = start_time;
+        n_pixels = params.n_pixels;
+        bin_size = params.bin_size;
+        angular_size = params.angular_size;
+        linear_size = params.linear_size;
+        this->min_time = min_time;
+        this->max_time = max_time;
 
-        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are equalized
-        last_time = start_time;
-        equalized = true;
+        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are trimmed
+        first_time = max_time;
+        last_time = min_time;
+        trimmed = false;
 
         // Initialize the photon count and valid pixel structures.
-        counts = vector<vector<vector<int>>>();
-        valid = vector<vector<bool>>();
+        counts = vector<vector<vector<int>>>(n_pixels, vector<vector<int>>(n_pixels, vector<int>()));
+        valid = vector<vector<bool>>(n_pixels, vector<bool>(n_pixels, false));
         for (int i = 0; i < n_pixels; i++)
         {
-            counts.push_back(vector<vector<int>>());
-            valid.push_back(vector<bool>());
             for (int j = 0; j < n_pixels; j++)
             {
-                counts[i].push_back(vector<int>());
-                valid[i].push_back(ValidPixel(i, j));
+                valid[i][j] = ValidPixel(i, j);
+                if (valid[i][j]) counts[i][j] = vector<int>(NBins(), 0);
             }
         }
 
@@ -105,7 +105,7 @@ namespace cherenkov_simulator
 
     int PhotonCount::NBins() const
     {
-        return start_time == last_time ? 0 : Bin(last_time) + 1;
+        return min_time == max_time ? 0 : Bin(max_time) + 1;
     }
 
     bool PhotonCount::Empty() const
@@ -120,12 +120,12 @@ namespace cherenkov_simulator
 
     double PhotonCount::Time(int bin) const
     {
-        return bin * bin_size + start_time;
+        return bin * bin_size + min_time;
     }
 
     int PhotonCount::Bin(double time) const
     {
-        return (int) Floor((time - start_time) / bin_size);
+        return (int) Floor((time - min_time) / bin_size);
     }
 
     double PhotonCount::DetectorAxisAngle() const
@@ -193,7 +193,7 @@ namespace cherenkov_simulator
 
     void PhotonCount::AddPhoton(double time, TVector3 direction, double thinning)
     {
-        if (time < start_time) return;
+        if (time < min_time || time > max_time) return;
 
         // Determine the indices of the pixel based on its orientation
         double elevation = ATan(direction.Y() / direction.Z());
@@ -208,14 +208,15 @@ namespace cherenkov_simulator
             ExpandVector(x_index, y_index, time_slot + 1);
             counts[x_index][y_index][time_slot] += thinning;
             if (time > last_time) last_time = time;
-            equalized = false;
+            if (time < first_time) first_time = time;
+            trimmed = false;
         }
     }
 
     void PhotonCount::AddNoise(double noise_rate, const Iterator& iter, TRandom3& rng)
     {
         // Ensure all channels have the same length.
-        Equalize();
+        Trim();
 
         // Randomly determine the number of photons in each bin according to the Poisson distribution.
         double expected_photons = RealNoiseRate(noise_rate);
@@ -278,12 +279,19 @@ namespace cherenkov_simulator
         }
     }
 
-    void PhotonCount::Equalize()
+    void PhotonCount::Trim()
     {
-        if (equalized) return;
+        if (trimmed) return;
         Iterator iter = GetIterator();
-        while (iter.Next()) ExpandVector(iter.X(), iter.Y(), NBins());
-        equalized = true;
+        while (iter.Next()) {
+            vector<int>::iterator begin = counts[iter.X()][iter.Y()].begin();
+            vector<int>::iterator end = counts[iter.X()][iter.Y()].end();
+            counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end)
+            counts[iter.X()][iter.Y()].erase(begin, begin + Bin(first_time));
+        }
+        min_time = min_time + Floor((first_time - min_time) / bin_size) * bin_size;
+        max_time = last_time;
+        trimmed = true;
     }
 
     bool PhotonCount::ValidPixel(int x_index, int y_index) const

@@ -9,6 +9,7 @@
         <fluor_thin unit="null">1</fluor_thin>
         <ckv_thin unit="null">1</ckv_thin>
         <time_seed unit="null">false</time_seed>
+        <back_toler unit="null">1.15</back_toler>
     </simulation>
 
     <surroundings note="The orientation of the surroundings">

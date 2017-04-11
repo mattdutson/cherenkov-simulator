@@ -86,7 +86,7 @@ namespace cherenkov_simulator
          * series for a particular photomultiplier. Takes the width/height of the array in number of photomultipliers,
          * the starting time for the series, the width of a time bin, and the angular width of a photomultiplier.
          */
-        PhotonCount(Params params, double start_time);
+        PhotonCount(Params params, double min_time, double max_time);
 
         /*
          * Returns the 2D array of valid pixel flags.
@@ -209,7 +209,7 @@ namespace cherenkov_simulator
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.
          */
-        void Equalize();
+        void Trim();
 
     private:
 
@@ -226,11 +226,13 @@ namespace cherenkov_simulator
 
         // The time at the beginning of the zeroth bin - cgs
         double bin_size;
-        double start_time;
+        double min_time;
+        double max_time;
+        double first_time;
         double last_time;
 
-        // Keeps track of whether we need to call Equalize
-        bool equalized;
+        // Keeps track of whether we need to call Trim
+        bool trimmed;
 
         // Used when calculating thresholds
         TF1 gauss;

@@ -24,6 +24,7 @@ namespace cherenkov_simulator
         depth_step = config.get<double>("simulation.depth_step");
         fluor_thin = config.get<double>("simulation.fluor_thin");
         ckv_thin = config.get<double>("simulation.ckv_thin");
+        back_toler = config.get<double>("simulation.back_toler");
 
         // Surrounding setup and orientation
         TVector3 ground_normal = Utility::ToVector(config.get<string>("surroundings.ground_normal"));
@@ -55,7 +56,7 @@ namespace cherenkov_simulator
     {
         // A lower bound on the time the first photon will reach the detector
         double time = shower.Time() + (shower.Position().Mag() - mirror_radius) / Utility::c_cent;
-        PhotonCount photon_count = PhotonCount(count_params, time);
+        PhotonCount photon_count = PhotonCount(count_params, MinTime(shower), MaxTime(shower));
 
         // Step the shower along its path
         while (shower.TimeToPlane(ground_plane) > 0)
@@ -64,7 +65,7 @@ namespace cherenkov_simulator
             ViewFluorescencePhotons(shower, photon_count);
             ViewCherenkovPhotons(shower, ground_plane, photon_count);
         }
-        photon_count.Equalize();
+        photon_count.Trim();
         return photon_count;
     }
 
@@ -275,5 +276,18 @@ namespace cherenkov_simulator
             point = point1.Z() < 0 ? point1 : point2;
             return true;
         }
+    }
+
+    double Simulator::MinTime(Shower shower) {
+        double time = shower.Time();
+        time += shower.Position().Mag() / Utility::c_cent;
+        return time;
+    }
+
+    double Simulator::MaxTime(Shower shower) {
+        double time = shower.Time();
+        time += shower.TimeToPlane(ground_plane);
+        time += shower.PlaneImpact(ground_plane).Mag() * back_toler / Utility::c_cent;
+        return time;
     }
 }

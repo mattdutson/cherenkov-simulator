@@ -100,6 +100,7 @@ namespace cherenkov_simulator
         double depth_step;
         double fluor_thin;
         double ckv_thin;
+        double back_toler;
 
         // Miscellaneous non-constant parameters
         Plane ground_plane;
@@ -216,6 +217,10 @@ namespace cherenkov_simulator
          * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
          */
         static bool NegSphereImpact(Ray ray, TVector3& point, double radius);
+
+        double MinTime(Shower shower);
+
+        double MaxTime(Shower shower);
     };
 }
 
