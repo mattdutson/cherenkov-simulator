@@ -7,6 +7,8 @@
 #ifndef RECONSTRUCTOR_H
 #define RECONSTRUCTOR_H
 
+#include <queue>
+#include <array>
 #include <boost/property_tree/ptree.hpp>
 #include <TRotation.h>
 #include <TGraphErrors.h>
@@ -89,6 +91,17 @@ namespace cherenkov_simulator
 
         // A general-purpose random number generator
         TRandom3 rng;
+
+        void VisitSpaceAdj(unsigned long x, unsigned long y, unsigned long t,
+                           std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited);
+
+        void
+        VisitTimeAdj(unsigned long x, unsigned long y, unsigned long t, std::queue<std::array<unsigned long, 3>>& front,
+                     Bool3D& not_visited);
+
+        void
+        VisitPush(unsigned long x, unsigned long y, unsigned long t, std::queue<std::array<unsigned long, 3>>& front,
+                  Bool3D& not_visited);
 
         /*
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is

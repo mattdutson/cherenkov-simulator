@@ -95,8 +95,63 @@ namespace cherenkov_simulator
     void Reconstructor::ClearNoise(PhotonCount& data)
     {
         SubtractAverageNoise(data);
-        ThreeSigmaFilter(data);
-        RecursiveSearch(data);
+        Bool3D not_visited = GetThresholdMatrices(data, noise_thresh);
+        Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
+        Bool3D good_pixels = data.GetFalseMatrix();
+        FindPlaneSubset(data, triggered);
+        std::vector<bool> trig_state = GetTriggeringState(triggered);
+
+        std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
+        for (unsigned long x_trig = 0; x_trig < triggered.size(); x_trig++) {
+            for (unsigned long y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++) {
+                for (unsigned long t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++) {
+                    if (triggered[x_trig][y_trig][t_trig] && trig_state[t_trig]) {
+                        frontier.push({x_trig, y_trig, t_trig});
+                    }
+
+                    while (!frontier.empty()) {
+                        std::array<unsigned long, 3> curr = frontier.front();
+                        frontier.pop();
+                        unsigned long x = curr[0];
+                        unsigned long y = curr[1];
+                        unsigned long t = curr[2];
+                        good_pixels[x][y][t] = true;
+                        VisitSpaceAdj(x, y, t, frontier, not_visited);
+                        VisitTimeAdj(x, y, t, frontier, not_visited);
+                    }
+                }
+            }
+        }
+        data.Subset(good_pixels);
+    }
+
+    void Reconstructor::VisitSpaceAdj(unsigned long x, unsigned long y, unsigned long t,
+                                      std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
+        VisitPush(x - 1, y - 1, t, front, not_visited);
+        VisitPush(x - 1, y, t, front, not_visited);
+        VisitPush(x - 1, y + 1, t, front, not_visited);
+        VisitPush(x, y - 1, t, front, not_visited);
+        VisitPush(x, y + 1, t, front, not_visited);
+        VisitPush(x + 1, y - 1, t, front, not_visited);
+        VisitPush(x + 1, y, t, front, not_visited);
+        VisitPush(x + 1, y + 1, t, front, not_visited);
+    }
+
+    void Reconstructor::VisitTimeAdj(unsigned long x, unsigned long y, unsigned long t,
+                                     std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
+        VisitPush(x, y, t - 1, front, not_visited);
+        VisitPush(x, y, t + 1, front, not_visited);
+    }
+
+    void Reconstructor::VisitPush(unsigned long x, unsigned long y, unsigned long t,
+                                  std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
+        if (x > not_visited.size()) return;
+        else if (y > not_visited.at(x).size()) return;
+        else if (t > not_visited.at(x)[y].size()) return;
+        else if (not_visited.at(x)[y][t]) {
+            front.push({x, y, t});
+            not_visited[x][y][t] = false;
+        }
     }
 
     Shower Reconstructor::MonocularFit(PhotonCount& data, TRotation to_sdp, string graph_file)
