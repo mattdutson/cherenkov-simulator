@@ -114,11 +114,6 @@ namespace cherenkov_simulator
         return empty;
     }
 
-    double PhotonCount::BinSize() const
-    {
-        return bin_size;
-    }
-
     double PhotonCount::Time(int bin) const
     {
         return bin * bin_size + min_time;

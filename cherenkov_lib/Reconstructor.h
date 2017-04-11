@@ -138,23 +138,11 @@ namespace cherenkov_simulator
         void SubtractAverageNoise(PhotonCount& data);
 
         /*
-         * Filters out any signal below three sigma. Assumes that the mean of the signal is zero (the average noise rate
-         * has already been subtracted).
-         */
-        void ThreeSigmaFilter(PhotonCount& data);
-
-        /*
          * Apply triggering logic to the signal. Look for consecutive groups of pixels in each time bin which have
          * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
          * any frames were triggered.
          */
         Bool1D GetTriggeringState(PhotonCount& data);
-
-        /*
-         * Performs a recursive search, starting from triggered pixels and moving to adjacent pixels in space and time.
-         * Only signals which are adjacent to another non-noise signal are considered.
-         */
-        void RecursiveSearch(PhotonCount& data);
 
         /*
          * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within
@@ -175,45 +163,15 @@ namespace cherenkov_simulator
         bool DetectorTriggered(const Bool1D& trig_state);
 
         /*
-         * Determines whether the array of triggered tubes contains enough adjacent true values for the frame to be
-         * triggered.
-         */
-        bool FrameTriggered(int t, Bool3D& triggers);
-
-        /*
          * Returns a 2D array of arrays, each of which contains true values for tubes above the specified multiple of
          * sigma, and false values for all those below.
          */
         Bool3D GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz = true);
 
         /*
-         * A method to count the largest cluster of adjacent "true" values in a 2D array at a specified time bin.
-         */
-        int LargestCluster(int t, Bool3D& not_counted);
-
-        /*
-         * A recursive method used by LargestCluster. Visits the item at the specified coordinates and any of its
-         * neighbors. Returns the total number of visited elements.
-         */
-        int Visit(int i, int j, int t, Bool3D& not_counted);
-
-        /*
-         * A recursive method used by RecursiveSearch. Visits the item at the specified coordinates and travels outward,
-         * searching for any spatially or temporally adjacent pixels which are above the noise threshold. If any
-         * neighbors are non-noise, they are also "bled" outward until they reach a below-noise boundary.
-         */
-        void BleedTrigger(int i, int j, int t, const Bool3D& three_sigma, Bool3D& good_pixels);
-
-        /*
          * Constructs a shower based on the results of the time profile reconstruction.
          */
         Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane);
-
-        /*
-         * Checks whether the specified point lies within the field of minus some buffer defined in the config. Assumes
-         * the direction is in the detector frame.
-         */
-        bool PointWithinView(TVector3 direction, const PhotonCount& data);
     };
 }
 

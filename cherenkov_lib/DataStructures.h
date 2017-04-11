@@ -111,11 +111,6 @@ namespace cherenkov_simulator
         bool Empty() const;
 
         /*
-         * Returns the size, in seconds, of each time bin.
-         */
-        double BinSize() const;
-
-        /*
          * Finds the time corresponding to the specified bin.
          */
         double Time(int bin) const;

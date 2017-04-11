@@ -68,7 +68,8 @@ namespace cherenkov_simulator
         {
             TRotation to_sdp = FitSDPlane(data);
             result.mono = MonocularFit(data, to_sdp);
-            if (PointWithinView(to_world.Inverse() * result.mono.PlaneImpact(ground), data))
+            TVector3 direction = to_world.Inverse() * result.mono.PlaneImpact(ground);
+            if (direction.Theta() < data.DetectorAxisAngle() - impact_buffer)
             {
                 TVector3 impact;
                 if (FindGroundImpact(data, &impact))
@@ -326,18 +327,6 @@ namespace cherenkov_simulator
         }
     }
 
-    void Reconstructor::ThreeSigmaFilter(PhotonCount& data)
-    {
-        int ground_thresh = data.FindThreshold(ground_noise, noise_thresh);
-        int sky_thresh = data.FindThreshold(sky_noise, noise_thresh);
-        PhotonCount::Iterator iter = data.GetIterator();
-        while (iter.Next())
-        {
-            bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
-            data.Threshold(iter, toward_ground ? ground_thresh : sky_thresh);
-        }
-    }
-
     Bool1D Reconstructor::GetTriggeringState(PhotonCount& data)
     {
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
@@ -374,34 +363,6 @@ namespace cherenkov_simulator
         return good_frames;
     }
 
-    void Reconstructor::RecursiveSearch(PhotonCount& data)
-    {
-        // Find the pixels and times where triggers occured as well as pixels and times above the noise threshold
-        Bool3D three_sigma = GetThresholdMatrices(data, noise_thresh);
-        Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
-        FindPlaneSubset(data, triggered);
-        Bool1D trig_state = GetTriggeringState(data);
-
-        // Start the recursive bleed from triggered pixels
-        Bool3D good_pixels = data.GetFalseMatrix();
-        for (int i = 0; i < triggered.size(); i++)
-        {
-            for (int j = 0; j < triggered[i].size(); j++)
-            {
-                for (int t = 0; t < triggered[i][j].size(); t++)
-                {
-                    if (triggered[i][j][t] && trig_state[t])
-                    {
-                        BleedTrigger(i, j, t, three_sigma, good_pixels);
-                    }
-                }
-            }
-        }
-
-        // Erase any pixels we determined to be non-valid
-        data.Subset(good_pixels);
-    }
-
     void Reconstructor::FindPlaneSubset(const PhotonCount& data, Bool3D& triggered)
     {
         TRotation to_sd_plane = FitSDPlane(data, &triggered);
@@ -428,11 +389,6 @@ namespace cherenkov_simulator
         return false;
     }
 
-    bool Reconstructor::FrameTriggered(int t, Bool3D& triggers)
-    {
-        return LargestCluster(t, triggers) > trigger_clust;
-    }
-
     Bool3D Reconstructor::GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz)
     {
         int ground_thresh = data.FindThreshold(ground_noise, sigma_mult);
@@ -448,82 +404,6 @@ namespace cherenkov_simulator
         return pass;
     }
 
-    int Reconstructor::LargestCluster(int t, Bool3D& not_counted)
-    {
-        int largest = 0;
-        for (int i = 0; i < not_counted.size(); i++)
-        {
-            for (int j = 0; j < not_counted.at(i).size(); j++)
-            {
-                if (not_counted.at(i)[j][t])
-                {
-                    int size = Visit(i, j, t, not_counted);
-                    if (size > largest) largest = size;
-                }
-            }
-        }
-        return largest;
-    }
-
-    int Reconstructor::Visit(int i, int j, int t, Bool3D& not_counted)
-    {
-        if (i > not_counted.size() - 1 || i < 0)
-        {
-            return 0;
-        } else if (j > not_counted.at(i).size() - 1 || j < 0)
-        {
-            return 0;
-        } else if (!not_counted.at(i)[j][t])
-        {
-            return 0;
-        }
-        else
-        {
-            not_counted.at(i)[j][t] = false;
-            int count = 1;
-            count += Visit(i - 1, j - 1, t, not_counted);
-            count += Visit(i - 1, j, t, not_counted);
-            count += Visit(i - 1, j + 1, t, not_counted);
-            count += Visit(i, j - 1, t, not_counted);
-            count += Visit(i, j + 1, t, not_counted);
-            count += Visit(i + 1, j - 1, t, not_counted);
-            count += Visit(i + 1, j, t, not_counted);
-            count += Visit(i + 1, j + 1, t, not_counted);
-            return count;
-        }
-    }
-
-    void Reconstructor::BleedTrigger(int i, int j, int t, const Bool3D& three_sigma, Bool3D& good_pixels)
-    {
-        if (i > three_sigma.size() - 1 || i < 0)
-        {
-            return;
-        } else if (j > three_sigma.at(i).size() - 1 || j < 0)
-        {
-            return;
-        } else if (t > three_sigma.at(i)[j].size() - 1 || t < 0)
-        {
-            return;
-        } else if (!three_sigma.at(i)[j][t] || good_pixels.at(i)[j][t])
-        {
-            return;
-        }
-        else
-        {
-            good_pixels.at(i)[j][t] = true;
-            BleedTrigger(i - 1, j - 1, t, three_sigma, good_pixels);
-            BleedTrigger(i - 1, j, t, three_sigma, good_pixels);
-            BleedTrigger(i - 1, j + 1, t, three_sigma, good_pixels);
-            BleedTrigger(i, j - 1, t, three_sigma, good_pixels);
-            BleedTrigger(i, j + 1, t, three_sigma, good_pixels);
-            BleedTrigger(i + 1, j - 1, t, three_sigma, good_pixels);
-            BleedTrigger(i + 1, j, t, three_sigma, good_pixels);
-            BleedTrigger(i + 1, j + 1, t, three_sigma, good_pixels);
-            BleedTrigger(i, j, t - 1, three_sigma, good_pixels);
-            BleedTrigger(i, j, t + 1, three_sigma, good_pixels);
-        }
-    }
-
     Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane)
     {
         // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame)
@@ -532,10 +412,5 @@ namespace cherenkov_simulator
         TVector3 plane_normal = to_sd_plane.Inverse() * TVector3(0, 0, 1);
         TVector3 impact_direction = plane_normal.Cross(shower_direction);
         return Shower(Shower::Params(), r_p * impact_direction, shower_direction, t_0);
-    }
-
-    bool Reconstructor::PointWithinView(TVector3 direction, const PhotonCount& data)
-    {
-        return direction.Theta() < data.DetectorAxisAngle() - impact_buffer;
     }
 }

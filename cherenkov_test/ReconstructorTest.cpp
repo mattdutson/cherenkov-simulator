@@ -48,23 +48,25 @@ namespace cherenkov_simulator
             delete reconstructor;
         }
 
-        bool FriendFrameTriggered(int i, Bool3D triggers) { return reconstructor->FrameTriggered(i, triggers); }
+        Bool3D FriendTriggeringMatrices(PhotonCount data) {
+            return reconstructor->GetThresholdMatrices(data, 0);
+        }
 
-        Bool3D FriendTriggeringMatrices(PhotonCount data) {return reconstructor->GetThresholdMatrices(data, 0);}
+        Bool1D FriendGetTriggeringState(PhotonCount data) {
+            return reconstructor->GetTriggeringState(data);
+        }
 
-        TRotation FriendFitSDPlane(PhotonCount data) {return reconstructor->FitSDPlane(data);}
+        TRotation FriendFitSDPlane(PhotonCount data) {
+            return reconstructor->FitSDPlane(data);
+        }
 
-        Shower FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, string graph_file = "") {return reconstructor->MonocularFit(data, to_sd_plane, graph_file);}
+        Shower FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, string graph_file = "") {
+            return reconstructor->MonocularFit(data, to_sd_plane, graph_file);
+        }
 
-        Shower FriendHybridFit(PhotonCount data, TVector3 impact, TRotation to_sd_plane, string graph_file = "") {return reconstructor->HybridFit(data, impact, to_sd_plane, graph_file);}
-
-        void FriendSubtractAverageNoise(PhotonCount& data) { reconstructor->SubtractAverageNoise(data); }
-
-        void FriendThreeSigmaFilter(PhotonCount& data) { reconstructor->ThreeSigmaFilter(data); }
-
-        void FriendRecursiveSearch(PhotonCount& data) { reconstructor->RecursiveSearch(data); }
-
-        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact) {return reconstructor->FindGroundImpact(data, impact);}
+        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact) {
+            return reconstructor->FindGroundImpact(data, impact);
+        }
     };
 
     TEST_F(ReconstructorTest, StraightShower)
@@ -117,12 +119,13 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        std::vector<std::vector<std::vector<bool>>> triggering_matrices = FriendTriggeringMatrices(data);
-        for (int i = 0; i < triggering_matrices.size(); i++)
+        Bool1D trig_state = FriendGetTriggeringState(data);
+        Bool3D triggering_matrices = FriendTriggeringMatrices(data);
+        for (int i = 0; i < trig_state.size(); i++)
         {
             TH2C frame_map = Analysis::GetBooleanMap(triggering_matrices[i]);
             std::string write_name;
-            if (FriendFrameTriggered(i, triggering_matrices))
+            if (trig_state[i])
             {
                 write_name = std::to_string(i) + "tr";
             }
