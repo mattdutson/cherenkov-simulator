@@ -42,12 +42,12 @@ namespace cherenkov_simulator
             /*
              * Returns the current x index of the iterator.
              */
-            int X() const;
+            size_t X() const;
 
             /*
              * Returns the current y index of the iterator.
              */
-            int Y() const;
+            size_t Y() const;
 
             /*
              * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
@@ -77,7 +77,7 @@ namespace cherenkov_simulator
          */
         struct Params
         {
-            int n_pixels;
+            size_t n_pixels;
             double bin_size;
             double angular_size;
             double linear_size;
@@ -98,12 +98,12 @@ namespace cherenkov_simulator
         /*
          * Returns the width/height of the 2D array
          */
-        int Size() const;
+        size_t Size() const;
 
         /*
          * Returns the total number of time bins in the data structure.
          */
-        int NBins() const;
+        size_t NBins() const;
 
         /*
          * Returns true if no photons were added.
@@ -118,7 +118,7 @@ namespace cherenkov_simulator
         /*
          * Finds the bin corresponding to some time.
          */
-        int Bin(double time) const;
+        size_t Bin(double time) const;
 
         /*
          * The angular size of the detector, from axis to the outside of the detector surface.
@@ -212,7 +212,7 @@ namespace cherenkov_simulator
         Bool2D valid;
 
         // The number and size of each pixel - cgs, sr
-        int n_pixels;
+        size_t n_pixels;
         double angular_size;
         double linear_size;
 
@@ -230,12 +230,12 @@ namespace cherenkov_simulator
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
-        bool ValidPixel(int x_index, int y_index) const;
+        bool ValidPixel(size_t x_index, size_t y_index) const;
 
         /*
          * A private method which is functionally equivalent to Direction(const Iterator*).
          */
-        TVector3 Direction(int x_index, int y_index) const;
+        TVector3 Direction(size_t x_index, size_t y_index) const;
 
         /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second

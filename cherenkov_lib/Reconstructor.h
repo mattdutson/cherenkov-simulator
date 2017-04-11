@@ -90,11 +90,11 @@ namespace cherenkov_simulator
         // A general-purpose random number generator
         TRandom3 rng;
 
-        void VisitSpaceAdj(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited);
+        void VisitSpaceAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
-        void VisitTimeAdj(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited);
+        void VisitTimeAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
-        void VisitPush(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited);
+        void VisitPush(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
         /*
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is

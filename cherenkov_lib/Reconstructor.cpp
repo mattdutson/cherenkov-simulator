@@ -12,7 +12,6 @@
 #include <TFile.h>
 
 #include "Reconstructor.h"
-#include "Utility.h"
 
 using namespace TMath;
 
@@ -101,20 +100,20 @@ namespace cherenkov_simulator
         FindPlaneSubset(data, triggered);
         Bool1D trig_state = GetTriggeringState(data);
 
-        std::queue<std::array<ulong, 3>> frontier = std::queue<std::array<ulong, 3>>();
-        for (ulong x_trig = 0; x_trig < triggered.size(); x_trig++) {
-            for (ulong y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++) {
-                for (ulong t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++) {
+        std::queue<std::array<size_t, 3>> frontier = std::queue<std::array<size_t, 3>>();
+        for (size_t x_trig = 0; x_trig < triggered.size(); x_trig++) {
+            for (size_t y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++) {
+                for (size_t t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++) {
                     if (triggered[x_trig][y_trig][t_trig] && trig_state[t_trig]) {
                         frontier.push({x_trig, y_trig, t_trig});
                     }
 
                     while (!frontier.empty()) {
-                        std::array<ulong, 3> curr = frontier.front();
+                        std::array<size_t, 3> curr = frontier.front();
                         frontier.pop();
-                        ulong x = curr[0];
-                        ulong y = curr[1];
-                        ulong t = curr[2];
+                        size_t x = curr[0];
+                        size_t y = curr[1];
+                        size_t t = curr[2];
                         good_pixels[x][y][t] = true;
                         VisitSpaceAdj(x, y, t, frontier, not_visited);
                         VisitTimeAdj(x, y, t, frontier, not_visited);
@@ -125,7 +124,7 @@ namespace cherenkov_simulator
         data.Subset(good_pixels);
     }
 
-    void Reconstructor::VisitSpaceAdj(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front,
+    void Reconstructor::VisitSpaceAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front,
                                       Bool3D& not_visited) {
         VisitPush(x - 1, y - 1, t, front, not_visited);
         VisitPush(x - 1, y, t, front, not_visited);
@@ -137,14 +136,14 @@ namespace cherenkov_simulator
         VisitPush(x + 1, y + 1, t, front, not_visited);
     }
 
-    void Reconstructor::VisitTimeAdj(ulong x, ulong y, ulong t,
-                                     std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited) {
+    void Reconstructor::VisitTimeAdj(size_t x, size_t y, size_t t,
+                                     std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited) {
         VisitPush(x, y, t - 1, front, not_visited);
         VisitPush(x, y, t + 1, front, not_visited);
     }
 
-    void Reconstructor::VisitPush(ulong x, ulong y, ulong t,
-                                  std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited) {
+    void Reconstructor::VisitPush(size_t x, size_t y, size_t t,
+                                  std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited) {
         if (x > not_visited.size() - 1) return;
         else if (y > not_visited.at(x).size() - 1) return;
         else if (t > not_visited.at(x)[y].size() - 1) return;
@@ -312,7 +311,8 @@ namespace cherenkov_simulator
 
         // Make arrays to pass to the TGraph constructor.
         Double1D angle_er = Double1D(angles.size(), 0.0);
-        TGraphErrors graph = TGraphErrors(angles.size(), &(angles[0]), &(times[0]), &(angle_er[0]), &(time_er[0]));
+        TGraphErrors graph = TGraphErrors((int) angles.size(), &(angles[0]), &(times[0]), &(angle_er[0]),
+                                          &(time_er[0]));
         graph.Sort();
         return graph;
     }
@@ -332,23 +332,23 @@ namespace cherenkov_simulator
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
         Bool1D good_frames = Bool1D(data.NBins(), false);
 
-        for (ulong t_trig = 0; t_trig < data.NBins(); t_trig++) {
+        for (size_t t_trig = 0; t_trig < data.NBins(); t_trig++) {
             bool found = false;
-            for (ulong x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++) {
-                for (ulong y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++) {
+            for (size_t x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++) {
+                for (size_t y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++) {
 
-                    std::queue<std::array<ulong, 3>> frontier = std::queue<std::array<ulong, 3>>();
+                    std::queue<std::array<size_t, 3>> frontier = std::queue<std::array<size_t, 3>>();
                     if (trig_matrices.at(x_trig)[y_trig][t_trig]) {
                         frontier.push({x_trig, y_trig, t_trig});
                     }
 
                     int adjacent = 0;
                     while (!frontier.empty()) {
-                        std::array<ulong, 3> curr = frontier.front();
+                        std::array<size_t, 3> curr = frontier.front();
                         frontier.pop();
-                        ulong x = curr[0];
-                        ulong y = curr[1];
-                        ulong t = curr[2];
+                        size_t x = curr[0];
+                        size_t y = curr[1];
+                        size_t t = curr[2];
                         adjacent++;
                         if (adjacent > trigger_clust) {
                             found = true;

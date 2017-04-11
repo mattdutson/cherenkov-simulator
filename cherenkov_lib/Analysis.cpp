@@ -5,7 +5,6 @@
 // Implementation of Analysis.h
 
 #include "Analysis.h"
-#include "Utility.h"
 
 using std::vector;
 
@@ -15,7 +14,7 @@ namespace cherenkov_simulator
     {
         Double1D times, counts;
         SuperimposeTimes(data, times, counts);
-        TGraph output = TGraph(times.size(), &(times[0]), &(counts[0]));
+        TGraph output = TGraph((int) times.size(), &(times[0]), &(counts[0]));
         output.SetTitle("Detector Time Profile");
         output.GetXaxis()->SetTitle("Time (s)");
         output.GetYaxis()->SetTitle("Total Photons Seen");
@@ -24,7 +23,7 @@ namespace cherenkov_simulator
 
     TH2I Analysis::MakeSumMap(const PhotonCount& data)
     {
-        int size = data.Size();
+        int size = (int) data.Size();
         TH2I histo = TH2I("sum_map", "Bin Signal Sums", size, 0, size, size, 0, size);
         histo.SetXTitle("x Bin");
         histo.SetYTitle("y Bin");
@@ -44,7 +43,8 @@ namespace cherenkov_simulator
 
     TH2C Analysis::GetBooleanMap(const Bool2D& valid)
     {
-        TH2C histo = TH2C("valid_map", "Valid Pixels", valid.size(), 0, valid.size(), valid[0].size(), 0, valid[0].size());
+        TH2C histo = TH2C("valid_map", "Valid Pixels", (int) valid.size(), 0, valid.size(), (int) valid[0].size(), 0,
+                          valid[0].size());
         histo.SetXTitle("x Bin");
         histo.SetYTitle("y Bin");
         for (int i = 0; i < valid.size(); i++)
@@ -75,7 +75,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             Int1D signal = data.Signal(iter);
-            for (int i = 0; i < signal.size(); i++)
+            for (size_t i = 0; i < signal.size(); i++)
             {
                 counts.at(i) += signal[i];
             }

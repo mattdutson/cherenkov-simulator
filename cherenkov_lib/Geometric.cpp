@@ -7,7 +7,6 @@
 #include <TMath.h>
 
 #include "Geometric.h"
-#include "Utility.h"
 
 using namespace TMath;
 using namespace std;

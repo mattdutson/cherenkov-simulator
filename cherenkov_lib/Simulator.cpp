@@ -9,7 +9,6 @@
 #include <TMath.h>
 
 #include "Simulator.h"
-#include "Utility.h"
 
 using namespace TMath;
 
@@ -41,7 +40,7 @@ namespace cherenkov_simulator
 
         // PhotonCount parameters
         count_params.bin_size = config.get<double>("simulation.time_bin");
-        count_params.n_pixels = config.get<int>("detector.n_pmt_across");
+        count_params.n_pixels = config.get<size_t>("detector.n_pmt_across");
         count_params.linear_size = cluster_diameter / count_params.n_pixels;
         count_params.angular_size = count_params.linear_size / (mirror_radius / 2.0);
 
@@ -55,7 +54,6 @@ namespace cherenkov_simulator
     PhotonCount Simulator::SimulateShower(Shower shower)
     {
         // A lower bound on the time the first photon will reach the detector
-        double time = shower.Time() + (shower.Position().Mag() - mirror_radius) / Utility::c_cent;
         PhotonCount photon_count = PhotonCount(count_params, MinTime(shower), MaxTime(shower));
 
         // Step the shower along its path

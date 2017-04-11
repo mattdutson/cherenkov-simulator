@@ -15,8 +15,6 @@
 
 namespace cherenkov_simulator
 {
-    typedef unsigned long ulong;
-
     typedef std::vector<bool> Bool1D;
     typedef std::vector<std::vector<bool>> Bool2D;
     typedef std::vector<std::vector<std::vector<bool>>> Bool3D;

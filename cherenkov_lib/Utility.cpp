@@ -7,7 +7,6 @@
 #include <fstream>
 #include <boost/property_tree/xml_parser.hpp>
 #include <TRotation.h>
-#include <TMath.h>
 
 #include "Utility.h"
 
@@ -21,7 +20,7 @@ namespace cherenkov_simulator
     TVector3 Utility::ToVector(string s)
     {
         // Clear out everything before the first parenthesis.
-        int current = s.find('(');
+        size_t current = s.find('(');
         s.erase(0, current + 1);
 
         // Pull double values from the vector.
