@@ -9,11 +9,24 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <string>
+#include <vector>
 #include <TVector3.h>
 #include <TRandom3.h>
 
 namespace cherenkov_simulator
 {
+    typedef unsigned long ulong;
+
+    typedef std::vector<bool> Bool1D;
+    typedef std::vector<std::vector<bool>> Bool2D;
+    typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
+
+    typedef std::vector<int> Int1D;
+    typedef std::vector<std::vector<int>> Int2D;
+    typedef std::vector<std::vector<std::vector<int>>> Int3D;
+
+    typedef std::vector<double> Double1D;
+
     class Utility
     {
     public:

@@ -15,7 +15,7 @@ using std::vector;
 
 namespace cherenkov_simulator
 {
-    PhotonCount::Iterator::Iterator(std::vector<std::vector<bool>> validPixels)
+    PhotonCount::Iterator::Iterator(Bool2D validPixels)
     {
         this->valid = validPixels;
         Reset();
@@ -79,14 +79,14 @@ namespace cherenkov_simulator
         empty = true;
 
         // Initialize the photon count and valid pixel structures.
-        counts = vector<vector<vector<int>>>(n_pixels, vector<vector<int>>(n_pixels, vector<int>()));
-        valid = vector<vector<bool>>(n_pixels, vector<bool>(n_pixels, false));
+        counts = Int3D(n_pixels, Int2D(n_pixels, Int1D()));
+        valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
         for (int i = 0; i < n_pixels; i++)
         {
             for (int j = 0; j < n_pixels; j++)
             {
                 valid[i][j] = ValidPixel(i, j);
-                if (valid[i][j]) counts[i][j] = vector<int>(NBins(), 0);
+                if (valid[i][j]) counts[i][j] = Int1D(NBins(), 0);
             }
         }
 
@@ -94,7 +94,7 @@ namespace cherenkov_simulator
         gauss = TF1("gauss", "e^(-0.5 * x^2) / sqrt(2 * pi)", -Infinity(), Infinity());
     }
 
-    vector<vector<bool>> PhotonCount::GetValid() const
+    Bool2D PhotonCount::GetValid() const
     {
         return valid;
     }
@@ -139,12 +139,12 @@ namespace cherenkov_simulator
         return Direction(iter.X(), iter.Y());
     }
 
-    vector<int> PhotonCount::Signal(const Iterator& iter) const
+    Int1D PhotonCount::Signal(const Iterator& iter) const
     {
         return counts[iter.X()][iter.Y()];
     }
 
-    int PhotonCount::SumBins(const Iterator& iter, const std::vector<bool>* mask) const
+    int PhotonCount::SumBins(const Iterator& iter, const Bool1D* mask) const
     {
         int sum = 0;
         for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
@@ -186,10 +186,10 @@ namespace cherenkov_simulator
         return Iterator(valid);
     }
 
-    vector<vector<vector<bool>>> PhotonCount::GetFalseMatrix() const
+    Bool3D PhotonCount::GetFalseMatrix() const
     {
         int size = Size();
-        return vector<vector<vector<bool>>>(size, vector<vector<bool>>(size, vector<bool>(NBins(), false)));
+        return Bool3D(size, Bool2D(size, Bool1D(NBins(), false)));
     }
 
     void PhotonCount::AddPhoton(double time, TVector3 direction, double thinning)
@@ -252,10 +252,10 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<bool> PhotonCount::AboveThreshold(const Iterator& iter, int threshold) const
+    Bool1D PhotonCount::AboveThreshold(const Iterator& iter, int threshold) const
     {
-        vector<int> data = counts[iter.X()][iter.Y()];
-        vector<bool> triggers = vector<bool>(data.size());
+        Int1D data = counts[iter.X()][iter.Y()];
+        Bool1D triggers = Bool1D(data.size());
         for (int i = 0; i < data.size(); i++) triggers[i] = data[i] > threshold;
         return triggers;
     }
@@ -269,7 +269,7 @@ namespace cherenkov_simulator
         return thresh;
     }
 
-    void PhotonCount::Subset(const vector<vector<vector<bool>>>& good_bins)
+    void PhotonCount::Subset(const Bool3D& good_bins)
     {
         for (int i = 0; i < counts.size(); i++)
         {
@@ -288,8 +288,8 @@ namespace cherenkov_simulator
         if (trimmed || empty) return;
         Iterator iter = GetIterator();
         while (iter.Next()) {
-            vector<int>::iterator begin = counts[iter.X()][iter.Y()].begin();
-            vector<int>::iterator end = counts[iter.X()][iter.Y()].end();
+            Int1D::iterator begin = counts[iter.X()][iter.Y()].begin();
+            Int1D::iterator end = counts[iter.X()][iter.Y()].end();
             counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end);
             counts[iter.X()][iter.Y()].erase(begin, begin + Bin(first_time));
         }

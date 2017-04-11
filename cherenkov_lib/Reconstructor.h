@@ -16,15 +16,13 @@
 
 #include "DataStructures.h"
 #include "Geometric.h"
+#include "Utility.h"
 
 namespace cherenkov_simulator
 {
     class Reconstructor
     {
     public:
-
-        typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
-
         struct Result
         {
             bool trigger;
@@ -92,16 +90,11 @@ namespace cherenkov_simulator
         // A general-purpose random number generator
         TRandom3 rng;
 
-        void VisitSpaceAdj(unsigned long x, unsigned long y, unsigned long t,
-                           std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited);
+        void VisitSpaceAdj(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited);
 
-        void
-        VisitTimeAdj(unsigned long x, unsigned long y, unsigned long t, std::queue<std::array<unsigned long, 3>>& front,
-                     Bool3D& not_visited);
+        void VisitTimeAdj(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited);
 
-        void
-        VisitPush(unsigned long x, unsigned long y, unsigned long t, std::queue<std::array<unsigned long, 3>>& front,
-                  Bool3D& not_visited);
+        void VisitPush(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited);
 
         /*
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
@@ -155,7 +148,7 @@ namespace cherenkov_simulator
          * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
          * any frames were triggered.
          */
-        std::vector<bool> GetTriggeringState(PhotonCount& data);
+        Bool1D GetTriggeringState(PhotonCount& data);
 
         /*
          * Performs a recursive search, starting from triggered pixels and moving to adjacent pixels in space and time.
@@ -179,7 +172,7 @@ namespace cherenkov_simulator
          * Determines whether the detector was triggered by iterating through trig_state and determining if there are
          * any "true" values.
          */
-        bool DetectorTriggered(const std::vector<bool>& trig_state);
+        bool DetectorTriggered(const Bool1D& trig_state);
 
         /*
          * Determines whether the array of triggered tubes contains enough adjacent true values for the frame to be

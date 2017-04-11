@@ -98,22 +98,22 @@ namespace cherenkov_simulator
         Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
         Bool3D good_pixels = data.GetFalseMatrix();
         FindPlaneSubset(data, triggered);
-        std::vector<bool> trig_state = GetTriggeringState(data);
+        Bool1D trig_state = GetTriggeringState(data);
 
-        std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
-        for (unsigned long x_trig = 0; x_trig < triggered.size(); x_trig++) {
-            for (unsigned long y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++) {
-                for (unsigned long t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++) {
+        std::queue<std::array<ulong, 3>> frontier = std::queue<std::array<ulong, 3>>();
+        for (ulong x_trig = 0; x_trig < triggered.size(); x_trig++) {
+            for (ulong y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++) {
+                for (ulong t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++) {
                     if (triggered[x_trig][y_trig][t_trig] && trig_state[t_trig]) {
                         frontier.push({x_trig, y_trig, t_trig});
                     }
 
                     while (!frontier.empty()) {
-                        std::array<unsigned long, 3> curr = frontier.front();
+                        std::array<ulong, 3> curr = frontier.front();
                         frontier.pop();
-                        unsigned long x = curr[0];
-                        unsigned long y = curr[1];
-                        unsigned long t = curr[2];
+                        ulong x = curr[0];
+                        ulong y = curr[1];
+                        ulong t = curr[2];
                         good_pixels[x][y][t] = true;
                         VisitSpaceAdj(x, y, t, frontier, not_visited);
                         VisitTimeAdj(x, y, t, frontier, not_visited);
@@ -124,8 +124,8 @@ namespace cherenkov_simulator
         data.Subset(good_pixels);
     }
 
-    void Reconstructor::VisitSpaceAdj(unsigned long x, unsigned long y, unsigned long t,
-                                      std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
+    void Reconstructor::VisitSpaceAdj(ulong x, ulong y, ulong t, std::queue<std::array<ulong, 3>>& front,
+                                      Bool3D& not_visited) {
         VisitPush(x - 1, y - 1, t, front, not_visited);
         VisitPush(x - 1, y, t, front, not_visited);
         VisitPush(x - 1, y + 1, t, front, not_visited);
@@ -136,14 +136,14 @@ namespace cherenkov_simulator
         VisitPush(x + 1, y + 1, t, front, not_visited);
     }
 
-    void Reconstructor::VisitTimeAdj(unsigned long x, unsigned long y, unsigned long t,
-                                     std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
+    void Reconstructor::VisitTimeAdj(ulong x, ulong y, ulong t,
+                                     std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited) {
         VisitPush(x, y, t - 1, front, not_visited);
         VisitPush(x, y, t + 1, front, not_visited);
     }
 
-    void Reconstructor::VisitPush(unsigned long x, unsigned long y, unsigned long t,
-                                  std::queue<std::array<unsigned long, 3>>& front, Bool3D& not_visited) {
+    void Reconstructor::VisitPush(ulong x, ulong y, ulong t,
+                                  std::queue<std::array<ulong, 3>>& front, Bool3D& not_visited) {
         if (x > not_visited.size() - 1) return;
         else if (y > not_visited.at(x).size() - 1) return;
         else if (t > not_visited.at(x)[y].size() - 1) return;
@@ -217,7 +217,7 @@ namespace cherenkov_simulator
     {
         // Construct the symmetric matrix for finding eigenvectors
         PhotonCount::Iterator iter = data.GetIterator();
-        vector<bool> curr_mask = vector<bool>(data.NBins(), true);
+        Bool1D curr_mask = Bool1D(data.NBins(), true);
         TMatrixDSym matrix(3);
         for (int j = 0; j < 3; j++)
         {
@@ -292,9 +292,9 @@ namespace cherenkov_simulator
     TGraphErrors Reconstructor::GetFitGraph(PhotonCount& data, TRotation to_sdp)
     {
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
-        vector<double> angles = vector<double>();
-        vector<double> times = vector<double>();
-        vector<double> time_er = vector<double>();
+        Double1D angles = Double1D();
+        Double1D times = Double1D();
+        Double1D time_er = Double1D();
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
@@ -310,7 +310,7 @@ namespace cherenkov_simulator
         }
 
         // Make arrays to pass to the TGraph constructor.
-        vector<double> angle_er = vector<double>(angles.size(), 0.0);
+        Double1D angle_er = Double1D(angles.size(), 0.0);
         TGraphErrors graph = TGraphErrors(angles.size(), &(angles[0]), &(times[0]), &(angle_er[0]), &(time_er[0]));
         graph.Sort();
         return graph;
@@ -338,28 +338,28 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<bool> Reconstructor::GetTriggeringState(PhotonCount& data)
+    Bool1D Reconstructor::GetTriggeringState(PhotonCount& data)
     {
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
-        vector<bool> good_frames = vector<bool>(data.NBins(), false);
+        Bool1D good_frames = Bool1D(data.NBins(), false);
 
-        for (unsigned long t_trig = 0; t_trig < data.NBins(); t_trig++) {
+        for (ulong t_trig = 0; t_trig < data.NBins(); t_trig++) {
             bool found = false;
-            for (unsigned long x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++) {
-                for (unsigned long y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++) {
+            for (ulong x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++) {
+                for (ulong y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++) {
 
-                    std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
+                    std::queue<std::array<ulong, 3>> frontier = std::queue<std::array<ulong, 3>>();
                     if (trig_matrices.at(x_trig)[y_trig][t_trig]) {
                         frontier.push({x_trig, y_trig, t_trig});
                     }
 
                     int adjacent = 0;
                     while (!frontier.empty()) {
-                        std::array<unsigned long, 3> curr = frontier.front();
+                        std::array<ulong, 3> curr = frontier.front();
                         frontier.pop();
-                        unsigned long x = curr[0];
-                        unsigned long y = curr[1];
-                        unsigned long t = curr[2];
+                        ulong x = curr[0];
+                        ulong y = curr[1];
+                        ulong t = curr[2];
                         adjacent++;
                         if (adjacent > trigger_clust) {
                             found = true;
@@ -380,7 +380,7 @@ namespace cherenkov_simulator
         Bool3D three_sigma = GetThresholdMatrices(data, noise_thresh);
         Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
         FindPlaneSubset(data, triggered);
-        vector<bool> trig_state = GetTriggeringState(data);
+        Bool1D trig_state = GetTriggeringState(data);
 
         // Start the recursive bleed from triggered pixels
         Bool3D good_pixels = data.GetFalseMatrix();
@@ -410,7 +410,7 @@ namespace cherenkov_simulator
         {
             if (!NearPlane(to_sd_plane, to_world * data.Direction(iter)))
             {
-                triggered.at(iter.X())[iter.Y()] = vector<bool>(data.NBins(), false);
+                triggered.at(iter.X())[iter.Y()] = Bool1D(data.NBins(), false);
             }
         }
     }
@@ -422,7 +422,7 @@ namespace cherenkov_simulator
         return Abs(angle) < plane_dev;
     }
 
-    bool Reconstructor::DetectorTriggered(const vector<bool>& trig_state)
+    bool Reconstructor::DetectorTriggered(const Bool1D& trig_state)
     {
         for (int i = 0; i < trig_state.size(); i++) if (trig_state[i]) return true;
         return false;
@@ -433,8 +433,7 @@ namespace cherenkov_simulator
         return LargestCluster(t, triggers) > trigger_clust;
     }
 
-    Reconstructor::Bool3D
-    Reconstructor::GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz)
+    Bool3D Reconstructor::GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz)
     {
         int ground_thresh = data.FindThreshold(ground_noise, sigma_mult);
         int sky_thresh = data.FindThreshold(sky_noise, sigma_mult);

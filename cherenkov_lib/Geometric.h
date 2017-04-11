@@ -10,6 +10,8 @@
 #include <TRotation.h>
 #include <TVector3.h>
 
+#include "Utility.h"
+
 namespace cherenkov_simulator
 {
     /*

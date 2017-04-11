@@ -13,7 +13,7 @@ namespace cherenkov_simulator
 {
     TGraph Analysis::MakeProfileGraph(const PhotonCount& data)
     {
-        vector<double> times, counts;
+        Double1D times, counts;
         SuperimposeTimes(data, times, counts);
         TGraph output = TGraph(times.size(), &(times[0]), &(counts[0]));
         output.SetTitle("Detector Time Profile");
@@ -42,7 +42,7 @@ namespace cherenkov_simulator
         return GetBooleanMap(data.GetValid());
     }
 
-    TH2C Analysis::GetBooleanMap(const vector<vector<bool>>& valid)
+    TH2C Analysis::GetBooleanMap(const Bool2D& valid)
     {
         TH2C histo = TH2C("valid_map", "Valid Pixels", valid.size(), 0, valid.size(), valid[0].size(), 0, valid[0].size());
         histo.SetXTitle("x Bin");
@@ -59,11 +59,11 @@ namespace cherenkov_simulator
         return histo;
     }
 
-    void Analysis::SuperimposeTimes(const PhotonCount& data, vector<double>& times, vector<double>& counts)
+    void Analysis::SuperimposeTimes(const PhotonCount& data, Double1D& times, Double1D& counts)
     {
         // Initialize the structure and find x-axis labels (times).
-        times = vector<double>();
-        counts = vector<double>();
+        times = Double1D();
+        counts = Double1D();
         for (int i = 0; i < data.NBins(); i++)
         {
             times.push_back(data.Time(i));
@@ -74,7 +74,7 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            vector<int> signal = data.Signal(iter);
+            Int1D signal = data.Signal(iter);
             for (int i = 0; i < signal.size(); i++)
             {
                 counts.at(i) += signal[i];

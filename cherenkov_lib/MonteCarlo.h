@@ -14,6 +14,7 @@
 #include "Geometric.h"
 #include "Simulator.h"
 #include "Reconstructor.h"
+#include "Utility.h"
 
 namespace cherenkov_simulator
 {

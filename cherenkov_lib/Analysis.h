@@ -14,6 +14,7 @@
 
 #include "DataStructures.h"
 #include "Geometric.h"
+#include "Utility.h"
 
 namespace cherenkov_simulator
 {
@@ -39,7 +40,7 @@ namespace cherenkov_simulator
         /*
          * Creates a 2D histogram with a 1 for true values and a 0 for false values.
          */
-        static TH2C GetBooleanMap(const std::vector<std::vector<bool>>& valid);
+        static TH2C GetBooleanMap(const Bool2D& valid);
 
     private:
 
@@ -47,7 +48,7 @@ namespace cherenkov_simulator
          * Finds the superimposed time profile of all photomultiplier signals. It is assumed that all signals will have the
          * same time length (if AddNoise wasn't called this won't be the case).
          */
-        static void SuperimposeTimes(const PhotonCount& data, std::vector<double>& times, std::vector<double>& counts);
+        static void SuperimposeTimes(const PhotonCount& data, Double1D& times, Double1D& counts);
     };
 }
 

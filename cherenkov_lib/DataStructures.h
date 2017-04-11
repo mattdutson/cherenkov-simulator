@@ -12,6 +12,8 @@
 #include <TRandom3.h>
 #include <TF1.h>
 
+#include "Utility.h"
+
 namespace cherenkov_simulator
 {
     /*
@@ -35,7 +37,7 @@ namespace cherenkov_simulator
              * The only constructor. Takes a 2D vector of bools which can be used to determine which pixels are valid. The
              * user is responsible for ensuring that all sub-vectors are non-null.
              */
-            Iterator(std::vector<std::vector<bool>> validPixels);
+            Iterator(Bool2D validPixels);
 
             /*
              * Returns the current x index of the iterator.
@@ -63,7 +65,7 @@ namespace cherenkov_simulator
             friend class DataStructuresTest;
 
             // Defines the subset of pixels which the iterator is allowed to stop at
-            std::vector<std::vector<bool>> valid;
+            Bool2D valid;
 
             // The current indices of the iterator
             int curr_x;
@@ -91,7 +93,7 @@ namespace cherenkov_simulator
         /*
          * Returns the 2D array of valid pixel flags.
          */
-        std::vector<std::vector<bool>> GetValid() const;
+        Bool2D GetValid() const;
 
         /*
          * Returns the width/height of the 2D array
@@ -136,12 +138,12 @@ namespace cherenkov_simulator
         /*
          * Gets the complete time signal at the current position of the iterator.
          */
-        std::vector<int> Signal(const Iterator& iter) const;
+        Int1D Signal(const Iterator& iter) const;
 
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(const Iterator& iter, const std::vector<bool>* mask = nullptr) const;
+        int SumBins(const Iterator& iter, const Bool1D* mask = nullptr) const;
 
         /*
          * Finds the average time in the pixel referenced by the iterator.
@@ -163,7 +165,7 @@ namespace cherenkov_simulator
          * Returns a 3D matrix of false values, with the same dimensions as the underlying vector of the PhotonCount
          * class.
          */
-        std::vector<std::vector<std::vector<bool>>> GetFalseMatrix() const;
+        Bool3D GetFalseMatrix() const;
 
         /*
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
@@ -191,13 +193,13 @@ namespace cherenkov_simulator
         /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
          */
-        void Subset(const std::vector<std::vector<std::vector<bool>>>& good_pixels);
+        void Subset(const Bool3D& good_pixels);
 
         /*
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
          * trigger_thresh * sigma photon counts.
          */
-        std::vector<bool> AboveThreshold(const Iterator& iter, int threshold) const;
+        Bool1D AboveThreshold(const Iterator& iter, int threshold) const;
 
         /*
          * Determines the appropriate threshold given the global noise rate (Poisson distributed), and the number of
@@ -216,8 +218,8 @@ namespace cherenkov_simulator
         friend class DataStructuresTest;
 
         // The underlying data structure and its validity mask
-        std::vector<std::vector<std::vector<int>>> counts;
-        std::vector<std::vector<bool>> valid;
+        Int3D counts;
+        Bool2D valid;
 
         // The number and size of each pixel - cgs, sr
         int n_pixels;
