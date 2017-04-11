@@ -342,16 +342,17 @@ namespace cherenkov_simulator
     {
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
         vector<bool> good_frames = vector<bool>(data.NBins(), false);
-        std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
+
         for (unsigned long x_trig = 0; x_trig < trig_matrices.size(); x_trig++) {
             for (unsigned long y_trig = 0; y_trig < trig_matrices.at(x_trig).size(); y_trig++) {
                 for (unsigned long t_trig = 0;
                      t_trig < trig_matrices.at(x_trig)[y_trig].size() && !good_frames[t_trig]; t_trig++) {
-                    int adjacent = 0;
+                    std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
                     if (trig_matrices.at(x_trig)[y_trig][t_trig]) {
                         frontier.push({x_trig, y_trig, t_trig});
                     }
 
+                    int adjacent = 0;
                     while (!frontier.empty()) {
                         std::array<unsigned long, 3> curr = frontier.front();
                         unsigned long x = curr[0];

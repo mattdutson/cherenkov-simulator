@@ -76,6 +76,7 @@ namespace cherenkov_simulator
         first_time = max_time;
         last_time = min_time;
         trimmed = false;
+        empty = true;
 
         // Initialize the photon count and valid pixel structures.
         counts = vector<vector<vector<int>>>(n_pixels, vector<vector<int>>(n_pixels, vector<int>()));
@@ -110,7 +111,7 @@ namespace cherenkov_simulator
 
     bool PhotonCount::Empty() const
     {
-        return NBins() == 0;
+        return empty;
     }
 
     double PhotonCount::BinSize() const
@@ -210,6 +211,7 @@ namespace cherenkov_simulator
             if (time > last_time) last_time = time;
             if (time < first_time) first_time = time;
             trimmed = false;
+            empty = false;
         }
     }
 
@@ -224,6 +226,8 @@ namespace cherenkov_simulator
         {
             counts[iter.X()][iter.Y()][i] += rng.Poisson(expected_photons);
         }
+
+        empty = false;
     }
 
     void PhotonCount::Subtract(const Iterator& iter, double rate)
@@ -281,7 +285,7 @@ namespace cherenkov_simulator
 
     void PhotonCount::Trim()
     {
-        if (trimmed) return;
+        if (trimmed || empty) return;
         Iterator iter = GetIterator();
         while (iter.Next()) {
             vector<int>::iterator begin = counts[iter.X()][iter.Y()].begin();

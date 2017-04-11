@@ -43,6 +43,8 @@ namespace cherenkov_simulator
          */
         Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy);
 
+        static int Run(int argc, const char* argv[]);
+
     private:
 
         // Used to calculate N_max from the energy - eV

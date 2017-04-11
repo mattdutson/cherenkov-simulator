@@ -232,6 +232,7 @@ namespace cherenkov_simulator
         double last_time;
 
         // Keeps track of whether we need to call Trim
+        bool empty;
         bool trimmed;
 
         // Used when calculating thresholds
