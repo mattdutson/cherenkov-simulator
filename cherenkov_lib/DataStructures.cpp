@@ -89,9 +89,6 @@ namespace cherenkov_simulator
                 if (valid[i][j]) counts[i][j] = Int1D(NBins(), 0);
             }
         }
-
-        // Initialize the gaussian used to calculate threhsolds.
-        gauss = TF1("gauss", "e^(-0.5 * x^2) / sqrt(2 * pi)", -Infinity(), Infinity());
     }
 
     Bool2D PhotonCount::GetValid() const
@@ -201,7 +198,6 @@ namespace cherenkov_simulator
         if (ValidPixel(x_index, y_index))
         {
             int time_slot = Bin(time);
-            ExpandVector(x_index, y_index, time_slot + 1);
             counts[x_index][y_index][time_slot] += thinning;
             if (time > last_time) last_time = time;
             if (time < first_time) first_time = time;
@@ -236,17 +232,6 @@ namespace cherenkov_simulator
         }
     }
 
-    void PhotonCount::Threshold(const Iterator& iter, int threshold)
-    {
-        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
-        {
-            if (counts[iter.X()][iter.Y()][i] < threshold)
-            {
-                counts[iter.X()][iter.Y()][i] = 0;
-            }
-        }
-    }
-
     Bool1D PhotonCount::AboveThreshold(const Iterator& iter, int threshold) const
     {
         Int1D data = counts[iter.X()][iter.Y()];
@@ -255,9 +240,9 @@ namespace cherenkov_simulator
         return triggers;
     }
 
-    int PhotonCount::FindThreshold(double global_rate, double sigma)
+    int PhotonCount::FindThreshold(double global_rate, double sigma) const
     {
-        double max_prob = gauss.Integral(sigma, Infinity());
+        double max_prob = Sqrt(Pi() / 2.0) * Erfc(sigma / Sqrt(2));
         double mean = RealNoiseRate(global_rate);
         int thresh = (int) Floor(sigma * Sqrt(mean));
         while(PoissonSum(mean, thresh) > max_prob) thresh++;
@@ -314,11 +299,6 @@ namespace cherenkov_simulator
 
         // A positive azimuth should correspond to a positive x component.
         return TVector3(Cos(elevation) * Sin(azimuth), Sin(elevation), Cos(elevation) * Cos(azimuth));
-    }
-
-    void PhotonCount::ExpandVector(int x_index, int y_index, int size)
-    {
-        if (counts[x_index][y_index].size() < size) counts[x_index][y_index].resize(size, 0);
     }
 
     double PhotonCount::RealNoiseRate(double universal_rate) const

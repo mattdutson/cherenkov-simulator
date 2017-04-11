@@ -51,7 +51,7 @@ namespace cherenkov_simulator
          * detector was not triggered, Result.triggered = false. If there was not visible impact point,
          * Result.cherenkov = false.
          */
-        Result Reconstruct(PhotonCount& data);
+        Result Reconstruct(const PhotonCount& data);
 
         /*
          * Adds Poisson-distributed background noise to the signal.
@@ -100,12 +100,12 @@ namespace cherenkov_simulator
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
          * not used.
          */
-        Shower MonocularFit(PhotonCount& data, TRotation to_sdp, std::string graph_file = "");
+        Shower MonocularFit(const PhotonCount& data, TRotation to_sdp, std::string graph_file = "");
 
         /*
          * Performs a time profile reconstruction, but using the constraint of an impact point.
          */
-        Shower HybridFit(PhotonCount& data, TVector3 impact, TRotation to_sdp, std::string graph_file = "");
+        Shower HybridFit(const PhotonCount& data, TVector3 impact, TRotation to_sdp, std::string graph_file = "");
 
         /*
          * Finds the shower-detector plane based on the distribution of data points. Returns a rotation to a frame in
@@ -125,12 +125,12 @@ namespace cherenkov_simulator
          * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
          * would expect during that time frame.
          */
-        bool FindGroundImpact(PhotonCount& data, TVector3* impact);
+        bool FindGroundImpact(const PhotonCount& data, TVector3* impact);
 
         /*
          * Constructs the fit graph from data points.
          */
-        TGraphErrors GetFitGraph(PhotonCount& data, TRotation to_sdp);
+        TGraphErrors GetFitGraph(const PhotonCount& data, TRotation to_sdp);
 
         /*
          * Subtracts the average amount of noise from each pixel.
@@ -142,7 +142,7 @@ namespace cherenkov_simulator
          * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
          * any frames were triggered.
          */
-        Bool1D GetTriggeringState(PhotonCount& data);
+        Bool1D GetTriggeringState(const PhotonCount& data);
 
         /*
          * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within
@@ -166,7 +166,7 @@ namespace cherenkov_simulator
          * Returns a 2D array of arrays, each of which contains true values for tubes above the specified multiple of
          * sigma, and false values for all those below.
          */
-        Bool3D GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz = true);
+        Bool3D GetThresholdMatrices(const PhotonCount& data, double sigma_mult, bool use_below_horiz = true);
 
         /*
          * Constructs a shower based on the results of the time profile reconstruction.

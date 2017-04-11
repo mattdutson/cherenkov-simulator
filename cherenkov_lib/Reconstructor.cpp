@@ -60,7 +60,7 @@ namespace cherenkov_simulator
         if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
-    Reconstructor::Result Reconstructor::Reconstruct(PhotonCount& data)
+    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data)
     {
         Result result = Result();
         result.trigger = DetectorTriggered(GetTriggeringState(data));
@@ -154,7 +154,7 @@ namespace cherenkov_simulator
         }
     }
 
-    Shower Reconstructor::MonocularFit(PhotonCount& data, TRotation to_sdp, string graph_file)
+    Shower Reconstructor::MonocularFit(const PhotonCount& data, TRotation to_sdp, string graph_file)
     {
         // The functional form of the time profile
         std::stringstream func_string = std::stringstream();
@@ -182,7 +182,7 @@ namespace cherenkov_simulator
         return MakeShower(t_0, r_p, psi, to_sdp);
     }
 
-    Shower Reconstructor::HybridFit(PhotonCount& data, TVector3 impact, TRotation to_sdp, string graph_file)
+    Shower Reconstructor::HybridFit(const PhotonCount& data, TVector3 impact, TRotation to_sdp, string graph_file)
     {
         // Find the angle of the impact direction with the shower-detector frame x-axis
         double impact_distance = impact.Mag();
@@ -264,7 +264,7 @@ namespace cherenkov_simulator
         return TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
     }
 
-    bool Reconstructor::FindGroundImpact(PhotonCount& data, TVector3* impact)
+    bool Reconstructor::FindGroundImpact(const PhotonCount& data, TVector3* impact)
     {
         // Find the brightest pixel below the horizon
         TVector3 impact_direction = TVector3();
@@ -290,7 +290,7 @@ namespace cherenkov_simulator
         return highest_count > data.FindThreshold(ground_noise, noise_thresh);
     }
 
-    TGraphErrors Reconstructor::GetFitGraph(PhotonCount& data, TRotation to_sdp)
+    TGraphErrors Reconstructor::GetFitGraph(const PhotonCount& data, TRotation to_sdp)
     {
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
         Double1D angles = Double1D();
@@ -327,7 +327,7 @@ namespace cherenkov_simulator
         }
     }
 
-    Bool1D Reconstructor::GetTriggeringState(PhotonCount& data)
+    Bool1D Reconstructor::GetTriggeringState(const PhotonCount& data)
     {
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
         Bool1D good_frames = Bool1D(data.NBins(), false);
@@ -389,7 +389,7 @@ namespace cherenkov_simulator
         return false;
     }
 
-    Bool3D Reconstructor::GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz)
+    Bool3D Reconstructor::GetThresholdMatrices(const PhotonCount& data, double sigma_mult, bool use_below_horiz)
     {
         int ground_thresh = data.FindThreshold(ground_noise, sigma_mult);
         int sky_thresh = data.FindThreshold(sky_noise, sigma_mult);

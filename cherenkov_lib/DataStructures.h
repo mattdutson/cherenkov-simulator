@@ -181,11 +181,6 @@ namespace cherenkov_simulator
         void Subtract(const Iterator& iter, double rate);
 
         /*
-         * Clears any bins in the current pixel which are less than noise_thresh * sigma from zero.
-         */
-        void Threshold(const Iterator& iter, int threshold);
-
-        /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
          */
         void Subset(const Bool3D& good_pixels);
@@ -201,7 +196,7 @@ namespace cherenkov_simulator
          * standard deviations above the mean where the threshold should lie. Any signals at or above this threshold are
          * considered "good".
          */
-        int FindThreshold(double global_rate, double sigma);
+        int FindThreshold(double global_rate, double sigma) const;
 
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.
@@ -232,9 +227,6 @@ namespace cherenkov_simulator
         bool empty;
         bool trimmed;
 
-        // Used when calculating thresholds
-        TF1 gauss;
-
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
@@ -246,12 +238,6 @@ namespace cherenkov_simulator
         TVector3 Direction(int x_index, int y_index) const;
 
         /*
-         * If the vector at index (x, y) is smaller than the specified size, it is expanded. This method does NOT
-         * check that the indices are valid.
-         */
-        void ExpandVector(int x_index, int y_index, int size);
-
-        /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second
          * per steradian in a given direction.
          */
@@ -261,12 +247,12 @@ namespace cherenkov_simulator
          * Approximates the sum of the specified Poisson distribution from some minimum value to infinity. The summation
          * stops when the value of the distribution is less than 10^-6 of the value at the starting point.
          */
-        double PoissonSum(double mean, int min);
+        static double PoissonSum(double mean, int min);
 
         /*
          * Calculates the value of the Poisson distribution with specified mean at the specified value.
          */
-        double Poisson(double mean, int x);
+        static double Poisson(double mean, int x);
     };
 }
 
