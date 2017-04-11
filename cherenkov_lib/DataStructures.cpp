@@ -286,7 +286,7 @@ namespace cherenkov_simulator
         while (iter.Next()) {
             vector<int>::iterator begin = counts[iter.X()][iter.Y()].begin();
             vector<int>::iterator end = counts[iter.X()][iter.Y()].end();
-            counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end)
+            counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end);
             counts[iter.X()][iter.Y()].erase(begin, begin + Bin(first_time));
         }
         min_time = min_time + Floor((first_time - min_time) / bin_size) * bin_size;

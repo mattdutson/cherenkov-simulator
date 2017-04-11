@@ -14,15 +14,13 @@ using namespace std;
 
 namespace cherenkov_simulator
 {
-    Plane::Plane() : Plane(TVector3(), TVector3())
+    Plane::Plane() : Plane(TVector3(0, 0, 1), TVector3())
     {}
 
     Plane::Plane(TVector3 normal_vector, TVector3 point)
     {
-        // If a zero normal vector is passed, use (0, 0, 1) instead.
-        normal = (normal_vector == TVector3(0, 0, 0)) ? TVector3(0, 0, 1) : normal_vector.Unit();
-
-        // d = a * x_0 + b * y_0 + c * z_0
+        if (normal_vector.Mag2() == 0) throw std::runtime_error("Plane normal vector must be nonzero");
+        normal = normal_vector;
         coefficient = normal.Dot(point);
     }
 
@@ -46,10 +44,8 @@ namespace cherenkov_simulator
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
-        // If a zero direction vector is passed, use (0, 0, 1) instead.
-        SetDirection((direction == TVector3(0, 0, 0)) ? TVector3(0, 0, 1) : direction);
-
-        // All times and starting positions are assumed valid.
+        if (direction.Mag2() == 0) throw std::runtime_error("Ray direction must be nonzero");
+        SetDirection(direction);
         this->time = time;
         this->position = position;
     }
