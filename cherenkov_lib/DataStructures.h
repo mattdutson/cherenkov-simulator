@@ -131,28 +131,28 @@ namespace cherenkov_simulator
         /*
          * Determines the direction of the photomultiplier referenced by the iterator.
          */
-        TVector3 Direction(const Iterator* iter) const;
+        TVector3 Direction(const Iterator& iter) const;
 
         /*
          * Gets the complete time signal at the current position of the iterator.
          */
-        std::vector<int> Signal(const Iterator* iter) const;
+        std::vector<int> Signal(const Iterator& iter) const;
 
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(const Iterator* iter, const std::vector<bool>* mask = nullptr) const;
+        int SumBins(const Iterator& iter, const std::vector<bool>* mask = nullptr) const;
 
         /*
          * Finds the average time in the pixel referenced by the iterator.
          */
-        double AverageTime(const Iterator* iter) const;
+        double AverageTime(const Iterator& iter) const;
 
         /*
          * Finds the standard deviation of the times in the pixel referenced by the iterator, applying Sheppard's
          * correction because the data is binned.
          */
-        double TimeError(const Iterator* iter) const;
+        double TimeError(const Iterator& iter) const;
 
         /*
          * Returns an object for iterating through the pixels.
@@ -176,28 +176,28 @@ namespace cherenkov_simulator
          * number of photons per second per steradian per square centimeter. These photons are randomly scattered
          * throughout the time bins using the random number generator.
          */
-        void AddNoise(double noise_rate, const Iterator* iter, TRandom3* rng);
+        void AddNoise(double noise_rate, const Iterator& iter, TRandom3& rng);
 
         /*
          * Subtract the average noise rate from the signal in the pixel specified by the iterator.
          */
-        void Subtract(const Iterator *iter, double rate);
+        void Subtract(const Iterator& iter, double rate);
 
         /*
          * Clears any bins in the current pixel which are less than noise_thresh * sigma from zero.
          */
-        void Threshold(const Iterator *iter, int threshold);
+        void Threshold(const Iterator& iter, int threshold);
 
         /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
          */
-        void Subset(std::vector<std::vector<std::vector<bool>>> good_pixels);
+        void Subset(const std::vector<std::vector<std::vector<bool>>>& good_pixels);
 
         /*
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
          * trigger_thresh * sigma photon counts.
          */
-        std::vector<bool> AboveThreshold(const Iterator* iter, int threshold) const;
+        std::vector<bool> AboveThreshold(const Iterator& iter, int threshold) const;
 
         /*
          * Determines the appropriate threshold given the global noise rate (Poisson distributed), and the number of

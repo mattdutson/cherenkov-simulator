@@ -27,7 +27,7 @@ namespace cherenkov_simulator
         /*
          * Constructs the Simulator from values in the configuration tree.
          */
-        Simulator(boost::property_tree::ptree config);
+        Simulator(const boost::property_tree::ptree& config);
 
         /*
          * Simulate the motion of the shower from its current point to the ground, emitting fluorescence and Cherenkov
@@ -118,13 +118,13 @@ namespace cherenkov_simulator
         /*
          * Simulate the production and detection of the fluorescence photons.
          */
-        void ViewFluorescencePhotons(Shower shower, PhotonCount* photon_count);
+        void ViewFluorescencePhotons(Shower shower, PhotonCount& photon_count);
 
         /*
          * Simulate the production and detection of the Cherenkov photons. Only Cherenkov photons reflected from the
          * ground are recorded (no back scattering).
          */
-        void ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount* photon_count);
+        void ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount& photon_count);
 
         /*
          * Determines the total number of Fluorescence photons produced by the shower at a particular point. Takes the
@@ -147,7 +147,7 @@ namespace cherenkov_simulator
          * parameter which represents the rate of computational thinning. This is passed to the photon count container
          * to allow it to increment bins by the correct amount.
          */
-        void SimulateOptics(Ray photon, PhotonCount* photon_count, double thinning);
+        void SimulateOptics(Ray photon, PhotonCount& photon_count, double thinning);
 
         /*
          * Generates a random point on the circle of the refracting lens.
@@ -157,13 +157,13 @@ namespace cherenkov_simulator
         /*
          * Refracts a ray across the Schmidt corrector. The Schmidt corrector is assumed to have zero thickness.
          */
-        bool DeflectFromLens(Ray* photon);
+        bool DeflectFromLens(Ray& photon);
 
         /*
          * Takes a ray which has just been refracted by the corrector. Finds the point on the mirror where that ray will
          * reflect. If the ray misses the mirror, false is returned.
          */
-        bool MirrorImpactPoint(Ray ray, TVector3* point);
+        bool MirrorImpactPoint(Ray ray, TVector3& point);
 
         /*
          * Returns the normal vector at some point on the mirror. Behavior is undefined if the passed point is not on or
@@ -176,7 +176,7 @@ namespace cherenkov_simulator
          * whether photons are blocked by the photomultipliers and to find where they are detected after being reflected
          * by the mirror. Returns false if the ray will not hit the photomultiplier array.
          */
-        bool CameraImpactPoint(Ray ray, TVector3* point);
+        bool CameraImpactPoint(Ray ray, TVector3& point);
 
         /*
          * Calculates the effective ionization loss rate for a shower (alpha_eff).
@@ -215,7 +215,7 @@ namespace cherenkov_simulator
          * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
          * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
          */
-        static bool NegSphereImpact(Ray ray, TVector3* point, double radius);
+        static bool NegSphereImpact(Ray ray, TVector3& point, double radius);
     };
 }
 

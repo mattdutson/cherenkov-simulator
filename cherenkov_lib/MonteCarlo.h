@@ -24,7 +24,7 @@ namespace cherenkov_simulator
         /*
          * Constructs the MonteCarlo from values in the configuration tree.
          */
-        MonteCarlo(boost::property_tree::ptree config_file);
+        MonteCarlo(const boost::property_tree::ptree& config_file);
 
         /*
          * Performs the overall Monte Carlo simulation and writes results to the console.

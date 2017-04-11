@@ -133,46 +133,46 @@ namespace cherenkov_simulator
         return ((double) n_pixels / 2) * angular_size;
     }
 
-    TVector3 PhotonCount::Direction(const Iterator* iter) const
+    TVector3 PhotonCount::Direction(const Iterator& iter) const
     {
-        return Direction(iter->X(), iter->Y());
+        return Direction(iter.X(), iter.Y());
     }
 
-    vector<int> PhotonCount::Signal(const Iterator* iter) const
+    vector<int> PhotonCount::Signal(const Iterator& iter) const
     {
-        return counts[iter->X()][iter->Y()];
+        return counts[iter.X()][iter.Y()];
     }
 
-    int PhotonCount::SumBins(const Iterator* iter, const std::vector<bool>* mask) const
+    int PhotonCount::SumBins(const Iterator& iter, const std::vector<bool>* mask) const
     {
         int sum = 0;
-        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
+        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
         {
-            int count = counts[iter->X()][iter->Y()][i];
+            int count = counts[iter.X()][iter.Y()][i];
             if (mask != nullptr) sum += mask->at(i) ? count : 0;
             else sum += count;
         }
         return sum;
     }
 
-    double PhotonCount::AverageTime(const Iterator* iter) const
+    double PhotonCount::AverageTime(const Iterator& iter) const
     {
         int sum = SumBins(iter);
         double average = 0;
-        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
+        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
         {
-            average += Time(i) * counts[iter->X()][iter->Y()][i] / (double) sum;
+            average += Time(i) * counts[iter.X()][iter.Y()][i] / (double) sum;
         }
         return average;
     }
 
-    double PhotonCount::TimeError(const Iterator* iter) const
+    double PhotonCount::TimeError(const Iterator& iter) const
     {
         double mean = AverageTime(iter);
         double variance = 0;
         for (int i = 0; i < NBins(); i++)
         {
-            variance += counts[iter->X()][iter->Y()][i]* Sq(Time(i) - mean);
+            variance += counts[iter.X()][iter.Y()][i] * Sq(Time(i) - mean);
         }
         double count = SumBins(iter);
         variance /= count;
@@ -212,7 +212,7 @@ namespace cherenkov_simulator
         }
     }
 
-    void PhotonCount::AddNoise(double noise_rate, const Iterator* iter, TRandom3* rng)
+    void PhotonCount::AddNoise(double noise_rate, const Iterator& iter, TRandom3& rng)
     {
         // Ensure all channels have the same length.
         Equalize();
@@ -221,35 +221,35 @@ namespace cherenkov_simulator
         double expected_photons = RealNoiseRate(noise_rate);
         for (int i = 0; i < NBins(); i++)
         {
-            counts[iter->X()][iter->Y()][i] += rng->Poisson(expected_photons);
+            counts[iter.X()][iter.Y()][i] += rng.Poisson(expected_photons);
         }
     }
 
-    void PhotonCount::Subtract(const Iterator *iter, double rate)
+    void PhotonCount::Subtract(const Iterator& iter, double rate)
     {
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
         int expected_photons = (int) RealNoiseRate(rate);
-        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
+        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
         {
-            counts[iter->X()][iter->Y()][i] -= expected_photons;
+            counts[iter.X()][iter.Y()][i] -= expected_photons;
         }
     }
 
-    void PhotonCount::Threshold(const Iterator *iter, int threshold)
+    void PhotonCount::Threshold(const Iterator& iter, int threshold)
     {
-        for (int i = 0; i < counts[iter->X()][iter->Y()].size(); i++)
+        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
         {
-            if (counts[iter->X()][iter->Y()][i] < threshold)
+            if (counts[iter.X()][iter.Y()][i] < threshold)
             {
-                counts[iter->X()][iter->Y()][i] = 0;
+                counts[iter.X()][iter.Y()][i] = 0;
             }
         }
     }
 
-    vector<bool> PhotonCount::AboveThreshold(const Iterator* iter, int threshold) const
+    vector<bool> PhotonCount::AboveThreshold(const Iterator& iter, int threshold) const
     {
-        vector<int> data = counts[iter->X()][iter->Y()];
+        vector<int> data = counts[iter.X()][iter.Y()];
         vector<bool> triggers = vector<bool>(data.size());
         for (int i = 0; i < data.size(); i++) triggers[i] = data[i] > threshold;
         return triggers;
@@ -264,7 +264,7 @@ namespace cherenkov_simulator
         return thresh;
     }
 
-    void PhotonCount::Subset(vector<vector<vector<bool>>> good_bins)
+    void PhotonCount::Subset(const vector<vector<vector<bool>>>& good_bins)
     {
         for (int i = 0; i < counts.size(); i++)
         {

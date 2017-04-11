@@ -33,7 +33,7 @@ namespace cherenkov_simulator
                 ", " + ckv.ToString();
     }
 
-    Reconstructor::Reconstructor(ptree config)
+    Reconstructor::Reconstructor(const ptree& config)
     {
         // Construct the ground plane in the world frame.
         TVector3 ground_normal = Utility::ToVector(config.get<string>("surroundings.ground_normal"));
@@ -60,10 +60,11 @@ namespace cherenkov_simulator
         if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
-    Reconstructor::Result Reconstructor::Reconstruct(PhotonCount data)
+    Reconstructor::Result Reconstructor::Reconstruct(PhotonCount& data)
     {
         Result result = Result();
-        result.trigger = DetectorTriggered(GetTriggeringState(GetThresholdMatrices(data, trigger_thresh, false)));
+        vector<vector<vector<bool>>> threshold = GetThresholdMatrices(data, trigger_thresh, false);
+        result.trigger = DetectorTriggered(GetTriggeringState(threshold));
         if (result.trigger)
         {
             TRotation to_sdp = FitSDPlane(data);
@@ -81,24 +82,24 @@ namespace cherenkov_simulator
         return result;
     }
 
-    void Reconstructor::AddNoise(PhotonCount* data)
+    void Reconstructor::AddNoise(PhotonCount& data)
     {
-        PhotonCount::Iterator iter = data->GetIterator();
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            bool toward_ground = ground.InFrontOf(to_world * data->Direction(&iter));
-            data->AddNoise(toward_ground ? ground_noise : sky_noise, &iter, &rng);
+            bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
+            data.AddNoise(toward_ground ? ground_noise : sky_noise, iter, rng);
         }
     }
 
-    void Reconstructor::ClearNoise(PhotonCount* data)
+    void Reconstructor::ClearNoise(PhotonCount& data)
     {
         SubtractAverageNoise(data);
         ThreeSigmaFilter(data);
         RecursiveSearch(data);
     }
 
-    Shower Reconstructor::MonocularFit(PhotonCount data, TRotation to_sdp, string graph_file)
+    Shower Reconstructor::MonocularFit(PhotonCount& data, TRotation to_sdp, string graph_file)
     {
         // The functional form of the time profile
         std::stringstream func_string = std::stringstream();
@@ -126,7 +127,7 @@ namespace cherenkov_simulator
         return MakeShower(t_0, r_p, psi, to_sdp);
     }
 
-    Shower Reconstructor::HybridFit(PhotonCount data, TVector3 impact, TRotation to_sdp, string graph_file)
+    Shower Reconstructor::HybridFit(PhotonCount& data, TVector3 impact, TRotation to_sdp, string graph_file)
     {
         // Find the angle of the impact direction with the shower-detector frame x-axis
         double impact_distance = impact.Mag();
@@ -158,7 +159,7 @@ namespace cherenkov_simulator
         return MakeShower(t_0, r_p, psi, to_sdp);
     }
 
-    TRotation Reconstructor::FitSDPlane(PhotonCount data, const Bool3D* mask)
+    TRotation Reconstructor::FitSDPlane(const PhotonCount& data, const Bool3D* mask)
     {
         // Construct the symmetric matrix for finding eigenvectors
         PhotonCount::Iterator iter = data.GetIterator();
@@ -173,8 +174,8 @@ namespace cherenkov_simulator
                 while (iter.Next())
                 {
                     if (mask != nullptr) curr_mask = mask->at(iter.X())[iter.Y()];
-                    TVector3 direction = data.Direction(&iter);
-                    int pmt_sum = data.SumBins(&iter, &curr_mask);
+                    TVector3 direction = data.Direction(iter);
+                    int pmt_sum = data.SumBins(iter, &curr_mask);
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }
                 matrix[j][k] = mat_element;
@@ -208,7 +209,7 @@ namespace cherenkov_simulator
         return TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
     }
 
-    bool Reconstructor::FindGroundImpact(PhotonCount data, TVector3* impact)
+    bool Reconstructor::FindGroundImpact(PhotonCount& data, TVector3* impact)
     {
         // Find the brightest pixel below the horizon
         TVector3 impact_direction = TVector3();
@@ -216,8 +217,8 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            TVector3 direction = to_world * data.Direction(&iter);
-            int sum = data.SumBins(&iter);
+            TVector3 direction = to_world * data.Direction(iter);
+            int sum = data.SumBins(iter);
             if (sum > highest_count && ground.InFrontOf(direction))
             {
                 highest_count = sum;
@@ -234,7 +235,7 @@ namespace cherenkov_simulator
         return highest_count > data.FindThreshold(ground_noise, noise_thresh);
     }
 
-    TGraphErrors Reconstructor::GetFitGraph(PhotonCount data, TRotation to_sdp)
+    TGraphErrors Reconstructor::GetFitGraph(PhotonCount& data, TRotation to_sdp)
     {
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
         vector<double> angles = vector<double>();
@@ -244,13 +245,13 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             // Don't rotate to the world because the rotation goes from the detector frame to the shower-detector frame.
-            TVector3 direction = to_world * data.Direction(&iter);
-            int bin_sum = data.SumBins(&iter);
+            TVector3 direction = to_world * data.Direction(iter);
+            int bin_sum = data.SumBins(iter);
             if (!ground.InFrontOf(direction) && bin_sum > 0)
             {
                 angles.push_back((to_sdp * direction).Phi());
-                times.push_back(data.AverageTime(&iter));
-                time_er.push_back(data.TimeError(&iter));
+                times.push_back(data.AverageTime(iter));
+                time_er.push_back(data.TimeError(iter));
             }
         }
 
@@ -261,45 +262,45 @@ namespace cherenkov_simulator
         return graph;
     }
 
-    void Reconstructor::SubtractAverageNoise(PhotonCount* data)
+    void Reconstructor::SubtractAverageNoise(PhotonCount& data)
     {
-        PhotonCount::Iterator iter = data->GetIterator();
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            bool toward_ground = ground.InFrontOf(to_world * data->Direction(&iter));
-            data->Subtract(&iter, toward_ground ? ground_noise : sky_noise);
+            bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
+            data.Subtract(iter, toward_ground ? ground_noise : sky_noise);
         }
     }
 
-    void Reconstructor::ThreeSigmaFilter(PhotonCount* data)
+    void Reconstructor::ThreeSigmaFilter(PhotonCount& data)
     {
-        int ground_thresh = data->FindThreshold(ground_noise, noise_thresh);
-        int sky_thresh = data->FindThreshold(sky_noise, noise_thresh);
-        PhotonCount::Iterator iter = data->GetIterator();
+        int ground_thresh = data.FindThreshold(ground_noise, noise_thresh);
+        int sky_thresh = data.FindThreshold(sky_noise, noise_thresh);
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            bool toward_ground = ground.InFrontOf(to_world * data->Direction(&iter));
-            data->Threshold(&iter, toward_ground ? ground_thresh : sky_thresh);
+            bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
+            data.Threshold(iter, toward_ground ? ground_thresh : sky_thresh);
         }
     }
 
     vector<bool> Reconstructor::GetTriggeringState(Bool3D trig_matrices)
     {
         vector<bool> good_frames = vector<bool>();
-        for (int i = 0; i < trig_matrices[0][0].size(); i++) good_frames.push_back(FrameTriggered(i, &trig_matrices));
+        for (int i = 0; i < trig_matrices[0][0].size(); i++) good_frames.push_back(FrameTriggered(i, trig_matrices));
         return good_frames;
     }
 
-    void Reconstructor::RecursiveSearch(PhotonCount* data)
+    void Reconstructor::RecursiveSearch(PhotonCount& data)
     {
         // Find the pixels and times where triggers occured as well as pixels and times above the noise threshold
-        Bool3D three_sigma = GetThresholdMatrices(*data, noise_thresh);
-        Bool3D triggered = GetThresholdMatrices(*data, trigger_thresh);
-        FindPlaneSubset(data, &triggered);
+        Bool3D three_sigma = GetThresholdMatrices(data, noise_thresh);
+        Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
+        FindPlaneSubset(data, triggered);
         vector<bool> trig_state = GetTriggeringState(triggered);
 
         // Start the recursive bleed from triggered pixels
-        Bool3D good_pixels = data->GetFalseMatrix();
+        Bool3D good_pixels = data.GetFalseMatrix();
         for (int i = 0; i < triggered.size(); i++)
         {
             for (int j = 0; j < triggered[i].size(); j++)
@@ -308,25 +309,25 @@ namespace cherenkov_simulator
                 {
                     if (triggered[i][j][t] && trig_state[t])
                     {
-                        BleedTrigger(i, j, t, &three_sigma, &good_pixels);
+                        BleedTrigger(i, j, t, three_sigma, good_pixels);
                     }
                 }
             }
         }
 
         // Erase any pixels we determined to be non-valid
-        data->Subset(good_pixels);
+        data.Subset(good_pixels);
     }
 
-    void Reconstructor::FindPlaneSubset(const PhotonCount* data, Bool3D* triggered)
+    void Reconstructor::FindPlaneSubset(const PhotonCount& data, Bool3D& triggered)
     {
-        TRotation to_sd_plane = FitSDPlane(*data, triggered);
-        PhotonCount::Iterator iter = data->GetIterator();
+        TRotation to_sd_plane = FitSDPlane(data, &triggered);
+        PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            if (!NearPlane(to_sd_plane, to_world * data->Direction(&iter)))
+            if (!NearPlane(to_sd_plane, to_world * data.Direction(iter)))
             {
-                triggered->at(iter.X())[iter.Y()] = vector<bool>(data->NBins(), false);
+                triggered.at(iter.X())[iter.Y()] = vector<bool>(data.NBins(), false);
             }
         }
     }
@@ -338,18 +339,19 @@ namespace cherenkov_simulator
         return Abs(angle) < plane_dev;
     }
 
-    bool Reconstructor::DetectorTriggered(vector<bool> trig_state)
+    bool Reconstructor::DetectorTriggered(const vector<bool>& trig_state)
     {
         for (int i = 0; i < trig_state.size(); i++) if (trig_state[i]) return true;
         return false;
     }
 
-    bool Reconstructor::FrameTriggered(int t, Bool3D* triggers)
+    bool Reconstructor::FrameTriggered(int t, Bool3D& triggers)
     {
         return LargestCluster(t, triggers) > trigger_clust;
     }
 
-    Reconstructor::Bool3D Reconstructor::GetThresholdMatrices(PhotonCount data, double sigma_mult, bool use_below_horiz)
+    Reconstructor::Bool3D
+    Reconstructor::GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz)
     {
         int ground_thresh = data.FindThreshold(ground_noise, sigma_mult);
         int sky_thresh = data.FindThreshold(sky_noise, sigma_mult);
@@ -357,21 +359,21 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            bool toward_ground = ground.InFrontOf(to_world * data.Direction(&iter));
+            bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
             if (toward_ground && !use_below_horiz) continue;
-            pass[iter.X()][iter.Y()] = data.AboveThreshold(&iter, toward_ground ? ground_thresh : sky_thresh);
+            pass[iter.X()][iter.Y()] = data.AboveThreshold(iter, toward_ground ? ground_thresh : sky_thresh);
         }
         return pass;
     }
 
-    int Reconstructor::LargestCluster(int t, Bool3D* not_counted)
+    int Reconstructor::LargestCluster(int t, Bool3D& not_counted)
     {
         int largest = 0;
-        for (int i = 0; i < not_counted->size(); i++)
+        for (int i = 0; i < not_counted.size(); i++)
         {
-            for (int j = 0; j < not_counted->at(i).size(); j++)
+            for (int j = 0; j < not_counted.at(i).size(); j++)
             {
-                if (not_counted->at(i)[j][t])
+                if (not_counted.at(i)[j][t])
                 {
                     int size = Visit(i, j, t, not_counted);
                     if (size > largest) largest = size;
@@ -381,23 +383,21 @@ namespace cherenkov_simulator
         return largest;
     }
 
-    int Reconstructor::Visit(int i, int j, int t, Bool3D* not_counted)
+    int Reconstructor::Visit(int i, int j, int t, Bool3D& not_counted)
     {
-        if (i > not_counted->size() - 1 || i < 0)
+        if (i > not_counted.size() - 1 || i < 0)
         {
             return 0;
-        }
-        else if (j > not_counted->at(i).size() - 1 || j < 0)
+        } else if (j > not_counted.at(i).size() - 1 || j < 0)
         {
             return 0;
-        }
-        else if (!not_counted->at(i)[j][t])
+        } else if (!not_counted.at(i)[j][t])
         {
             return 0;
         }
         else
         {
-            not_counted->at(i)[j][t] = false;
+            not_counted.at(i)[j][t] = false;
             int count = 1;
             count += Visit(i - 1, j - 1, t, not_counted);
             count += Visit(i - 1, j, t, not_counted);
@@ -411,27 +411,24 @@ namespace cherenkov_simulator
         }
     }
 
-    void Reconstructor::BleedTrigger(int i, int j, int t, const Bool3D* three_sigma, Bool3D* good_pixels)
+    void Reconstructor::BleedTrigger(int i, int j, int t, const Bool3D& three_sigma, Bool3D& good_pixels)
     {
-        if (i > three_sigma->size() - 1 || i < 0)
+        if (i > three_sigma.size() - 1 || i < 0)
         {
             return;
-        }
-        else if (j > three_sigma->at(i).size() - 1 || j < 0)
+        } else if (j > three_sigma.at(i).size() - 1 || j < 0)
         {
             return;
-        }
-        else if (t > three_sigma->at(i)[j].size() - 1 || t < 0)
+        } else if (t > three_sigma.at(i)[j].size() - 1 || t < 0)
         {
             return;
-        }
-        else if (!three_sigma->at(i)[j][t] || good_pixels->at(i)[j][t])
+        } else if (!three_sigma.at(i)[j][t] || good_pixels.at(i)[j][t])
         {
             return;
         }
         else
         {
-            good_pixels->at(i)[j][t] = true;
+            good_pixels.at(i)[j][t] = true;
             BleedTrigger(i - 1, j - 1, t, three_sigma, good_pixels);
             BleedTrigger(i - 1, j, t, three_sigma, good_pixels);
             BleedTrigger(i - 1, j + 1, t, three_sigma, good_pixels);
@@ -455,7 +452,7 @@ namespace cherenkov_simulator
         return Shower(Shower::Params(), r_p * impact_direction, shower_direction, t_0);
     }
 
-    bool Reconstructor::PointWithinView(TVector3 direction, PhotonCount data)
+    bool Reconstructor::PointWithinView(TVector3 direction, const PhotonCount& data)
     {
         return direction.Theta() < data.DetectorAxisAngle() - impact_buffer;
     }

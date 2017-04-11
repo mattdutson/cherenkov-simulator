@@ -48,18 +48,18 @@ namespace cherenkov_simulator
          * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
          * returned.
          */
-        static TVector3 RandNormal(TVector3 vec, TRandom3* rng);
+        static TVector3 RandNormal(TVector3 vec, TRandom3& rng);
 
         /*
          * Returns a random, linearly distributed value constrained between zero and some maximum.
          */
-        static double RandLinear(TRandom3* rng, double max);
+        static double RandLinear(TRandom3& rng, double max);
 
         /*
          * Returns an integer which is randomly rounded up or down from the input double based on its decimal. For
          * instance, 3.2 would be rounded up to 4 20% of the time and down to 3 80% of the time.
          */
-        static int RandomRound(double value, TRandom3* rng);
+        static int RandomRound(double value, TRandom3& rng);
 
         /*
          * Calculates the percent error between the actual and expected values. If the expected value is zero, the
@@ -83,7 +83,7 @@ namespace cherenkov_simulator
          * A helper method which parses to double everything from the beginning of the string to the first occurence of the
          * secified character. The method then erases everything up to and including the specified character.
          */
-        static double ParseTo(std::string* s, char c);
+        static double ParseTo(std::string& s, char c);
     };
 }
 
