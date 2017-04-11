@@ -97,7 +97,7 @@ namespace cherenkov_simulator
         for (int i = 0; i < number_detected / fluor_thin; i++)
         {
             TVector3 lens_impact = rotate_to_world * RandomStopImpact();
-            Ray photon = Ray(shower.Position(), lens_impact - shower.Position(), JitteredTime(shower));
+            Ray photon = JitteredRay(shower, lens_impact - shower.Position());
             photon.PropagateToPoint(lens_impact);
             SimulateOptics(photon, photon_count, fluor_thin);
         }
@@ -235,7 +235,7 @@ namespace cherenkov_simulator
         TVector3 direction = shower.Direction();
         TVector3 rotation_axis = Utility::RandNormal(shower.Velocity().Unit(), rng);
         direction.Rotate(rng.Exp(ThetaC(shower)), rotation_axis);
-        return Ray(shower.Position(), direction, JitteredTime(shower));
+        return JitteredRay(shower, direction);
     }
 
     double Simulator::ThetaC(Shower shower)
@@ -243,10 +243,13 @@ namespace cherenkov_simulator
         return ckv_k1 * Power(shower.EThresh(), ckv_k2);
     }
 
-    double Simulator::JitteredTime(Shower shower)
+    Ray Simulator::JitteredRay(Shower shower, TVector3 direction)
     {
         double step_time = depth_step / shower.LocalRho() / Utility::c_cent;
-        return shower.Time() + rng.Uniform(-0.5 * step_time, 0.5 * step_time);
+        double offset = rng.Uniform(-0.5 * step_time, 0.5 * step_time);
+        double time = shower.Time() + offset;
+        TVector3 position = shower.Position() + shower.Velocity() * offset;
+        return Ray(position, direction, time);
     }
 
     bool Simulator::NegSphereImpact(Ray ray, TVector3& point, double radius)

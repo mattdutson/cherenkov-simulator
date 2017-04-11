@@ -209,7 +209,7 @@ namespace cherenkov_simulator
         /*
          * Generates a time which is randomly offset from the shower time.
          */
-        double JitteredTime(Shower shower);
+        Ray JitteredRay(Shower shower, TVector3 direction);
 
         /*
          * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
