@@ -258,25 +258,21 @@ namespace cherenkov_simulator
         double a = ray.Velocity().Mag2();
         double b = 2 * ray.Position().Dot(ray.Velocity());
         double c = ray.Position().Mag2() - Sq(radius);
-        ROOT::Math::Polynomial poly = ROOT::Math::Polynomial(a, b, c);
-        std::vector<double> roots = poly.FindRealRoots();
 
         // If there are no real roots there is no impact, otherwise find the rearmost impact
-        if (roots.size() == 0)
+        double b4ac = Sq(b) - 4 * a * c;
+        if (b4ac < 0)
         {
             point = TVector3();
             return false;
         }
-        else if (roots.size() == 1)
-        {
-            point = ray.Position() + roots[0] * ray.Velocity();
-            return true;
-        }
         else
         {
-            TVector3 point1 = ray.Position() + roots[0] * ray.Velocity();
-            TVector3 point2 = ray.Position() + roots[1] * ray.Velocity();
-            point = point1.Z() < 0 ? point1 : point2;
+            double root1 = (-b + Sqrt(b4ac)) / (2 * a);
+            double root2 = (-b - Sqrt(b4ac)) / (2 * a);
+            TVector3 point1 = ray.Position() + root1 * ray.Velocity();
+            TVector3 point2 = ray.Position() + root2 * ray.Velocity();
+            point = point1.Z() < point2.Z() ? point1 : point2;
             return true;
         }
     }
