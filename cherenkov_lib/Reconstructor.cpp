@@ -63,8 +63,7 @@ namespace cherenkov_simulator
     Reconstructor::Result Reconstructor::Reconstruct(PhotonCount& data)
     {
         Result result = Result();
-        vector<vector<vector<bool>>> threshold = GetThresholdMatrices(data, trigger_thresh, false);
-        result.trigger = DetectorTriggered(GetTriggeringState(threshold));
+        result.trigger = DetectorTriggered(GetTriggeringState(data));
         if (result.trigger)
         {
             TRotation to_sdp = FitSDPlane(data);
@@ -99,7 +98,7 @@ namespace cherenkov_simulator
         Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
         Bool3D good_pixels = data.GetFalseMatrix();
         FindPlaneSubset(data, triggered);
-        std::vector<bool> trig_state = GetTriggeringState(triggered);
+        std::vector<bool> trig_state = GetTriggeringState(data);
 
         std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
         for (unsigned long x_trig = 0; x_trig < triggered.size(); x_trig++) {
@@ -339,10 +338,35 @@ namespace cherenkov_simulator
         }
     }
 
-    vector<bool> Reconstructor::GetTriggeringState(Bool3D trig_matrices)
+    vector<bool> Reconstructor::GetTriggeringState(PhotonCount& data)
     {
-        vector<bool> good_frames = vector<bool>();
-        for (int i = 0; i < trig_matrices[0][0].size(); i++) good_frames.push_back(FrameTriggered(i, trig_matrices));
+        Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
+        vector<bool> good_frames = vector<bool>(data.NBins(), false);
+        std::queue<std::array<unsigned long, 3>> frontier = std::queue<std::array<unsigned long, 3>>();
+        for (unsigned long x_trig = 0; x_trig < trig_matrices.size(); x_trig++) {
+            for (unsigned long y_trig = 0; y_trig < trig_matrices.at(x_trig).size(); y_trig++) {
+                for (unsigned long t_trig = 0;
+                     t_trig < trig_matrices.at(x_trig)[y_trig].size() && !good_frames[t_trig]; t_trig++) {
+                    int adjacent = 0;
+                    if (trig_matrices.at(x_trig)[y_trig][t_trig]) {
+                        frontier.push({x_trig, y_trig, t_trig});
+                    }
+
+                    while (!frontier.empty()) {
+                        std::array<unsigned long, 3> curr = frontier.front();
+                        unsigned long x = curr[0];
+                        unsigned long y = curr[1];
+                        unsigned long t = curr[2];
+                        adjacent++;
+                        if (adjacent > trigger_clust) {
+                            good_frames[t_trig] = true;
+                            break;
+                        }
+                        VisitSpaceAdj(x, y, t, frontier, trig_matrices);
+                    }
+                }
+            }
+        }
         return good_frames;
     }
 
@@ -352,7 +376,7 @@ namespace cherenkov_simulator
         Bool3D three_sigma = GetThresholdMatrices(data, noise_thresh);
         Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
         FindPlaneSubset(data, triggered);
-        vector<bool> trig_state = GetTriggeringState(triggered);
+        vector<bool> trig_state = GetTriggeringState(data);
 
         // Start the recursive bleed from triggered pixels
         Bool3D good_pixels = data.GetFalseMatrix();

@@ -155,7 +155,7 @@ namespace cherenkov_simulator
          * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
          * any frames were triggered.
          */
-        std::vector<bool> GetTriggeringState(Bool3D trig_matrices);
+        std::vector<bool> GetTriggeringState(PhotonCount& data);
 
         /*
          * Performs a recursive search, starting from triggered pixels and moving to adjacent pixels in space and time.
