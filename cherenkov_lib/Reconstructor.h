@@ -8,21 +8,21 @@
 #define RECONSTRUCTOR_H
 
 #include <queue>
+#include <array>
 #include <boost/property_tree/ptree.hpp>
 #include <TRotation.h>
 #include <TGraphErrors.h>
 #include <TMatrixDSym.h>
 
-#include "Utility.h"
 #include "DataStructures.h"
 #include "Geometric.h"
+#include "Utility.h"
 
 namespace cherenkov_simulator
 {
     class Reconstructor
     {
     public:
-
         struct Result
         {
             bool trigger;
@@ -51,7 +51,7 @@ namespace cherenkov_simulator
          * detector was not triggered, Result.triggered = false. If there was not visible impact point,
          * Result.cherenkov = false.
          */
-        Result Reconstruct(PhotonCount& data);
+        Result Reconstruct(const PhotonCount& data);
 
         /*
          * Adds Poisson-distributed background noise to the signal.
@@ -119,7 +119,7 @@ namespace cherenkov_simulator
          * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
          * would expect during that time frame.
          */
-        bool FindGroundImpact(PhotonCount& data, TVector3& impact);
+        bool FindGroundImpact(const PhotonCount& data, TVector3& impact);
 
         /*
          * Constructs the fit graph from data points.
@@ -136,7 +136,25 @@ namespace cherenkov_simulator
          * signals above some threshold. Also, eliminate any noise which is below some lower threshold. Return true if
          * any frames were triggered.
          */
-        std::vector<bool> GetTriggeringState(PhotonCount& data);
+        Bool1D GetTriggeringState(const PhotonCount& data);
+
+        /*
+         * Visits all spatially adjacent pixels to the (x, y, t) point passed, pushing them to the queue. They are also
+         * marked as visited in the not_visited structure.
+         */
+        void VisitSpaceAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+
+        /*
+         * Visits all spatially adjacent temporally to the (x, y, t) point passed, pushing them to the queue. They are
+         * also marked as visited in the not_visited structure.
+        */
+        void VisitTimeAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+
+        /*
+         * Pushes the specified (x, y, z) point to the queue, first checking that the point lies within appropriate
+         * bounds and has not yet been visited. not_visited[x][y][t] is set to false.
+         */
+        void VisitPush(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
         /*
          * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within
@@ -154,30 +172,18 @@ namespace cherenkov_simulator
          * Determines whether the detector was triggered by iterating through trig_state and determining if there are
          * any "true" values.
          */
-        bool DetectorTriggered(PhotonCount& data);
+        bool DetectorTriggered(const Bool1D& trig_state);
 
         /*
          * Returns a 2D array of arrays, each of which contains true values for tubes above the specified multiple of
          * sigma, and false values for all those below.
          */
-        Bool3D GetThresholdMatrices(PhotonCount& data, double sigma_mult, bool use_below_horiz = true);
+        Bool3D GetThresholdMatrices(const PhotonCount& data, double sigma_mult, bool use_below_horiz = true);
 
         /*
          * Constructs a shower based on the results of the time profile reconstruction.
          */
         Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane);
-
-        /*
-         * Checks whether the specified point lies within the field of minus some buffer defined in the config. Assumes
-         * the direction is in the detector frame.
-         */
-        bool PointWithinView(TVector3 direction, const PhotonCount& data);
-
-        void VisitSpaceAdj(ULong x, ULong y, ULong t, std::queue<std::array<ULong, 3>>& front, const Bool3D& good);
-
-        void VisitTimeAdj(ULong x, ULong y, ULong t, std::queue<std::array<ULong, 3>>& front, const Bool3D& good);
-
-        void SafePush(ULong x, ULong y, ULong t, std::queue<std::array<ULong, 3>>& front, const Bool3D& good);
     };
 }
 

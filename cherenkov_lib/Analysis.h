@@ -15,6 +15,7 @@
 #include "Utility.h"
 #include "DataStructures.h"
 #include "Geometric.h"
+#include "Utility.h"
 
 namespace cherenkov_simulator
 {

@@ -15,6 +15,7 @@
 #include "Geometric.h"
 #include "Simulator.h"
 #include "Reconstructor.h"
+#include "Utility.h"
 
 namespace cherenkov_simulator
 {
@@ -43,6 +44,12 @@ namespace cherenkov_simulator
          * point of closest approach), energy, and depth of first interaction.
          */
         Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy);
+
+        /*
+         * Parses the output file and configuration file from command line arguments, instantiates the MonteCarlo
+         * object, and runs PerformMonteCarlo method.
+         */
+        static int Run(int argc, const char* argv[]);
 
     private:
 

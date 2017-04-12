@@ -10,27 +10,31 @@
 
 using namespace TMath;
 
+using std::vector;
+
 namespace cherenkov_simulator
 {
-    PhotonCount::Iterator::Iterator(Bool2D valid_pixels)
+    PhotonCount::Iterator::Iterator(Bool2D validPixels)
     {
-        valid = valid_pixels;
+        this->valid = validPixels;
         Reset();
     }
 
-    ULong PhotonCount::Iterator::X() const
+    size_t PhotonCount::Iterator::X() const
     {
-        return (ULong) curr_x;
+        if (curr_y < 0) throw std::runtime_error("Invalid position");
+        return (size_t) curr_x;
     }
 
-    ULong PhotonCount::Iterator::Y() const
+    size_t PhotonCount::Iterator::Y() const
     {
-        return (ULong) curr_y;
+        if (curr_y < 0) throw std::runtime_error("Invalid position");
+        return (size_t) curr_y;
     }
 
     bool PhotonCount::Iterator::Next()
     {
-        // If the outer std::vector is empty, then there will never be anything to iterate through.
+        // If the outer vector is empty, then there will never be anything to iterate through.
         if (valid.size() == 0) return false;
 
         // Loop until we find a valid pixel.
@@ -69,25 +73,23 @@ namespace cherenkov_simulator
         this->min_time = min_time;
         this->max_time = max_time;
 
-        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are equalized
+        // We haven't seen any non-noise photons yet, so the last time is the start time and channels are trimmed
         first_time = max_time;
         last_time = min_time;
-        trimmed = true;
+        trimmed = false;
+        empty = true;
 
         // Initialize the photon count and valid pixel structures.
-        counts = Int3D(n_pixels, Int2D(n_pixels));
+        counts = Int3D(n_pixels, Int2D(n_pixels, Int1D()));
         valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
-        for (ULong i = 0; i < n_pixels; i++)
+        for (size_t i = 0; i < n_pixels; i++)
         {
-            for (ULong j = 0; j < n_pixels; j++)
+            for (size_t j = 0; j < n_pixels; j++)
             {
                 valid[i][j] = ValidPixel(i, j);
-                if (valid[i][j]) counts[i][j] = Int1D(n_pixels, 0);
+                if (valid[i][j]) counts[i][j] = Int1D(NBins(), 0);
             }
         }
-
-        // Initialize the gaussian used to calculate threhsolds.
-        gauss = TF1("gauss", "e^(-0.5 * x^2) / sqrt(2 * pi)", -Infinity(), Infinity());
     }
 
     Bool2D PhotonCount::GetValid() const
@@ -95,19 +97,19 @@ namespace cherenkov_simulator
         return valid;
     }
 
-    ULong PhotonCount::Size() const
+    size_t PhotonCount::Size() const
     {
         return n_pixels;
     }
 
-    ULong PhotonCount::NBins() const
+    size_t PhotonCount::NBins() const
     {
-        return min_time == last_time ? (ULong) 0 : Bin(last_time) + 1;
+        return min_time == max_time ? 0 : Bin(max_time) + 1;
     }
 
     bool PhotonCount::Empty() const
     {
-        return NBins() == 0;
+        return empty;
     }
 
     double PhotonCount::Time(int bin) const
@@ -115,9 +117,9 @@ namespace cherenkov_simulator
         return bin * bin_size + min_time;
     }
 
-    ULong PhotonCount::Bin(double time) const
+    size_t PhotonCount::Bin(double time) const
     {
-        return (ULong) Floor((time - min_time) / bin_size);
+        return (size_t) Floor((time - min_time) / bin_size);
     }
 
     double PhotonCount::DetectorAxisAngle() const
@@ -135,22 +137,14 @@ namespace cherenkov_simulator
         return counts[iter.X()][iter.Y()];
     }
 
-    int PhotonCount::SumBins(const Iterator& iter) const
+    int PhotonCount::SumBins(const Iterator& iter, const Bool1D* mask) const
     {
         int sum = 0;
-        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
+        for (size_t i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
         {
-            sum += counts[iter.X()][iter.Y()][i];
-        }
-        return sum;
-    }
-
-    int PhotonCount::FilteredSum(const Iterator& iter, const Bool1D& mask) const
-    {
-        int sum = 0;
-        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
-        {
-            if (mask[i]) sum += counts[iter.X()][iter.Y()][i];
+            int count = counts[iter.X()][iter.Y()][i];
+            if (mask != nullptr) sum += mask->at(i) ? count : 0;
+            else sum += count;
         }
         return sum;
     }
@@ -172,7 +166,7 @@ namespace cherenkov_simulator
         double variance = 0;
         for (int i = 0; i < NBins(); i++)
         {
-            variance += counts[iter.X()][iter.Y()][i]* Sq(Time(i) - mean);
+            variance += counts[iter.X()][iter.Y()][i] * Sq(Time(i) - mean);
         }
         double count = SumBins(iter);
         variance /= count;
@@ -187,7 +181,7 @@ namespace cherenkov_simulator
 
     Bool3D PhotonCount::GetFalseMatrix() const
     {
-        ULong size = Size();
+        size_t size = Size();
         return Bool3D(size, Bool2D(size, Bool1D(NBins(), false)));
     }
 
@@ -198,17 +192,18 @@ namespace cherenkov_simulator
         // Determine the indices of the pixel based on its orientation
         double elevation = ATan(direction.Y() / direction.Z());
         double azimuth = ATan(direction.X() / direction.Z());
-        long y_index = (long) (Floor(elevation / angular_size) + n_pixels / 2); // TODO: SWITCH BACK TO ULONG
-        long x_index = (long) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
+        size_t y_index = (size_t) (Floor(elevation / angular_size) + n_pixels / 2);
+        size_t x_index = (size_t) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
 
         // If the location is valid, add the pixel to the underlying data structure
         if (ValidPixel(x_index, y_index))
         {
-            ULong time_slot = Bin(time);
+            size_t time_slot = Bin(time);
             counts[x_index][y_index][time_slot] += thinning;
             if (time > last_time) last_time = time;
             if (time < first_time) first_time = time;
             trimmed = false;
+            empty = false;
         }
     }
 
@@ -219,10 +214,12 @@ namespace cherenkov_simulator
 
         // Randomly determine the number of photons in each bin according to the Poisson distribution.
         double expected_photons = RealNoiseRate(noise_rate);
-        for (int i = 0; i < NBins(); i++)
+        for (size_t i = 0; i < NBins(); i++)
         {
             counts[iter.X()][iter.Y()][i] += rng.Poisson(expected_photons);
         }
+
+        empty = false;
     }
 
     void PhotonCount::Subtract(const Iterator& iter, double rate)
@@ -230,7 +227,7 @@ namespace cherenkov_simulator
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
         int expected_photons = (int) RealNoiseRate(rate);
-        for (int i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
+        for (size_t i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
         {
             counts[iter.X()][iter.Y()][i] -= expected_photons;
         }
@@ -240,26 +237,26 @@ namespace cherenkov_simulator
     {
         Int1D data = counts[iter.X()][iter.Y()];
         Bool1D triggers = Bool1D(data.size());
-        for (int i = 0; i < data.size(); i++) triggers[i] = data[i] > threshold;
+        for (size_t i = 0; i < data.size(); i++) triggers[i] = data[i] > threshold;
         return triggers;
     }
 
-    int PhotonCount::FindThreshold(double global_rate, double sigma)
+    int PhotonCount::FindThreshold(double global_rate, double sigma) const
     {
-        double max_prob = gauss.Integral(sigma, Infinity());
+        double max_prob = Sqrt(Pi() / 2.0) * Erfc(sigma / Sqrt(2));
         double mean = RealNoiseRate(global_rate);
         int thresh = (int) Floor(sigma * Sqrt(mean));
-        while(PoissonSum(mean, thresh) > max_prob) thresh++;
+        while (PoissonSum(mean, thresh) > max_prob) thresh++;
         return thresh;
     }
 
-    void PhotonCount::Subset(Bool3D& good_bins)
+    void PhotonCount::Subset(const Bool3D& good_bins)
     {
-        for (int i = 0; i < counts.size(); i++)
+        for (size_t i = 0; i < counts.size(); i++)
         {
-            for (int j = 0; j < counts[i].size(); j++)
+            for (size_t j = 0; j < counts[i].size(); j++)
             {
-                for (int t = 0; t < counts[i][j].size(); t++)
+                for (size_t t = 0; t < counts[i][j].size(); t++)
                 {
                     if (!good_bins[i][j][t]) counts[i][j][t] = 0;
                 }
@@ -269,24 +266,23 @@ namespace cherenkov_simulator
 
     void PhotonCount::Trim()
     {
-        if (trimmed) return;
+        if (trimmed || empty) return;
         Iterator iter = GetIterator();
         while (iter.Next())
         {
             Int1D::iterator begin = counts[iter.X()][iter.Y()].begin();
             Int1D::iterator end = counts[iter.X()][iter.Y()].end();
-//            counts[iter.X()][iter.Y()].erase(begin + Bin(first_time) - 1, end);
-//            counts[iter.X()][iter.Y()].erase(begin, begin + Bin(last_time) + 1); // TODO: Double check the indexing here
+            counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end);
+            counts[iter.X()][iter.Y()].erase(begin, begin + Bin(first_time));
         }
-        min_time = first_time;
+        min_time = min_time + Floor((first_time - min_time) / bin_size) * bin_size;
         max_time = last_time;
         trimmed = true;
     }
 
-    bool PhotonCount::ValidPixel(int x_index, int y_index) const    // TODO: Change back to ULong
+    bool PhotonCount::ValidPixel(size_t x_index, size_t y_index) const
     {
-//        return x_index >= 0 && x_index <= 199 && y_index >= 0 && y_index <= 199;
-        int n_half = n_pixels / 2;
+        size_t n_half = n_pixels / 2;
         double arc_length = n_half * linear_size;
         double angle = n_half * angular_size;
         double radius = arc_length / angle;
@@ -295,12 +291,12 @@ namespace cherenkov_simulator
         return Utility::WithinXYDisk(direction, max_dev);
     }
 
-    TVector3 PhotonCount::Direction(ULong x_index, ULong y_index) const
+    TVector3 PhotonCount::Direction(size_t x_index, size_t y_index) const
     {
         // Reverse the operations of AddPhoton. Add 0.5 to account for the Floor() operation.
-        double pixels_up = ((double) y_index) - n_pixels / 2.0 + 0.5; // TODO: HERE
+        double pixels_up = (y_index - n_pixels / 2.0 + 0.5);
         double elevation = pixels_up * angular_size;
-        double pixels_horiz = ((double) x_index) - n_pixels / 2.0 + 0.5;
+        double pixels_horiz = (x_index - n_pixels / 2.0 + 0.5);
         double azimuth = pixels_horiz * angular_size * Cos(elevation);
 
         // A positive azimuth should correspond to a positive x component.

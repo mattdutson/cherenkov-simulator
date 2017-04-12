@@ -18,7 +18,7 @@ using std::endl;
 
 namespace cherenkov_simulator
 {
-    MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config): simulator(config), reconstructor(config)
+    MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config) : simulator(config), reconstructor(config)
     {
         // The distribution of shower energies
         std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
@@ -134,5 +134,26 @@ namespace cherenkov_simulator
         params.scale_height = scale_height;
         params.delta_0 = delta_0;
         return Shower(params, starting_position, axis);
+    }
+
+    int MonteCarlo::Run(int argc, const char* argv[])
+    {
+        // Get the filename from the first command-line argument
+        std::string out_file = "Output";
+        std::string config_file = "Config.xml";
+        if (argc > 1) out_file = std::string(argv[1]);
+        if (argc > 2) config_file = std::string(argv[2]);
+        try
+        {
+            boost::property_tree::ptree config = Utility::ParseXMLFile(config_file).get_child("config");
+            MonteCarlo monte_carlo = MonteCarlo(config);
+            monte_carlo.PerformMonteCarlo(out_file);
+            return 0;
+        }
+        catch (std::runtime_error err)
+        {
+            cout << err.what() << endl;
+            return -1;
+        }
     }
 }

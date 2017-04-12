@@ -37,17 +37,17 @@ namespace cherenkov_simulator
              * The only constructor. Takes a 2D vector of bools which can be used to determine which pixels are valid. The
              * user is responsible for ensuring that all sub-vectors are non-null.
              */
-            Iterator(Bool2D valid_pixels);
+            Iterator(Bool2D validPixels);
 
             /*
              * Returns the current x index of the iterator.
              */
-            ULong X() const;
+            size_t X() const;
 
             /*
              * Returns the current y index of the iterator.
              */
-            ULong Y() const;
+            size_t Y() const;
 
             /*
              * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
@@ -68,8 +68,8 @@ namespace cherenkov_simulator
             Bool2D valid;
 
             // The current indices of the iterator
-            long curr_x;
-            long curr_y;
+            int curr_x;
+            int curr_y;
         };
 
         /*
@@ -77,7 +77,7 @@ namespace cherenkov_simulator
          */
         struct Params
         {
-            ULong n_pixels;
+            size_t n_pixels;
             double bin_size;
             double angular_size;
             double linear_size;
@@ -98,12 +98,12 @@ namespace cherenkov_simulator
         /*
          * Returns the width/height of the 2D array
          */
-        ULong Size() const;
+        size_t Size() const;
 
         /*
          * Returns the total number of time bins in the data structure.
          */
-        ULong NBins() const;
+        size_t NBins() const;
 
         /*
          * Returns true if no photons were added.
@@ -118,7 +118,7 @@ namespace cherenkov_simulator
         /*
          * Finds the bin corresponding to some time.
          */
-        ULong Bin(double time) const;
+        size_t Bin(double time) const;
 
         /*
          * The angular size of the detector, from axis to the outside of the detector surface.
@@ -138,12 +138,7 @@ namespace cherenkov_simulator
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(const Iterator& iter) const;
-
-        /*
-         * Sums all bins in the channel referenced by the iterator for which the mask contains a true value.
-         */
-        int FilteredSum(const Iterator& iter, const Bool1D& mask) const;
+        int SumBins(const Iterator& iter, const Bool1D* mask = nullptr) const;
 
         /*
          * Finds the average time in the pixel referenced by the iterator.
@@ -188,7 +183,7 @@ namespace cherenkov_simulator
         /*
          * Erases any photon counts which do not correspond to a true value in the 3D input vector.
          */
-        void Subset(Bool3D& good_pixels);
+        void Subset(const Bool3D& good_pixels);
 
         /*
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
@@ -201,7 +196,7 @@ namespace cherenkov_simulator
          * standard deviations above the mean where the threshold should lie. Any signals at or above this threshold are
          * considered "good".
          */
-        int FindThreshold(double global_rate, double sigma);
+        int FindThreshold(double global_rate, double sigma) const;
 
         /*
          * Resizes all channels so they have bins up through the last photon seen and all have the same size.
@@ -212,12 +207,12 @@ namespace cherenkov_simulator
 
         friend class DataStructuresTest;
 
-        // The underlying data structure and its validity mask, along with a vector to track sums for fast access
+        // The underlying data structure and its validity mask
         Int3D counts;
         Bool2D valid;
 
         // The number and size of each pixel - cgs, sr
-        ULong n_pixels;
+        size_t n_pixels;
         double angular_size;
         double linear_size;
 
@@ -228,21 +223,19 @@ namespace cherenkov_simulator
         double first_time;
         double last_time;
 
-        // Keeps track of whether we need to call Equalize
+        // Keeps track of whether we need to call Trim
+        bool empty;
         bool trimmed;
-
-        // Used when calculating thresholds
-        TF1 gauss;
 
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
-        bool ValidPixel(int x_index, int y_index) const;
+        bool ValidPixel(size_t x_index, size_t y_index) const;
 
         /*
          * A private method which is functionally equivalent to Direction(const Iterator*).
          */
-        TVector3 Direction(ULong x_index, ULong y_index) const;
+        TVector3 Direction(size_t x_index, size_t y_index) const;
 
         /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second

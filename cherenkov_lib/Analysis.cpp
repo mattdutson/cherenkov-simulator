@@ -6,6 +6,8 @@
 
 #include "Analysis.h"
 
+using std::vector;
+
 namespace cherenkov_simulator
 {
     TGraph Analysis::MakeProfileGraph(const PhotonCount& data)
@@ -29,10 +31,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             // The underflow seems to be defined differently for the TH1I than for the TH1C
-            long x = iter.X();
-            long y = iter.Y();
-            int sum = data.SumBins(iter);
-            histo.Fill(x, y, sum);
+            histo.Fill(iter.X(), iter.Y(), data.SumBins(iter));
         }
         return histo;
     }
@@ -44,7 +43,8 @@ namespace cherenkov_simulator
 
     TH2C Analysis::GetBooleanMap(const Bool2D& valid)
     {
-        TH2C histo = TH2C("valid_map", "Valid Pixels", (int) valid.size(), 0, valid.size(), (int) valid[0].size(), 0, valid[0].size());
+        TH2C histo = TH2C("valid_map", "Valid Pixels", (int) valid.size(), 0, valid.size(), (int) valid[0].size(), 0,
+                          valid[0].size());
         histo.SetXTitle("x Bin");
         histo.SetYTitle("y Bin");
         for (int i = 0; i < valid.size(); i++)
@@ -75,9 +75,9 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             Int1D signal = data.Signal(iter);
-            for (int i = 0; i < signal.size(); i++)
+            for (size_t i = 0; i < signal.size(); i++)
             {
-                counts[i] += signal[i];
+                counts.at(i) += signal[i];
             }
         }
     };

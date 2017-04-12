@@ -19,7 +19,7 @@ namespace cherenkov_simulator
     Plane::Plane(TVector3 normal_vector, TVector3 point)
     {
         if (normal_vector.Mag2() == 0) throw std::runtime_error("Plane normal vector must be nonzero");
-        normal = normal_vector.Unit();
+        normal = normal_vector;
         coefficient = normal.Dot(point);
     }
 
@@ -39,11 +39,12 @@ namespace cherenkov_simulator
         return outward_ray.TimeToPlane(*this) > 0;
     }
 
-    Ray::Ray() {}
+    Ray::Ray()
+    {}
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
-        if (direction.Mag2() == 0) throw std::runtime_error("Ray direction vector must be nonzero");
+        if (direction.Mag2() == 0) throw std::runtime_error("Ray direction must be nonzero");
         SetDirection(direction);
         this->time = time;
         this->position = position;
@@ -66,6 +67,7 @@ namespace cherenkov_simulator
 
     void Ray::SetDirection(TVector3 direction)
     {
+        // Use the speed of light in centimeters/second.
         velocity = direction.Unit() * Utility::c_cent;
     }
 
@@ -150,7 +152,8 @@ namespace cherenkov_simulator
         position += time_step * velocity;
     }
 
-    Shower::Shower() : Ray() {}
+    Shower::Shower() : Ray()
+    {}
 
     Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
@@ -225,8 +228,8 @@ namespace cherenkov_simulator
 
     string Shower::ToString()
     {
-        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam()) + ", " +
-                to_string(Direction().X()) + ", " + to_string(Direction().Y()) + ", " + to_string(Direction().Z());
+        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam()) + ", " + to_string(Direction().X()) +
+               ", " + to_string(Direction().Y()) + ", " + to_string(Direction().Z());
     }
 
     double Shower::X()

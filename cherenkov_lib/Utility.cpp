@@ -7,7 +7,6 @@
 #include <fstream>
 #include <boost/property_tree/xml_parser.hpp>
 #include <TRotation.h>
-#include <TMath.h>
 
 #include "Utility.h"
 
@@ -21,14 +20,14 @@ namespace cherenkov_simulator
     TVector3 Utility::ToVector(string s)
     {
         // Clear out everything before the first parenthesis.
-        unsigned long current = s.find('(');
+        size_t current = s.find('(');
         s.erase(0, current + 1);
 
         // Pull double values from the vector.
         TVector3 output = TVector3();
-        output.SetX(ParseTo(&s, ','));
-        output.SetY(ParseTo(&s, ','));
-        output.SetZ(ParseTo(&s, ')'));
+        output.SetX(ParseTo(s, ','));
+        output.SetY(ParseTo(s, ','));
+        output.SetZ(ParseTo(s, ')'));
         return output;
     }
 
@@ -67,7 +66,7 @@ namespace cherenkov_simulator
         return Sqrt(Sq(vec.X()) + Sq(vec.Y())) < radius;
     }
 
-    TVector3 Utility::RandNormal(TVector3 vec, TRandom3* rng)
+    TVector3 Utility::RandNormal(TVector3 vec, TRandom3& rng)
     {
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
         {
@@ -77,29 +76,29 @@ namespace cherenkov_simulator
         {
             TVector3 other_vec = vec + TVector3(1, 0, 0);
             TVector3 normal = (vec.Cross(other_vec)).Unit();
-            normal.Rotate(rng->Uniform(2 * TMath::Pi()), vec);
+            normal.Rotate(rng.Uniform(2 * TMath::Pi()), vec);
             return normal;
         }
     }
 
-    double Utility::RandLinear(TRandom3* rng, double max)
+    double Utility::RandLinear(TRandom3& rng, double max)
     {
-        return max * Sqrt(rng->Uniform());
+        return max * Sqrt(rng.Uniform());
     }
 
-    int Utility::RandomRound(double value, TRandom3* rng)
+    int Utility::RandomRound(double value, TRandom3& rng)
     {
         double decimal = value - Floor(value);
         int base = (int) (value - decimal);
-        if (rng->Rndm() < decimal) return base + 1;
+        if (rng.Rndm() < decimal) return base + 1;
         else return base;
     }
 
-    double Utility::ParseTo(string* s, char c)
+    double Utility::ParseTo(string& s, char c)
     {
-        size_t index = s->find(c);
-        double out = stod(s->substr(0, index));
-        s->erase(0, index + 1);
+        size_t index = s.find(c);
+        double out = stod(s.substr(0, index));
+        s.erase(0, index + 1);
         return out;
     }
 
