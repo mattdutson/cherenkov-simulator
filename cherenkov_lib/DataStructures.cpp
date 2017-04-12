@@ -246,7 +246,7 @@ namespace cherenkov_simulator
         double max_prob = Sqrt(Pi() / 2.0) * Erfc(sigma / Sqrt(2));
         double mean = RealNoiseRate(global_rate);
         int thresh = (int) Floor(sigma * Sqrt(mean));
-        while(PoissonSum(mean, thresh) > max_prob) thresh++;
+        while (PoissonSum(mean, thresh) > max_prob) thresh++;
         return thresh;
     }
 
@@ -268,7 +268,8 @@ namespace cherenkov_simulator
     {
         if (trimmed || empty) return;
         Iterator iter = GetIterator();
-        while (iter.Next()) {
+        while (iter.Next())
+        {
             Int1D::iterator begin = counts[iter.X()][iter.Y()].begin();
             Int1D::iterator end = counts[iter.X()][iter.Y()].end();
             counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end);

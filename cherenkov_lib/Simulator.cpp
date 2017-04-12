@@ -275,13 +275,15 @@ namespace cherenkov_simulator
         }
     }
 
-    double Simulator::MinTime(Shower shower) {
+    double Simulator::MinTime(Shower shower)
+    {
         double time = shower.Time();
         time += shower.Position().Mag() / Utility::c_cent;
         return time;
     }
 
-    double Simulator::MaxTime(Shower shower) {
+    double Simulator::MaxTime(Shower shower)
+    {
         double time = shower.Time();
         time += shower.TimeToPlane(ground_plane);
         time += shower.PlaneImpact(ground_plane).Mag() * back_toler / Utility::c_cent;

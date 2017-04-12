@@ -48,23 +48,28 @@ namespace cherenkov_simulator
             delete reconstructor;
         }
 
-        Bool3D FriendTriggeringMatrices(PhotonCount data) {
+        Bool3D FriendTriggeringMatrices(PhotonCount data)
+        {
             return reconstructor->GetThresholdMatrices(data, 0);
         }
 
-        Bool1D FriendGetTriggeringState(PhotonCount data) {
+        Bool1D FriendGetTriggeringState(PhotonCount data)
+        {
             return reconstructor->GetTriggeringState(data);
         }
 
-        TRotation FriendFitSDPlane(PhotonCount data) {
+        TRotation FriendFitSDPlane(PhotonCount data)
+        {
             return reconstructor->FitSDPlane(data);
         }
 
-        Shower FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, string graph_file = "") {
+        Shower FriendMonocularFit(PhotonCount data, TRotation to_sd_plane, string graph_file = "")
+        {
             return reconstructor->MonocularFit(data, to_sd_plane, graph_file);
         }
 
-        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact) {
+        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact)
+        {
             return reconstructor->FindGroundImpact(data, impact);
         }
     };

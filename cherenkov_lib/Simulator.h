@@ -213,15 +213,24 @@ namespace cherenkov_simulator
         Ray JitteredRay(Shower shower, TVector3 direction);
 
         /*
+         * Determines the time when we want to start recording photons for the shower. This is calculated by taking the
+         * time it would take for a photon to travel directly from the shower's current position to the detector.
+         */
+        double MinTime(Shower shower);
+
+        /*
+         * Determines the time when we want to stop recording photons from the shower. This is calculated by the time it
+         * would take for a photon to travel along the shower axis to the ground plus some multiple of the time it would
+         * take for that photon to then reach the detector.
+         */
+        double MaxTime(Shower shower);
+
+        /*
          * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
          * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
          * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
          */
         static bool NegSphereImpact(Ray ray, TVector3& point, double radius);
-
-        double MinTime(Shower shower);
-
-        double MaxTime(Shower shower);
     };
 }
 

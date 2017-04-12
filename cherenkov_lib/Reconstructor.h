@@ -90,12 +90,6 @@ namespace cherenkov_simulator
         // A general-purpose random number generator
         TRandom3 rng;
 
-        void VisitSpaceAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
-
-        void VisitTimeAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
-
-        void VisitPush(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
-
         /*
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
          * not used.
@@ -125,7 +119,7 @@ namespace cherenkov_simulator
          * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
          * would expect during that time frame.
          */
-        bool FindGroundImpact(const PhotonCount& data, TVector3* impact);
+        bool FindGroundImpact(const PhotonCount& data, TVector3& impact);
 
         /*
          * Constructs the fit graph from data points.
@@ -143,6 +137,24 @@ namespace cherenkov_simulator
          * any frames were triggered.
          */
         Bool1D GetTriggeringState(const PhotonCount& data);
+
+        /*
+         * Visits all spatially adjacent pixels to the (x, y, t) point passed, pushing them to the queue. They are also
+         * marked as visited in the not_visited structure.
+         */
+        void VisitSpaceAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+
+        /*
+         * Visits all spatially adjacent temporally to the (x, y, t) point passed, pushing them to the queue. They are
+         * also marked as visited in the not_visited structure.
+        */
+        void VisitTimeAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+
+        /*
+         * Pushes the specified (x, y, z) point to the queue, first checking that the point lies within appropriate
+         * bounds and has not yet been visited. not_visited[x][y][t] is set to false.
+         */
+        void VisitPush(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
         /*
          * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within

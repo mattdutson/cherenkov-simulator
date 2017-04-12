@@ -39,7 +39,8 @@ namespace cherenkov_simulator
         return outward_ray.TimeToPlane(*this) > 0;
     }
 
-    Ray::Ray() {}
+    Ray::Ray()
+    {}
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
@@ -151,7 +152,8 @@ namespace cherenkov_simulator
         position += time_step * velocity;
     }
 
-    Shower::Shower() : Ray() {}
+    Shower::Shower() : Ray()
+    {}
 
     Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
@@ -226,8 +228,8 @@ namespace cherenkov_simulator
 
     string Shower::ToString()
     {
-        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam()) + ", " +
-                to_string(Direction().X()) + ", " + to_string(Direction().Y()) + ", " + to_string(Direction().Z());
+        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam()) + ", " + to_string(Direction().X()) +
+               ", " + to_string(Direction().Y()) + ", " + to_string(Direction().Z());
     }
 
     double Shower::X()

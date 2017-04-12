@@ -136,19 +136,22 @@ namespace cherenkov_simulator
         return Shower(params, starting_position, axis);
     }
 
-    int MonteCarlo::Run(int argc, const char* argv[]) {
+    int MonteCarlo::Run(int argc, const char* argv[])
+    {
         // Get the filename from the first command-line argument
         std::string out_file = "Output";
         std::string config_file = "Config.xml";
         if (argc > 1) out_file = std::string(argv[1]);
         if (argc > 2) config_file = std::string(argv[2]);
-        try {
+        try
+        {
             boost::property_tree::ptree config = Utility::ParseXMLFile(config_file).get_child("config");
             MonteCarlo monte_carlo = MonteCarlo(config);
             monte_carlo.PerformMonteCarlo(out_file);
             return 0;
         }
-        catch (std::runtime_error err) {
+        catch (std::runtime_error err)
+        {
             cout << err.what() << endl;
             return -1;
         }

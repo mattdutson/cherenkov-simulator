@@ -39,7 +39,8 @@ namespace cherenkov_simulator
         ASSERT_EQ(0.12, config.get<double>("surroundings.elevation_angle"));
     }
 
-    TEST(MiscellaneousTest, MonteCarlo) {
+    TEST(MiscellaneousTest, MonteCarlo)
+    {
         const char* argv[] = {"", "Output", "../../../Config.xml"};
         cherenkov_simulator::MonteCarlo::Run(3, argv);
     }

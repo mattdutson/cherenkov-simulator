@@ -44,6 +44,10 @@ namespace cherenkov_simulator
          */
         Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy);
 
+        /*
+         * Parses the output file and configuration file from command line arguments, instantiates the MonteCarlo
+         * object, and runs PerformMonteCarlo method.
+         */
         static int Run(int argc, const char* argv[]);
 
     private:
