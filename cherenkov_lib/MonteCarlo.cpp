@@ -82,7 +82,7 @@ namespace cherenkov_simulator
 
             // Attempt both monocular and hybrid reconstruction of the shower
             Reconstructor::Result result = reconstructor.Reconstruct(data);
-            cout << "Shower " << i << " finished" << endl;
+            cout << endl << "Shower " << i << " finished";
             fout << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
         }
     }

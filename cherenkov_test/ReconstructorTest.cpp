@@ -68,7 +68,7 @@ namespace cherenkov_simulator
             return reconstructor->MonocularFit(data, to_sd_plane, graph_file);
         }
 
-        bool FriendFindGroundImpact(PhotonCount data, TVector3* impact)
+        bool FriendFindGroundImpact(PhotonCount data, TVector3& impact)
         {
             return reconstructor->FindGroundImpact(data, impact);
         }
@@ -149,7 +149,7 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
 
         TVector3 impact;
-        if (FriendFindGroundImpact(data, &impact))
+        if (FriendFindGroundImpact(data, impact))
         {
             impact.Write("ground_impact");
         }
