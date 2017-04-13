@@ -315,11 +315,8 @@ namespace cherenkov_simulator
 
     double PhotonCount::PoissonSum(double mean, int min)
     {
-        double sum = 0.0;
-        for (int i = min; Poisson(mean, i) > 10e-6 * Poisson(mean, min); i++)
-        {
-            sum += Poisson(mean, i);
-        }
+        double sum = 1.0;
+        for (int i = 0; i < min; i++) sum -= Poisson(mean, i);
         return sum;
     }
 
