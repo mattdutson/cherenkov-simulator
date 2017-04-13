@@ -126,10 +126,8 @@ namespace cherenkov_simulator
         try
         {
             boost::property_tree::ptree config = Utility::ParseXMLFile(config_file).get_child("config");
-            MonteCarlo monte_carlo;
-            if (argc > 3) monte_carlo = MonteCarlo(config, std::stoul(argv[3]));
-            else monte_carlo = MonteCarlo(config);
-            monte_carlo.PerformMonteCarlo(out_file);
+            if (argc > 3) MonteCarlo(config, std::stoul(argv[3])).PerformMonteCarlo(out_file);
+            else MonteCarlo(config).PerformMonteCarlo(out_file);
             return 0;
         }
         catch (std::runtime_error err)
