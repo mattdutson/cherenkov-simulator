@@ -54,15 +54,6 @@ namespace cherenkov_simulator
         trigger_clust = config.get<int>("triggering.trigger_clust");
         impact_buffer = config.get<double>("triggering.impact_buffer");
         plane_dev = config.get<double>("triggering.plane_dev");
-
-        // The random number generator
-        rng = TRandom3();
-        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
-    }
-
-    Reconstructor::Reconstructor(const ptree& config, unsigned long seed) : Reconstructor(config)
-    {
-        rng.SetSeed(seed);
     }
 
     Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data)
@@ -93,7 +84,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
-            data.AddNoise(toward_ground ? ground_noise : sky_noise, iter, rng);
+            data.AddNoise(toward_ground ? ground_noise : sky_noise, iter);
         }
     }
 

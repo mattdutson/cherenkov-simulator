@@ -31,11 +31,6 @@ namespace cherenkov_simulator
         Simulator(const boost::property_tree::ptree& config);
 
         /*
-         * Constructs the Simulator with a manual seed (usually passed via command line)
-         */
-        Simulator(const boost::property_tree::ptree& config, unsigned long seed);
-
-        /*
          * Simulate the motion of the shower from its current point to the ground, emitting fluorescence and Cherenkov
          * photons at each depth step. Ray trace these photons through the Schmidt detector and record their impact
          * positions. Add Poisson-distributed background noise.
@@ -111,7 +106,6 @@ namespace cherenkov_simulator
         // Miscellaneous non-constant parameters
         Plane ground_plane;
         TRotation rotate_to_world;
-        TRandom3 rng;
         CherenkovFunc ckv_func;
         TF1 ckv_integrator;
         PhotonCount::Params count_params;

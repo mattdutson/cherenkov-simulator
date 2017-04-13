@@ -47,13 +47,6 @@ namespace cherenkov_simulator
         // Miscellaneous member variables
         ckv_integrator = TF1("ckv_integrator", ckv_func, 0.0, Infinity(), 3);
         ckv_integrator.SetParNames("age", "rho", "delta");
-        rng = TRandom3();
-        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
-    }
-
-    Simulator::Simulator(const boost::property_tree::ptree& config, unsigned long seed) : Simulator(config)
-    {
-        rng.SetSeed(seed);
     }
 
     PhotonCount Simulator::SimulateShower(Shower shower)
@@ -130,7 +123,7 @@ namespace cherenkov_simulator
         // Find the number produced and the fraction captured
         double total = yield * shower.GaisserHillas() * depth_step;
         double fraction = SphereFraction(shower.Position()) * DetectorEfficiency();
-        return Utility::RandomRound(total * fraction, rng);
+        return Utility::RandomRound(total * fraction);
     }
 
     int Simulator::NumberCherenkovPhotons(Shower shower)
@@ -146,7 +139,7 @@ namespace cherenkov_simulator
         TVector3 ground_impact = shower.PlaneImpact(ground_plane);
         double cos_theta = Abs(Cos(ground_impact.Angle(ground_plane.Normal())));
         double fraction = 4 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
-        return Utility::RandomRound(total * fraction, rng);
+        return Utility::RandomRound(total * fraction);
     }
 
     void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, double thinning)
@@ -173,8 +166,8 @@ namespace cherenkov_simulator
 
     TVector3 Simulator::RandomStopImpact()
     {
-        double r_rand = Utility::RandLinear(rng, stop_diameter / 2.0);
-        double phi_rand = rng.Uniform(TwoPi());
+        double r_rand = Utility::RandLinear(stop_diameter / 2.0);
+        double phi_rand = gRandom->Uniform(TwoPi());
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
 
@@ -236,8 +229,8 @@ namespace cherenkov_simulator
     Ray Simulator::GenerateCherenkovPhoton(Shower shower)
     {
         TVector3 direction = shower.Direction();
-        TVector3 rotation_axis = Utility::RandNormal(shower.Velocity().Unit(), rng);
-        direction.Rotate(rng.Exp(ThetaC(shower)), rotation_axis);
+        TVector3 rotation_axis = Utility::RandNormal(shower.Velocity().Unit());
+        direction.Rotate(gRandom->Exp(ThetaC(shower)), rotation_axis);
         return JitteredRay(shower, direction);
     }
 
@@ -249,7 +242,7 @@ namespace cherenkov_simulator
     Ray Simulator::JitteredRay(Shower shower, TVector3 direction)
     {
         double step_time = depth_step / shower.LocalRho() / Utility::c_cent;
-        double offset = rng.Uniform(-0.5 * step_time, 0.5 * step_time);
+        double offset = gRandom->Uniform(-0.5 * step_time, 0.5 * step_time);
         double time = shower.Time() + offset;
         TVector3 position = shower.Position() + shower.Velocity() * offset;
         return Ray(position, direction, time);

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <boost/property_tree/xml_parser.hpp>
 #include <TRotation.h>
+#include <TRandom3.h>
 
 #include "Utility.h"
 
@@ -66,7 +67,7 @@ namespace cherenkov_simulator
         return Sqrt(Sq(vec.X()) + Sq(vec.Y())) < radius;
     }
 
-    TVector3 Utility::RandNormal(TVector3 vec, TRandom3& rng)
+    TVector3 Utility::RandNormal(TVector3 vec)
     {
         if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
         {
@@ -76,21 +77,21 @@ namespace cherenkov_simulator
         {
             TVector3 other_vec = vec + TVector3(1, 0, 0);
             TVector3 normal = (vec.Cross(other_vec)).Unit();
-            normal.Rotate(rng.Uniform(2 * TMath::Pi()), vec);
+            normal.Rotate(gRandom->Uniform(2 * TMath::Pi()), vec);
             return normal;
         }
     }
 
-    double Utility::RandLinear(TRandom3& rng, double max)
+    double Utility::RandLinear(double max)
     {
-        return max * Sqrt(rng.Uniform());
+        return max * Sqrt(gRandom->Uniform());
     }
 
-    int Utility::RandomRound(double value, TRandom3& rng)
+    int Utility::RandomRound(double value)
     {
         double decimal = value - Floor(value);
         int base = (int) (value - decimal);
-        if (rng.Rndm() < decimal) return base + 1;
+        if (gRandom->Rndm() < decimal) return base + 1;
         else return base;
     }
 

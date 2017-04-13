@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include <TVector3.h>
-#include <TRandom3.h>
 
 namespace cherenkov_simulator
 {
@@ -59,18 +58,18 @@ namespace cherenkov_simulator
          * Generates a randomly rotated vector perpendicular to the input. If the input vector is zero, (1, 0, 0) is
          * returned.
          */
-        static TVector3 RandNormal(TVector3 vec, TRandom3& rng);
+        static TVector3 RandNormal(TVector3 vec);
 
         /*
          * Returns a random, linearly distributed value constrained between zero and some maximum.
          */
-        static double RandLinear(TRandom3& rng, double max);
+        static double RandLinear(double max);
 
         /*
          * Returns an integer which is randomly rounded up or down from the input double based on its decimal. For
          * instance, 3.2 would be rounded up to 4 20% of the time and down to 3 80% of the time.
          */
-        static int RandomRound(double value, TRandom3& rng);
+        static int RandomRound(double value);
 
         /*
          * Calculates the percent error between the actual and expected values. If the expected value is zero, the

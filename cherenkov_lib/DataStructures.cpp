@@ -5,6 +5,7 @@
 // Implementation of DataStructures.h
 
 #include <TMath.h>
+#include <TRandom3.h>
 
 #include "DataStructures.h"
 
@@ -207,7 +208,7 @@ namespace cherenkov_simulator
         }
     }
 
-    void PhotonCount::AddNoise(double noise_rate, const Iterator& iter, TRandom3& rng)
+    void PhotonCount::AddNoise(double noise_rate, const Iterator& iter)
     {
         // Ensure all channels have the same length.
         Trim();
@@ -216,7 +217,7 @@ namespace cherenkov_simulator
         double expected_photons = RealNoiseRate(noise_rate);
         for (size_t i = 0; i < NBins(); i++)
         {
-            counts[iter.X()][iter.Y()][i] += rng.Poisson(expected_photons);
+            counts[iter.X()][iter.Y()][i] += gRandom->Poisson(expected_photons);
         }
 
         empty = false;

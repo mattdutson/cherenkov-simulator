@@ -15,19 +15,36 @@ using namespace TMath;
 
 using std::cout;
 using std::endl;
+using boost::property_tree::ptree;
 
 namespace cherenkov_simulator
 {
     MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config) : simulator(config), reconstructor(config)
     {
-        Init(config);
-    }
+        // The distribution of shower energies
+        std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
+        double e_min = config.get<double>("monte_carlo.e_min");
+        double e_max = config.get<double>("monte_carlo.e_max");
+        energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
 
-    MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config, unsigned long seed) : simulator(config, seed),
-                                                                                            reconstructor(config, seed)
-    {
-        Init(config);
-        rng.SetSeed(seed);
+        // The distribution of shower vertical directions
+        cosine_distribution = TF1("cosine", "cos(x)", 0.0, TMath::Pi() / 2);
+
+        // The Monte Carlo distribution of impact parameters
+        double impact_min = config.get<double>("monte_carlo.impact_min");
+        double impact_max = config.get<double>("monte_carlo.impact_max");
+        impact_distribution = TF1("impact", "x", impact_min, impact_max);
+
+        // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
+        start_tracking = config.get<double>("monte_carlo.start_tracking");
+
+        // Determine the local atmosphere based on the elevation
+        double detect_elevation = config.get<double>("surroundings.detect_elevation");
+        rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
+        delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
+
+        // The number of showers to simulate in PerformMonteCarlo
+        n_showers = config.get<int>("simulation.n_showers");
     }
 
     void MonteCarlo::PerformMonteCarlo(std::string out_file)
@@ -72,7 +89,7 @@ namespace cherenkov_simulator
         // Determine the direction of the shower and its position relative to the detector. The angle of the shower
         // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
         double theta = cosine_distribution.GetRandom();
-        double phi_shower = rng.Uniform(TwoPi());
+        double phi_shower = gRandom->Uniform(TwoPi());
 
         // Determine the impact parameter.
         double impact_param = impact_distribution.GetRandom();
@@ -81,7 +98,7 @@ namespace cherenkov_simulator
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
         // local ground.
         TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), -cos(theta));
-        return GenerateShower(shower_axis, impact_param, rng.Uniform(TwoPi()), energy_distribution.GetRandom());
+        return GenerateShower(shower_axis, impact_param, gRandom->Uniform(TwoPi()), energy_distribution.GetRandom());
     }
 
     Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy)
@@ -118,16 +135,16 @@ namespace cherenkov_simulator
 
     int MonteCarlo::Run(int argc, const char* argv[])
     {
-        // Get the filename from the first command-line argument
         std::string out_file = "Output";
         std::string config_file = "Config.xml";
         if (argc > 1) out_file = std::string(argv[1]);
         if (argc > 2) config_file = std::string(argv[2]);
         try
         {
-            boost::property_tree::ptree config = Utility::ParseXMLFile(config_file).get_child("config");
-            if (argc > 3) MonteCarlo(config, std::stoul(argv[3])).PerformMonteCarlo(out_file);
-            else MonteCarlo(config).PerformMonteCarlo(out_file);
+            ptree config = Utility::ParseXMLFile(config_file).get_child("config");
+            if (config.get<bool>("simulation.time_seed")) gRandom->SetSeed();
+            if (argc > 3) gRandom->SetSeed(std::stoul(argv[3]));
+            MonteCarlo(config).PerformMonteCarlo(out_file);
             return 0;
         }
         catch (std::runtime_error err)
@@ -135,37 +152,5 @@ namespace cherenkov_simulator
             cout << err.what() << endl;
             return -1;
         }
-    }
-
-    void MonteCarlo::Init(const boost::property_tree::ptree& config)
-    {
-        // The distribution of shower energies
-        std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
-        double e_min = config.get<double>("monte_carlo.e_min");
-        double e_max = config.get<double>("monte_carlo.e_max");
-        energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
-
-        // The distribution of shower vertical directions
-        cosine_distribution = TF1("cosine", "cos(x)", 0.0, TMath::Pi() / 2);
-
-        // The Monte Carlo distribution of impact parameters
-        double impact_min = config.get<double>("monte_carlo.impact_min");
-        double impact_max = config.get<double>("monte_carlo.impact_max");
-        impact_distribution = TF1("impact", "x", impact_min, impact_max);
-
-        // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
-        start_tracking = config.get<double>("monte_carlo.start_tracking");
-
-        // Determine the local atmosphere based on the elevation
-        double detect_elevation = config.get<double>("surroundings.detect_elevation");
-        rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
-        delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
-
-        // The number of showers to simulate in PerformMonteCarlo
-        n_showers = config.get<int>("simulation.n_showers");
-
-        // The random number generator
-        rng = TRandom3();
-        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 }

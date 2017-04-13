@@ -9,7 +9,6 @@
 
 #include <vector>
 #include <TVector3.h>
-#include <TRandom3.h>
 #include <TF1.h>
 
 #include "Utility.h"
@@ -173,7 +172,7 @@ namespace cherenkov_simulator
          * number of photons per second per steradian per square centimeter. These photons are randomly scattered
          * throughout the time bins using the random number generator.
          */
-        void AddNoise(double noise_rate, const Iterator& iter, TRandom3& rng);
+        void AddNoise(double noise_rate, const Iterator& iter);
 
         /*
          * Subtract the average noise rate from the signal in the pixel specified by the iterator.

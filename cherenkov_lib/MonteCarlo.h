@@ -29,11 +29,6 @@ namespace cherenkov_simulator
         MonteCarlo(const boost::property_tree::ptree& config_file);
 
         /*
-         * Constructs the MonteCarlo with a manual seed (usually passed via command line).
-         */
-        MonteCarlo(const boost::property_tree::ptree& config_file, unsigned long seed);
-
-        /*
          * Performs the overall Monte Carlo simulation and writes results to the console.
          */
         void PerformMonteCarlo(std::string out_file);
@@ -84,17 +79,9 @@ namespace cherenkov_simulator
         // The number of showers to simulate when PerformMonteCarlo is called
         int n_showers;
 
-        // A general-purpose random number generator
-        TRandom3 rng;
-
         // The Simulator and Reconstructor objects used when PerformMonteCarlo is called
         Simulator simulator;
         Reconstructor reconstructor;
-
-        /*
-         * Initializes the MonteCarlo using values in the config.
-         */
-        void Init(const boost::property_tree::ptree& config);
     };
 }
 
