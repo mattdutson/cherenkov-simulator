@@ -51,6 +51,11 @@ namespace cherenkov_simulator
         if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
+    Simulator::Simulator(const boost::property_tree::ptree& config, unsigned long seed) : Simulator(config)
+    {
+        rng.SetSeed(seed);
+    }
+
     PhotonCount Simulator::SimulateShower(Shower shower)
     {
         // A lower bound on the time the first photon will reach the detector

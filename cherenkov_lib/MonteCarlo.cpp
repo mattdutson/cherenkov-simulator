@@ -20,34 +20,14 @@ namespace cherenkov_simulator
 {
     MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config) : simulator(config), reconstructor(config)
     {
-        // The distribution of shower energies
-        std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
-        double e_min = config.get<double>("monte_carlo.e_min");
-        double e_max = config.get<double>("monte_carlo.e_max");
-        energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
+        Init(config);
+    }
 
-        // The distribution of shower vertical directions
-        cosine_distribution = TF1("cosine", "cos(x)", 0.0, TMath::Pi() / 2);
-
-        // The Monte Carlo distribution of impact parameters
-        double impact_min = config.get<double>("monte_carlo.impact_min");
-        double impact_max = config.get<double>("monte_carlo.impact_max");
-        impact_distribution = TF1("impact", "x", impact_min, impact_max);
-
-        // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
-        start_tracking = config.get<double>("monte_carlo.start_tracking");
-
-        // Determine the local atmosphere based on the elevation
-        double detect_elevation = config.get<double>("surroundings.detect_elevation");
-        rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
-        delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
-
-        // The number of showers to simulate in PerformMonteCarlo
-        n_showers = config.get<int>("simulation.n_showers");
-
-        // The random number generator
-        rng = TRandom3();
-        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
+    MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config, unsigned long seed) : simulator(config, seed),
+                                                                                            reconstructor(config, seed)
+    {
+        Init(config);
+        rng.SetSeed(seed);
     }
 
     void MonteCarlo::PerformMonteCarlo(std::string out_file)
@@ -82,7 +62,7 @@ namespace cherenkov_simulator
 
             // Attempt both monocular and hybrid reconstruction of the shower
             Reconstructor::Result result = reconstructor.Reconstruct(data);
-            cout << endl << "Shower " << i << " finished";
+            cout << "Shower " << i << " finished" << endl;
             fout << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
         }
     }
@@ -146,7 +126,9 @@ namespace cherenkov_simulator
         try
         {
             boost::property_tree::ptree config = Utility::ParseXMLFile(config_file).get_child("config");
-            MonteCarlo monte_carlo = MonteCarlo(config);
+            MonteCarlo monte_carlo;
+            if (argc > 3) monte_carlo = MonteCarlo(config, std::stoul(argv[3]));
+            else monte_carlo = MonteCarlo(config);
             monte_carlo.PerformMonteCarlo(out_file);
             return 0;
         }
@@ -155,5 +137,37 @@ namespace cherenkov_simulator
             cout << err.what() << endl;
             return -1;
         }
+    }
+
+    void MonteCarlo::Init(const boost::property_tree::ptree& config)
+    {
+        // The distribution of shower energies
+        std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
+        double e_min = config.get<double>("monte_carlo.e_min");
+        double e_max = config.get<double>("monte_carlo.e_max");
+        energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
+
+        // The distribution of shower vertical directions
+        cosine_distribution = TF1("cosine", "cos(x)", 0.0, TMath::Pi() / 2);
+
+        // The Monte Carlo distribution of impact parameters
+        double impact_min = config.get<double>("monte_carlo.impact_min");
+        double impact_max = config.get<double>("monte_carlo.impact_max");
+        impact_distribution = TF1("impact", "x", impact_min, impact_max);
+
+        // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
+        start_tracking = config.get<double>("monte_carlo.start_tracking");
+
+        // Determine the local atmosphere based on the elevation
+        double detect_elevation = config.get<double>("surroundings.detect_elevation");
+        rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
+        delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
+
+        // The number of showers to simulate in PerformMonteCarlo
+        n_showers = config.get<int>("simulation.n_showers");
+
+        // The random number generator
+        rng = TRandom3();
+        if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 }

@@ -47,6 +47,11 @@ namespace cherenkov_simulator
         Reconstructor(const boost::property_tree::ptree& config);
 
         /*
+         * Constructs the Reconstructor with a manual seed (usually passed via command line)
+         */
+        Reconstructor(const boost::property_tree::ptree& config, unsigned long seed);
+
+        /*
          * Performs both a monocular and Cherenkov reconstruction, storing output in a Result data structure. If the
          * detector was not triggered, Result.triggered = false. If there was not visible impact point,
          * Result.cherenkov = false.

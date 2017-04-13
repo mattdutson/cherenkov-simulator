@@ -60,6 +60,11 @@ namespace cherenkov_simulator
         if (config.get<bool>("simulation.time_seed")) rng.SetSeed();
     }
 
+    Reconstructor::Reconstructor(const ptree& config, unsigned long seed) : Reconstructor(config)
+    {
+        rng.SetSeed(seed);
+    }
+
     Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data)
     {
         Result result = Result();
