@@ -29,7 +29,7 @@
     </monte_carlo>
 
     <detector note="Properties of the optics and detector">
-        <mirror_radius unit="cm">300.0</mirror_radius>
+        <mirror_radius unit="cm">400.0</mirror_radius>
         <f_number unit="null">1.0</f_number>
         <field_of_view unit="rad">0.45</field_of_view>
         <n_pmt_across unit="null" note="Must be even">400</n_pmt_across>
