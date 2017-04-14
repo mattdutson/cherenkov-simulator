@@ -63,7 +63,17 @@ namespace cherenkov_simulator
         /*
          * Returns a random, linearly distributed value constrained between zero and some maximum.
          */
-        static double RandLinear(double max);
+        static double RandLinear(double min, double max);
+
+        /*
+         * Generates a random angle on (0, pi) weighted by a cosine.
+         */
+        static double RandCosine();
+
+        /*
+         * Generates a random number according to a power law distribution.
+         */
+        static double RandPower(double min, double max, double pow);
 
         /*
          * Returns an integer which is randomly rounded up or down from the input double based on its decimal. For

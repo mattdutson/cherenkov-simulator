@@ -22,18 +22,13 @@ namespace cherenkov_simulator
     MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config) : simulator(config), reconstructor(config)
     {
         // The distribution of shower energies
-        std::string energy_formula = "x^(" + config.get<std::string>("monte_carlo.energy_pow") + ")";
-        double e_min = config.get<double>("monte_carlo.e_min");
-        double e_max = config.get<double>("monte_carlo.e_max");
-        energy_distribution = TF1("energy", energy_formula.c_str(), e_min, e_max);
-
-        // The distribution of shower vertical directions
-        cosine_distribution = TF1("cosine", "cos(x)", 0.0, TMath::Pi() / 2);
+        energy_pow = config.get<double>("monte_carlo.energy_pow");
+        e_min = config.get<double>("monte_carlo.e_min");
+        e_max = config.get<double>("monte_carlo.e_max");
 
         // The Monte Carlo distribution of impact parameters
-        double impact_min = config.get<double>("monte_carlo.impact_min");
-        double impact_max = config.get<double>("monte_carlo.impact_max");
-        impact_distribution = TF1("impact", "x", impact_min, impact_max);
+        impact_min = config.get<double>("monte_carlo.impact_min");
+        impact_max = config.get<double>("monte_carlo.impact_max");
 
         // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
         start_tracking = config.get<double>("monte_carlo.start_tracking");
@@ -88,17 +83,18 @@ namespace cherenkov_simulator
     {
         // Determine the direction of the shower and its position relative to the detector. The angle of the shower
         // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
-        double theta = cosine_distribution.GetRandom();
+        double theta = Utility::RandCosine();
         double phi_shower = gRandom->Uniform(TwoPi());
+        double energy = Utility::RandPower(e_min, e_max, energy_pow);
 
         // Determine the impact parameter.
-        double impact_param = impact_distribution.GetRandom();
+        double impact_param = Utility::RandLinear(impact_min, impact_max);
 
         // Find the Cartesian shower axis vector. This vector is in the world frame (z is normal to the surface of the
         // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
         // local ground.
         TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), -cos(theta));
-        return GenerateShower(shower_axis, impact_param, gRandom->Uniform(TwoPi()), energy_distribution.GetRandom());
+        return GenerateShower(shower_axis, impact_param, gRandom->Uniform(TwoPi()), energy);
     }
 
     Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy)

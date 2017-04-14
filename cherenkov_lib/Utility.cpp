@@ -69,7 +69,7 @@ namespace cherenkov_simulator
 
     TVector3 Utility::RandNormal(TVector3 vec)
     {
-        if (vec.X() == 0 && vec.Y() == 0 && vec.Z() == 0)
+        if (vec.Mag2() == 0)
         {
             return TVector3(1, 0, 0);
         }
@@ -82,9 +82,32 @@ namespace cherenkov_simulator
         }
     }
 
-    double Utility::RandLinear(double max)
+    double Utility::RandLinear(double min, double max)
     {
-        return max * Sqrt(gRandom->Uniform());
+        if (min < 0 || max < 0) throw std::runtime_error("The bounds must be non-negative");
+        if (min >= max) throw std::runtime_error("The min bound must be less than the max bound");
+        return Sqrt((Sq(max) - Sq(min)) * gRandom->Rndm() + Sq(min));
+    }
+
+    double Utility::RandCosine()
+    {
+        return ASin(gRandom->Rndm());
+    }
+
+    double Utility::RandPower(double min, double max, double pow)
+    {
+        if (min <= 0 || max <= 0) throw std::runtime_error("The bounds must be positive");
+        if (min >= max) throw std::runtime_error("The min bound must be less than the max bound");
+        if (pow == -1)
+        {
+            return min * Power(max / min, gRandom->Rndm());
+        }
+        else
+        {
+            double a = Power(min, pow + 1);
+            double b = Power(max, pow + 1);
+            return Power((b - a) * gRandom->Rndm() + a, 1.0 / (pow + 1));
+        }
     }
 
     int Utility::RandomRound(double value)

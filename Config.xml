@@ -15,7 +15,7 @@
     <surroundings note="The orientation of the surroundings">
         <ground_normal unit="(null, null, null)">(0, 0, 1)</ground_normal>
         <ground_point unit="(cm, cm, cm)">(0, 0, -20000)</ground_point>
-        <elevation_angle unit="rad">0.12</elevation_angle>
+        <elevation_angle unit="rad">0.045</elevation_angle>
         <detect_elevation unit="cm">141400</detect_elevation>
     </surroundings>
 
@@ -29,10 +29,10 @@
     </monte_carlo>
 
     <detector note="Properties of the optics and detector">
-        <mirror_radius unit="cm">400.0</mirror_radius>
+        <mirror_radius unit="cm">300.0</mirror_radius>
         <f_number unit="null">1.0</f_number>
-        <field_of_view unit="rad">0.3</field_of_view>
-        <n_pmt_across unit="null" note="Must be even">200</n_pmt_across>
+        <field_of_view unit="rad">0.45</field_of_view>
+        <n_pmt_across unit="null" note="Must be even">400</n_pmt_across>
     </detector>
 
     <triggering note="Thresholds in filtering and triggering">

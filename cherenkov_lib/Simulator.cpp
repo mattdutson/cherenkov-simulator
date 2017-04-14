@@ -166,7 +166,7 @@ namespace cherenkov_simulator
 
     TVector3 Simulator::RandomStopImpact()
     {
-        double r_rand = Utility::RandLinear(stop_diameter / 2.0);
+        double r_rand = Utility::RandLinear(0.0, stop_diameter / 2.0);
         double phi_rand = gRandom->Uniform(TwoPi());
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }

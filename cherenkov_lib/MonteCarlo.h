@@ -71,9 +71,11 @@ namespace cherenkov_simulator
         double delta_0;
 
         // Parameters used to generate random showers in the Monte Carlo simulation - eV, cgs
-        TF1 energy_distribution;
-        TF1 cosine_distribution;
-        TF1 impact_distribution;
+        double energy_pow;
+        double e_min;
+        double e_max;
+        double impact_min;
+        double impact_max;
         double start_tracking;
 
         // The number of showers to simulate when PerformMonteCarlo is called
