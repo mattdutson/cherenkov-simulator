@@ -31,7 +31,7 @@ namespace cherenkov_simulator
         /*
          * Makes a 2D histogram with the sum of each bin
          */
-        static TH2I MakeSumMap(const PhotonCount& data);
+        static TH2I MakeSumMap(const PhotonCount& data, bool reverse_y = true);
 
         /*
          * Creates a 2D histogram with a 1 for valid cells and a 0 for invalid cells.

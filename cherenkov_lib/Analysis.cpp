@@ -21,7 +21,7 @@ namespace cherenkov_simulator
         return output;
     }
 
-    TH2I Analysis::MakeSumMap(const PhotonCount& data)
+    TH2I Analysis::MakeSumMap(const PhotonCount& data, bool reverse_y)
     {
         int size = (int) data.Size();
         TH2I histo = TH2I("sum_map", "Bin Signal Sums", size, 0, size, size, 0, size);
@@ -30,8 +30,9 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            // The underflow seems to be defined differently for the TH1I than for the TH1C
-            histo.Fill(iter.X(), iter.Y(), data.SumBins(iter));
+            size_t y = iter.Y();
+            if (reverse_y) y = size - 1 - y;
+            histo.Fill(iter.X(), y, data.SumBins(iter));
         }
         return histo;
     }
@@ -53,7 +54,6 @@ namespace cherenkov_simulator
             {
                 // The zeroth bin is the underflow, so start at 1.
                 histo.SetBinContent(i + 1, j + 1, valid[i][j] ? 1.0 : 0.0);
-
             }
         }
         return histo;
