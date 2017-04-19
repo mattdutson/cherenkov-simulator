@@ -3,7 +3,7 @@
 <config>
 
     <simulation note="Defines computational behavior of the simulation">
-        <n_showers unit="null">100</n_showers>
+        <n_showers unit="null">150</n_showers>
         <depth_step unit="g/cm^2">0.3</depth_step>
         <time_bin unit="s">100e-9</time_bin>
         <fluor_thin unit="null">1</fluor_thin>
@@ -32,7 +32,7 @@
         <mirror_radius unit="cm">400.0</mirror_radius>
         <f_number unit="null">1.0</f_number>
         <field_of_view unit="rad">0.45</field_of_view>
-        <n_pmt_across unit="null" note="Must be even">400</n_pmt_across>
+        <n_pmt_across unit="null" note="Must be even">300</n_pmt_across>
     </detector>
 
     <triggering note="Thresholds in filtering and triggering">

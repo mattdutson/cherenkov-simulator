@@ -30,7 +30,7 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            size_t y = iter.Y();
+            int y = iter.Y();
             if (reverse_y) y = size - 1 - y;
             histo.Fill(iter.X(), y, data.SumBins(iter));
         }

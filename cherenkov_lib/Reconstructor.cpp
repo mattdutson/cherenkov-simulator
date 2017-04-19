@@ -163,7 +163,7 @@ namespace cherenkov_simulator
                 iter.Reset();
                 while (iter.Next())
                 {
-                    if (mask != nullptr) curr_mask = mask->at(iter.X())[iter.Y()];
+                    if (mask != nullptr) curr_mask = (*mask)[iter.X()][iter.Y()];
                     TVector3 direction = data.Direction(iter);
                     int pmt_sum = data.SumBins(iter, &curr_mask);
                     mat_element += direction[j] * direction[k] * pmt_sum;
@@ -383,7 +383,7 @@ namespace cherenkov_simulator
         {
             if (!NearPlane(to_sd_plane, to_world * data.Direction(iter)))
             {
-                triggered.at(iter.X())[iter.Y()] = Bool1D(data.NBins(), false);
+                triggered[iter.X()][iter.Y()] = Bool1D(data.NBins(), false);
             }
         }
     }

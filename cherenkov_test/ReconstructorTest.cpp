@@ -11,7 +11,6 @@
 #include "Reconstructor.h"
 #include "Simulator.h"
 #include "MonteCarlo.h"
-#include "Utility.h"
 #include "Analysis.h"
 
 using namespace TMath;
@@ -79,8 +78,8 @@ namespace cherenkov_simulator
         // Construct and simulate a shower at 10 km. The axis coordinates are in the world frame
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
-        reconstructor->AddNoise(data);
-        reconstructor->ClearNoise(data);
+//        reconstructor->AddNoise(data);
+//        reconstructor->ClearNoise(data);
 
         // Attempt to reconstruct the shower plane and geometry, writing the fit graph to a file
         TRotation to_sd_plane = FriendFitSDPlane(data);

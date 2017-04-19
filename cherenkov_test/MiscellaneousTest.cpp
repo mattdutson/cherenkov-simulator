@@ -41,7 +41,7 @@ namespace cherenkov_simulator
 
     TEST(MiscellaneousTest, MonteCarlo)
     {
-        const char* argv[] = {"", "Output", "../../../Config.xml"};
-        cherenkov_simulator::MonteCarlo::Run(3, argv);
+        const char* argv[] = {"", "Output", "../../../Config.xml", "1"};
+        cherenkov_simulator::MonteCarlo::Run(4, argv);
     }
 }

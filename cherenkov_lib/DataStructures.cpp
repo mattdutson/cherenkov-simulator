@@ -21,16 +21,16 @@ namespace cherenkov_simulator
         Reset();
     }
 
-    size_t PhotonCount::Iterator::X() const
+    int PhotonCount::Iterator::X() const
     {
         if (curr_y < 0) throw std::runtime_error("Invalid position");
-        return (size_t) curr_x;
+        return curr_x;
     }
 
-    size_t PhotonCount::Iterator::Y() const
+    int PhotonCount::Iterator::Y() const
     {
         if (curr_y < 0) throw std::runtime_error("Invalid position");
-        return (size_t) curr_y;
+        return curr_y;
     }
 
     bool PhotonCount::Iterator::Next()
@@ -83,9 +83,9 @@ namespace cherenkov_simulator
         // Initialize the photon count and valid pixel structures.
         counts = Int3D(n_pixels, Int2D(n_pixels, Int1D()));
         valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
-        for (size_t i = 0; i < n_pixels; i++)
+        for (int i = 0; i < n_pixels; i++)
         {
-            for (size_t j = 0; j < n_pixels; j++)
+            for (int j = 0; j < n_pixels; j++)
             {
                 valid[i][j] = ValidPixel(i, j);
                 if (valid[i][j]) counts[i][j] = Int1D(NBins(), 0);
@@ -193,8 +193,8 @@ namespace cherenkov_simulator
         // Determine the indices of the pixel based on its orientation
         double elevation = ATan(direction.Y() / direction.Z());
         double azimuth = ATan(direction.X() / direction.Z());
-        size_t y_index = (size_t) (Floor(elevation / angular_size) + n_pixels / 2);
-        size_t x_index = (size_t) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
+        int y_index = (int) (Floor(elevation / angular_size) + n_pixels / 2);
+        int x_index = (int) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
 
         // If the location is valid, add the pixel to the underlying data structure
         if (ValidPixel(x_index, y_index))
@@ -281,7 +281,7 @@ namespace cherenkov_simulator
         trimmed = true;
     }
 
-    bool PhotonCount::ValidPixel(size_t x_index, size_t y_index) const
+    bool PhotonCount::ValidPixel(int x_index, int y_index) const
     {
         size_t n_half = n_pixels / 2;
         double arc_length = n_half * linear_size;
@@ -292,7 +292,7 @@ namespace cherenkov_simulator
         return Utility::WithinXYDisk(direction, max_dev);
     }
 
-    TVector3 PhotonCount::Direction(size_t x_index, size_t y_index) const
+    TVector3 PhotonCount::Direction(int x_index, int y_index) const
     {
         // Reverse the operations of AddPhoton. Add 0.5 to account for the Floor() operation.
         double pixels_up = (y_index - n_pixels / 2.0 + 0.5);

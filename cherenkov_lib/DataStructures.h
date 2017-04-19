@@ -41,12 +41,12 @@ namespace cherenkov_simulator
             /*
              * Returns the current x index of the iterator.
              */
-            size_t X() const;
+            int X() const;
 
             /*
              * Returns the current y index of the iterator.
              */
-            size_t Y() const;
+            int Y() const;
 
             /*
              * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
@@ -229,12 +229,12 @@ namespace cherenkov_simulator
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
          */
-        bool ValidPixel(size_t x_index, size_t y_index) const;
+        bool ValidPixel(int x_index, int y_index) const;
 
         /*
          * A private method which is functionally equivalent to Direction(const Iterator*).
          */
-        TVector3 Direction(size_t x_index, size_t y_index) const;
+        TVector3 Direction(int x_index, int y_index) const;
 
         /*
          * Determines the number of photons per bin observed by a single pixel given the number of photons per second
