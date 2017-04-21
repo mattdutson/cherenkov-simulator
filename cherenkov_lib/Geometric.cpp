@@ -223,13 +223,12 @@ namespace cherenkov_simulator
 
     string Shower::Header()
     {
-        return "Psi (rad), Impact (km), Dir x, Dir y, Dir z";
+        return "Psi, Impact";
     }
 
     string Shower::ToString()
     {
-        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam()) + ", " + to_string(Direction().X()) +
-               ", " + to_string(Direction().Y()) + ", " + to_string(Direction().Z());
+        return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam());
     }
 
     double Shower::X()

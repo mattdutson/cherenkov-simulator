@@ -47,7 +47,7 @@ namespace cherenkov_simulator
         // Open a ROOT file to store information about each shower
         TFile file((out_file + ".root").c_str(), "RECREATE");
         std::ofstream fout = std::ofstream(out_file + ".csv");
-        fout << "ID, Energy (eV), " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
+        fout << "ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
         // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers;)

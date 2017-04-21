@@ -28,8 +28,7 @@ namespace cherenkov_simulator
 
     string Reconstructor::Result::ToString()
     {
-        return Utility::BoolString(trigger) + ", " + mono.ToString() + ", " + Utility::BoolString(impact) + ", " +
-               ckv.ToString();
+        return std::to_string(trigger) + ", " + mono.ToString() + ", " + std::to_string(impact) + ", " + ckv.ToString();
     }
 
     Reconstructor::Reconstructor(const ptree& config)

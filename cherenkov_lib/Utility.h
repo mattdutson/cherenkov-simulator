@@ -88,11 +88,6 @@ namespace cherenkov_simulator
         static double PercentError(double actual, double expected);
 
         /*
-         * Converts a bool to the string "TRUE" or "FALSE".
-         */
-        static std::string BoolString(bool b);
-
-        /*
          * Converts a centimeter double into a kilometer string.
          */
         static std::string KmString(double cent);
