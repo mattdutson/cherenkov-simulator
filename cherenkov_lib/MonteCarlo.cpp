@@ -47,7 +47,8 @@ namespace cherenkov_simulator
         // Open a ROOT file to store information about each shower
         TFile file((out_file + ".root").c_str(), "RECREATE");
         std::ofstream fout = std::ofstream(out_file + ".csv");
-        fout << "ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
+        unsigned int start_seed = gRandom->GetSeed();
+        fout << "Seed, ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
         // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers;)
@@ -75,7 +76,8 @@ namespace cherenkov_simulator
             // Attempt both monocular and hybrid reconstruction of the shower
             Reconstructor::Result result = reconstructor.Reconstruct(data);
             cout << "Shower " << i << " finished" << endl;
-            fout << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
+            fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", "
+                 << result.ToString() << endl;
         }
     }
 
