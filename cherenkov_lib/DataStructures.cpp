@@ -81,14 +81,13 @@ namespace cherenkov_simulator
         empty = true;
 
         // Initialize the photon count and valid pixel structures.
-        counts = Int3D(n_pixels, Int2D(n_pixels, Int1D()));
+        counts = Int3D(n_pixels, Int2D(n_pixels, Int1D(NBins(), 0)));
         valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
         for (int i = 0; i < n_pixels; i++)
         {
             for (int j = 0; j < n_pixels; j++)
             {
                 valid[i][j] = ValidPixel(i, j);
-                if (valid[i][j]) counts[i][j] = Int1D(NBins(), 0);
             }
         }
     }
@@ -268,13 +267,15 @@ namespace cherenkov_simulator
     void PhotonCount::Trim()
     {
         if (trimmed || empty) return;
-        Iterator iter = GetIterator();
-        while (iter.Next())
+        for (int i = 0; i < n_pixels; i++)
         {
-            Int1D::iterator begin = counts[iter.X()][iter.Y()].begin();
-            Int1D::iterator end = counts[iter.X()][iter.Y()].end();
-            counts[iter.X()][iter.Y()].erase(begin + Bin(last_time) + 1, end);
-            counts[iter.X()][iter.Y()].erase(begin, begin + Bin(first_time));
+            for (int j = 0; j < n_pixels; j++)
+            {
+                Int1D::iterator begin = counts[i][j].begin();
+                Int1D::iterator end = counts[i][j].end();
+                counts[i][j].erase(begin + Bin(last_time) + 1, end);
+                counts[i][j].erase(begin, begin + Bin(first_time));
+            }
         }
         min_time = min_time + Floor((first_time - min_time) / bin_size) * bin_size;
         max_time = last_time;
