@@ -42,7 +42,7 @@ namespace cherenkov_simulator
         n_showers = config.get<int>("simulation.n_showers");
     }
 
-    void MonteCarlo::PerformMonteCarlo(std::string out_file)
+    void MonteCarlo::PerformMonteCarlo(std::string out_file) const
     {
         // Open a ROOT file to store information about each shower
         TFile file((out_file + ".root").c_str(), "RECREATE");
@@ -81,7 +81,7 @@ namespace cherenkov_simulator
         }
     }
 
-    Shower MonteCarlo::GenerateShower()
+    Shower MonteCarlo::GenerateShower() const
     {
         // Determine the direction of the shower and its position relative to the detector. The angle of the shower
         // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
@@ -99,7 +99,7 @@ namespace cherenkov_simulator
         return GenerateShower(shower_axis, impact_param, gRandom->Uniform(TwoPi()), energy);
     }
 
-    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy)
+    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy) const
     {
         // We define the origin of both the world and detector frames to be the detector's center of curvature for
         // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction

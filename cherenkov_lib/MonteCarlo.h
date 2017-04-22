@@ -31,19 +31,19 @@ namespace cherenkov_simulator
         /*
          * Performs the overall Monte Carlo simulation and writes results to the console.
          */
-        void PerformMonteCarlo(std::string out_file);
+        void PerformMonteCarlo(std::string out_file) const;
 
         /*
          * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and
          * distribution parameters are set in the configuration file.
          */
-        Shower GenerateShower();
+        Shower GenerateShower() const;
 
         /*
          * Constructs a shower object given a user-defined direction, impact parameter, impact angle (the angle of the
          * point of closest approach), energy, and depth of first interaction.
          */
-        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy);
+        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy) const;
 
         /*
          * Parses the output file and configuration file from command line arguments, instantiates the MonteCarlo

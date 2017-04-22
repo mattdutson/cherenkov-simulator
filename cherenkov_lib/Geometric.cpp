@@ -23,17 +23,17 @@ namespace cherenkov_simulator
         coefficient = normal.Dot(point);
     }
 
-    TVector3 Plane::Normal()
+    TVector3 Plane::Normal() const
     {
         return normal;
     }
 
-    double Plane::Coefficient()
+    double Plane::Coefficient() const
     {
         return coefficient;
     }
 
-    bool Plane::InFrontOf(TVector3 direction)
+    bool Plane::InFrontOf(TVector3 direction) const
     {
         Ray outward_ray = Ray(TVector3(), direction, 0);
         return outward_ray.TimeToPlane(*this) > 0;
@@ -50,17 +50,17 @@ namespace cherenkov_simulator
         this->position = position;
     }
 
-    TVector3 Ray::Position()
+    TVector3 Ray::Position() const
     {
         return position;
     }
 
-    TVector3 Ray::Velocity()
+    TVector3 Ray::Velocity() const
     {
         return velocity;
     }
 
-    TVector3 Ray::Direction()
+    TVector3 Ray::Direction() const
     {
         return velocity.Unit();
     }
@@ -71,7 +71,7 @@ namespace cherenkov_simulator
         velocity = direction.Unit() * Utility::c_cent;
     }
 
-    double Ray::Time()
+    double Ray::Time() const
     {
         return time;
     }
@@ -91,14 +91,14 @@ namespace cherenkov_simulator
         PropagateToPoint(PlaneImpact(plane));
     }
 
-    TVector3 Ray::PlaneImpact(Plane plane)
+    TVector3 Ray::PlaneImpact(Plane plane) const
     {
         // If the ray and the plane are exactly parallel, return the current position of the ray.
         double time = TimeToPlane(plane);
         return (time == Infinity()) ? position : position + time * velocity;
     }
 
-    double Ray::TimeToPlane(Plane plane)
+    double Ray::TimeToPlane(Plane plane) const
     {
         TVector3 normal = plane.Normal();
         double coefficient = plane.Coefficient();
@@ -165,22 +165,22 @@ namespace cherenkov_simulator
         this->delta_0 = params.delta_0;
     }
 
-    double Shower::Age()
+    double Shower::Age() const
     {
         return 3.0 * X() / (X() + 2.0 * x_max);
     }
 
-    double Shower::EnergyMeV()
+    double Shower::EnergyMeV() const
     {
         return energy / (10.0e6);
     }
 
-    double Shower::EnergyeV()
+    double Shower::EnergyeV() const
     {
         return energy;
     }
 
-    double Shower::ImpactParam()
+    double Shower::ImpactParam() const
     {
         // See http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
         TVector3 point1 = Position();
@@ -188,29 +188,29 @@ namespace cherenkov_simulator
         return (point1.Cross(point2)).Mag();
     }
 
-    double Shower::ImpactAngle()
+    double Shower::ImpactAngle() const
     {
         return Direction().Angle(TVector3(0, 1, 0));
     }
 
-    double Shower::LocalRho()
+    double Shower::LocalRho() const
     {
         return rho_0 * Exp(-position.Z() / scale_height);
     }
 
-    double Shower::LocalDelta()
+    double Shower::LocalDelta() const
     {
         return delta_0 * Exp(-position.Z() / scale_height);
     }
 
-    double Shower::GaisserHillas()
+    double Shower::GaisserHillas() const
     {
         double pow = Power((X() - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda);
         double exp = Exp((x_max - X()) / gh_lambda);
         return n_max * pow * exp;
     }
 
-    double Shower::EThresh()
+    double Shower::EThresh() const
     {
         return Utility::mass_e / Sqrt(2 * LocalDelta());
     }
@@ -226,12 +226,12 @@ namespace cherenkov_simulator
         return "Psi, Impact";
     }
 
-    string Shower::ToString()
+    string Shower::ToString() const
     {
         return to_string(ImpactAngle()) + ", " + Utility::KmString(ImpactParam());
     }
 
-    double Shower::X()
+    double Shower::X() const
     {
         // See 1/25 depth integration notes.
         double cos_theta = Abs(velocity.CosTheta());

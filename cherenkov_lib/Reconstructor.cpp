@@ -26,7 +26,7 @@ namespace cherenkov_simulator
         return "Triggered, " + Shower::Header() + ", Cherenkov, " + Shower::Header();
     }
 
-    string Reconstructor::Result::ToString()
+    string Reconstructor::Result::ToString() const
     {
         return std::to_string(trigger) + ", " + mono.ToString() + ", " + std::to_string(impact) + ", " + ckv.ToString();
     }
@@ -55,7 +55,7 @@ namespace cherenkov_simulator
         plane_dev = config.get<double>("triggering.plane_dev");
     }
 
-    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data)
+    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data) const
     {
         Result result = Result();
         result.trigger = DetectorTriggered(GetTriggeringState(data));
@@ -77,7 +77,7 @@ namespace cherenkov_simulator
         return result;
     }
 
-    void Reconstructor::AddNoise(PhotonCount& data)
+    void Reconstructor::AddNoise(PhotonCount& data) const
     {
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
@@ -87,7 +87,7 @@ namespace cherenkov_simulator
         }
     }
 
-    Shower Reconstructor::MonocularFit(const PhotonCount& data, TRotation to_sdp, string graph_file)
+    Shower Reconstructor::MonocularFit(const PhotonCount& data, TRotation to_sdp, string graph_file) const
     {
         // The functional form of the time profile
         std::stringstream func_string = std::stringstream();
@@ -115,7 +115,7 @@ namespace cherenkov_simulator
         return MakeShower(t_0, r_p, psi, to_sdp);
     }
 
-    Shower Reconstructor::HybridFit(const PhotonCount& data, TVector3 impact, TRotation to_sdp, string graph_file)
+    Shower Reconstructor::HybridFit(const PhotonCount& data, TVector3 impact, TRotation to_sdp, string graph_file) const
     {
         // Find the angle of the impact direction with the shower-detector frame x-axis
         double impact_distance = impact.Mag();
@@ -148,7 +148,7 @@ namespace cherenkov_simulator
         return MakeShower(t_0, r_p, psi, to_sdp);
     }
 
-    TRotation Reconstructor::FitSDPlane(const PhotonCount& data, const Bool3D* mask)
+    TRotation Reconstructor::FitSDPlane(const PhotonCount& data, const Bool3D* mask) const
     {
         // Construct the symmetric matrix for finding eigenvectors
         PhotonCount::Iterator iter = data.GetIterator();
@@ -180,7 +180,7 @@ namespace cherenkov_simulator
         return TRotation().RotateAxes(new_x, new_y, normal).Inverse();
     }
 
-    TVector3 Reconstructor::MinValVec(TMatrixDSym matrix)
+    TVector3 Reconstructor::MinValVec(TMatrixDSym matrix) const
     {
         TMatrixDSymEigen eigen = TMatrixDSymEigen(matrix);
         TVectorD eigen_val = eigen.GetEigenValues();
@@ -198,7 +198,7 @@ namespace cherenkov_simulator
         return TVector3(eigen_vec[0][min_index], eigen_vec[1][min_index], eigen_vec[2][min_index]);
     }
 
-    bool Reconstructor::FindGroundImpact(const PhotonCount& data, TVector3& impact)
+    bool Reconstructor::FindGroundImpact(const PhotonCount& data, TVector3& impact) const
     {
         // Find the brightest pixel below the horizon
         TVector3 impact_direction = TVector3();
@@ -223,7 +223,7 @@ namespace cherenkov_simulator
         return highest_count > data.FindThreshold(ground_noise, trigger_thresh);
     }
 
-    TGraphErrors Reconstructor::GetFitGraph(const PhotonCount& data, TRotation to_sdp)
+    TGraphErrors Reconstructor::GetFitGraph(const PhotonCount& data, TRotation to_sdp) const
     {
         // Populate a TGraph with angle/time points from the data. Set errors based on the number of photons viewed.
         Double1D angles = Double1D();
@@ -251,7 +251,7 @@ namespace cherenkov_simulator
         return graph;
     }
 
-    void Reconstructor::SubtractAverageNoise(PhotonCount& data)
+    void Reconstructor::SubtractAverageNoise(PhotonCount& data) const
     {
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
@@ -261,7 +261,7 @@ namespace cherenkov_simulator
         }
     }
 
-    Bool1D Reconstructor::GetTriggeringState(const PhotonCount& data)
+    Bool1D Reconstructor::GetTriggeringState(const PhotonCount& data) const
     {
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
         Bool1D good_frames = Bool1D(data.NBins(), false);
@@ -303,7 +303,7 @@ namespace cherenkov_simulator
         return good_frames;
     }
 
-    void Reconstructor::ClearNoise(PhotonCount& data)
+    void Reconstructor::ClearNoise(PhotonCount& data) const
     {
         SubtractAverageNoise(data);
         Bool3D not_visited = GetThresholdMatrices(data, noise_thresh);
@@ -374,7 +374,7 @@ namespace cherenkov_simulator
         }
     }
 
-    void Reconstructor::FindPlaneSubset(const PhotonCount& data, Bool3D& triggered)
+    void Reconstructor::FindPlaneSubset(const PhotonCount& data, Bool3D& triggered) const
     {
         TRotation to_sd_plane = FitSDPlane(data, &triggered);
         PhotonCount::Iterator iter = data.GetIterator();
@@ -387,20 +387,20 @@ namespace cherenkov_simulator
         }
     }
 
-    bool Reconstructor::NearPlane(TRotation to_plane, TVector3 direction)
+    bool Reconstructor::NearPlane(TRotation to_plane, TVector3 direction) const
     {
         TVector3 dir_rotated = to_plane * direction;
         double angle = ASin(dir_rotated.Z() / dir_rotated.Mag());
         return Abs(angle) < plane_dev;
     }
 
-    bool Reconstructor::DetectorTriggered(const Bool1D& trig_state)
+    bool Reconstructor::DetectorTriggered(const Bool1D& trig_state) const
     {
         for (int i = 0; i < trig_state.size(); i++) if (trig_state[i]) return true;
         return false;
     }
 
-    Bool3D Reconstructor::GetThresholdMatrices(const PhotonCount& data, double sigma_mult, bool use_below_horiz)
+    Bool3D Reconstructor::GetThresholdMatrices(const PhotonCount& data, double sigma_mult, bool use_below_horiz) const
     {
         int ground_thresh = data.FindThreshold(ground_noise, sigma_mult);
         int sky_thresh = data.FindThreshold(sky_noise, sigma_mult);
@@ -415,7 +415,7 @@ namespace cherenkov_simulator
         return pass;
     }
 
-    Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane)
+    Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane) const
     {
         // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame)
         TVector3 shower_direction = to_sd_plane.Inverse() * TVector3(Cos(psi), -Sin(psi), 0);

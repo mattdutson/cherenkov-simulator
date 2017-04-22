@@ -49,17 +49,18 @@ namespace cherenkov_simulator
         ckv_integrator.SetParNames("age", "rho", "delta");
     }
 
-    PhotonCount Simulator::SimulateShower(Shower shower)
+    PhotonCount Simulator::SimulateShower(Shower shower) const
     {
         // A lower bound on the time the first photon will reach the detector
         PhotonCount photon_count = PhotonCount(count_params, MinTime(shower), MaxTime(shower));
+        TF1 integrator = TF1(ckv_integrator);
 
         // Step the shower along its path
         while (shower.TimeToPlane(ground_plane) > 0)
         {
             shower.IncrementDepth(depth_step);
             ViewFluorescencePhotons(shower, photon_count);
-            ViewCherenkovPhotons(shower, ground_plane, photon_count);
+            ViewCherenkovPhotons(shower, ground_plane, photon_count, integrator);
         }
         photon_count.Trim();
         return photon_count;
@@ -87,7 +88,7 @@ namespace cherenkov_simulator
         return a0 * Exp(dep) / ((a1 + Exp(dep)) * Power(a2 + Exp(dep), age)) * (k_1 - k_2 * Exp(-2.0 * dep));
     }
 
-    void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount& photon_count)
+    void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount& photon_count) const
     {
         int number_detected = NumberFluorescencePhotons(shower);
         for (int i = 0; i < number_detected / fluor_thin; i++)
@@ -99,9 +100,9 @@ namespace cherenkov_simulator
         }
     }
 
-    void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount& photon_count)
+    void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount& photon_count, TF1 integrator) const
     {
-        int number_detected = NumberCherenkovPhotons(shower);
+        int number_detected = NumberCherenkovPhotons(shower, integrator);
         for (int i = 0; i < number_detected / ckv_thin; i++)
         {
             Ray photon = GenerateCherenkovPhoton(shower);
@@ -112,7 +113,7 @@ namespace cherenkov_simulator
         }
     }
 
-    int Simulator::NumberFluorescencePhotons(Shower shower)
+    int Simulator::NumberFluorescencePhotons(Shower shower) const
     {
         // Find the yield via formula from Kakimoto
         double rho = shower.LocalRho();
@@ -126,13 +127,13 @@ namespace cherenkov_simulator
         return Utility::RandomRound(total * fraction);
     }
 
-    int Simulator::NumberCherenkovPhotons(Shower shower)
+    int Simulator::NumberCherenkovPhotons(Shower shower, TF1 integrator) const
     {
         // Perform the integration, ignoring portion above the shower energy
-        ckv_integrator.SetParameter("age", shower.Age());
-        ckv_integrator.SetParameter("rho", shower.LocalRho());
-        ckv_integrator.SetParameter("delta", shower.LocalDelta());
-        double yield = ckv_integrator.Integral(Log(shower.EThresh()), Log(shower.EnergyMeV()));
+        integrator.SetParameter("age", shower.Age());
+        integrator.SetParameter("rho", shower.LocalRho());
+        integrator.SetParameter("delta", shower.LocalDelta());
+        double yield = integrator.Integral(Log(shower.EThresh()), Log(shower.EnergyMeV()));
 
         // Find the number produced, and use a Lambertian reflectance model to find the fraction captured
         double total = yield * shower.GaisserHillas() * depth_step;
@@ -142,7 +143,7 @@ namespace cherenkov_simulator
         return Utility::RandomRound(total * fraction);
     }
 
-    void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, double thinning)
+    void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, double thinning) const
     {
         // Refract across the corrector plate
         photon.Transform(rotate_to_world.Inverse());
@@ -164,14 +165,14 @@ namespace cherenkov_simulator
         photon_count.AddPhoton(photon.Time(), camera_impact, thinning);
     }
 
-    TVector3 Simulator::RandomStopImpact()
+    TVector3 Simulator::RandomStopImpact() const
     {
         double r_rand = Utility::RandLinear(0.0, stop_diameter / 2.0);
         double phi_rand = gRandom->Uniform(TwoPi());
         return TVector3(r_rand * Cos(phi_rand), r_rand * Sin(phi_rand), 0);
     }
 
-    bool Simulator::DeflectFromLens(Ray& photon)
+    bool Simulator::DeflectFromLens(Ray& photon) const
     {
         // Cut out the inner portion of the corrector
         double x = photon.Position().X();
@@ -189,30 +190,30 @@ namespace cherenkov_simulator
         return success && photon.Refract(TVector3(0, 0, 1), refrac_lens, 1);
     }
 
-    bool Simulator::MirrorImpactPoint(Ray ray, TVector3& point)
+    bool Simulator::MirrorImpactPoint(Ray ray, TVector3& point) const
     {
         NegSphereImpact(ray, point, mirror_radius);
         return Utility::WithinXYDisk(point, mirror_size / 2.0) && point.Z() < 0.0;
     }
 
-    TVector3 Simulator::MirrorNormal(TVector3 point)
+    TVector3 Simulator::MirrorNormal(TVector3 point) const
     {
         return -point.Unit();
     }
 
-    bool Simulator::CameraImpactPoint(Ray ray, TVector3& point)
+    bool Simulator::CameraImpactPoint(Ray ray, TVector3& point) const
     {
         NegSphereImpact(ray, point, mirror_radius / 2.0);
         return Utility::WithinXYDisk(point, cluster_diameter / 2.0) && point.Z() < 0;
     }
 
-    double Simulator::IonizationLossRate(Shower shower)
+    double Simulator::IonizationLossRate(Shower shower) const
     {
         double age = shower.Age();
         return ion_c1 / Power(ion_c2 + age, ion_c3) + ion_c4 + ion_c5 * age;
     }
 
-    double Simulator::SphereFraction(TVector3 view_point)
+    double Simulator::SphereFraction(TVector3 view_point) const
     {
         TVector3 detector_axis = rotate_to_world * TVector3(0, 0, 1);
         double cosine = Cos(detector_axis.Angle(view_point));
@@ -221,12 +222,12 @@ namespace cherenkov_simulator
         return area_fraction * cosine;
     }
 
-    double Simulator::DetectorEfficiency()
+    double Simulator::DetectorEfficiency() const
     {
         return quantum_eff * mirror_reflect * filter_transmit;
     }
 
-    Ray Simulator::GenerateCherenkovPhoton(Shower shower)
+    Ray Simulator::GenerateCherenkovPhoton(Shower shower) const
     {
         TVector3 direction = shower.Direction();
         TVector3 rotation_axis = Utility::RandNormal(shower.Velocity().Unit());
@@ -234,12 +235,12 @@ namespace cherenkov_simulator
         return JitteredRay(shower, direction);
     }
 
-    double Simulator::ThetaC(Shower shower)
+    double Simulator::ThetaC(Shower shower) const
     {
         return ckv_k1 * Power(shower.EThresh(), ckv_k2);
     }
 
-    Ray Simulator::JitteredRay(Shower shower, TVector3 direction)
+    Ray Simulator::JitteredRay(Shower shower, TVector3 direction) const
     {
         double step_time = depth_step / shower.LocalRho() / Utility::c_cent;
         double offset = gRandom->Uniform(-0.5 * step_time, 0.5 * step_time);
@@ -273,14 +274,14 @@ namespace cherenkov_simulator
         }
     }
 
-    double Simulator::MinTime(Shower shower)
+    double Simulator::MinTime(Shower shower) const
     {
         double time = shower.Time();
         time += shower.Position().Mag() / Utility::c_cent;
         return time;
     }
 
-    double Simulator::MaxTime(Shower shower)
+    double Simulator::MaxTime(Shower shower) const
     {
         double time = shower.Time();
         time += shower.TimeToPlane(ground_plane);

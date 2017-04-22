@@ -36,18 +36,18 @@ namespace cherenkov_simulator
         /*
          * Returns a unit vector normal to the plane.
          */
-        TVector3 Normal();
+        TVector3 Normal() const;
 
         /*
          * Returns the coefficient "d" in the plane equation.
          */
-        double Coefficient();
+        double Coefficient() const;
 
         /*
          * Returns true if a ray going outward from the origin in the specified direction would eventually strike the
          * plane.
          */
-        bool InFrontOf(TVector3 direction);
+        bool InFrontOf(TVector3 direction) const;
 
     private:
 
@@ -82,17 +82,17 @@ namespace cherenkov_simulator
         /*
          * Returns the current position of the ray.
          */
-        TVector3 Position();
+        TVector3 Position() const;
 
         /*
          * Returns the current velocity of the ray.
          */
-        TVector3 Velocity();
+        TVector3 Velocity() const;
 
         /*
          * Returns a unit vector pointing in the direction of the shower's motion.
          */
-        TVector3 Direction();
+        TVector3 Direction() const;
 
         /*
          * When possible, use this method to set direction instead of directly modifying the velocity member.
@@ -103,7 +103,7 @@ namespace cherenkov_simulator
         /*
          * Returns the current time of the ray.
          */
-        double Time();
+        double Time() const;
 
         /*
          * Moves the ray from its current position to the destination point. If the destination point doesn't lie along
@@ -122,14 +122,14 @@ namespace cherenkov_simulator
          * Find the point where this ray will intersect with the plane. If the ray and the plane are exactly parallel,
          * the current position of the ray is returned.
          */
-        TVector3 PlaneImpact(Plane plane);
+        TVector3 PlaneImpact(Plane plane) const;
 
         /*
          * Finds the amount of time it will take before the ray will collide with the specified Plane object. Negative
          * times are returned if the ray has already passed the plane. Infinity is returned if the ray and plane are
          * exactly parallel.
          */
-        double TimeToPlane(Plane plane);
+        double TimeToPlane(Plane plane) const;
 
         /*
          * Reflects the ray across the normal vector.
@@ -205,47 +205,47 @@ namespace cherenkov_simulator
         /*
          * Finds the age of the shower, given by 3 * X / (X + 2 * XMax).
          */
-        double Age();
+        double Age() const;
 
         /*
          * Returns the energy of the shower primary in MeV. Note that the energy is passed to the constructor in eV.
          */
-        double EnergyMeV();
+        double EnergyMeV() const;
 
         /*
          * Returns the energy of the shower primary in eV.
          */
-        double EnergyeV();
+        double EnergyeV() const;
 
         /*
          * Calculates the impact parameter of the shower from the origin.
          */
-        double ImpactParam();
+        double ImpactParam() const;
 
         /*
          * Calculates the angle psi of the shower in the shower-detector plane.
          */
-        double ImpactAngle();
+        double ImpactAngle() const;
 
         /*
          * Returns the atmospheric density at the shower's current position.
          */
-        double LocalRho();
+        double LocalRho() const;
 
         /*
          * Returns the local value for n - 1.
          */
-        double LocalDelta();
+        double LocalDelta() const;
 
         /*
          * Returns the number of particles in the shower at its current position.
          */
-        double GaisserHillas();
+        double GaisserHillas() const;
 
         /*
          * Calculates the Cherenkov threshold energy of the shower.
          */
-        double EThresh();
+        double EThresh() const;
 
         /*
          * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
@@ -260,7 +260,7 @@ namespace cherenkov_simulator
         /*
          * Creates a string with comma-separated impact parameter, impact angle, and shower direction.
          */
-        std::string ToString();
+        std::string ToString() const;
 
     private:
 
@@ -292,7 +292,7 @@ namespace cherenkov_simulator
         /*
          * Returns the current depth of the shower in the atmosphere.
          */
-        double X();
+        double X() const;
     };
 }
 
