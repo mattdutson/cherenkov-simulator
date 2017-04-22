@@ -99,8 +99,8 @@ namespace cherenkov_simulator
 
         // Parameters related to the behavior of the simulation - cgs
         double depth_step;
-        double fluor_thin;
-        double ckv_thin;
+        int fluor_thin;
+        int ckv_thin;
         double back_toler;
 
         // Miscellaneous non-constant parameters
@@ -148,7 +148,7 @@ namespace cherenkov_simulator
          * parameter which represents the rate of computational thinning. This is passed to the photon count container
          * to allow it to increment bins by the correct amount.
          */
-        void SimulateOptics(Ray photon, PhotonCount& photon_count, double thinning) const;
+        void SimulateOptics(Ray photon, PhotonCount& photon_count, int thinning) const;
 
         /*
          * Generates a random point on the circle of the refracting lens.

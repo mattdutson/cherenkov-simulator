@@ -170,7 +170,7 @@ namespace cherenkov_simulator
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
          * specified time is before the container's start time, nothing is done.
          */
-        void AddPhoton(double time, TVector3 direction, double thinning = 1.0);
+        void AddPhoton(double time, TVector3 direction, int thinning);
 
         /*
          * Adds some number of noise photons to the channel referenced by the iterator. The noise rate represents the

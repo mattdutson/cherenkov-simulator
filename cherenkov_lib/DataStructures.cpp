@@ -188,7 +188,7 @@ namespace cherenkov_simulator
         return Bool3D(size, Bool2D(size, Bool1D(NBins(), false)));
     }
 
-    void PhotonCount::AddPhoton(double time, TVector3 direction, double thinning)
+    void PhotonCount::AddPhoton(double time, TVector3 direction, int thinning)
     {
         if (time < min_time || time > max_time) return;
 

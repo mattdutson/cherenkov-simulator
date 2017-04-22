@@ -21,8 +21,8 @@ namespace cherenkov_simulator
     {
         // Behavior of the simulation
         depth_step = config.get<double>("simulation.depth_step");
-        fluor_thin = config.get<double>("simulation.fluor_thin");
-        ckv_thin = config.get<double>("simulation.ckv_thin");
+        fluor_thin = config.get<int>("simulation.fluor_thin");
+        ckv_thin = config.get<int>("simulation.ckv_thin");
         back_toler = config.get<double>("simulation.back_toler");
 
         // Surrounding setup and orientation
@@ -90,8 +90,9 @@ namespace cherenkov_simulator
 
     void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount& photon_count) const
     {
-        int number_detected = NumberFluorescencePhotons(shower);
-        for (int i = 0; i < number_detected / fluor_thin; i++)
+        int n_detected = NumberFluorescencePhotons(shower);
+        int n_loops = Utility::RandomRound((double) n_detected / (double) fluor_thin);
+        for (int i = 0; i < n_loops / fluor_thin; i++)
         {
             TVector3 lens_impact = rotate_to_world * RandomStopImpact();
             Ray photon = JitteredRay(shower, lens_impact - shower.Position());
@@ -102,8 +103,9 @@ namespace cherenkov_simulator
 
     void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount& photon_count, TF1 integrator) const
     {
-        int number_detected = NumberCherenkovPhotons(shower, integrator);
-        for (int i = 0; i < number_detected / ckv_thin; i++)
+        int n_detected = NumberCherenkovPhotons(shower, integrator);
+        int n_loops = Utility::RandomRound((double) n_detected / (double) ckv_thin);
+        for (int i = 0; i < n_loops; i++)
         {
             Ray photon = GenerateCherenkovPhoton(shower);
             photon.PropagateToPlane(ground_plane);
@@ -143,7 +145,7 @@ namespace cherenkov_simulator
         return Utility::RandomRound(total * fraction);
     }
 
-    void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, double thinning) const
+    void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, int thinning) const
     {
         // Refract across the corrector plate
         photon.Transform(rotate_to_world.Inverse());
