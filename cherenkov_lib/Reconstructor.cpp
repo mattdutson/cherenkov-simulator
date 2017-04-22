@@ -162,9 +162,10 @@ namespace cherenkov_simulator
                 iter.Reset();
                 while (iter.Next())
                 {
-                    if (mask != nullptr) curr_mask = (*mask)[iter.X()][iter.Y()];
+                    int pmt_sum;
+                    if (mask == nullptr) pmt_sum = data.SumBins(iter);
+                    else pmt_sum = data.SumBinsFiltered(iter, mask);
                     TVector3 direction = data.Direction(iter);
-                    int pmt_sum = data.SumBins(iter, &curr_mask);
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }
                 matrix[j][k] = mat_element;

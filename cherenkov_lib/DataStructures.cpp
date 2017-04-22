@@ -82,6 +82,7 @@ namespace cherenkov_simulator
 
         // Initialize the photon count and valid pixel structures.
         counts = Int3D(n_pixels, Int2D(n_pixels, Int1D(NBins(), 0)));
+        sums = Int2D(n_pixels, Int1D(n_pixels, 0));
         valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
         for (int i = 0; i < n_pixels; i++)
         {
@@ -137,15 +138,17 @@ namespace cherenkov_simulator
         return counts[iter.X()][iter.Y()];
     }
 
-    int PhotonCount::SumBins(const Iterator& iter, const Bool1D* mask) const
+    int PhotonCount::SumBins(const Iterator& iter) const
+    {
+        return sums[iter.X()][iter.Y()];
+    }
+
+    int PhotonCount::SumBinsFiltered(const Iterator& iter, const Bool3D* filter) const
     {
         int sum = 0;
-        for (size_t i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
-        {
-            int count = counts[iter.X()][iter.Y()][i];
-            if (mask != nullptr) sum += mask->at(i) ? count : 0;
-            else sum += count;
-        }
+        const Bool1D& mask = (*filter)[iter.X()][iter.Y()];
+        const Int1D& curr = counts[iter.X()][iter.Y()];
+        for (size_t i = 0; i < curr.size(); i++) sum += mask[i] ? curr[i] : 0;
         return sum;
     }
 
@@ -199,7 +202,7 @@ namespace cherenkov_simulator
         if (ValidPixel(x_index, y_index))
         {
             size_t time_slot = Bin(time);
-            counts[x_index][y_index][time_slot] += thinning;
+            IncrementCell(thinning, (size_t) x_index, (size_t) y_index, time_slot);
             if (time > last_time) last_time = time;
             if (time < first_time) first_time = time;
             trimmed = false;
@@ -216,7 +219,7 @@ namespace cherenkov_simulator
         double expected_photons = RealNoiseRate(noise_rate);
         for (size_t i = 0; i < NBins(); i++)
         {
-            counts[iter.X()][iter.Y()][i] += gRandom->Poisson(expected_photons);
+            IncrementCell(gRandom->Poisson(expected_photons), iter, i);
         }
 
         empty = false;
@@ -227,9 +230,9 @@ namespace cherenkov_simulator
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
         int expected_photons = (int) RealNoiseRate(rate);
-        for (size_t i = 0; i < counts[iter.X()][iter.Y()].size(); i++)
+        for (size_t i = 0; i < NBins(); i++)
         {
-            counts[iter.X()][iter.Y()][i] -= expected_photons;
+            IncrementCell(expected_photons, iter, i);
         }
     }
 
@@ -258,7 +261,11 @@ namespace cherenkov_simulator
             {
                 for (size_t t = 0; t < counts[i][j].size(); t++)
                 {
-                    if (!good_bins[i][j][t]) counts[i][j][t] = 0;
+                    if (!good_bins[i][j][t])
+                    {
+                        int val = counts[i][j][t];
+                        IncrementCell(-val, i, j, t);
+                    }
                 }
             }
         }
@@ -280,6 +287,17 @@ namespace cherenkov_simulator
         min_time = min_time + Floor((first_time - min_time) / bin_size) * bin_size;
         max_time = last_time;
         trimmed = true;
+    }
+
+    void PhotonCount::IncrementCell(int inc, const Iterator& iter, size_t t)
+    {
+        IncrementCell(inc, (size_t) iter.X(), (size_t) iter.Y(), t);
+    }
+
+    void PhotonCount::IncrementCell(int inc, size_t x_index, size_t y_index, size_t t)
+    {
+        counts[x_index][y_index][t] += inc;
+        sums[x_index][y_index] += inc;
     }
 
     bool PhotonCount::ValidPixel(int x_index, int y_index) const

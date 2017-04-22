@@ -137,7 +137,12 @@ namespace cherenkov_simulator
         /*
          * Sums all bins in the channel referenced by the iterator.
          */
-        int SumBins(const Iterator& iter, const Bool1D* mask = nullptr) const;
+        int SumBins(const Iterator& iter) const;
+
+        /*
+         * Sums all bins in the channel which correspond to a "true" value in the filter.
+         */
+        int SumBinsFiltered(const Iterator& iter, const Bool3D* filter) const;
 
         /*
          * Finds the average time in the pixel referenced by the iterator.
@@ -208,6 +213,7 @@ namespace cherenkov_simulator
 
         // The underlying data structure and its validity mask
         Int3D counts;
+        Int2D sums;
         Bool2D valid;
 
         // The number and size of each pixel - cgs, sr
@@ -225,6 +231,16 @@ namespace cherenkov_simulator
         // Keeps track of whether we need to call Trim
         bool empty;
         bool trimmed;
+
+        /*
+         * Modifies some (x, y, t) cell by the specified amount, taking an Iterator instead of an x, y position.
+         */
+        void IncrementCell(int inc, const Iterator& iter, size_t t);
+
+        /*
+         * Modifies some (x, y, t) by the specified amount.
+         */
+        void IncrementCell(int inc, size_t x_index, size_t y_index, size_t t);
 
         /*
          * Determines whether the pixel at the specified indices lies within the central circle.
