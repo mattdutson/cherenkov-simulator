@@ -183,8 +183,7 @@ namespace cherenkov_simulator
         if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return photon.Direction().Z() < 0;
 
         // Find the normal to the corrector
-        double c_lead = 4.0 * (refrac_lens - 1) * Power(mirror_radius, 3);
-        double z_norm = c_lead / (4.0 * (Sq(x) + Sq(y)) - stop_diameter);
+        double z_norm = (refrac_lens - 1) * Power(mirror_radius, 3) / (Sq(x) + Sq(y));
         TVector3 norm = TVector3(-x, -y, z_norm).Unit();
 
         // Perform the refraction
