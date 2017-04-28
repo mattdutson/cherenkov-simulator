@@ -3,7 +3,7 @@
 <config>
 
     <simulation note="Defines computational behavior of the simulation">
-        <n_showers unit="null">150</n_showers>
+        <n_showers unit="null">200</n_showers>
         <depth_step unit="g/cm^2">0.3</depth_step>
         <time_bin unit="s">100e-9</time_bin>
         <fluor_thin unit="null">1</fluor_thin>

@@ -132,14 +132,14 @@ namespace cherenkov_simulator
          * distance traveled by the shower due to the fact that the form for fluorescence yield (Stratton 4.2) gives the
          * number of photons per electron per unit length.
          */
-        int NumberFluorescencePhotons(Shower shower) const;
+        int NumberFluorescenceLoops(Shower shower) const;
 
         /*
          * Determines the total number of Cherenkov photons produced by the shower at a particular point. This doesn't
          * need the distance traveled because the form for Cherenkov yield gives the number of photons per electron per
          * slant depth.
          */
-        int NumberCherenkovPhotons(Shower shower, TF1 integrator) const;
+        int NumberCherenkovLoops(Shower shower, TF1 integrator) const;
 
         /*
          * Takes a photon which is assumed to lie at the corrector plate and simulates its motion through the detector

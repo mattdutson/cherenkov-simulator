@@ -90,8 +90,7 @@ namespace cherenkov_simulator
 
     void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount& photon_count) const
     {
-        int n_detected = NumberFluorescencePhotons(shower);
-        int n_loops = Utility::RandomRound((double) n_detected / (double) fluor_thin);
+        int n_loops = NumberFluorescenceLoops(shower);
         for (int i = 0; i < n_loops / fluor_thin; i++)
         {
             TVector3 lens_impact = rotate_to_world * RandomStopImpact();
@@ -103,8 +102,7 @@ namespace cherenkov_simulator
 
     void Simulator::ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount& photon_count, TF1 integrator) const
     {
-        int n_detected = NumberCherenkovPhotons(shower, integrator);
-        int n_loops = Utility::RandomRound((double) n_detected / (double) ckv_thin);
+        int n_loops = NumberCherenkovLoops(shower, integrator);
         for (int i = 0; i < n_loops; i++)
         {
             Ray photon = GenerateCherenkovPhoton(shower);
@@ -115,7 +113,7 @@ namespace cherenkov_simulator
         }
     }
 
-    int Simulator::NumberFluorescencePhotons(Shower shower) const
+    int Simulator::NumberFluorescenceLoops(Shower shower) const
     {
         // Find the yield via formula from Kakimoto
         double rho = shower.LocalRho();
@@ -126,10 +124,10 @@ namespace cherenkov_simulator
         // Find the number produced and the fraction captured
         double total = yield * shower.GaisserHillas() * depth_step;
         double fraction = SphereFraction(shower.Position()) * DetectorEfficiency();
-        return Utility::RandomRound(total * fraction);
+        return Utility::RandomRound(total * fraction / (double) fluor_thin);
     }
 
-    int Simulator::NumberCherenkovPhotons(Shower shower, TF1 integrator) const
+    int Simulator::NumberCherenkovLoops(Shower shower, TF1 integrator) const
     {
         // Perform the integration, ignoring portion above the shower energy
         integrator.SetParameter("age", shower.Age());
@@ -142,7 +140,7 @@ namespace cherenkov_simulator
         TVector3 ground_impact = shower.PlaneImpact(ground_plane);
         double cos_theta = Abs(Cos(ground_impact.Angle(ground_plane.Normal())));
         double fraction = 4 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
-        return Utility::RandomRound(total * fraction);
+        return Utility::RandomRound(total * fraction / (double) ckv_thin);
     }
 
     void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, int thinning) const
