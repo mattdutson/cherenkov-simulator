@@ -99,9 +99,9 @@ namespace cherenkov_simulator
         FriendMonocularFit(data, to_sd_plane, "AngleShowerRecon.root");
     }
 
-    TEST_F(ReconstructorTest, AddSubtractNoise)
+    TEST_F(ReconstructorTest, TypicalShowerEntire)
     {
-        TFile file("AddSubtractNoise.root", "RECREATE");
+        TFile file("TypicalShowerEntire.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 1, -3), 1e6, -0.1, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
@@ -115,6 +115,11 @@ namespace cherenkov_simulator
         reconstructor->ClearNoise(data);
         Analysis::MakeProfileGraph(data).Write("after_clear_graph");
         Analysis::MakeSumMap(data).Write("after_clear_map");
+
+        Reconstructor::Result result = reconstructor->Reconstruct(data);
+        std::cout << "Actual Angle: " << shower.ImpactAngle() << "\tActual Impact: " << shower.ImpactParam() << std::endl;
+        std::cout << "Mono Angle: " << result.mono.ImpactAngle() << "\tMono Impact: " << result.mono.ImpactParam() << std::endl;
+        std::cout << "Chkv Angle: " << result.ckv.ImpactAngle() << "\tChkv Impact: " << result.ckv.ImpactParam() << std::endl;
     }
 
     TEST_F(ReconstructorTest, TriggeringMaps)
