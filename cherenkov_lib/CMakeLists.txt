@@ -1,3 +1,5 @@
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 # Define source files and add the executable.
 project(cherenkov_lib)
 set(SOURCE_FILES
