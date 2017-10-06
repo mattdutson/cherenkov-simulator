@@ -18,9 +18,9 @@ namespace cherenkov_simulator
     typedef std::vector<std::vector<bool>> Bool2D;
     typedef std::vector<std::vector<std::vector<bool>>> Bool3D;
 
-    typedef std::vector<int> Int1D;
-    typedef std::vector<std::vector<int>> Int2D;
-    typedef std::vector<std::vector<std::vector<int>>> Int3D;
+    typedef std::vector<short> Int1D;
+    typedef std::vector<std::vector<short>> Int2D;
+    typedef std::vector<std::vector<std::vector<short>>> Int3D;
 
     typedef std::vector<double> Double1D;
 

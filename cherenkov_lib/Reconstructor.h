@@ -139,19 +139,19 @@ namespace cherenkov_simulator
          * Visits all spatially adjacent pixels to the (x, y, t) point passed, pushing them to the queue. They are also
          * marked as visited in the not_visited structure.
          */
-        static void VisitSpaceAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+        static void VisitSpaceAdj(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front, Bool3D& not_visited);
 
         /*
          * Visits all spatially adjacent temporally to the (x, y, t) point passed, pushing them to the queue. They are
          * also marked as visited in the not_visited structure.
         */
-        static void VisitTimeAdj(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+        static void VisitTimeAdj(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front, Bool3D& not_visited);
 
         /*
          * Pushes the specified (x, y, z) point to the queue, first checking that the point lies within appropriate
          * bounds and has not yet been visited. not_visited[x][y][t] is set to false.
          */
-        static void VisitPush(size_t x, size_t y, size_t t, std::queue<std::array<size_t, 3>>& front, Bool3D& not_visited);
+        static void VisitPush(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front, Bool3D& not_visited);
 
         /*
          * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within
