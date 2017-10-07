@@ -17,7 +17,7 @@ namespace cherenkov_simulator
 {
     PhotonCount::Iterator::Iterator(Bool2D validPixels)
     {
-        this->valid = validPixels;
+        this->valid = std::move(validPixels);
         Reset();
     }
 
@@ -36,13 +36,13 @@ namespace cherenkov_simulator
     bool PhotonCount::Iterator::Next()
     {
         // If the outer vector is empty, then there will never be anything to iterate through.
-        if (valid.size() == 0) return false;
+        if (valid.empty()) return false;
 
         // Loop until we find a valid pixel.
         bool found = false;
         while (!found)
         {
-            // If we're at the end of the current column, try to move to the next column. Otherwise, increment y.
+            // If we're at the end of the current column, try to std::move to the next column. Otherwise, increment y.
             if (curr_y == valid[curr_x].size() - 1)
             {
                 if (curr_x == valid.size() - 1) return false;
@@ -81,8 +81,8 @@ namespace cherenkov_simulator
         empty = true;
 
         // Initialize the photon count and valid pixel structures.
-        counts = Int3D(n_pixels, Int2D(n_pixels, Int1D(NBins(), 0)));
-        sums = Int2D(n_pixels, Int1D(n_pixels, 0));
+        counts = Short3D(n_pixels, Short2D(n_pixels, Short1D(NBins(), 0)));
+        sums = Short2D(n_pixels, Short1D(n_pixels, 0));
         valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
         for (int i = 0; i < n_pixels; i++)
         {
@@ -133,7 +133,7 @@ namespace cherenkov_simulator
         return Direction(iter.X(), iter.Y());
     }
 
-    Int1D PhotonCount::Signal(const Iterator& iter) const
+    Short1D PhotonCount::Signal(const Iterator& iter) const
     {
         return counts[iter.X()][iter.Y()];
     }
@@ -147,7 +147,7 @@ namespace cherenkov_simulator
     {
         int sum = 0;
         const Bool1D& mask = (*filter)[iter.X()][iter.Y()];
-        const Int1D& curr = counts[iter.X()][iter.Y()];
+        const Short1D& curr = counts[iter.X()][iter.Y()];
         for (size_t i = 0; i < curr.size(); i++) sum += mask[i] ? curr[i] : 0;
         return sum;
     }
@@ -195,8 +195,8 @@ namespace cherenkov_simulator
         // Determine the indices of the pixel based on its orientation
         double elevation = ATan(direction.Y() / direction.Z());
         double azimuth = ATan(direction.X() / direction.Z());
-        int y_index = (int) (Floor(elevation / angular_size) + n_pixels / 2);
-        int x_index = (int) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
+        auto y_index = (int) (Floor(elevation / angular_size) + n_pixels / 2);
+        auto x_index = (int) (Floor(azimuth / (angular_size * Cos(elevation))) + n_pixels / 2);
 
         // If the location is valid, add the pixel to the underlying data structure
         if (ValidPixel(x_index, y_index))
@@ -229,7 +229,7 @@ namespace cherenkov_simulator
     {
         // We floor the real noise rate because the most probably value for a Poisson distribution with mean < 1 is 0.
         // With the current configuration, mean < 1 seems like a reasonable assumption.
-        int expected_photons = (int) RealNoiseRate(rate);
+        auto expected_photons = (int) RealNoiseRate(rate);
         for (size_t i = 0; i < NBins(); i++)
         {
             IncrementCell(expected_photons, iter, i);
@@ -238,7 +238,7 @@ namespace cherenkov_simulator
 
     Bool1D PhotonCount::AboveThreshold(const Iterator& iter, int threshold) const
     {
-        Int1D data = counts[iter.X()][iter.Y()];
+        Short1D data = counts[iter.X()][iter.Y()];
         Bool1D triggers = Bool1D(data.size());
         for (size_t i = 0; i < data.size(); i++) triggers[i] = data[i] > threshold;
         return triggers;
@@ -248,7 +248,7 @@ namespace cherenkov_simulator
     {
         double max_prob = Sqrt(Pi() / 2.0) * Erfc(sigma / Sqrt(2));
         double mean = RealNoiseRate(global_rate);
-        int thresh = (int) Floor(sigma * Sqrt(mean));
+        auto thresh = (int) Floor(sigma * Sqrt(mean));
         while (PoissonSum(mean, thresh) > max_prob) thresh++;
         return thresh;
     }
@@ -278,10 +278,10 @@ namespace cherenkov_simulator
         {
             for (int j = 0; j < n_pixels; j++)
             {
-                Int1D::iterator begin = counts[i][j].begin();
-                Int1D::iterator end = counts[i][j].end();
-                counts[i][j].erase(begin + Bin(last_time) + 1, end);
-                counts[i][j].erase(begin, begin + Bin(first_time));
+                auto bgn = counts[i][j].begin();
+                auto end = counts[i][j].end();
+                counts[i][j].erase(bgn + Bin(last_time) + 1, end);
+                counts[i][j].erase(bgn, bgn + Bin(first_time));
             }
         }
         min_time = min_time + Floor((first_time - min_time) / bin_size) * bin_size;

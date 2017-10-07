@@ -42,8 +42,7 @@ namespace cherenkov_simulator
         to_world = Utility::MakeRotation(config.get<double>("surroundings.elevation_angle"));
 
         // The amount of night sky background noise
-        double stop_diameter =
-                config.get<double>("detector.mirror_radius") / (2.0 * config.get<double>("detector.f_number"));
+        double stop_diameter = config.get<double>("detector.mirror_radius") / (2.0 * config.get<double>("detector.f_number"));
         sky_noise = Sq(stop_diameter / 2.0) * Pi() * global_sky_noise;
         ground_noise = Sq(stop_diameter / 2.0) * Pi() * global_ground_noise;
 
@@ -55,10 +54,10 @@ namespace cherenkov_simulator
         plane_dev = config.get<double>("triggering.plane_dev");
     }
 
-    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data) const
+    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data, const Bool1D& trigger) const
     {
         Result result = Result();
-        result.trigger = DetectorTriggered(GetTriggeringState(data));
+        result.trigger = DetectorTriggered(trigger);
         if (result.trigger)
         {
             TRotation to_sdp = FitSDPlane(data);
@@ -102,7 +101,7 @@ namespace cherenkov_simulator
         TGraphErrors data_graph = GetFitGraph(data, to_sdp);
         data_graph.Fit("profile_fit", "Q");
         TF1* result = data_graph.GetFunction("profile_fit");
-        if (graph_file != "")
+        if (graph_file.empty())
         {
             TFile file(graph_file.c_str(), "RECREATE");
             data_graph.Write("fit_graph");
@@ -135,7 +134,7 @@ namespace cherenkov_simulator
         TGraphErrors data_graph = GetFitGraph(data, to_sdp);
         data_graph.Fit("profile_fit", "Q");
         TF1* result = data_graph.GetFunction("profile_fit");
-        if (graph_file != "")
+        if (graph_file.empty())
         {
             TFile file(graph_file.c_str(), "RECREATE");
             data_graph.Write("fit_graph");
@@ -267,32 +266,30 @@ namespace cherenkov_simulator
         Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
         Bool1D good_frames = Bool1D(data.NBins(), false);
 
-        std::list<std::array<unsigned short, 3>> frontier = std::list<std::array<unsigned short, 3>>();
-        for (unsigned short t_trig = 0; t_trig < data.NBins(); t_trig++)
+        std::list<std::array<size_t, 3>> frontier = std::list<std::array<size_t, 3>>();
+        for (size_t t_trig = 0; t_trig < data.NBins(); t_trig++)
         {
             bool found = false;
-            for (unsigned short x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++)
+            for (size_t x_trig = 0; x_trig < trig_matrices.size() && !found; x_trig++)
             {
-                for (unsigned short y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++)
+                for (size_t y_trig = 0; y_trig < trig_matrices.at(x_trig).size() && !found; y_trig++)
                 {
-                    if (!trig_matrices.at(x_trig)[y_trig][t_trig])
-                        continue;
+                    if (trig_matrices.at(x_trig)[y_trig][t_trig])
+                        frontier.push_back({x_trig, y_trig, t_trig});
 
-                    frontier.push_back({x_trig, y_trig, t_trig});
                     int adjacent = 0;
-                    while (!frontier.empty())
+                    while (!frontier.empty() && !found)
                     {
-                        std::array<unsigned short, 3> curr = frontier.front();
+                        std::array<size_t, 3> curr = frontier.front();
                         frontier.pop_front();
-                        unsigned short x = curr[0];
-                        unsigned short y = curr[1];
-                        unsigned short t = curr[2];
+                        size_t x = curr[0];
+                        size_t y = curr[1];
+                        size_t t = curr[2];
                         adjacent++;
                         if (adjacent > trigger_clust)
                         {
                             frontier.clear();
                             found = true;
-                            break;
                         }
                         VisitSpaceAdj(x, y, t, frontier, trig_matrices);
                     }
@@ -303,7 +300,7 @@ namespace cherenkov_simulator
         return good_frames;
     }
 
-    void Reconstructor::ClearNoise(PhotonCount& data) const
+    Bool1D Reconstructor::ClearNoise(PhotonCount& data) const
     {
         SubtractAverageNoise(data);
         Bool3D not_visited = GetThresholdMatrices(data, noise_thresh);
@@ -312,25 +309,23 @@ namespace cherenkov_simulator
         FindPlaneSubset(data, triggered);
         Bool1D trig_state = GetTriggeringState(data);
 
-        std::list<std::array<unsigned short, 3>> frontier = std::list<std::array<unsigned short, 3>>();
-        for (unsigned short x_trig = 0; x_trig < triggered.size(); x_trig++)
+        std::list<std::array<size_t, 3>> frontier = std::list<std::array<size_t, 3>>();
+        for (size_t x_trig = 0; x_trig < triggered.size(); x_trig++)
         {
-            for (unsigned short y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++)
+            for (size_t y_trig = 0; y_trig < triggered[x_trig].size(); y_trig++)
             {
-                for (unsigned short t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++)
+                for (size_t t_trig = 0; t_trig < triggered[x_trig][y_trig].size(); t_trig++)
                 {
                     if (triggered[x_trig][y_trig][t_trig] && trig_state[t_trig])
-                    {
                         frontier.push_back({x_trig, y_trig, t_trig});
-                    }
 
                     while (!frontier.empty())
                     {
-                        std::array<unsigned short, 3> curr = frontier.front();
+                        std::array<size_t, 3> curr = frontier.front();
                         frontier.pop_front();
-                        unsigned short x = curr[0];
-                        unsigned short y = curr[1];
-                        unsigned short t = curr[2];
+                        size_t x = curr[0];
+                        size_t y = curr[1];
+                        size_t t = curr[2];
                         good_pixels[x][y][t] = true;
                         VisitSpaceAdj(x, y, t, frontier, not_visited);
                         VisitTimeAdj(x, y, t, frontier, not_visited);
@@ -339,10 +334,10 @@ namespace cherenkov_simulator
             }
         }
         data.Subset(good_pixels);
+        return trig_state;
     }
 
-    void Reconstructor::VisitSpaceAdj(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front,
-                                      Bool3D& not_visited)
+    void Reconstructor::VisitSpaceAdj(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited)
     {
         VisitPush(x - 1, y - 1, t, front, not_visited);
         VisitPush(x - 1, y, t, front, not_visited);
@@ -354,15 +349,13 @@ namespace cherenkov_simulator
         VisitPush(x + 1, y + 1, t, front, not_visited);
     }
 
-    void Reconstructor::VisitTimeAdj(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front,
-                                     Bool3D& not_visited)
+    void Reconstructor::VisitTimeAdj(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited)
     {
         VisitPush(x, y, t - 1, front, not_visited);
         VisitPush(x, y, t + 1, front, not_visited);
     }
 
-    void Reconstructor::VisitPush(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front,
-                                  Bool3D& not_visited)
+    void Reconstructor::VisitPush(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited)
     {
         if (x > not_visited.size() - 1) return;
         else if (y > not_visited.at(x).size() - 1) return;
@@ -396,7 +389,7 @@ namespace cherenkov_simulator
 
     bool Reconstructor::DetectorTriggered(const Bool1D& trig_state) const
     {
-        for (int i = 0; i < trig_state.size(); i++) if (trig_state[i]) return true;
+        for (bool state : trig_state) if (state) return true;
         return false;
     }
 
@@ -415,7 +408,7 @@ namespace cherenkov_simulator
         return pass;
     }
 
-    Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane) const
+    Shower Reconstructor::MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane)
     {
         // Reconstruct the shower and transform to the world frame (to_sd_plane goes from world frame)
         TVector3 shower_direction = to_sd_plane.Inverse() * TVector3(Cos(psi), -Sin(psi), 0);

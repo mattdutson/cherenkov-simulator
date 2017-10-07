@@ -23,7 +23,7 @@ namespace cherenkov_simulator
 
     TH2I Analysis::MakeSumMap(const PhotonCount& data, bool reverse_y)
     {
-        int size = (int) data.Size();
+        auto size = (int) data.Size();
         TH2I histo = TH2I("sum_map", "Bin Signal Sums", size, 0, size, size, 0, size);
         histo.SetXTitle("x Bin");
         histo.SetYTitle("y Bin");
@@ -74,11 +74,11 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
-            Int1D signal = data.Signal(iter);
+            Short1D signal = data.Signal(iter);
             for (size_t i = 0; i < signal.size(); i++)
             {
                 counts.at(i) += signal[i];
             }
         }
-    };
+    }
 }

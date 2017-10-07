@@ -5,7 +5,6 @@
 // Implementation of Simulator.h
 
 #include <boost/property_tree/ptree.hpp>
-#include <Math/Polynomial.h>
 #include <TMath.h>
 
 #include "Simulator.h"

@@ -36,7 +36,7 @@ namespace cherenkov_simulator
              * The only constructor. Takes a 2D vector of bools which can be used to determine which pixels are valid. The
              * user is responsible for ensuring that all sub-vectors are non-null.
              */
-            Iterator(Bool2D validPixels);
+            explicit Iterator(Bool2D validPixels);
 
             /*
              * Returns the current x index of the iterator.
@@ -132,7 +132,7 @@ namespace cherenkov_simulator
         /*
          * Gets the complete time signal at the current position of the iterator.
          */
-        Int1D Signal(const Iterator& iter) const;
+        Short1D Signal(const Iterator& iter) const;
 
         /*
          * Sums all bins in the channel referenced by the iterator.
@@ -212,8 +212,8 @@ namespace cherenkov_simulator
         friend class DataStructuresTest;
 
         // The underlying data structure and its validity mask
-        Int3D counts;
-        Int2D sums;
+        Short3D counts;
+        Short2D sums;
         Bool2D valid;
 
         // The number and size of each pixel - cgs, sr

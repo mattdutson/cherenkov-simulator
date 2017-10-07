@@ -51,7 +51,7 @@ namespace cherenkov_simulator
          * detector was not triggered, Result.triggered = false. If there was not visible impact point,
          * Result.cherenkov = false.
          */
-        Result Reconstruct(const PhotonCount& data) const;
+        Result Reconstruct(const PhotonCount& data, const Bool1D& trig) const;
 
         /*
          * Adds Poisson-distributed background noise to the signal.
@@ -62,7 +62,7 @@ namespace cherenkov_simulator
          * Attempts to isolate signal from noise by subtracting the background level, applying triggering, removing
          * anything below three sigma, and performing a recursive search from triggered pixels.
          */
-        void ClearNoise(PhotonCount& data) const;
+        Bool1D ClearNoise(PhotonCount& data) const;
 
     private:
 
@@ -139,19 +139,19 @@ namespace cherenkov_simulator
          * Visits all spatially adjacent pixels to the (x, y, t) point passed, pushing them to the queue. They are also
          * marked as visited in the not_visited structure.
          */
-        static void VisitSpaceAdj(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front, Bool3D& not_visited);
+        static void VisitSpaceAdj(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
         /*
          * Visits all spatially adjacent temporally to the (x, y, t) point passed, pushing them to the queue. They are
          * also marked as visited in the not_visited structure.
         */
-        static void VisitTimeAdj(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front, Bool3D& not_visited);
+        static void VisitTimeAdj(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
         /*
          * Pushes the specified (x, y, z) point to the queue, first checking that the point lies within appropriate
          * bounds and has not yet been visited. not_visited[x][y][t] is set to false.
          */
-        static void VisitPush(unsigned short x, unsigned short y, unsigned short t, std::list<std::array<unsigned short, 3>>& front, Bool3D& not_visited);
+        static void VisitPush(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited);
 
         /*
          * Modify the set of triggered pixels/times to contain the subset of triggered pixels/times which are within
@@ -180,7 +180,7 @@ namespace cherenkov_simulator
         /*
          * Constructs a shower based on the results of the time profile reconstruction.
          */
-        Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane) const;
+        static Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane);
     };
 }
 

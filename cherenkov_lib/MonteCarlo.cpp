@@ -34,7 +34,7 @@ namespace cherenkov_simulator
         start_tracking = config.get<double>("monte_carlo.start_tracking");
 
         // Determine the local atmosphere based on the elevation
-        double detect_elevation = config.get<double>("surroundings.detect_elevation");
+        auto detect_elevation = config.get<double>("surroundings.detect_elevation");
         rho_0 = rho_sea * Exp(-detect_elevation / scale_height);
         delta_0 = (refrac_sea - 1) * Exp(-detect_elevation / scale_height);
 
@@ -53,6 +53,8 @@ namespace cherenkov_simulator
         // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers;)
         {
+            // TODO: Need to find a way to continue to the next iteration if we run out of memory
+            // TODO: Keep an eye on shower 16-6. It requires memory on the order of 50GB, could indicate a leak
             // Simulate the shower and record photon counts before noise is added
             Shower shower = GenerateShower();
             PhotonCount data = simulator.SimulateShower(shower);
@@ -69,12 +71,12 @@ namespace cherenkov_simulator
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_noise_graph").c_str());
 
             // Clear noise and record the new photon counts
-            reconstructor.ClearNoise(data);
+            Bool1D triggers = reconstructor.ClearNoise(data);
             Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_clear_map").c_str());
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_clear_graph").c_str());
 
             // Attempt both monocular and hybrid reconstruction of the shower
-            Reconstructor::Result result = reconstructor.Reconstruct(data);
+            Reconstructor::Result result = reconstructor.Reconstruct(data, triggers);
             cout << "Shower " << i << " finished" << endl;
             fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", "
                  << result.ToString() << endl;
@@ -121,7 +123,7 @@ namespace cherenkov_simulator
         TVector3 starting_position = impact_point + param * axis;
 
         // Create a new shower with all of the randomly determined parameters.
-        Shower::Params params;
+        Shower::Params params = Shower::Params();
         params.energy = energy;
         params.x_max = x_max;
         params.n_max = n_max;
@@ -145,7 +147,7 @@ namespace cherenkov_simulator
             MonteCarlo(config).PerformMonteCarlo(out_file);
             return 0;
         }
-        catch (std::runtime_error err)
+        catch (std::runtime_error& err)
         {
             cout << err.what() << endl;
             return -1;

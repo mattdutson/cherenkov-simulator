@@ -39,8 +39,7 @@ namespace cherenkov_simulator
         return outward_ray.TimeToPlane(*this) > 0;
     }
 
-    Ray::Ray()
-    {}
+    Ray::Ray() = default;
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
@@ -88,13 +87,13 @@ namespace cherenkov_simulator
 
     void Ray::PropagateToPlane(Plane plane)
     {
-        PropagateToPoint(PlaneImpact(plane));
+        PropagateToPoint(PlaneImpact(std::move(plane)));
     }
 
     TVector3 Ray::PlaneImpact(Plane plane) const
     {
         // If the ray and the plane are exactly parallel, return the current position of the ray.
-        double time = TimeToPlane(plane);
+        double time = TimeToPlane(std::move(plane));
         return (time == Infinity()) ? position : position + time * velocity;
     }
 

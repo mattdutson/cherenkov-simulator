@@ -1,5 +1,8 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+# TODO: Find a way to toggle this between release/debug easily
+set(CMAKE_BUILD_TYPE Release)
+
 # Define source files and add the executable.
 project(cherenkov_lib)
 set(SOURCE_FILES
