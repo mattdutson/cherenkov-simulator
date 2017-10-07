@@ -1,8 +1,7 @@
+# Note that you'll want to set CMAKE_BUILD_TYPE to Release if you're looking for efficiency - in CLion this is done via
+# a build configuration setting, and not directly in CMakeLists
 cmake_minimum_required(VERSION 3.6)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-# TODO: Find a way to toggle this between release/debug easily
-set(CMAKE_BUILD_TYPE Release)
 
 # Define source files and add the executable.
 project(cherenkov_simulator)

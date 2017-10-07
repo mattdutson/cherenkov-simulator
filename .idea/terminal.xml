@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="TerminalProjectOptionsProvider">
+    <option name="myStartingDirectory" value="$PROJECT_DIR$/cmake-build-debug/cherenkov_test/test_output" />
+  </component>
+</project>
