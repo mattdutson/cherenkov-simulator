@@ -101,7 +101,7 @@ namespace cherenkov_simulator
         TGraphErrors data_graph = GetFitGraph(data, to_sdp);
         data_graph.Fit("profile_fit", "Q");
         TF1* result = data_graph.GetFunction("profile_fit");
-        if (graph_file.empty())
+        if (!graph_file.empty())
         {
             TFile file(graph_file.c_str(), "RECREATE");
             data_graph.Write("fit_graph");
@@ -134,7 +134,7 @@ namespace cherenkov_simulator
         TGraphErrors data_graph = GetFitGraph(data, to_sdp);
         data_graph.Fit("profile_fit", "Q");
         TF1* result = data_graph.GetFunction("profile_fit");
-        if (graph_file.empty())
+        if (!graph_file.empty())
         {
             TFile file(graph_file.c_str(), "RECREATE");
             data_graph.Write("fit_graph");
