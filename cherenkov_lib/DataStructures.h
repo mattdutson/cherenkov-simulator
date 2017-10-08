@@ -77,10 +77,16 @@ namespace cherenkov_simulator
         struct Params
         {
             size_t n_pixels;
+            size_t max_bytes;
             double bin_size;
             double angular_size;
             double linear_size;
         };
+
+        /*
+         * Default constructor
+         */
+        PhotonCount();
 
         /*
          * Creates a 2d indexed collection of vectors (a vector of vectors of vectors). Each vector represents the time

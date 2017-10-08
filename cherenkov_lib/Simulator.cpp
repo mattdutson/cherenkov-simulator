@@ -33,12 +33,13 @@ namespace cherenkov_simulator
         // Properties of the detector
         mirror_radius = config.get<double>("detector.mirror_radius");
         stop_diameter = mirror_radius / (2.0 * config.get<double>("detector.f_number"));
-        double field_of_view = config.get<double>("detector.field_of_view");
+        auto field_of_view = config.get<double>("detector.field_of_view");
         mirror_size = stop_diameter + 2.0 * mirror_radius * Tan(field_of_view / 2.0);
         cluster_diameter = mirror_radius * Sin(field_of_view / 2.0);
 
         // PhotonCount parameters
         count_params.bin_size = config.get<double>("simulation.time_bin");
+        count_params.max_bytes = config.get<size_t>("simulation.max_bytes");
         count_params.n_pixels = config.get<size_t>("detector.n_pmt_across");
         count_params.linear_size = cluster_diameter / count_params.n_pixels;
         count_params.angular_size = count_params.linear_size / (mirror_radius / 2.0);
@@ -190,7 +191,7 @@ namespace cherenkov_simulator
 
     bool Simulator::MirrorImpactPoint(Ray ray, TVector3& point) const
     {
-        NegSphereImpact(ray, point, mirror_radius);
+        NegSphereImpact(std::move(ray), point, mirror_radius);
         return Utility::WithinXYDisk(point, mirror_size / 2.0) && point.Z() < 0.0;
     }
 
@@ -201,7 +202,7 @@ namespace cherenkov_simulator
 
     bool Simulator::CameraImpactPoint(Ray ray, TVector3& point) const
     {
-        NegSphereImpact(ray, point, mirror_radius / 2.0);
+        NegSphereImpact(std::move(ray), point, mirror_radius / 2.0);
         return Utility::WithinXYDisk(point, cluster_diameter / 2.0) && point.Z() < 0;
     }
 

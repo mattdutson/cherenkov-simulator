@@ -53,11 +53,19 @@ namespace cherenkov_simulator
         // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers;)
         {
-            // TODO: Need to find a way to continue to the next iteration if we run out of memory
-            // TODO: Keep an eye on shower 16-6. It requires memory on the order of 50GB, could indicate a leak
             // Simulate the shower and record photon counts before noise is added
             Shower shower = GenerateShower();
-            PhotonCount data = simulator.SimulateShower(shower);
+            PhotonCount data;
+            try
+            {
+                data = simulator.SimulateShower(shower);
+            }
+            catch (std::out_of_range& err)
+            {
+                cout << err.what() << endl;
+                cout << "Skipping this shower..." << endl;
+                continue;
+            }
             if (data.Empty()) continue;
             else i++;
 

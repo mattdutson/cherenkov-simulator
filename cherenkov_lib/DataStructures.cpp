@@ -64,6 +64,8 @@ namespace cherenkov_simulator
         curr_y = -1;
     }
 
+    PhotonCount::PhotonCount() {}
+
     PhotonCount::PhotonCount(Params params, double min_time, double max_time)
     {
         // Copy parameters
@@ -73,6 +75,9 @@ namespace cherenkov_simulator
         linear_size = params.linear_size;
         this->min_time = min_time;
         this->max_time = max_time;
+
+        if (NBins() * Sq(n_pixels) * sizeof(short) > params.max_bytes)
+            throw std::out_of_range("Warning: too much memory requested due to shower direction");
 
         // We haven't seen any non-noise photons yet, so the last time is the start time and channels are trimmed
         first_time = max_time;
