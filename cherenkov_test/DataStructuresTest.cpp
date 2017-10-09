@@ -18,7 +18,8 @@ namespace cherenkov_simulator
     class DataStructuresTest : public ::testing::Test
     {
         PhotonCount::Params test_params;
-        PhotonCount test_data;
+        PhotonCount empty_data;
+        PhotonCount sample_data;
 
         virtual void SetUp()
         {
@@ -29,7 +30,14 @@ namespace cherenkov_simulator
             test_params.angular_size = 0.08;
             test_params.linear_size = 2.5;
 
-            test_data = PhotonCount(test_params, 0.0, 1.0);
+            empty_data = PhotonCount(test_params, 0.0, 1.0);
+
+            sample_data = PhotonCount(test_params, 0.0, 1.0);
+            sample_data.IncrementCell(1, 0, 2, 7);
+            sample_data.IncrementCell(2, 1, 1, 3);
+            sample_data.IncrementCell(3, 1, 1, 3);
+            sample_data.IncrementCell(1, 1, 1, 4);
+            sample_data.IncrementCell(8, 1, 1, 9);
         }
 
         virtual void TearDown()
@@ -40,9 +48,14 @@ namespace cherenkov_simulator
     // TODO: Shouldn't test fixtures have access to these methods without making them public?
     public:
 
-        PhotonCount CopyData()
+        PhotonCount CopyEmpty()
         {
-            return test_data;
+            return empty_data;
+        }
+
+        PhotonCount CopySample()
+        {
+            return sample_data;
         }
 
         PhotonCount::Params CopyParams()
@@ -71,6 +84,25 @@ namespace cherenkov_simulator
         ASSERT_EQ(4, data.Size());
         ASSERT_EQ(10, data.NBins());
         ASSERT_TRUE(data.Empty());
+    }
+
+    /*
+     * An invalid_argument exception should be thrown if the number of bins is odd.
+     */
+    TEST_F(DataStructuresTest, OddNPixels)
+    {
+        PhotonCount::Params params = CopyParams();
+        params.n_pixels = 5;
+        try
+        {
+            // TODO: Do we need to store this?
+            PhotonCount data = PhotonCount(params, 0.0, 1.0);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::exception& err)
+        {
+            ASSERT_EQ(std::string("Number of pixels must be even"), err.what());
+        }
     }
 
     /*
@@ -192,7 +224,7 @@ namespace cherenkov_simulator
     TEST_F(DataStructuresTest, ValidPixels)
     {
         // TODO: May want to do a more complex example
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         Bool2D valid = data.GetValid();
         for (int i = 0; i < valid.size(); i++)
         {
@@ -212,7 +244,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestIterator)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         PhotonCount::Iterator iter = data.GetIterator();
         try
         {
@@ -289,7 +321,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestIteratorReset)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         PhotonCount::Iterator iter = data.GetIterator();
 
         iter.Next();
@@ -329,25 +361,25 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestEmpty)
     {
-        PhotonCount data0 = CopyData();
+        PhotonCount data0 = CopyEmpty();
         ASSERT_TRUE(data0.Empty());
         data0.AddPhoton(0.2, TVector3(0.0, 0.0, 1.0), 1);
         ASSERT_FALSE(data0.Empty());
 
         // Emptiness shouldn't change if the photon is outside valid time bounds.
-        PhotonCount data1 = CopyData();
+        PhotonCount data1 = CopyEmpty();
         ASSERT_TRUE(data1.Empty());
         data1.AddPhoton(-0.3, TVector3(0.0, 0.0, 1.0), 1);
         ASSERT_FALSE(data1.Empty());
 
         // Emptiness shouldn't change if the photon is outside valid spatial bounds.
-        PhotonCount data2 = CopyData();
+        PhotonCount data2 = CopyEmpty();
         ASSERT_TRUE(data2.Empty());
         data2.AddPhoton(0.2, TVector3(0.0, 0.0, -1.0), 1);
         ASSERT_FALSE(data2.Empty());
 
         // Emptiness
-        PhotonCount data3 = CopyData();
+        PhotonCount data3 = CopyEmpty();
         ASSERT_TRUE(data3.Empty());
         PhotonCount::Iterator iter = data2.GetIterator();
         iter.Next();
@@ -360,7 +392,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestBinTime)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         ASSERT_EQ(1, data.Bin(0.15));
         ASSERT_EQ(7, data.Bin(0.75));
     }
@@ -370,7 +402,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestBinOutOfRange)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         try
         {
             data.Bin(-0.1);
@@ -396,7 +428,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestTimeBin)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         ASSERT_EQ(0.1, data.Time(1));
         ASSERT_EQ(0.7, data.Time(7));
     }
@@ -406,7 +438,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestTimeOutOfRange)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         try
         {
             // TODO: Might want to change this to 9
@@ -433,7 +465,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, DetectorAxisAngle)
     {
-        PhotonCount data = CopyData();
+        PhotonCount data = CopyEmpty();
         ASSERT_EQ(0.16, data.DetectorAxisAngle());
     }
 
@@ -442,15 +474,30 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, PixelDirection)
     {
-
+        FAIL() << "Not implemented";
     }
 
     /*
-     * See what happens if an invalid iterator is passed to Direction.
+     * See what happens if an invalid iterator is passed to Direction. The Direction() method will check that they
+     * both have the same size, but not that they both have the same validity mask, as this would be expensive.
      */
     TEST_F(DataStructuresTest, InvalidIterator)
     {
-
+        PhotonCount::Params params = CopyParams();
+        params.n_pixels = 2;
+        PhotonCount data1 = PhotonCount(params, 0.0, 1.0);
+        PhotonCount::Iterator iter1 = data1.GetIterator();
+        iter1.Next();
+        PhotonCount data2 = CopyEmpty();
+        try
+        {
+            data2.Direction(iter1);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::exception& err)
+        {
+            ASSERT_EQ(std::string("Iterator has invalid size"), err.what());
+        }
     }
 
     /*
@@ -458,7 +505,22 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, PixelSignal)
     {
+        PhotonCount data = CopySample();
 
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        // TODO: May want to change this to 10.
+        ASSERT_EQ(Short1D(11, 0), data.Signal(iter));
+
+        iter.Next();
+        // TODO: May want to change this to 10.
+        Short1D expected = Short1D(11, 0);
+        expected[3] = 5;
+        expected[4] = 1;
+        expected[9] = 8;
+        ASSERT_EQ(expected, data.Signal(iter));
     }
 
     /*
@@ -466,7 +528,16 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, SumBins)
     {
+        PhotonCount data = CopySample();
 
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(0, data.SumBins(iter));
+
+        iter.Next();
+        ASSERT_EQ(14, data.SumBins(iter));
     }
 
     /*
@@ -474,7 +545,22 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, SumBinsFiltered)
     {
+        PhotonCount data = CopySample();
 
+        Bool3D mask = data.GetFalseMatrix();
+        // TODO: May want to change this to 10
+        mask[0][2] = Bool1D(11, false);
+        mask[1][1][3] = true;
+        mask[1][1][4] = true;
+        mask[1][1][9] = false;
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(0, data.SumBinsFiltered(iter, &mask));
+
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(5, data.SumBinsFiltered(iter, &mask));
     }
 
     /*
@@ -482,7 +568,26 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, AverageTime)
     {
+        PhotonCount data = CopySample();
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(0.7, data.AverageTime(iter));
 
+        iter.Next();
+        try
+        {
+            // TODO: Do we need to store this?
+            double avg = data.AverageTime(iter);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::exception& err)
+        {
+            ASSERT_EQ(std::string("Channel is empty, division by zero"), err.what());
+        }
+
+        iter.Next();
+        ASSERT_EQ(0.65, data.AverageTime(iter));
     }
 
     /*
@@ -490,7 +595,28 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TimeError)
     {
+        PhotonCount data = CopySample();
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(0.1 / TMath::Sqrt(12.0), data.TimeError(iter));
 
+        iter.Next();
+        try
+        {
+            // TODO: Do we need to store this?
+            double var = data.TimeError(iter);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::exception& err)
+        {
+            ASSERT_EQ(std::string("Channel is empty, division by zero"), err.what());
+        }
+
+        // TODO: Is our data centrally binned or left binned? This will likely impact our estimate of errors.
+        iter.Next();
+        double expected = TMath::Sqrt(117.5 / 14.0 + TMath::Sq(0.1) / 12.0);
+        ASSERT_EQ(expected, data.TimeError(iter));
     }
 
     /*
@@ -498,7 +624,19 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, GetFalseMatrix)
     {
-
+        PhotonCount data = CopyEmpty();
+        Bool3D matrix = data.GetFalseMatrix();
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                // TODO: May need to change this to 10
+                for (int k = 0; k < 11; k++)
+                {
+                    ASSERT_FALSE(matrix[i][j][k]);
+                }
+            }
+        }
     }
 
     /*

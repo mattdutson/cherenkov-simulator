@@ -133,7 +133,8 @@ namespace cherenkov_simulator
         double DetectorAxisAngle() const;
 
         /*
-         * Determines the direction of the photomultiplier referenced by the iterator.
+         * Determines the direction of the photomultiplier referenced by the iterator. If the iterator does not have the
+         * same size as this object's validity mask, throws an invalid_argument exception.
          */
         TVector3 Direction(const Iterator& iter) const;
 
@@ -153,13 +154,15 @@ namespace cherenkov_simulator
         int SumBinsFiltered(const Iterator& iter, const Bool3D* filter) const;
 
         /*
-         * Finds the average time in the pixel referenced by the iterator.
+         * Finds the average time in the pixel referenced by the iterator. Throws a domain_error if the channel
+         * referenced by the iterator is empty (this results in division by zero).
          */
         double AverageTime(const Iterator& iter) const;
 
         /*
          * Finds the standard deviation of the times in the pixel referenced by the iterator, applying Sheppard's
-         * correction because the data is binned.
+         * correction because the data is binned. Throws a domain_error if the channel referenced by the iterator is
+         * empty (this results in division by zero).
          */
         double TimeError(const Iterator& iter) const;
 
