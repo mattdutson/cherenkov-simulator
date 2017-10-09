@@ -116,10 +116,10 @@ namespace cherenkov_simulator
         Analysis::MakeProfileGraph(data).Write("after_clear_graph");
         Analysis::MakeSumMap(data).Write("after_clear_map");
 
-        Reconstructor::Result result = reconstructor->Reconstruct(data);
-        std::cout << "Actual Angle: " << shower.ImpactAngle() << "\tActual Impact: " << shower.ImpactParam() << std::endl;
-        std::cout << "Mono Angle: " << result.mono.ImpactAngle() << "\tMono Impact: " << result.mono.ImpactParam() << std::endl;
-        std::cout << "Chkv Angle: " << result.ckv.ImpactAngle() << "\tChkv Impact: " << result.ckv.ImpactParam() << std::endl;
+//        Reconstructor::Result result = reconstructor->Reconstruct(data);
+//        std::cout << "Actual Angle: " << shower.ImpactAngle() << "\tActual Impact: " << shower.ImpactParam() << std::endl;
+//        std::cout << "Mono Angle: " << result.mono.ImpactAngle() << "\tMono Impact: " << result.mono.ImpactParam() << std::endl;
+//        std::cout << "Chkv Angle: " << result.ckv.ImpactAngle() << "\tChkv Impact: " << result.ckv.ImpactParam() << std::endl;
     }
 
     TEST_F(ReconstructorTest, TriggeringMaps)
@@ -165,9 +165,9 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        Reconstructor::Result result = reconstructor->Reconstruct(data);
-        result.mono.Position().Write("straight_shower_position");
-        result.mono.Direction().Write("straight_shower_direction");
+//        Reconstructor::Result result = reconstructor->Reconstruct(data);
+//        result.mono.Position().Write("straight_shower_position");
+//        result.mono.Direction().Write("straight_shower_direction");
     }
 
     TEST_F(ReconstructorTest, AngleShowerGeometry)
@@ -176,9 +176,9 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 0, -2), 1e6, 0, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        Reconstructor::Result result = reconstructor->Reconstruct(data);
-        result.mono.Position().Write("angle_shower_position");
-        result.mono.Direction().Write("angle_shower_direction");
+//        Reconstructor::Result result = reconstructor->Reconstruct(data);
+//        result.mono.Position().Write("angle_shower_position");
+//        result.mono.Direction().Write("angle_shower_direction");
     }
 
     TEST_F(ReconstructorTest, StraightCherenkovRecon)
@@ -188,13 +188,13 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
         reconstructor->AddNoise(data);
 
-        Reconstructor::Result result = reconstructor->Reconstruct(data);
-        result.ckv.Position().Write("straight_shower_position");
-        result.ckv.Direction().Write("straight_shower_direction");
-        std::cout << "Mono Direction Error: " << result.mono.Direction().Angle(shower.Direction()) << std::endl;
-        std::cout << "Mono Impact Error: " << Abs(result.mono.Position().Mag() - 1e6) << std::endl;
-        std::cout << "Cherenkov Direction Error: " << result.ckv.Direction().Angle(shower.Direction()) << std::endl;
-        std::cout << "Cherenkov Impact Error: " << Abs(result.ckv.Position().Mag() - 1e6) << std::endl;
+//        Reconstructor::Result result = reconstructor->Reconstruct(data);
+//        result.ckv.Position().Write("straight_shower_position");
+//        result.ckv.Direction().Write("straight_shower_direction");
+//        std::cout << "Mono Direction Error: " << result.mono.Direction().Angle(shower.Direction()) << std::endl;
+//        std::cout << "Mono Impact Error: " << Abs(result.mono.Position().Mag() - 1e6) << std::endl;
+//        std::cout << "Cherenkov Direction Error: " << result.ckv.Direction().Angle(shower.Direction()) << std::endl;
+//        std::cout << "Cherenkov Impact Error: " << Abs(result.ckv.Position().Mag() - 1e6) << std::endl;
     }
 
     TEST_F(ReconstructorTest, AngleCherenkovRecon)
@@ -204,12 +204,12 @@ namespace cherenkov_simulator
         PhotonCount data = simulator->SimulateShower(shower);
         reconstructor->AddNoise(data);
 
-        Reconstructor::Result result = reconstructor->Reconstruct(data);
-        result.ckv.Position().Write("angle_shower_position");
-        result.ckv.Direction().Write("angle_shower_direction");
-        std::cout << "Mono Direction Error: " << result.mono.Direction().Angle(shower.Direction()) << std::endl;
-        std::cout << "Mono Impact Error: " << Abs(result.mono.Position().Mag() - 1e6) << std::endl;
-        std::cout << "Cherenkov Direction Error: " << result.ckv.Direction().Angle(shower.Direction()) << std::endl;
-        std::cout << "Cherenkov Impact Error: " << Abs(result.ckv.Position().Mag() - 1e6) << std::endl;
+//        Reconstructor::Result result = reconstructor->Reconstruct(data);
+//        result.ckv.Position().Write("angle_shower_position");
+//        result.ckv.Direction().Write("angle_shower_direction");
+//        std::cout << "Mono Direction Error: " << result.mono.Direction().Angle(shower.Direction()) << std::endl;
+//        std::cout << "Mono Impact Error: " << Abs(result.mono.Position().Mag() - 1e6) << std::endl;
+//        std::cout << "Cherenkov Direction Error: " << result.ckv.Direction().Angle(shower.Direction()) << std::endl;
+//        std::cout << "Cherenkov Impact Error: " << Abs(result.ckv.Position().Mag() - 1e6) << std::endl;
     }
 }

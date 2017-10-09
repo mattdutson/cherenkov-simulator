@@ -50,7 +50,7 @@ namespace cherenkov_simulator
 
             /*
              * Moves to the next photomultiplier signal. Returns false if the iterator has reached the end of the
-             * collection (the last photomultiplier).
+             * collection (the last photomultiplier). Steps through y and then through x.
              */
             bool Next();
 
@@ -91,7 +91,9 @@ namespace cherenkov_simulator
         /*
          * Creates a 2d indexed collection of vectors (a vector of vectors of vectors). Each vector represents the time
          * series for a particular photomultiplier. Takes the width/height of the array in number of photomultipliers,
-         * the starting time for the series, the width of a time bin, and the angular width of a photomultiplier.
+         * the starting time for the series, the width of a time bin, and the angular width of a photomultiplier. The
+         * width/height of the array can be zero (this is what the default constructor does), although this probably
+         * isn't very useful. The bin size CANNOT be zero, as this results in divisions by zero.
          */
         PhotonCount(Params params, double min_time, double max_time);
 
@@ -116,12 +118,12 @@ namespace cherenkov_simulator
         bool Empty() const;
 
         /*
-         * Finds the time corresponding to the specified bin.
+         * Finds the time corresponding to the specified bin. Throws an exception if the bin is out of range.
          */
         double Time(int bin) const;
 
         /*
-         * Finds the bin corresponding to some time.
+         * Finds the bin corresponding to some time. Throws an exception if the time is out of range.
          */
         size_t Bin(double time) const;
 
@@ -181,7 +183,8 @@ namespace cherenkov_simulator
         /*
          * Adds some number of noise photons to the channel referenced by the iterator. The noise rate represents the
          * number of photons per second per steradian per square centimeter. These photons are randomly scattered
-         * throughout the time bins using the random number generator.
+         * throughout the time bins using the random number generator. Adding noise will set "empty" to false,
+         * regardless of how much (if any) noise is added.
          */
         void AddNoise(double noise_rate, const Iterator& iter);
 
@@ -218,6 +221,7 @@ namespace cherenkov_simulator
         friend class DataStructuresTest;
 
         // The underlying data structure and its validity mask
+        // TODO: The three-dimensional array wastes some space (fitting a circle into a square) - it would be nice to convert x-y coordinates to a single array index
         Short3D counts;
         Short2D sums;
         Bool2D valid;

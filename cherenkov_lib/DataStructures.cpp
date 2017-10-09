@@ -182,6 +182,7 @@ namespace cherenkov_simulator
         return Sqrt(variance / count);
     }
 
+    // TODO: Return a reference/pointer to the iterator instead of making a copy, then check that it's the right iterator when it's passed to a method
     PhotonCount::Iterator PhotonCount::GetIterator() const
     {
         return Iterator(valid);
