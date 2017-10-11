@@ -179,7 +179,7 @@ namespace cherenkov_simulator
 
         /*
          * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
-         * specified time is before the container's start time, nothing is done.
+         * specified time or direction are outside of valid bounds, nothing is done.
          */
         void AddPhoton(double time, TVector3 direction, int thinning);
 

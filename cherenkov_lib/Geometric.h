@@ -45,7 +45,7 @@ namespace cherenkov_simulator
 
         /*
          * Returns true if a ray going outward from the origin in the specified direction would eventually strike the
-         * plane.
+         * plane. If the plane is exactly at the origin, false is returned.
          */
         bool InFrontOf(TVector3 direction) const;
 
@@ -132,7 +132,8 @@ namespace cherenkov_simulator
         double TimeToPlane(Plane plane) const;
 
         /*
-         * Reflects the ray across the normal vector.
+         * Reflects the ray across the normal vector. The method should work as expected regardless of the normal
+         * vector's sign. std::invalid_argument will be thrown if a zero vector is passed as the normal.
          */
         void Reflect(TVector3 normal);
 
@@ -228,12 +229,13 @@ namespace cherenkov_simulator
         double ImpactAngle() const;
 
         /*
-         * Returns the atmospheric density at the shower's current position.
+         * Returns the atmospheric density at the shower's current position. The exponential model is defined at all
+         * heights, so this is guaranteed to return, even if the height is negative.
          */
         double LocalRho() const;
 
         /*
-         * Returns the local value for n - 1.
+         * Returns the local value for n - 1. Will calculate a value for any h for the same reason as LocalRho.
          */
         double LocalDelta() const;
 
@@ -243,12 +245,13 @@ namespace cherenkov_simulator
         double GaisserHillas() const;
 
         /*
-         * Calculates the Cherenkov threshold energy of the shower.
+         * Calculates the Cherenkov threshold energy of the shower. std::invalid_argument is thrown if it is not
+         * positive. We don't check whether it's above some particle creation threshold.
          */
         double EThresh() const;
 
         /*
-         * Increments the position of the shower by the specified slant depth. Returns the distance traversed.
+         * Increments the position of the shower by the specified slant depth.
          */
         void IncrementDepth(double depth);
 

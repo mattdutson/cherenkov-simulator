@@ -644,22 +644,55 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, AddValidPhoton)
     {
+        FAIL() << "Not implemented";
+    }
 
+    /*
+     * See what happens if a photon with an invalid position is added. This should leave the underlying container
+     * unmodified.
+     */
+    TEST_F(DataStructuresTest, AddInvalidPosition)
+    {
+        PhotonCount data = CopyEmpty();
+        data.AddPhoton(0.35, TVector3(0, 0, -1), 1);
+        ASSERT_TRUE(data.Empty());
+
+        PhotonCount::Iterator iter = data.GetIterator();
+        while (iter.Next())
+            ASSERT_EQ(0, data.SumBins(iter));
+    }
+
+    /*
+     * See what happens if a photon with an undefined (0, 0, 0) position is added. This should throw a
+     * std::invalid_argument. Also make sure we're able to add photons at angle pi/2.
+     */
+    TEST_F(DataStructuresTest, AddUndefinedPosition)
+    {
+        PhotonCount data = CopyEmpty();
+        try
+        {
+            data.AddPhoton(0.35, TVector3(0, 0, 0), 1);
+            FAIL() << "Exception not thrown";
+        }
+        catch (std::exception& err)
+        {
+            ASSERT_EQ(std::string("Direction cannot be a zero vector"), err.what());
+        }
+        data.AddPhoton(0.35, TVector3(1, 1, 0), 1);
     }
 
     /*
      * See what happens if a photon with an invalid time is added.
      */
-    TEST_F(DataStructuresTest, AddInvalidPosition)
-    {
-
-    }
-
-    /*
-     * See what happens if a photon with an invalid position is added.
-     */
     TEST_F(DataStructuresTest, AddInvalidTime)
     {
+        PhotonCount data = CopyEmpty();
+        data.AddPhoton(-0.1, TVector3(0, 0, 1), 1);
+        ASSERT_TRUE(data.Empty());
+
+        PhotonCount::Iterator iter = data.GetIterator();
+        while (iter.Next())
+            ASSERT_EQ(0, data.SumBins(iter));
 
     }
 
@@ -668,7 +701,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, AddNoise)
     {
-
+        FAIL() << "Not implemented";
     }
 
     /*
@@ -676,15 +709,15 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, SubtractNoise)
     {
-
+        FAIL() << "Not implemented";
     }
 
     /*
-     * Tests the AboeThreshold function.
+     * Tests the AboveThreshold function.
      */
     TEST_F(DataStructuresTest, AboveThreshold)
     {
-
+        FAIL() << "Not implemented";
     }
 
     /*
@@ -692,7 +725,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, FindThreshold)
     {
-
+        FAIL() << "Not implemented";
     }
 
     /*
@@ -700,7 +733,27 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, Subset)
     {
+        PhotonCount data = CopySample();
+        Bool3D mat = data.GetFalseMatrix();
+        mat[1][1][3] = true;
+        data.Subset(mat);
 
+        PhotonCount::Iterator iter = data.GetIterator();
+        while (iter.Next())
+        {
+            Short1D signal = data.Signal(iter);
+            if (iter.X() == 1 && iter.Y() == 1)
+            {
+                ASSERT_EQ(5, signal[3]);
+                ASSERT_EQ(0, signal[4]);
+                ASSERT_EQ(0, signal[9]);
+            }
+            else
+            {
+                // TODO: May want to change this to 10
+                ASSERT_EQ(Short1D(11, 0), signal);
+            }
+        }
     }
 
     /*
@@ -708,6 +761,10 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, Trim)
     {
-
+        PhotonCount data = CopySample();
+        data.Trim();
+        ASSERT_EQ(7, data.NBins());
+        ASSERT_EQ(0.3, data.Time(0));
+        ASSERT_EQ(0.9, data.Time(6));
     }
 }

@@ -115,6 +115,8 @@ namespace cherenkov_simulator
     bool Ray::Refract(TVector3 normal, double n_in, double n_out)
     {
         // Reverse the normal vector so it points in the direction of the incoming ray
+        // TODO: Perform a check and update here on the direction.
+        // TODO: Perform a check on the critical angle of the substance.
         normal = -normal;
 
         double angle_in = velocity.Angle(normal);
