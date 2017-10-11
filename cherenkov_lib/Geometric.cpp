@@ -39,7 +39,8 @@ namespace cherenkov_simulator
         return outward_ray.TimeToPlane(*this) > 0;
     }
 
-    Ray::Ray() = default;
+    Ray::Ray() : Ray(TVector3(), TVector3(0, 0, 1), 0)
+    {}
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
@@ -109,6 +110,7 @@ namespace cherenkov_simulator
 
     void Ray::Reflect(TVector3 normal)
     {
+        // TODO: Would it be a good idea to update this with the SetDirection method?
         velocity -= 2 * velocity.Dot(normal.Unit()) * normal.Unit();
     }
 
@@ -117,6 +119,7 @@ namespace cherenkov_simulator
         // Reverse the normal vector so it points in the direction of the incoming ray
         // TODO: Perform a check and update here on the direction.
         // TODO: Perform a check on the critical angle of the substance.
+        // TODO: Would it be a good idea to update the velocity with the SetDirection method?
         normal = -normal;
 
         double angle_in = velocity.Angle(normal);

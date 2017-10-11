@@ -17,6 +17,8 @@ namespace cherenkov_simulator
      */
     class DataStructuresTest : public ::testing::Test
     {
+    private:
+
         PhotonCount::Params test_params;
         PhotonCount empty_data;
         PhotonCount sample_data;
