@@ -139,7 +139,7 @@ namespace cherenkov_simulator
         double total = yield * shower.GaisserHillas() * depth_step;
         TVector3 ground_impact = shower.PlaneImpact(ground_plane);
         double cos_theta = Abs(Cos(ground_impact.Angle(ground_plane.Normal())));
-        double fraction = 2 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
+        double fraction = 4.0 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
         return Utility::RandomRound(total * fraction / (double) ckv_thin);
     }
 
