@@ -266,7 +266,7 @@ public:
     TEST_F(GeometricTest, PropagateToPlane)
     {
         Ray ray = CopyRay2();
-        
+
     }
 
     /*
