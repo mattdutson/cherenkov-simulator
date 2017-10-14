@@ -77,10 +77,10 @@ namespace cherenkov_simulator
         struct Params
         {
             size_t n_pixels;
-            size_t max_bytes;
+            size_t max_byte;
             double bin_size;
-            double angular_size;
-            double linear_size;
+            double ang_size;
+            double lin_size;
         };
 
         /*
@@ -133,8 +133,7 @@ namespace cherenkov_simulator
         double DetectorAxisAngle() const;
 
         /*
-         * Determines the direction of the photomultiplier referenced by the iterator. If the iterator does not have the
-         * same size as this object's validity mask, throws an invalid_argument exception.
+         * Determines the direction of the photomultiplier referenced by the iterator.
          */
         TVector3 Direction(const Iterator& iter) const;
 
@@ -160,9 +159,9 @@ namespace cherenkov_simulator
         double AverageTime(const Iterator& iter) const;
 
         /*
-         * Finds the standard deviation of the times in the pixel referenced by the iterator, applying Sheppard's
-         * correction because the data is binned. Throws a domain_error if the channel referenced by the iterator is
-         * empty (this results in division by zero).
+         * Finds the standard deviation of the mean of times in the pixel referenced by the iterator, applying
+         * Sheppard's correction because the data is binned. Throws an invalid_argument if the channel referenced by
+         * the iterator is empty (this results in division by zero).
          */
         double TimeError(const Iterator& iter) const;
 
@@ -178,10 +177,10 @@ namespace cherenkov_simulator
         Bool3D GetFalseMatrix() const;
 
         /*
-         * Increments the photon count at some time for the photomultiplier pointing in the specified direction. If the
-         * specified time or direction are outside of valid bounds, nothing is done.
+         * Increments the photon count at some time for the photomultiplier at the specified position. Nothing is done
+         * if the specified time is invalid or the position is outside the axial cylinder containing the focal surface.
          */
-        void AddPhoton(double time, TVector3 direction, int thinning);
+        void AddPhoton(double time, TVector3 position, int thinning);
 
         /*
          * Adds some number of noise photons to the channel referenced by the iterator. The noise rate represents the
@@ -203,14 +202,14 @@ namespace cherenkov_simulator
 
         /*
          * Returns a vector which contains "true" for each bin in the current pixel which contains more than
-         * trigger_thresh * sigma photon counts.
+         * "threshold" photons.
          */
         Bool1D AboveThreshold(const Iterator& iter, int threshold) const;
 
         /*
          * Determines the appropriate threshold given the global noise rate (Poisson distributed), and the number of
-         * standard deviations above the mean where the threshold should lie. Any signals at or above this threshold are
-         * considered "good".
+         * standard deviations above the mean where the threshold should lie. Any signals strictly above this
+         * threshold are considered "good".
          */
         int FindThreshold(double global_rate, double sigma) const;
 
@@ -224,26 +223,25 @@ namespace cherenkov_simulator
         friend class DataStructuresTest;
 
         // The underlying data structure and its validity mask
-        // TODO: The three-dimensional array wastes some space (fitting a circle into a square) - it would be nice to convert x-y coordinates to a single array index
         Short3D counts;
         Short2D sums;
         Bool2D valid;
 
         // The number and size of each pixel - cgs, sr
         size_t n_pixels;
-        double angular_size;
-        double linear_size;
+        double ang_size;
+        double lin_size;
 
         // The time at the beginning of the zeroth bin - cgs
         double bin_size;
         double min_time;
         double max_time;
-        double first_time;
+        double frst_time;
         double last_time;
 
         // Keeps track of whether we need to call Trim
         bool empty;
-        bool trimmed;
+        bool trimd;
 
         /*
          * Modifies some (x, y, t) cell by the specified amount, taking an Iterator instead of an x, y position.
@@ -256,9 +254,9 @@ namespace cherenkov_simulator
         void IncrementCell(int inc, size_t x_index, size_t y_index, size_t t);
 
         /*
-         * Determines whether the pixel at the specified indices lies within the central circle.
+         * Determines whether the pixel at the specified indices lies within the central circle. This
          */
-        bool ValidPixel(int x_index, int y_index) const;
+        bool IsValid(int x_index, int y_index) const;
 
         /*
          * A private method which is functionally equivalent to Direction(const Iterator*).

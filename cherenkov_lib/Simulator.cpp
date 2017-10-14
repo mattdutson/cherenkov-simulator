@@ -39,10 +39,10 @@ namespace cherenkov_simulator
 
         // PhotonCount parameters
         count_params.bin_size = config.get<double>("simulation.time_bin");
-        count_params.max_bytes = config.get<size_t>("simulation.max_bytes");
+        count_params.max_byte = config.get<size_t>("simulation.max_bytes");
         count_params.n_pixels = config.get<size_t>("detector.n_pmt_across");
-        count_params.linear_size = cluster_diameter / count_params.n_pixels;
-        count_params.angular_size = count_params.linear_size / (mirror_radius / 2.0);
+        count_params.lin_size = cluster_diameter / count_params.n_pixels;
+        count_params.ang_size = count_params.lin_size / (mirror_radius / 2.0);
 
         // Miscellaneous member variables
         ckv_integrator = TF1("ckv_integrator", ckv_func, 0.0, Infinity(), 3);

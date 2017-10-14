@@ -9,6 +9,7 @@
 
 #include "DataStructures.h"
 #include "Analysis.h"
+#include "Helper.h"
 
 namespace cherenkov_simulator
 {
@@ -27,27 +28,24 @@ namespace cherenkov_simulator
         {
             test_params = PhotonCount::Params();
             test_params.n_pixels = 4;
-            test_params.max_bytes = 4000000;
+            test_params.max_byte = 4000000;
             test_params.bin_size = 0.1;
-            test_params.angular_size = 0.08;
-            test_params.linear_size = 2.5;
+            test_params.ang_size = 0.08;
+            test_params.lin_size = 2.5;
 
-            empty_data = PhotonCount(test_params, 0.0, 1.0);
+            empty_data = PhotonCount(test_params, 0.0, 0.95);
 
-            sample_data = PhotonCount(test_params, 0.0, 1.0);
+            sample_data = PhotonCount(test_params, 0.0, 0.95);
             sample_data.IncrementCell(1, 0, 2, 7);
             sample_data.IncrementCell(2, 1, 1, 3);
             sample_data.IncrementCell(3, 1, 1, 3);
             sample_data.IncrementCell(1, 1, 1, 4);
             sample_data.IncrementCell(8, 1, 1, 9);
+            sample_data.trimd = false;
+            sample_data.frst_time = 0.35;
+            sample_data.last_time = 0.95;
         }
 
-        virtual void TearDown()
-        {
-
-        }
-
-    // TODO: Shouldn't test fixtures have access to these methods without making them public?
     public:
 
         PhotonCount CopyEmpty()
@@ -63,6 +61,11 @@ namespace cherenkov_simulator
         PhotonCount::Params CopyParams()
         {
             return test_params;
+        }
+
+        double FriendRealNoiseRate(PhotonCount& data, double rate)
+        {
+            return data.RealNoiseRate(rate);
         }
     };
 
@@ -82,7 +85,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, UserConstructor)
     {
-        PhotonCount data = PhotonCount(CopyParams(), 0.0, 1.0);
+        PhotonCount data = PhotonCount(CopyParams(), 0.0, 0.95);
         ASSERT_EQ(4, data.Size());
         ASSERT_EQ(10, data.NBins());
         ASSERT_TRUE(data.Empty());
@@ -97,42 +100,33 @@ namespace cherenkov_simulator
         params.n_pixels = 5;
         try
         {
-            // TODO: Do we need to store this?
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
+            PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::invalid_argument& err)
         {
             ASSERT_EQ(std::string("Number of pixels must be even"), err.what());
         }
     }
 
     /*
-     * Check what happens if we exceed the maximum number of bytes.
+     * An invalid_argument exception should be thrown if the size of the underlying data structure is too large.
      */
     TEST_F(DataStructuresTest, OverMaxBytes)
     {
         PhotonCount::Params params = CopyParams();
         try
         {
-            params.max_bytes = 10;
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
+            params.max_byte = 10;
+            PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::out_of_range& err)
         {
             ASSERT_EQ(std::string("Warning: too much memory requested due to shower direction"), err.what());
         }
-        try
-        {
-            // TODO: May want to drop this to 340.
-            params.max_bytes = 352;
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
-        }
-        catch(std::exception& err)
-        {
-            FAIL() << "Exception thrown: " << err.what();
-        }
+        params.max_byte = 320;
+        PhotonCount(params, 0.0, 0.95);
     }
 
     /*
@@ -143,89 +137,98 @@ namespace cherenkov_simulator
     {
         PhotonCount::Params params = CopyParams();
         params.n_pixels = 0;
-        try
-        {
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
-        }
-        catch(std::exception& err)
-        {
-            FAIL() << "Exception thrown: " << err.what();
-        }
+        PhotonCount(params, 0.0, 0.95);
     }
 
     /*
-     * See what happens if the bin size is zero. This will cause division by zero when determining the temporal bin, so
-     * an exception should be thrown.
+     * An invalid_argument exception should be thrown if the bin size is non-positive.
      */
-    TEST_F(DataStructuresTest, ZeroBinSize)
+    TEST_F(DataStructuresTest, NonPositiveBinSize)
     {
         PhotonCount::Params params = CopyParams();
-        params.bin_size = 0;
+        params.bin_size = 0.0;
         try
         {
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
+            PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Bin size cannot be zero"), err.what());
+            ASSERT_EQ(std::string("Bin size must be positive"), err.what());
+        }
+        params.bin_size = -0.1;
+        try
+        {
+            PhotonCount(params, 0.0, 0.95);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::invalid_argument& err)
+        {
+            ASSERT_EQ(std::string("Bin size must be positive"), err.what());
         }
     }
 
     /*
-     * See what happens if the angular size is zero (angular size is for a single pixel). This will cause division by
-     * zero when determining the spatial bin, so an exception should be thrown.
+     * An invalid_argument exception should be thrown if the angular size is non-positive.
      */
-    TEST_F(DataStructuresTest, ZeroAngularSize)
+    TEST_F(DataStructuresTest, NonPositiveAngularSize)
     {
         PhotonCount::Params params = CopyParams();
-        params.angular_size = 0;
+        params.ang_size = 0.0;
         try
         {
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
+            PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Angular size cannot be zero"), err.what());
+            ASSERT_EQ(std::string("Angular size must be positive"), err.what());
+        }
+        params.ang_size = -0.08;
+        try
+        {
+            PhotonCount(params, 0.0, 0.95);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::invalid_argument& err)
+        {
+            ASSERT_EQ(std::string("Angular size must be positive"), err.what());
         }
     }
 
     /*
-     * See what happens if the linear size is zero (linear size is for a single pixel). Setting this to zero does not
-     * necessarily cause division by zero, but does result in undefined behavior, so an exception should be thrown.
+     * An invalid_argument exception should be thrown if the linear size is non-positive.
      */
-    TEST_F(DataStructuresTest, ZeroLinearSize)
+    TEST_F(DataStructuresTest, NonPositiveLinearSize)
     {
         PhotonCount::Params params = CopyParams();
-        params.linear_size = 0;
+        params.lin_size = 0.0;
         try
         {
-            // TODO: Do we need to actually declare a variable, or can we just call the constructor?
-            PhotonCount data = PhotonCount(params, 0.0, 1.0);
+            PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Linear size cannot be zero"), err.what());
+            ASSERT_EQ(std::string("Linear size must be positive"), err.what());
+        }
+        params.lin_size = -0.08;
+        try
+        {
+            PhotonCount(params, 0.0, 0.95);
+            FAIL() << "Exception not thrown";
+        }
+        catch(std::invalid_argument& err)
+        {
+            ASSERT_EQ(std::string("Linear size must be positive"), err.what());
         }
     }
 
     /*
-     * See what happens if we make the field of view very wide (close to 360 degrees).
-     */
-    TEST_F(DataStructuresTest, VeryWideField)
-    {
-        // TODO: I can see that this likely a problem, but not quite sure how to test it yet. Or maybe it's not a problem.
-        FAIL() << "Not implemented";
-    }
-
-    /*
-     * Checks that the correct pixels are valid.
+     * Check that the correct pixels are marked as positive.
      */
     TEST_F(DataStructuresTest, ValidPixels)
     {
-        // TODO: May want to do a more complex example
         PhotonCount data = CopyEmpty();
         Bool2D valid = data.GetValid();
         for (int i = 0; i < valid.size(); i++)
@@ -241,19 +244,18 @@ namespace cherenkov_simulator
     }
 
     /*
-     * Test the PhotonCount::Iterator. Steps through y and then steps through x. An exception should be thrown if the
-     * iterator is at an invalid position and X() or Y() are called.
+     * An out_of_range exception should be thrown if Next() has not been called on a PhotonCount::Iterator before X() or
+     * Y() are called.
      */
-    TEST_F(DataStructuresTest, TestIterator)
+    TEST_F(DataStructuresTest, InvalidIteratorPosition)
     {
-        PhotonCount data = CopyEmpty();
-        PhotonCount::Iterator iter = data.GetIterator();
+        PhotonCount::Iterator iter = CopyEmpty().GetIterator();
         try
         {
             iter.X();
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::out_of_range& err)
         {
             ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
         }
@@ -262,10 +264,19 @@ namespace cherenkov_simulator
             iter.Y();
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::out_of_range& err)
         {
             ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
         }
+    }
+
+    /*
+     * Test the PhotonCount::Iterator. Steps through y and then steps through x. An exception should be thrown if the
+     * iterator is at an invalid position and X() or Y() are called.
+     */
+    TEST_F(DataStructuresTest, TestIterator)
+    {
+        PhotonCount::Iterator iter = CopyEmpty().GetIterator();
 
         ASSERT_TRUE(iter.Next());
         ASSERT_EQ(0, iter.X());
@@ -323,19 +334,17 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, TestIteratorReset)
     {
-        PhotonCount data = CopyEmpty();
-        PhotonCount::Iterator iter = data.GetIterator();
+        PhotonCount::Iterator iter = CopyEmpty().GetIterator();
 
         iter.Next();
         iter.Next();
         iter.Reset();
-
         try
         {
             iter.X();
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::out_of_range& err)
         {
             ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
         }
@@ -349,38 +358,36 @@ namespace cherenkov_simulator
             ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
         }
 
-        ASSERT_TRUE(iter.Next());
+        iter.Next();
         ASSERT_EQ(0, iter.X());
         ASSERT_EQ(1, iter.Y());
 
-        ASSERT_TRUE(iter.Next());
+        iter.Next();
         ASSERT_EQ(0, iter.X());
         ASSERT_EQ(2, iter.Y());
     }
 
     /*
-     * Make sure the empty flag is updated correctly.
+     * Make sure the empty flag is updated correctly. The container should remain empty if the photon is outside valid
+     * time or space bounds. Calling the AddNoise function causes emptiness to be false.
      */
     TEST_F(DataStructuresTest, TestEmpty)
     {
         PhotonCount data0 = CopyEmpty();
         ASSERT_TRUE(data0.Empty());
-        data0.AddPhoton(0.2, TVector3(0.0, 0.0, 1.0), 1);
+        data0.AddPhoton(0.2, TVector3(0.0, 0.0, -1.0), 1);
         ASSERT_FALSE(data0.Empty());
 
-        // Emptiness shouldn't change if the photon is outside valid time bounds.
         PhotonCount data1 = CopyEmpty();
         ASSERT_TRUE(data1.Empty());
-        data1.AddPhoton(-0.3, TVector3(0.0, 0.0, 1.0), 1);
-        ASSERT_FALSE(data1.Empty());
+        data1.AddPhoton(-0.3, TVector3(0.0, 0.0, -1.0), 1);
+        ASSERT_TRUE(data1.Empty());
 
-        // Emptiness shouldn't change if the photon is outside valid spatial bounds.
         PhotonCount data2 = CopyEmpty();
         ASSERT_TRUE(data2.Empty());
-        data2.AddPhoton(0.2, TVector3(0.0, 0.0, -1.0), 1);
-        ASSERT_FALSE(data2.Empty());
+        data2.AddPhoton(0.2, TVector3(0.0, 1.0, 0.0), 1);
+        ASSERT_TRUE(data2.Empty());
 
-        // Emptiness
         PhotonCount data3 = CopyEmpty();
         ASSERT_TRUE(data3.Empty());
         PhotonCount::Iterator iter = data2.GetIterator();
@@ -400,7 +407,7 @@ namespace cherenkov_simulator
     }
 
     /*
-     * Check what happens if the bin passed to Time(int) is out of range.
+     * An out_of_range exception should be thrown if an invalid time is passed to the Bin() function.
      */
     TEST_F(DataStructuresTest, TestBinOutOfRange)
     {
@@ -410,16 +417,16 @@ namespace cherenkov_simulator
             data.Bin(-0.1);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::out_of_range& err)
         {
             ASSERT_EQ(std::string("Invalid time"), err.what());
         }
         try
         {
-            data.Bin(1.1);
+            data.Bin(0.99);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::out_of_range& err)
         {
             ASSERT_EQ(std::string("Invalid time"), err.what());
         }
@@ -431,25 +438,24 @@ namespace cherenkov_simulator
     TEST_F(DataStructuresTest, TestTimeBin)
     {
         PhotonCount data = CopyEmpty();
-        ASSERT_EQ(0.1, data.Time(1));
-        ASSERT_EQ(0.7, data.Time(7));
+        ASSERT_TRUE(Helper::ValuesEqual(0.15, data.Time(1), 1e-6));
+        ASSERT_TRUE(Helper::ValuesEqual(0.75, data.Time(7), 1e-6));
     }
 
     /*
-     * Check what happens if the time passed to Bin(double) is out of range.
+     * An out_of_range exception should be thrown if an invalid bin is passed to the Time() function.
      */
     TEST_F(DataStructuresTest, TestTimeOutOfRange)
     {
         PhotonCount data = CopyEmpty();
         try
         {
-            // TODO: Might want to change this to 9
             data.Time(10);
             FAIL() << "Exception not thrown";
         }
         catch(std::exception& err)
         {
-            ASSERT_EQ(std::string("Invalid time"), err.what());
+            ASSERT_EQ(std::string("Invalid bin"), err.what());
         }
         try
         {
@@ -458,7 +464,7 @@ namespace cherenkov_simulator
         }
         catch(std::exception& err)
         {
-            ASSERT_EQ(std::string("Invalid time"), err.what());
+            ASSERT_EQ(std::string("Invalid bin"), err.what());
         }
     }
 
@@ -472,34 +478,25 @@ namespace cherenkov_simulator
     }
 
     /*
-     * Check that the pixel direction is calculated correctly using the iterator.
+     * Check that the pixel direction is calculated correctly using the iterator. The unit position of a pixel should be
+     * its negative direction.
      */
     TEST_F(DataStructuresTest, PixelDirection)
     {
-        FAIL() << "Not implemented";
-    }
+        PhotonCount data = CopyEmpty();
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        iter.Next();
 
-    /*
-     * See what happens if an invalid iterator is passed to Direction. The Direction() method will check that they
-     * both have the same size, but not that they both have the same validity mask, as this would be expensive.
-     */
-    TEST_F(DataStructuresTest, InvalidIterator)
-    {
-        PhotonCount::Params params = CopyParams();
-        params.n_pixels = 2;
-        PhotonCount data1 = PhotonCount(params, 0.0, 1.0);
-        PhotonCount::Iterator iter1 = data1.GetIterator();
-        iter1.Next();
-        PhotonCount data2 = CopyEmpty();
-        try
-        {
-            data2.Direction(iter1);
-            FAIL() << "Exception not thrown";
-        }
-        catch(std::exception& err)
-        {
-            ASSERT_EQ(std::string("Iterator has invalid size"), err.what());
-        }
+        TVector3 direction = TVector3(0, 0, 1);
+        direction.RotateX(0.04);
+        direction.RotateY(-0.04);
+        ASSERT_TRUE(Helper::VectorsEqual(direction, data.Direction(iter), 1e-3));
+
+        data.AddPhoton(0.45, -data.Direction(iter), 1);
+        ASSERT_EQ(1, data.SumBins(iter));
     }
 
     /*
@@ -508,17 +505,15 @@ namespace cherenkov_simulator
     TEST_F(DataStructuresTest, PixelSignal)
     {
         PhotonCount data = CopySample();
-
         PhotonCount::Iterator iter = data.GetIterator();
-        iter.Next();
-        iter.Next();
-        iter.Next();
-        // TODO: May want to change this to 10.
-        ASSERT_EQ(Short1D(11, 0), data.Signal(iter));
 
         iter.Next();
-        // TODO: May want to change this to 10.
-        Short1D expected = Short1D(11, 0);
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(Short1D(10, 0), data.Signal(iter));
+
+        iter.Next();
+        Short1D expected = Short1D(10, 0);
         expected[3] = 5;
         expected[4] = 1;
         expected[9] = 8;
@@ -548,25 +543,22 @@ namespace cherenkov_simulator
     TEST_F(DataStructuresTest, SumBinsFiltered)
     {
         PhotonCount data = CopySample();
-
         Bool3D mask = data.GetFalseMatrix();
-        // TODO: May want to change this to 10
-        mask[0][2] = Bool1D(11, false);
         mask[1][1][3] = true;
         mask[1][1][4] = true;
-        mask[1][1][9] = false;
         PhotonCount::Iterator iter = data.GetIterator();
+
         iter.Next();
         iter.Next();
         ASSERT_EQ(0, data.SumBinsFiltered(iter, &mask));
 
         iter.Next();
         iter.Next();
-        ASSERT_EQ(5, data.SumBinsFiltered(iter, &mask));
+        ASSERT_EQ(6, data.SumBinsFiltered(iter, &mask));
     }
 
     /*
-     * Check the AverageTime function.
+     * Check the AverageTime function. The function should throw a std::invalid_argument error if the channel is empty
      */
     TEST_F(DataStructuresTest, AverageTime)
     {
@@ -574,22 +566,21 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         iter.Next();
         iter.Next();
-        ASSERT_EQ(0.7, data.AverageTime(iter));
+        ASSERT_TRUE(Helper::ValuesEqual(0.75, data.AverageTime(iter), 1e-6));
 
         iter.Next();
         try
         {
-            // TODO: Do we need to store this?
-            double avg = data.AverageTime(iter);
+            data.AverageTime(iter);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::invalid_argument& err)
         {
             ASSERT_EQ(std::string("Channel is empty, division by zero"), err.what());
         }
 
         iter.Next();
-        ASSERT_EQ(0.65, data.AverageTime(iter));
+        ASSERT_TRUE(Helper::ValuesEqual(0.7, data.AverageTime(iter), 1e-6));
     }
 
     /*
@@ -606,19 +597,19 @@ namespace cherenkov_simulator
         iter.Next();
         try
         {
-            // TODO: Do we need to store this?
-            double var = data.TimeError(iter);
+            data.TimeError(iter);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(std::invalid_argument& err)
         {
             ASSERT_EQ(std::string("Channel is empty, division by zero"), err.what());
         }
 
-        // TODO: Is our data centrally binned or left binned? This will likely impact our estimate of errors.
         iter.Next();
-        double expected = TMath::Sqrt(117.5 / 14.0 + TMath::Sq(0.1) / 12.0);
-        ASSERT_EQ(expected, data.TimeError(iter));
+        double mean = data.AverageTime(iter);
+        double vari = (5.0 * TMath::Sq(0.35 - mean) + TMath::Sq(0.45 - mean) + 8.0 * TMath::Sq(0.95 - mean)) / 14.0;
+        vari += TMath::Sq(0.1) / 12.0;
+        ASSERT_TRUE(Helper::ValuesEqual(TMath::Sqrt(vari / 14.0), data.TimeError(iter), 1e-6));
     }
 
     /*
@@ -628,17 +619,10 @@ namespace cherenkov_simulator
     {
         PhotonCount data = CopyEmpty();
         Bool3D matrix = data.GetFalseMatrix();
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                // TODO: May need to change this to 10
-                for (int k = 0; k < 11; k++)
-                {
+        for (int i = 0; i < data.Size(); i++)
+            for (int j = 0; j < data.Size(); j++)
+                for (int k = 0; k < data.NBins(); k++)
                     ASSERT_FALSE(matrix[i][j][k]);
-                }
-            }
-        }
     }
 
     /*
@@ -646,7 +630,17 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, AddValidPhoton)
     {
-        FAIL() << "Not implemented";
+        PhotonCount data = CopyEmpty();
+        TVector3 direction = TVector3(0, 0, 1);
+        direction.RotateX(0.12);
+        direction.RotateY(-0.04);
+        data.AddPhoton(0.45, -direction, 3);
+        ASSERT_FALSE(data.Empty());
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        ASSERT_EQ(3, data.SumBins(iter));
     }
 
     /*
@@ -656,7 +650,7 @@ namespace cherenkov_simulator
     TEST_F(DataStructuresTest, AddInvalidPosition)
     {
         PhotonCount data = CopyEmpty();
-        data.AddPhoton(0.35, TVector3(0, 0, -1), 1);
+        data.AddPhoton(0.45, TVector3(0.0, 1.0, 0.0), 1);
         ASSERT_TRUE(data.Empty());
 
         PhotonCount::Iterator iter = data.GetIterator();
@@ -676,7 +670,7 @@ namespace cherenkov_simulator
             data.AddPhoton(0.35, TVector3(0, 0, 0), 1);
             FAIL() << "Exception not thrown";
         }
-        catch (std::exception& err)
+        catch (std::invalid_argument& err)
         {
             ASSERT_EQ(std::string("Direction cannot be a zero vector"), err.what());
         }
@@ -695,15 +689,6 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
             ASSERT_EQ(0, data.SumBins(iter));
-
-    }
-
-    /*
-     * Make sure the noise addition does basically what we would expect (this is a probabilistic test).
-     */
-    TEST_F(DataStructuresTest, AddNoise)
-    {
-        FAIL() << "Not implemented";
     }
 
     /*
@@ -711,7 +696,19 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, SubtractNoise)
     {
-        FAIL() << "Not implemented";
+        PhotonCount data = CopySample();
+        double universal_rate = 1e4;
+        auto rate = (int) FriendRealNoiseRate(data, universal_rate);
+        if (rate < 1) FAIL() << "Test is only trivially passing, increase the universal rate";
+
+        PhotonCount::Iterator iter = data.GetIterator();
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        int expected = data.SumBins(iter) - rate * 10;
+        data.Subtract(iter, universal_rate);
+        ASSERT_EQ(expected, data.SumBins(iter));
     }
 
     /*
@@ -719,15 +716,30 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, AboveThreshold)
     {
-        FAIL() << "Not implemented";
+        PhotonCount data = CopySample();
+        PhotonCount::Iterator iter = data.GetIterator();
+
+        iter.Next();
+        ASSERT_EQ(Bool1D(10, true), data.AboveThreshold(iter, -1));
+        ASSERT_EQ(Bool1D(10, false), data.AboveThreshold(iter, 0));
+
+        iter.Next();
+        iter.Next();
+        iter.Next();
+        Bool1D expected = Bool1D(10, false);
+        expected[9] = true;
+        ASSERT_EQ(expected, data.AboveThreshold(iter, 6));
     }
 
     /*
-     * Make sure FindThreshold correctly sets the threshold based on Gaussian probabilities.
+     * Make sure FindThreshold correctly sets the threshold based on Gaussian probabilities. Note that, for the sample
+     * data set, a universal noise rate of 1e4 implies a real noise rate of 6.4. The integral of a Gaussian above three
+     * sigma is 0.001349.
      */
     TEST_F(DataStructuresTest, FindThreshold)
     {
-        FAIL() << "Not implemented";
+        PhotonCount data = CopySample();
+        ASSERT_EQ(16, data.FindThreshold(1e4, 3));
     }
 
     /*
@@ -752,8 +764,7 @@ namespace cherenkov_simulator
             }
             else
             {
-                // TODO: May want to change this to 10
-                ASSERT_EQ(Short1D(11, 0), signal);
+                ASSERT_EQ(Short1D(10, 0), signal);
             }
         }
     }
@@ -766,7 +777,7 @@ namespace cherenkov_simulator
         PhotonCount data = CopySample();
         data.Trim();
         ASSERT_EQ(7, data.NBins());
-        ASSERT_EQ(0.3, data.Time(0));
-        ASSERT_EQ(0.9, data.Time(6));
+        ASSERT_TRUE(Helper::ValuesEqual(0.35, data.Time(0), 1e-6));
+        ASSERT_TRUE(Helper::ValuesEqual(0.95, data.Time(6), 1e-6));
     }
 }
