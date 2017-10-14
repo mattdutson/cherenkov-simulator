@@ -163,7 +163,7 @@ namespace cherenkov_simulator
                 {
                     int pmt_sum;
                     if (mask == nullptr) pmt_sum = data.SumBins(iter);
-                    else pmt_sum = data.SumBinsFiltered(iter, mask);
+                    else pmt_sum = data.SumBinsFiltered(iter, *mask);
                     TVector3 direction = data.Direction(iter);
                     mat_element += direction[j] * direction[k] * pmt_sum;
                 }
@@ -257,7 +257,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
-            data.Subtract(iter, toward_ground ? ground_noise : sky_noise);
+            data.Subtract(toward_ground ? ground_noise : sky_noise, iter);
         }
     }
 

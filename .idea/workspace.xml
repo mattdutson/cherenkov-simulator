@@ -22,9 +22,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" afterPath="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Simulator.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Simulator.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/Helper.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/Helper.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/cmake-build-release/" />
@@ -35,13 +34,71 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="DataStructures.h" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.h">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="4020">
+                    <caret line="268" column="0" lean-forward="true" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
+                    <folding>
+                      <element signature="e#150#167#0" expanded="true" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+    <window id="2">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="DataStructures.cpp" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="4620">
+                    <caret line="308" column="5" lean-forward="true" selection-start-line="308" selection-start-column="5" selection-end-line="308" selection-end-column="5" />
+                    <folding>
+                      <element signature="e#94#112#0" expanded="true" />
+                      <marker date="1507958093143" expanded="true" signature="240:10086" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="302:326" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="5536:6261" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="6339:6516" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="6594:6742" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="6830:7010" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="7090:7357" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="7417:7680" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="7715:8253" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="8336:8412" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="8505:8631" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="8699:9107" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="9181:9600" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="9669:9769" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="9832:9960" ph="{...}" />
+                      <marker date="1507958093143" expanded="true" signature="10018:10084" ph="{...}" />
+                    </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DataStructuresTest.cpp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DataStructuresTest.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9406">
-              <caret line="744" column="6" lean-forward="false" selection-start-line="744" selection-start-column="6" selection-end-line="744" selection-end-column="6" />
+            <state relative-caret-position="-10199">
+              <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
               <folding>
                 <element signature="e#88#112#0" expanded="true" />
               </folding>
@@ -59,23 +116,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataStructures.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="206" column="73" lean-forward="true" selection-start-line="206" selection-start-column="73" selection-end-line="206" selection-end-column="73" />
-              <folding>
-                <element signature="e#205#222#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Reconstructor.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="398" column="30" lean-forward="false" selection-start-line="398" selection-start-column="30" selection-end-line="398" selection-end-column="30" />
+            <state relative-caret-position="10">
+              <caret line="261" column="5" lean-forward="true" selection-start-line="261" selection-start-column="5" selection-end-line="261" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -91,27 +136,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DataStructures.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="248" column="9" lean-forward="true" selection-start-line="248" selection-start-column="9" selection-end-line="248" selection-end-column="9" />
-              <folding>
-                <element signature="e#93#111#0" expanded="true" />
-                <marker date="1507945838319" expanded="true" signature="300:324" ph="{...}" />
-                <marker date="1507945838319" expanded="true" signature="1112:1525" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>static</find>
-      <find>Int3D</find>
-      <find>move</find>
       <find>Short3D</find>
       <find>Params</find>
       <find>bin_size</find>
@@ -137,6 +165,11 @@
       <find>TimeError</find>
       <find>FindThreshold</find>
       <find>Above</find>
+      <find>TF1</find>
+      <find>for</find>
+      <find>TMath</find>
+      <find>std::</find>
+      <find>TMath::</find>
     </findStrings>
     <replaceStrings>
       <replace>std::move</replace>
@@ -167,7 +200,6 @@
         <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Analysis.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Utility.h" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/cherenkov_lib/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
@@ -178,16 +210,19 @@
         <option value="$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Simulator.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_test/Helper.cpp" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" />
       </list>
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="48" />
+    <option name="y" value="23" />
+    <option name="width" value="1379" />
+    <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -464,7 +499,7 @@
       <workItem from="1507921415701" duration="455000" />
       <workItem from="1507925587015" duration="123000" />
       <workItem from="1507929102942" duration="2871000" />
-      <workItem from="1507932016078" duration="12382000" />
+      <workItem from="1507932016078" duration="18569000" />
     </task>
     <task id="LOCAL-00001" summary="Reversed y-direction in sum maps so ground is at the bottom">
       <created>1492142150458</created>
@@ -690,7 +725,14 @@
       <option name="project" value="LOCAL" />
       <updated>1507925656470</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Completed DataStructures unit tests&#10;&#10;Added some additional error checking. Also discovered a few issues. The FindThreshold metohd returned slightly wrong values, due to an incorrect use of erfc and an off by one error. The Subtract method wasn't subtracting - it was actually adding (didn't notice this sooner because noise levels are so low).">
+      <created>1507945995037</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1507945995038</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -726,7 +768,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="88220000" />
+    <option name="totallyTimeSpent" value="94407000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -738,18 +780,18 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="48" y="23" width="1379" height="877" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43651754" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.43606138" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39897698" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38814995" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31438935" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32889965" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23032904" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4498186" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3478261" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2408377" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4488491" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4062878" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -816,7 +858,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="Schmidt corrector tweak" />
     <MESSAGE value="Tweaks to thinning" />
     <MESSAGE value="Adding 3000 simulated showers to GitHub" />
     <MESSAGE value="Adding data files to repo" />
@@ -841,11 +882,12 @@
     <MESSAGE value="Small unit test changes" />
     <MESSAGE value="IMPORTANT: Correction to math&#10;&#10;Found an issue with math when calculating the number of Cherenkov photons reflected. Changed a factor of 4 to a factor of 2, which will alter the output of future simulations." />
     <MESSAGE value="JK on that last one" />
-    <option name="LAST_COMMIT_MESSAGE" value="JK on that last one" />
+    <MESSAGE value="Completed DataStructures unit tests&#10;&#10;Added some additional error checking. Also discovered a few issues. The FindThreshold metohd returned slightly wrong values, due to an incorrect use of erfc and an off by one error. The Subtract method wasn't subtracting - it was actually adding (didn't notice this sooner because noise levels are so low)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Completed DataStructures unit tests&#10;&#10;Added some additional error checking. Also discovered a few issues. The FindThreshold metohd returned slightly wrong values, due to an incorrect use of erfc and an off by one error. The Subtract method wasn't subtracting - it was actually adding (didn't notice this sooner because noise levels are so low)." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="52" />
+      <option name="time" value="53" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1170,6 +1212,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Simulator.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2580">
+          <caret line="175" column="5" lean-forward="false" selection-start-line="175" selection-start-column="0" selection-end-line="176" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_test/Helper.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
@@ -1180,34 +1230,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="398" column="30" lean-forward="false" selection-start-line="398" selection-start-column="30" selection-end-line="398" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="206" column="73" lean-forward="true" selection-start-line="206" selection-start-column="73" selection-end-line="206" selection-end-column="73" />
-          <folding>
-            <element signature="e#205#222#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Simulator.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2580">
-          <caret line="175" column="5" lean-forward="false" selection-start-line="175" selection-start-column="0" selection-end-line="176" selection-end-column="0" />
+        <state relative-caret-position="10">
+          <caret line="261" column="5" lean-forward="true" selection-start-line="261" selection-start-column="5" selection-end-line="261" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9406">
-          <caret line="744" column="6" lean-forward="false" selection-start-line="744" selection-start-column="6" selection-end-line="744" selection-end-column="6" />
+        <state relative-caret-position="-10199">
+          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           <folding>
             <element signature="e#88#112#0" expanded="true" />
           </folding>
@@ -1216,12 +1248,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="248" column="9" lean-forward="true" selection-start-line="248" selection-start-column="9" selection-end-line="248" selection-end-column="9" />
+        <state relative-caret-position="4620">
+          <caret line="308" column="5" lean-forward="true" selection-start-line="308" selection-start-column="5" selection-end-line="308" selection-end-column="5" />
           <folding>
-            <element signature="e#93#111#0" expanded="true" />
-            <marker date="1507945838319" expanded="true" signature="300:324" ph="{...}" />
-            <marker date="1507945838319" expanded="true" signature="1112:1525" ph="{...}" />
+            <element signature="e#94#112#0" expanded="true" />
+            <marker date="1507958093143" expanded="true" signature="240:10086" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="302:326" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="5536:6261" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="6339:6516" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="6594:6742" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="6830:7010" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="7090:7357" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="7417:7680" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="7715:8253" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="8336:8412" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="8505:8631" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="8699:9107" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="9181:9600" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="9669:9769" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="9832:9960" ph="{...}" />
+            <marker date="1507958093143" expanded="true" signature="10018:10084" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4020">
+          <caret line="268" column="0" lean-forward="true" selection-start-line="268" selection-start-column="0" selection-end-line="268" selection-end-column="0" />
+          <folding>
+            <element signature="e#150#167#0" expanded="true" />
           </folding>
         </state>
       </provider>

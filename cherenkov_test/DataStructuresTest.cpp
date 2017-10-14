@@ -11,6 +11,9 @@
 #include "Analysis.h"
 #include "Helper.h"
 
+using namespace std;
+using namespace TMath;
+
 namespace cherenkov_simulator
 {
     /*
@@ -103,9 +106,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Number of pixels must be even"), err.what());
+            ASSERT_EQ(string("Number of pixels must be even"), err.what());
         }
     }
 
@@ -121,9 +124,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::out_of_range& err)
+        catch(out_of_range& err)
         {
-            ASSERT_EQ(std::string("Warning: too much memory requested due to shower direction"), err.what());
+            ASSERT_EQ(string("Warning: too much memory requested due to shower direction"), err.what());
         }
         params.max_byte = 320;
         PhotonCount(params, 0.0, 0.95);
@@ -152,9 +155,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Bin size must be positive"), err.what());
+            ASSERT_EQ(string("Bin size must be positive"), err.what());
         }
         params.bin_size = -0.1;
         try
@@ -162,9 +165,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Bin size must be positive"), err.what());
+            ASSERT_EQ(string("Bin size must be positive"), err.what());
         }
     }
 
@@ -180,9 +183,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Angular size must be positive"), err.what());
+            ASSERT_EQ(string("Angular size must be positive"), err.what());
         }
         params.ang_size = -0.08;
         try
@@ -190,9 +193,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Angular size must be positive"), err.what());
+            ASSERT_EQ(string("Angular size must be positive"), err.what());
         }
     }
 
@@ -208,9 +211,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Linear size must be positive"), err.what());
+            ASSERT_EQ(string("Linear size must be positive"), err.what());
         }
         params.lin_size = -0.08;
         try
@@ -218,9 +221,9 @@ namespace cherenkov_simulator
             PhotonCount(params, 0.0, 0.95);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Linear size must be positive"), err.what());
+            ASSERT_EQ(string("Linear size must be positive"), err.what());
         }
     }
 
@@ -235,7 +238,7 @@ namespace cherenkov_simulator
         {
             for (int j = 0; j < valid.size(); j++)
             {
-                if (TMath::Abs(i - 1.5) < 1 || TMath::Abs(j - 1.5) < 1)
+                if (Abs(i - 1.5) < 1 || Abs(j - 1.5) < 1)
                     ASSERT_TRUE(valid[i][j]);
                 else
                     ASSERT_FALSE(valid[i][j]);
@@ -255,18 +258,18 @@ namespace cherenkov_simulator
             iter.X();
             FAIL() << "Exception not thrown";
         }
-        catch(std::out_of_range& err)
+        catch(out_of_range& err)
         {
-            ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
+            ASSERT_EQ(string("Call Next() before checking the iterator position"), err.what());
         }
         try
         {
             iter.Y();
             FAIL() << "Exception not thrown";
         }
-        catch(std::out_of_range& err)
+        catch(out_of_range& err)
         {
-            ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
+            ASSERT_EQ(string("Call Next() before checking the iterator position"), err.what());
         }
     }
 
@@ -344,18 +347,18 @@ namespace cherenkov_simulator
             iter.X();
             FAIL() << "Exception not thrown";
         }
-        catch(std::out_of_range& err)
+        catch(out_of_range& err)
         {
-            ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
+            ASSERT_EQ(string("Call Next() before checking the iterator position"), err.what());
         }
         try
         {
             iter.Y();
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(exception& err)
         {
-            ASSERT_EQ(std::string("Call Next() before checking the iterator position"), err.what());
+            ASSERT_EQ(string("Call Next() before checking the iterator position"), err.what());
         }
 
         iter.Next();
@@ -417,18 +420,18 @@ namespace cherenkov_simulator
             data.Bin(-0.1);
             FAIL() << "Exception not thrown";
         }
-        catch(std::out_of_range& err)
+        catch(out_of_range& err)
         {
-            ASSERT_EQ(std::string("Invalid time"), err.what());
+            ASSERT_EQ(string("Invalid time"), err.what());
         }
         try
         {
             data.Bin(0.99);
             FAIL() << "Exception not thrown";
         }
-        catch(std::out_of_range& err)
+        catch(out_of_range& err)
         {
-            ASSERT_EQ(std::string("Invalid time"), err.what());
+            ASSERT_EQ(string("Invalid time"), err.what());
         }
     }
 
@@ -453,18 +456,18 @@ namespace cherenkov_simulator
             data.Time(10);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(exception& err)
         {
-            ASSERT_EQ(std::string("Invalid bin"), err.what());
+            ASSERT_EQ(string("Invalid bin"), err.what());
         }
         try
         {
             data.Time(-1);
             FAIL() << "Exception not thrown";
         }
-        catch(std::exception& err)
+        catch(exception& err)
         {
-            ASSERT_EQ(std::string("Invalid bin"), err.what());
+            ASSERT_EQ(string("Invalid bin"), err.what());
         }
     }
 
@@ -558,7 +561,7 @@ namespace cherenkov_simulator
     }
 
     /*
-     * Check the AverageTime function. The function should throw a std::invalid_argument error if the channel is empty
+     * Check the AverageTime function. The function should throw a invalid_argument error if the channel is empty
      */
     TEST_F(DataStructuresTest, AverageTime)
     {
@@ -574,9 +577,9 @@ namespace cherenkov_simulator
             data.AverageTime(iter);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Channel is empty, division by zero"), err.what());
+            ASSERT_EQ(string("Channel is empty, division by zero"), err.what());
         }
 
         iter.Next();
@@ -592,7 +595,7 @@ namespace cherenkov_simulator
         PhotonCount::Iterator iter = data.GetIterator();
         iter.Next();
         iter.Next();
-        ASSERT_EQ(0.1 / TMath::Sqrt(12.0), data.TimeError(iter));
+        ASSERT_EQ(0.1 / Sqrt(12.0), data.TimeError(iter));
 
         iter.Next();
         try
@@ -600,16 +603,16 @@ namespace cherenkov_simulator
             data.TimeError(iter);
             FAIL() << "Exception not thrown";
         }
-        catch(std::invalid_argument& err)
+        catch(invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Channel is empty, division by zero"), err.what());
+            ASSERT_EQ(string("Channel is empty, division by zero"), err.what());
         }
 
         iter.Next();
         double mean = data.AverageTime(iter);
-        double vari = (5.0 * TMath::Sq(0.35 - mean) + TMath::Sq(0.45 - mean) + 8.0 * TMath::Sq(0.95 - mean)) / 14.0;
-        vari += TMath::Sq(0.1) / 12.0;
-        ASSERT_TRUE(Helper::ValuesEqual(TMath::Sqrt(vari / 14.0), data.TimeError(iter), 1e-6));
+        double vari = (5.0 * Sq(0.35 - mean) + Sq(0.45 - mean) + 8.0 * Sq(0.95 - mean)) / 14.0;
+        vari += Sq(0.1) / 12.0;
+        ASSERT_TRUE(Helper::ValuesEqual(Sqrt(vari / 14.0), data.TimeError(iter), 1e-6));
     }
 
     /*
@@ -660,7 +663,7 @@ namespace cherenkov_simulator
 
     /*
      * See what happens if a photon with an undefined (0, 0, 0) position is added. This should throw a
-     * std::invalid_argument. Also make sure we're able to add photons at angle pi/2.
+     * invalid_argument. Also make sure we're able to add photons at angle pi/2.
      */
     TEST_F(DataStructuresTest, AddUndefinedPosition)
     {
@@ -670,9 +673,9 @@ namespace cherenkov_simulator
             data.AddPhoton(0.35, TVector3(0, 0, 0), 1);
             FAIL() << "Exception not thrown";
         }
-        catch (std::invalid_argument& err)
+        catch (invalid_argument& err)
         {
-            ASSERT_EQ(std::string("Direction cannot be a zero vector"), err.what());
+            ASSERT_EQ(string("Direction cannot be a zero vector"), err.what());
         }
         data.AddPhoton(0.35, TVector3(1, 1, 0), 1);
     }
