@@ -96,11 +96,11 @@ namespace cherenkov_simulator
         if (NBins() * Sq(n_pixels) * sizeof(short) > params.max_byte)
             throw out_of_range("Warning: too much memory requested due to shower direction");
 
-        counts = Short3D(n_pixels, Short2D(n_pixels, Short1D(NBins(), 0)));
-        sums = Short2D(n_pixels, Short1D(n_pixels, 0));
-        valid = Bool2D(n_pixels, Bool1D(n_pixels, false));
-        for (int i = 0; i < NBins(); i++)
-            for (int j = 0; j < NBins(); j++)
+        counts = Short3D(Size(), Short2D(Size(), Short1D(NBins(), 0)));
+        sums = Short2D(Size(), Short1D(Size(), 0));
+        valid = Bool2D(Size(), Bool1D(Size(), false));
+        for (int i = 0; i < Size(); i++)
+            for (int j = 0; j < Size(); j++)
                 valid[i][j] = IsValid(i, j);
     }
 
