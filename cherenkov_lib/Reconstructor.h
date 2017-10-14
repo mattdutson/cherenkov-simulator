@@ -51,7 +51,7 @@ namespace cherenkov_simulator
          * detector was not triggered, Result.triggered = false. If there was not visible impact point,
          * Result.cherenkov = false.
          */
-        Result Reconstruct(const PhotonCount& data, const Bool1D& trig) const;
+        Result Reconstruct(const PhotonCount& data) const;
 
         /*
          * Adds Poisson-distributed background noise to the signal.
@@ -62,7 +62,7 @@ namespace cherenkov_simulator
          * Attempts to isolate signal from noise by subtracting the background level, applying triggering, removing
          * anything below three sigma, and performing a recursive search from triggered pixels.
          */
-        Bool1D ClearNoise(PhotonCount& data) const;
+        void ClearNoise(PhotonCount& data) const;
 
     private:
 

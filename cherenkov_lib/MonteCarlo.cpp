@@ -79,12 +79,12 @@ namespace cherenkov_simulator
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_noise_graph").c_str());
 
             // Clear noise and record the new photon counts
-            Bool1D triggers = reconstructor.ClearNoise(data);
+            reconstructor.ClearNoise(data);
             Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_clear_map").c_str());
             Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_clear_graph").c_str());
 
             // Attempt both monocular and hybrid reconstruction of the shower
-            Reconstructor::Result result = reconstructor.Reconstruct(data, triggers);
+            Reconstructor::Result result = reconstructor.Reconstruct(data);
             cout << "Shower " << i << " finished" << endl;
             fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", "
                  << result.ToString() << endl;

@@ -54,10 +54,10 @@ namespace cherenkov_simulator
         plane_dev = config.get<double>("triggering.plane_dev");
     }
 
-    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data, const Bool1D& trigger) const
+    Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data) const
     {
         Result result = Result();
-        result.trigger = DetectorTriggered(trigger);
+        result.trigger = DetectorTriggered(GetTriggeringState(data));
         if (result.trigger)
         {
             TRotation to_sdp = FitSDPlane(data);
@@ -300,7 +300,7 @@ namespace cherenkov_simulator
         return good_frames;
     }
 
-    Bool1D Reconstructor::ClearNoise(PhotonCount& data) const
+    void Reconstructor::ClearNoise(PhotonCount& data) const
     {
         SubtractAverageNoise(data);
         Bool3D not_visited = GetThresholdMatrices(data, noise_thresh);
@@ -334,7 +334,6 @@ namespace cherenkov_simulator
             }
         }
         data.Subset(good_pixels);
-        return trig_state;
     }
 
     void Reconstructor::VisitSpaceAdj(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited)
