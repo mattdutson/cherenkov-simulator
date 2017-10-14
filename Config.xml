@@ -4,12 +4,12 @@
 
     <simulation note="Defines computational behavior of the simulation">
         <max_bytes unit="null" note="Maximum size of the data buffer">8000000000</max_bytes>
-        <n_showers unit="null">200</n_showers>
-        <depth_step unit="g/cm^2">0.3</depth_step>
+        <n_showers unit="null">4000</n_showers>
+        <depth_step unit="g/cm^2">1.0</depth_step>
         <time_bin unit="s">100e-9</time_bin>
         <fluor_thin unit="null">1</fluor_thin>
         <ckv_thin unit="null">1</ckv_thin>
-        <time_seed unit="null">false</time_seed>
+        <time_seed unit="null" note="Whether the seed should be set randomly by the current time">false</time_seed>
         <back_toler unit="null">1.15</back_toler>
     </simulation>
 
