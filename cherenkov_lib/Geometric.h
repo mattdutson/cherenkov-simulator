@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Contains the definitions of the Plane, Shower, and Ray classes.
+// Defines the Plane, Shower, and Ray classes.
 
 #ifndef GEOMETRIC_H
 #define GEOMETRIC_H
@@ -15,36 +15,37 @@
 namespace cherenkov_simulator
 {
     /*
-     * A class representing a plane in 3D space.
+     * A class representing a plane in 3D space. Defined internally by a normal vector and the coefficient "d" in the 
+     * equation ax + by + cz = d.
      */
     class Plane
     {
     public:
 
         /*
-         * The default constructor. Passes two zero vectors to the two-parameter constructor. The behavior for dealing
-         * with a zero normal vector is defined in the other constructor.
+         * The default constructor. Sets the normal vector to (0, 0, 1) and the fixed point to the origin.
          */
         Plane();
 
         /*
-         * Constructs a plane with the specified normal vector and with a coefficient "d" which causes the input point
-         * to lie on the plane. If (0, 0, 0) is passed as the normal vector, (0, 0, 1) is used instead.
+         * Constructs a plane using the specified normal vector and intersection point. The point is converted to the 
+         * coefficient "d" by plugging it into the equation ax + by + cz = d. Throws an invalid_argument exception if 
+         * the normal vector is zero.
          */
         Plane(TVector3 normal, TVector3 point);
 
         /*
-         * Returns a unit vector normal to the plane.
+         * Returns a copy of the plane's normal vector.
          */
         TVector3 Normal() const;
 
         /*
-         * Returns the coefficient "d" in the plane equation.
+         * Returns the coefficient "d" of the plane equation.
          */
         double Coefficient() const;
 
         /*
-         * Returns true if a ray going outward from the origin in the specified direction would eventually strike the
+         * Returns true if a Ray going outward from the origin in the specified direction would eventually strike this
          * plane. If the plane is exactly at the origin, false is returned.
          */
         bool InFrontOf(TVector3 direction) const;
@@ -53,99 +54,100 @@ namespace cherenkov_simulator
 
         friend class GeometricTest;
 
-        // A unit vector normal to the plane
+        // The normal vector and equation coefficient.
         TVector3 normal;
-
-        // The coefficient "d" in the equation ax + by + cz = d
-        double coefficient;
+        double coeff;
     };
 
     /*
-     * Represents a light ray with a time, position, and direction. All Ray objects travel at the speed of light in a
-     * vacuum (units of cm/s).
+     * Represents a light Ray with a position, direction, and time. All Rays travel at the speed of light in a vacuum, 
+     * measured in cm/s.
      */
     class Ray
     {
     public:
 
         /*
-         * The default constructor.
+         * The default constructor. Sets the position to the origin, the direction to (0, 0, 1), and the time to zero.
          */
         Ray();
 
         /*
-         * Constructs a ray at the specified position, moving in the specified direction, at the given time. If
-         * (0, 0, 0) is passed as the direction vector, (0, 0, 1) is used instead.
+         * Constructs a Ray with the specified position, direction, and time. The direction does not necessarily have to
+         * be unit (this will be taken care of by the constructor. An invalid_argument exception is thrown if the 
+         * direction vector is zero.
          */
-        Ray(TVector3 position, TVector3 direction, double time);
+        Ray(TVector3 position, TVector3 direction, double cur_time);
 
         /*
-         * Returns the current position of the ray.
+         * Returns the current position of the Ray.
          */
         TVector3 Position() const;
 
         /*
-         * Returns the current velocity of the ray.
+         * Returns the current velocity of the Ray.
          */
         TVector3 Velocity() const;
 
         /*
-         * Returns a unit vector pointing in the direction of the shower's motion.
+         * Returns the unit vector of velocity.
          */
         TVector3 Direction() const;
 
         /*
-         * When possible, use this method to set direction instead of directly modifying the velocity member.
-         * This method ensures that the velocity vector has a magnitude equal to the speed of light in a vacuum.
+         * Updates the direction with the one specified, setting the velocity to direction.Unit() * c. An 
+         * invalid_argument exception is thrown if the direction vector is zero.
          */
         void SetDirection(TVector3 direction);
 
         /*
-         * Returns the current time of the ray.
+         * Returns the current time of the Ray.
          */
         double Time() const;
 
         /*
-         * Moves the ray from its current position to the destination point. If the destination point doesn't lie along
-         * the ray's current trajectory, the ray's direction is changed so it is pointing toward the destination.
+         * Moves the Ray from its current position to the destination point. If the destination doesn't lie along
+         * the current trajectory, the Ray's direction is changed to the displacement between the current position and
+         * the destination.
          */
         void PropagateToPoint(TVector3 destination);
 
         /*
-         * Moves the ray from its current position to the point where it intersects with the specified plane. If the ray
-         * has already passed the plane, it will be moved BACKWARD. If the ray and the plane are exactly parallel, no
-         * change is made to the ray's position.
+         * Moves the Ray along its current trajectory until it collides with the Plane. If the Ray has already passed
+         * the Plane, it will be moved backward, and its time will decrease. If the Ray and the Plane are exactly
+         * parallel, no action is taken.
          */
         void PropagateToPlane(Plane plane);
 
         /*
-         * Find the point where this ray will intersect with the plane. If the ray and the plane are exactly parallel,
-         * the current position of the ray is returned.
+         * Finds the point where this Ray will, or would have, collide with the Plane. If the Ray and the Plane are
+         * exactly parallel, the current position of the Ray is returned.
          */
         TVector3 PlaneImpact(Plane plane) const;
 
         /*
-         * Finds the amount of time it will take before the ray will collide with the specified Plane object. Negative
-         * times are returned if the ray has already passed the plane. Infinity is returned if the ray and plane are
-         * exactly parallel.
+         * Finds the amount of time it will take for the Ray to collide with the Plane. Negative times are returned if
+         * the Ray has already passed the Plane. Infinity is returned if the Ray and Plane are exactly parallel.
          */
         double TimeToPlane(Plane plane) const;
 
         /*
-         * Reflects the ray across the normal vector. The method should work as expected regardless of the normal
-         * vector's sign. std::invalid_argument will be thrown if a zero vector is passed as the normal.
+         * Reflects the Ray across the the normal vector to some surface. The sign of the normal vector doesn't matter.
+         * An invalid_argument exception is thrown if the normal vector is zero.
          */
         void Reflect(TVector3 normal);
 
         /*
-         * Refracts the ray across the normal vector using the incident and outward indices of refraction specified. The
-         * normal vector should point outward from the refracting surface, and therefore be opposite to the direction of
-         * the ray's motion.
+         * Refracts the Ray across some interface with the normal vector, incident n, and outward n specified. The
+         * normal vector should point outward from the refracting surface, opposite the direction of the ray. An
+         * invalid_argument exception is thrown if the indices of refraction aren't at least 1 or if the normal vector
+         * is zero. Returns true if the ray was refracted, and false if the ray was beyond the critical angle. If false
+         * is returned, no changes are made to the vector's direction.
          */
         bool Refract(TVector3 normal, double n_in, double n_out);
 
         /*
-         * Switches the the position and direction to a new, rotated reference frame.
+         * Applies the rotation to both the Ray's position and velocity.
          */
         void Transform(TRotation rotation);
 
@@ -153,42 +155,47 @@ namespace cherenkov_simulator
 
         friend class GeometricTest;
 
-        // The current state of the Ray - cgs
-        double time;
         TVector3 position;
         TVector3 velocity;
+        double cur_time;
 
         /*
-         * Moves the ray forward by the specified distance.
+         * Moves the Ray forward by the specified distance, updating the time in the process.
          */
         void IncrementPosition(double distance);
 
         /*
-         * Move the time forward by some amount. This causes the ray to move forward according to its velocity.
+         * Move the time forward by some amount. This causes the Ray's position to change according to its velocity.
          */
         void IncrementTime(double time_step);
     };
 
     /*
-     * Represents an atmospheric cosmic ray shower. Contains various shower-specific parameters (x_0, n_max). Also
-     * contains information about the density of the atmosphere. These atmospheric parameters are used to find the
-     * relationship between slant depth and distance.
+     * Represents an atmospheric cosmic ray shower. Contains various Gaisser-Hillas parameters. Also contains
+     * information about the density of the atmosphere. These atmospheric parameters are used to calculate and update
+     * the shower's depth.
      */
     class Shower : public Ray
     {
     public:
 
         /*
-         * A container for Shower parameters to be passed to the constructor.
+         * A container for Shower constructor parameters.
          */
         struct Params
         {
-            double energy;
+            /*
+             * Define the default Params constructor to prevent exceptions when an empty one is passed to the Shower
+             * constructor.
+             */
+            Params();
+
+            double energ;
             double x_max;
             double n_max;
             double rho_0;
-            double scale_height;
-            double delta_0;
+            double atm_h;
+            double del_0;
         };
 
         /*
@@ -197,78 +204,83 @@ namespace cherenkov_simulator
         Shower();
 
         /*
-         * Takes all of the parameters used in the Ray class, as well as three shower-specificparameters (x_0, x_max,
-         * n_max). Also takes two atmospheric parameters (rho_0 and scale_height). The startingtime is assumed to be
-         * zero by default.
+         * The main constructor. Takes the energy of the shower, various Gaisser-Hillas parameters, and the values
+         * defining the exponential atmosphere. Also takes a position, direction, and optional time, which are passed to
+         * the parent Ray constructor. An invalid_argument exception is thrown if any parameters are out of range.
          */
         Shower(Params params, TVector3 position, TVector3 direction, double time = 0);
 
         /*
-         * Finds the age of the shower, given by 3 * X / (X + 2 * XMax).
+         * Finds the age of the shower, defined as 3 * X / (X + 2 * XMax).
          */
         double Age() const;
 
         /*
-         * Returns the energy of the shower primary in MeV. Note that the energy is passed to the constructor in eV.
+         * Returns the energy of the shower in MeV. Note that the energy is passed to the constructor in eV.
          */
         double EnergyMeV() const;
 
         /*
-         * Returns the energy of the shower primary in eV.
+         * Returns the energy of the shower in eV.
          */
         double EnergyeV() const;
 
         /*
-         * Calculates the impact parameter of the shower from the origin.
+         * Calculates the impact parameter of the shower, assuming the detector is at the origin. See
+         * http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html for an explanation of the point-line
+         * distance formula.
          */
         double ImpactParam() const;
 
         /*
-         * Calculates the angle psi of the shower in the shower-detector plane.
+         * Calculates the angle of the shower with respect to a horizontal line in the shower-detector plane. Like
+         * ImpactParam, this method assumes that the detector is at the origin.
          */
         double ImpactAngle() const;
 
         /*
          * Returns the atmospheric density at the shower's current position. The exponential model is defined at all
-         * heights, so this is guaranteed to return, even if the height is negative.
+         * heights, so the function will return a value even if the height is negative.
          */
         double LocalRho() const;
 
         /*
-         * Returns the local value for n - 1. Will calculate a value for any h for the same reason as LocalRho.
+         * Returns the local value of n - 1, where n is the index of refraction. This is proportional to the local
+         * atmospheric density. For the same reason as LocalRho(), this function will return a value regardless of the
+         * height of the shower.
          */
         double LocalDelta() const;
 
         /*
-         * Returns the number of particles in the shower at its current position.
+         * Uses the Gaisser-Hillas function to calculate the current number of particles (electrons) in the shower.
          */
         double GaisserHillas() const;
 
         /*
-         * Calculates the Cherenkov threshold energy of the shower. std::invalid_argument is thrown if it is not
-         * positive. We don't check whether it's above some particle creation threshold.
+         * Calculates the Cherenkov threshold energy of the shower.
          */
         double EThresh() const;
 
         /*
-         * Increments the position of the shower by the specified slant depth.
+         * Increases the slant depth of the shower by a specified amount, moving the shower forward in the process. The
+         * assumption is made that the atmospheric density is constant over the course of the step.
          */
         void IncrementDepth(double depth);
 
         /*
-         * Creates a header for rows of data created with ToString().
+         * Returns a header for rows of data created with ToString(). Used when writing CSV files.
          */
         static std::string Header();
 
         /*
-         * Creates a string with comma-separated impact parameter, impact angle, and shower direction.
+         * Creates a string with a comma-separated impact parameter, impact angle, and shower direction. Used when
+         * writing CSV files.
          */
         std::string ToString() const;
 
     private:
 
-        // Mask various methods from the Ray class. We have no need to change the shower's direction, and we only want
-        // to change its position using the IncrementDepth method.
+        // Mask unneeded Ray methods to keep them from being public.
         using Ray::IncrementTime;
         using Ray::IncrementPosition;
         using Ray::SetDirection;
@@ -278,22 +290,22 @@ namespace cherenkov_simulator
 
         friend class GeometricTest;
 
-        // Parameters in the Gaisser-Hillas profile - cgs
+        // Fixed parameters in the Gaisser-Hillas profile - cgs.
         constexpr static double x_0 = -70.0;
         constexpr static double gh_lambda = 70.0;
 
-        // Variable parameters in the Gaisser-Hillas profile - eV, cgs
-        double energy;
+        // Variable parameters in the Gaisser-Hillas profile - eV, cgs.
+        double energ;
         double x_max;
         double n_max;
 
-        // Properties of the atmosphere - cgs
+        // Properties of the atmosphere - cgs.
         double rho_0;
-        double scale_height;
-        double delta_0;
+        double atm_h;
+        double del_0;
 
         /*
-         * Returns the current depth of the shower in the atmosphere.
+         * Calculates the shower's current slant depth.
          */
         double X() const;
     };

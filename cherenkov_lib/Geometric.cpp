@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Implementation of Geometric.h
+// Implementation of Geometric.h.
 
 #include <TMath.h>
 
@@ -13,15 +13,14 @@ using namespace TMath;
 
 namespace cherenkov_simulator
 {
-    Plane::Plane() : Plane(TVector3(0, 0, 1), TVector3())
-    {}
+    Plane::Plane() : Plane(TVector3(0, 0, 1), TVector3()) {}
 
     Plane::Plane(TVector3 normal, TVector3 point)
     {
         if (normal.Mag2() == 0) 
             throw invalid_argument("Plane normal vector must be nonzero");
         this->normal = normal.Unit();
-        coefficient = normal.Dot(point);
+        this->coeff = normal.Dot(point);
     }
 
     TVector3 Plane::Normal() const
@@ -31,7 +30,7 @@ namespace cherenkov_simulator
 
     double Plane::Coefficient() const
     {
-        return coefficient;
+        return coeff;
     }
 
     bool Plane::InFrontOf(TVector3 direction) const
@@ -40,13 +39,12 @@ namespace cherenkov_simulator
         return outward_ray.TimeToPlane(*this) > 0;
     }
 
-    Ray::Ray() : Ray(TVector3(), TVector3(0, 0, 1), 0)
-    {}
+    Ray::Ray() : Ray(TVector3(), TVector3(0, 0, 1), 0) {}
 
-    Ray::Ray(TVector3 position, TVector3 direction, double time)
+    Ray::Ray(TVector3 position, TVector3 direction, double cur_time)
     {
         SetDirection(direction);
-        this->time = time;
+        this->cur_time = cur_time;
         this->position = position;
     }
 
@@ -74,16 +72,13 @@ namespace cherenkov_simulator
 
     double Ray::Time() const
     {
-        return time;
+        return cur_time;
     }
 
     void Ray::PropagateToPoint(TVector3 destination)
     {
-        // If needed, change the direction so the ray is pointing toward the destination.
         TVector3 displacement = destination - position;
         SetDirection(displacement);
-
-        // Move the ray forward until it reaches the destination.
         IncrementPosition(displacement.Mag());
     }
 
@@ -105,80 +100,74 @@ namespace cherenkov_simulator
     double Ray::TimeToPlane(Plane plane) const
     {
         TVector3 normal = plane.Normal();
-        double coefficient = plane.Coefficient();
-
-        // Check the edge case where the vector is perfectly parallel to the plane.
-        if (normal.Dot(velocity) == 0) return Infinity();
-        return (coefficient - normal.Dot(position)) / normal.Dot(velocity);
+        if (normal.Dot(velocity) == 0)
+            return Infinity();
+        return (plane.Coefficient() - normal.Dot(position)) / normal.Dot(velocity);
     }
 
     void Ray::Reflect(TVector3 normal)
     {
-        // TODO: Would it be a good idea to update this with the SetDirection method?
         if(normal.Mag2() == 0)
             throw invalid_argument("Reflection normal vector must be nonzero");
-        velocity -= 2 * velocity.Dot(normal.Unit()) * normal.Unit();
+        SetDirection(velocity - 2 * velocity.Dot(normal.Unit()) * normal.Unit());
     }
 
     bool Ray::Refract(TVector3 normal, double n_in, double n_out)
     {
-        // Reverse the normal vector so it points in the direction of the incoming ray
-        // TODO: Perform a check and update here on the direction.
-        // TODO: Perform a check on the critical angle of the substance.
-        // TODO: Would it be a good idea to update the velocity with the SetDirection method?
         if(normal.Mag2() == 0)
             throw invalid_argument("Refraction normal vector must be nonzero");
         if (n_in < 1 || n_out < 1)
             throw invalid_argument("Indices of refraction must be at least one");
+
         normal = -normal;
-
         double angle_in = velocity.Angle(normal);
+        if (angle_in > PiOver2() || angle_in > ASin(n_out / n_in)) return false;
 
-        // If the current velocity and normal vector are parallel, don't do anything.
         if (angle_in == 0) return true;
-
-        // If we're more than 90 degrees from the normal, we're coming from the wrong side of the lens (reversed normal
-        // should point in the same direction as the incoming ray)
-        double theta_c = ASin(n_out / n_in);
-        if (angle_in > PiOver2() || angle_in > theta_c) return false;
-
-        // Refract and rotate around some vector perpendicular to both the ray and plane normal.
         double angle_out = ASin(n_in * Sin(angle_in) / n_out);
-        TVector3 mutual_norm = normal.Cross(velocity);
-        velocity.Rotate(angle_out - angle_in, mutual_norm);
+        velocity.Rotate(angle_out - angle_in, normal.Cross(velocity));
         return true;
     }
 
     void Ray::Transform(TRotation rotation)
     {
-        velocity = rotation * velocity;
-        position = rotation * position;
+        velocity *= rotation;
+        position *= rotation;
     }
 
     void Ray::IncrementPosition(double distance)
     {
-        double time = distance / Utility::c_cent;
-        IncrementTime(time);
+        IncrementTime(distance / Utility::c_cent);
     }
 
     void Ray::IncrementTime(double time_step)
     {
-        time += time_step;
+        cur_time += time_step;
         position += time_step * velocity;
+    }
+
+    Shower::Params::Params()
+    {
+        energ = 1.0;
+        x_max = 1.0;
+        n_max = 1.0;
+        rho_0 = 1.0;
+        atm_h = 1.0;
+        del_0 = 1.0;
     }
 
     Shower::Shower() : Ray() {}
 
     Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
-        this->energy = params.energy;
-        this->x_max = params.x_max;
-        this->n_max = params.n_max;
-        this->rho_0 = params.rho_0;
-        this->scale_height = params.scale_height;
-        this->delta_0 = params.delta_0;
+        energ = params.energ;
+        x_max = params.x_max;
+        n_max = params.n_max;
+        rho_0 = params.rho_0;
+        atm_h = params.atm_h;
+        del_0 = params.del_0;
 
-        if (energy <= 0.0)
+        if (energ <= 0.0)
             throw invalid_argument("Shower energy must be positive");
         if (x_max <= 0.0)
             throw invalid_argument("Shower XMax must be positive");
@@ -186,9 +175,9 @@ namespace cherenkov_simulator
             throw invalid_argument("Shower NMax must be positive");
         if (rho_0 <= 0.0)
             throw invalid_argument("Atmospheric density must be positive");
-        if (scale_height <= 0.0)
+        if (atm_h <= 0.0)
             throw invalid_argument("Scale height must be positive");
-        if (delta_0 <= 0.0)
+        if (del_0 <= 0.0)
             throw invalid_argument("Atmospheric delta0 must be positive");
     }
 
@@ -199,36 +188,32 @@ namespace cherenkov_simulator
 
     double Shower::EnergyMeV() const
     {
-        return energy / (10.0e6);
+        return energ / (10.0e6);
     }
 
     double Shower::EnergyeV() const
     {
-        return energy;
+        return energ;
     }
 
     double Shower::ImpactParam() const
     {
-        // See http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-        TVector3 point1 = Position();
-        TVector3 point2 = Position() + Direction();
-        return (point1.Cross(point2)).Mag();
+        return Position().Cross(Position() + Direction()).Mag();
     }
 
     double Shower::ImpactAngle() const
     {
-        Plane horiz_plane = Plane(TVector3(0, 0, 1), TVector3(0, 0, 0));
-        return Direction().Angle(PlaneImpact(horiz_plane));
+        return Direction().Angle(PlaneImpact(Plane()));
     }
 
     double Shower::LocalRho() const
     {
-        return rho_0 * Exp(-position.Z() / scale_height);
+        return rho_0 * Exp(-position.Z() / atm_h);
     }
 
     double Shower::LocalDelta() const
     {
-        return delta_0 * Exp(-position.Z() / scale_height);
+        return del_0 * Exp(-position.Z() / atm_h);
     }
 
     double Shower::GaisserHillas() const
@@ -245,7 +230,6 @@ namespace cherenkov_simulator
 
     void Shower::IncrementDepth(double depth)
     {
-        // We make the simplifying assumption that the atmospheric density is constant over a single step
         IncrementPosition(depth / LocalRho());
     }
 
@@ -261,8 +245,6 @@ namespace cherenkov_simulator
 
     double Shower::X() const
     {
-        // See 1/25 depth integration notes.
-        double cos_theta = Abs(velocity.CosTheta());
-        return scale_height * rho_0 / cos_theta * Exp(-position.Z() / scale_height);
+        return atm_h * rho_0 / Abs(velocity.CosTheta()) * Exp(-position.Z() / atm_h);
     }
 }

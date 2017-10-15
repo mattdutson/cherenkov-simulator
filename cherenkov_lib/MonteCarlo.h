@@ -62,13 +62,13 @@ namespace cherenkov_simulator
         constexpr static double x_max_3 = 18.0;
 
         // Atmospheric parameters - cgs
-        constexpr static double scale_height = 841300;
+        constexpr static double atm_h = 841300;
         constexpr static double rho_sea = 0.001225;
         constexpr static double refrac_sea = 1.00029;
 
         // Non-constant atmospheric parameters (depend on the elevation) - cgs
         double rho_0;
-        double delta_0;
+        double del_0;
 
         // Parameters used to generate random showers in the Monte Carlo simulation - eV, cgs
         double energy_pow;

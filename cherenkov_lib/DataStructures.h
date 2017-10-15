@@ -231,12 +231,12 @@ namespace cherenkov_simulator
         Short2D sums;
         Bool2D valid;
 
-        // The number and size of pixels - cgs, sr
+        // The number and size of pixels - cgs, sr.
         size_t n_pixels;
         double ang_size;
         double lin_size;
 
-        // Various properties of the time series - cgs
+        // Various properties of the time series - cgs.
         double bin_size;
         double min_time;
         double max_time;

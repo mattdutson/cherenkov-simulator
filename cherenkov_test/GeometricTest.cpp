@@ -34,12 +34,12 @@ private:
         test_ray_2 = Ray(TVector3(0, 0, 0), TVector3(-1, 2, -1), -0.8);
 
         test_params = Shower::Params();
-        test_params.energy = 2.7e19;
+        test_params.energ = 2.7e19;
         test_params.x_max = 800;
         test_params.n_max = 2.1e10;
         test_params.rho_0 = 0.0012;
-        test_params.scale_height = 841300;
-        test_params.delta_0 = 0.00029;
+        test_params.atm_h = 841300;
+        test_params.del_0 = 0.00029;
 
         test_shower = Shower(test_params, TVector3(0, 0, 2000000), TVector3(1, -1, -3));
     }
@@ -510,7 +510,7 @@ public:
     {
         Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        ASSERT_EQ(params.energy, shower.EnergyeV());
+        ASSERT_EQ(params.energ, shower.EnergyeV());
         ASSERT_EQ(TVector3(0, 0, 2000000), shower.Position());
         ASSERT_TRUE(Helper::VectorsEqual(TVector3(1, -1, -3).Unit(), shower.Direction(), 1e-6));
     }
@@ -521,7 +521,7 @@ public:
     TEST_F(GeometricTest, NonPositiveEnergy)
     {
         Shower::Params params = CopyParams();
-        params.energy = -1.2e18;
+        params.energ = -1.2e18;
         try
         {
             Shower(params, TVector3(), TVector3(1, 0, 0));
@@ -594,7 +594,7 @@ public:
     TEST_F(GeometricTest, NonPositiveScaleH)
     {
         Shower::Params params = CopyParams();
-        params.scale_height = -2.3e-19;
+        params.atm_h = -2.3e-19;
         try
         {
             Shower(params, TVector3(), TVector3(1, 0, 0));
@@ -607,12 +607,12 @@ public:
     }
 
     /*
-     * An invalid_argument exception should be thrown if a non-positive delta_0 is passed to the Shower constructor.
+     * An invalid_argument exception should be thrown if a non-positive del_0 is passed to the Shower constructor.
      */
     TEST_F(GeometricTest, NonPositiveDelta0)
     {
         Shower::Params params = CopyParams();
-        params.delta_0 = 0.0;
+        params.del_0 = 0.0;
         try
         {
             Shower(params, TVector3(), TVector3(1, 0, 0));
@@ -644,7 +644,7 @@ public:
     {
         Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        ASSERT_EQ(params.energy / 10e6, shower.EnergyMeV());
+        ASSERT_EQ(params.energ / 10e6, shower.EnergyMeV());
     }
 
     /*
@@ -654,7 +654,7 @@ public:
     {
         Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        ASSERT_EQ(params.energy, shower.EnergyeV());
+        ASSERT_EQ(params.energ, shower.EnergyeV());
     }
 
     /*
@@ -684,7 +684,7 @@ public:
     {
         Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double rho = params.rho_0 * Exp(-shower.Position().Z() / params.scale_height);
+        double rho = params.rho_0 * Exp(-shower.Position().Z() / params.atm_h);
         ASSERT_TRUE(Helper::ValuesEqual(rho, shower.LocalRho(), 1e-6));
     }
 
@@ -695,7 +695,7 @@ public:
     {
         Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double delta = params.delta_0 * Exp(-shower.Position().Z() / params.scale_height);
+        double delta = params.del_0 * Exp(-shower.Position().Z() / params.atm_h);
         ASSERT_TRUE(Helper::ValuesEqual(delta, shower.LocalDelta(), 1e-6));
     }
 
