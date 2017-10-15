@@ -19,13 +19,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d33216d-c2b0-40e7-8a74-b14cf93ccffe" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/terminal.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" afterPath="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Geometric.h" afterPath="$PROJECT_DIR$/cherenkov_lib/Geometric.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h" afterPath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run_output/PlotTree.cpp" afterPath="$PROJECT_DIR$/run_output/PlotTree.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/cmake-build-release/" />
@@ -38,76 +34,22 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DataStructures.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3480">
-              <caret line="235" column="24" lean-forward="false" selection-start-line="235" selection-start-column="24" selection-end-line="235" selection-end-column="24" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataStructures.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="369">
-              <caret line="80" column="34" lean-forward="false" selection-start-line="80" selection-start-column="34" selection-end-line="80" selection-end-column="34" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Config.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Config.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="47" lean-forward="false" selection-start-line="19" selection-start-column="47" selection-end-line="19" selection-end-column="47" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DataStructuresTest.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="495" column="47" lean-forward="false" selection-start-line="495" selection-start-column="47" selection-end-line="495" selection-end-column="47" />
-              <folding>
-                <element signature="e#88#112#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Reconstructor.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="664">
-              <caret line="416" column="0" lean-forward="false" selection-start-line="416" selection-start-column="0" selection-end-line="416" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="MonteCarlo.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1980">
-              <caret line="137" column="29" lean-forward="false" selection-start-line="137" selection-start-column="29" selection-end-line="137" selection-end-column="29" />
+            <state relative-caret-position="225">
+              <caret line="20" column="1" lean-forward="false" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GeometricTest.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp">
+      <file leaf-file-name="PlotTree.cpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/run_output/PlotTree.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-              <folding>
-                <element signature="e#78#102#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="214">
+              <caret line="133" column="18" lean-forward="false" selection-start-line="133" selection-start-column="18" selection-end-line="133" selection-end-column="18" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -115,33 +57,9 @@
       <file leaf-file-name="MonteCarlo.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="915">
-              <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
+            <state relative-caret-position="255">
+              <caret line="17" column="20" lean-forward="false" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Geometric.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="122" column="38" lean-forward="true" selection-start-line="122" selection-start-column="38" selection-end-line="122" selection-end-column="38" />
-              <folding>
-                <element signature="e#84#102#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Geometric.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1341">
-              <caret line="190" column="12" lean-forward="false" selection-start-line="190" selection-start-column="12" selection-end-line="190" selection-end-column="12" />
-              <folding>
-                <element signature="e#136#158#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -150,7 +68,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>PropagateToPlane</find>
       <find>AddPhoton</find>
       <find>Bin</find>
       <find>Subtract</find>
@@ -180,6 +97,7 @@
       <find>ray</find>
       <find>plane</find>
       <find>throw</find>
+      <find>struct</find>
     </findStrings>
     <replaceStrings>
       <replace>std::move</replace>
@@ -227,14 +145,15 @@
         <option value="$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.h" />
+        <option value="$PROJECT_DIR$/run_output/PlotTree.cpp" />
       </list>
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="85" />
+    <option name="x" value="289" />
     <option name="y" value="23" />
-    <option name="width" value="1385" />
+    <option name="width" value="1151" />
     <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -272,6 +191,11 @@
               <item name="cherenkov_simulator" type="462c0819:PsiDirectoryNode" />
               <item name="cherenkov_test" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="cherenkov_simulator" type="dad4c3:CidrFilesViewHelper$MyProjectTreeStructure$1" />
+              <item name="cherenkov_simulator" type="462c0819:PsiDirectoryNode" />
+              <item name="run_output" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -280,7 +204,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
+    <property name="settings.editor.selected.configurable" value="terminal" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
   </component>
@@ -301,7 +225,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.cherenkov_simulator_release">
+  <component name="RunManager" selected="Application.cherenkov_simulator_debug">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
       <envs />
     </configuration>
@@ -515,7 +439,8 @@
       <workItem from="1507932016078" duration="19072000" />
       <workItem from="1507960057741" duration="238000" />
       <workItem from="1507960317006" duration="40000" />
-      <workItem from="1508004135218" duration="21995000" />
+      <workItem from="1508004135218" duration="22132000" />
+      <workItem from="1508101098448" duration="4617000" />
     </task>
     <task id="LOCAL-00001" summary="Reversed y-direction in sum maps so ground is at the bottom">
       <created>1492142150458</created>
@@ -776,7 +701,14 @@
       <option name="project" value="LOCAL" />
       <updated>1508041437258</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Updated documentation and style of Geometric files">
+      <created>1508047066386</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1508047066386</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -812,7 +744,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="118033000" />
+    <option name="totallyTimeSpent" value="122787000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -824,19 +756,18 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="85" y="23" width="1385" height="877" extended-state="0" />
+    <frame x="289" y="23" width="1151" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31018937" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4219949" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39897698" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.42838874" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4280532" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38814995" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3478261" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25167537" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44860944" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4168798" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4050786" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -846,6 +777,7 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44860944" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -902,7 +834,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="Changing AddSubtractNoise test to TypicalShowerEntire and modifying" />
     <MESSAGE value="Added ROOT macro for plotting CSV files" />
     <MESSAGE value="Fixed compiler flags" />
     <MESSAGE value="Updated ReadMe file" />
@@ -927,7 +858,8 @@
     <MESSAGE value="Preparing for data collection&#10;&#10;Tweaked a couple of XML settings in preparation for large overnight data collection." />
     <MESSAGE value="Reverting optimization that could result in an empty fitting dataset" />
     <MESSAGE value="Finished unit testing on Geometric&#10;&#10;Found a few issues:&#10; - Plane normal vector wasn't being made unit (this is just a specification thing and probably wasn't causing problems)&#10; - PropagateToPlane was reversing the direction if the plane was behind the ray (it should add a negative time and keep direction the same)&#10; - Checking for total internal reflection in the Refract method&#10; - Fixed the ImpactAngle method (THIS ONE IS IMPORTANT!!!)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished unit testing on Geometric&#10;&#10;Found a few issues:&#10; - Plane normal vector wasn't being made unit (this is just a specification thing and probably wasn't causing problems)&#10; - PropagateToPlane was reversing the direction if the plane was behind the ray (it should add a negative time and keep direction the same)&#10; - Checking for total internal reflection in the Refract method&#10; - Fixed the ImpactAngle method (THIS ONE IS IMPORTANT!!!)" />
+    <MESSAGE value="Updated documentation and style of Geometric files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated documentation and style of Geometric files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -936,13 +868,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/Analysis.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -1165,7 +1090,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="312">
           <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1173,7 +1097,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="145">
           <caret line="85" column="0" lean-forward="false" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1181,7 +1104,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="287" column="0" lean-forward="false" selection-start-line="287" selection-start-column="0" selection-end-line="287" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1189,7 +1111,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="1350" column="0" lean-forward="false" selection-start-line="1350" selection-start-column="0" selection-end-line="1350" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1197,7 +1118,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1241,29 +1161,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="915">
-          <caret line="69" column="21" lean-forward="false" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
           <folding>
-            <element signature="e#78#102#0" expanded="true" />
+            <element signature="e#78#102#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1980">
-          <caret line="137" column="29" lean-forward="false" selection-start-line="137" selection-start-column="29" selection-end-line="137" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1280,7 +1184,7 @@
         <state relative-caret-position="219">
           <caret line="495" column="47" lean-forward="false" selection-start-line="495" selection-start-column="47" selection-end-line="495" selection-end-column="47" />
           <folding>
-            <element signature="e#88#112#0" expanded="true" />
+            <element signature="e#88#112#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1298,18 +1202,39 @@
         <state relative-caret-position="-1341">
           <caret line="190" column="12" lean-forward="false" selection-start-line="190" selection-start-column="12" selection-end-line="190" selection-end-column="12" />
           <folding>
-            <element signature="e#136#158#0" expanded="true" />
+            <element signature="e#136#158#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="122" column="38" lean-forward="true" selection-start-line="122" selection-start-column="38" selection-end-line="122" selection-end-column="38" />
-          <folding>
-            <element signature="e#84#102#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1965">
+          <caret line="131" column="43" lean-forward="true" selection-start-line="131" selection-start-column="43" selection-end-line="131" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="20" lean-forward="false" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="20" column="1" lean-forward="false" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run_output/PlotTree.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="133" column="18" lean-forward="false" selection-start-line="133" selection-start-column="18" selection-end-line="133" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>
