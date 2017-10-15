@@ -8,18 +8,19 @@
 
 #include "Geometric.h"
 
-using namespace TMath;
 using namespace std;
+using namespace TMath;
 
 namespace cherenkov_simulator
 {
     Plane::Plane() : Plane(TVector3(0, 0, 1), TVector3())
     {}
 
-    Plane::Plane(TVector3 normal_vector, TVector3 point)
+    Plane::Plane(TVector3 normal, TVector3 point)
     {
-        if (normal_vector.Mag2() == 0) throw std::runtime_error("Plane normal vector must be nonzero");
-        normal = normal_vector;
+        if (normal.Mag2() == 0) 
+            throw invalid_argument("Plane normal vector must be nonzero");
+        this->normal = normal.Unit();
         coefficient = normal.Dot(point);
     }
 
@@ -44,7 +45,6 @@ namespace cherenkov_simulator
 
     Ray::Ray(TVector3 position, TVector3 direction, double time)
     {
-        if (direction.Mag2() == 0) throw std::runtime_error("Ray direction must be nonzero");
         SetDirection(direction);
         this->time = time;
         this->position = position;
@@ -67,7 +67,8 @@ namespace cherenkov_simulator
 
     void Ray::SetDirection(TVector3 direction)
     {
-        // Use the speed of light in centimeters/second.
+        if (direction.Mag2() == 0)
+            throw invalid_argument("Ray direction must be nonzero");
         velocity = direction.Unit() * Utility::c_cent;
     }
 
@@ -88,14 +89,17 @@ namespace cherenkov_simulator
 
     void Ray::PropagateToPlane(Plane plane)
     {
-        PropagateToPoint(PlaneImpact(std::move(plane)));
+        double time = TimeToPlane(move(plane));
+        if (time != Infinity())
+            IncrementTime(time);
     }
 
     TVector3 Ray::PlaneImpact(Plane plane) const
     {
-        // If the ray and the plane are exactly parallel, return the current position of the ray.
-        double time = TimeToPlane(std::move(plane));
-        return (time == Infinity()) ? position : position + time * velocity;
+        double time = TimeToPlane(move(plane));
+        if (time != Infinity())
+            return position + time * velocity;
+        return position;
     }
 
     double Ray::TimeToPlane(Plane plane) const
@@ -111,6 +115,8 @@ namespace cherenkov_simulator
     void Ray::Reflect(TVector3 normal)
     {
         // TODO: Would it be a good idea to update this with the SetDirection method?
+        if(normal.Mag2() == 0)
+            throw invalid_argument("Reflection normal vector must be nonzero");
         velocity -= 2 * velocity.Dot(normal.Unit()) * normal.Unit();
     }
 
@@ -120,6 +126,10 @@ namespace cherenkov_simulator
         // TODO: Perform a check and update here on the direction.
         // TODO: Perform a check on the critical angle of the substance.
         // TODO: Would it be a good idea to update the velocity with the SetDirection method?
+        if(normal.Mag2() == 0)
+            throw invalid_argument("Refraction normal vector must be nonzero");
+        if (n_in < 1 || n_out < 1)
+            throw invalid_argument("Indices of refraction must be at least one");
         normal = -normal;
 
         double angle_in = velocity.Angle(normal);
@@ -129,7 +139,8 @@ namespace cherenkov_simulator
 
         // If we're more than 90 degrees from the normal, we're coming from the wrong side of the lens (reversed normal
         // should point in the same direction as the incoming ray)
-        if (angle_in > PiOver2()) return false;
+        double theta_c = ASin(n_out / n_in);
+        if (angle_in > PiOver2() || angle_in > theta_c) return false;
 
         // Refract and rotate around some vector perpendicular to both the ray and plane normal.
         double angle_out = ASin(n_in * Sin(angle_in) / n_out);
@@ -156,8 +167,7 @@ namespace cherenkov_simulator
         position += time_step * velocity;
     }
 
-    Shower::Shower() : Ray()
-    {}
+    Shower::Shower() : Ray() {}
 
     Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
@@ -167,6 +177,19 @@ namespace cherenkov_simulator
         this->rho_0 = params.rho_0;
         this->scale_height = params.scale_height;
         this->delta_0 = params.delta_0;
+
+        if (energy <= 0.0)
+            throw invalid_argument("Shower energy must be positive");
+        if (x_max <= 0.0)
+            throw invalid_argument("Shower XMax must be positive");
+        if (n_max <= 0.0)
+            throw invalid_argument("Shower NMax must be positive");
+        if (rho_0 <= 0.0)
+            throw invalid_argument("Atmospheric density must be positive");
+        if (scale_height <= 0.0)
+            throw invalid_argument("Scale height must be positive");
+        if (delta_0 <= 0.0)
+            throw invalid_argument("Atmospheric delta0 must be positive");
     }
 
     double Shower::Age() const
@@ -194,7 +217,8 @@ namespace cherenkov_simulator
 
     double Shower::ImpactAngle() const
     {
-        return Direction().Angle(TVector3(0, 1, 0));
+        Plane horiz_plane = Plane(TVector3(0, 0, 1), TVector3(0, 0, 0));
+        return Direction().Angle(PlaneImpact(horiz_plane));
     }
 
     double Shower::LocalRho() const

@@ -192,7 +192,7 @@ namespace cherenkov_simulator
         };
 
         /*
-         * The default constructor.
+         * The default constructor. Objects constructed with this should only be used as placeholders.
          */
         Shower();
 

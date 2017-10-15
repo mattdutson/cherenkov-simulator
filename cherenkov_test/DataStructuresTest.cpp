@@ -88,7 +88,7 @@ namespace cherenkov_simulator
      */
     TEST_F(DataStructuresTest, UserConstructor)
     {
-        PhotonCount data = PhotonCount(CopyParams(), 0.0, 0.95);
+        PhotonCount data = CopyEmpty();
         ASSERT_EQ(4, data.Size());
         ASSERT_EQ(10, data.NBins());
         ASSERT_TRUE(data.Empty());
@@ -553,11 +553,11 @@ namespace cherenkov_simulator
 
         iter.Next();
         iter.Next();
-        ASSERT_EQ(0, data.SumBinsFiltered(iter, &mask));
+        ASSERT_EQ(0, data.SumBinsFiltered(iter, mask));
 
         iter.Next();
         iter.Next();
-        ASSERT_EQ(6, data.SumBinsFiltered(iter, &mask));
+        ASSERT_EQ(6, data.SumBinsFiltered(iter, mask));
     }
 
     /*
@@ -710,7 +710,7 @@ namespace cherenkov_simulator
         iter.Next();
         iter.Next();
         int expected = data.SumBins(iter) - rate * 10;
-        data.Subtract(iter, universal_rate);
+        data.Subtract(universal_rate, iter);
         ASSERT_EQ(expected, data.SumBins(iter));
     }
 
