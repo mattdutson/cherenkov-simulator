@@ -2,7 +2,8 @@
 //
 // Author: Matthew Dutson
 //
-// Contains generally useful methods. Has no knowledge of Reconstructor, MonteCarlo, or Simulator.
+// Contains generally useful and constant definitions. Has no knowledge of Reconstructor, MonteCarlo, or Simulator. See
+// thesis for detailed parameter descriptions.
 
 #ifndef UTILITY_H
 #define UTILITY_H
@@ -14,37 +15,36 @@
 
 namespace cherenkov_simulator
 {
-    // Physics constants - MeV, cgs
-    const double mass_e = 0.511;
+    // Physics constants - MeV, cgs.
     const double fine_struct = 0.007297;
+    const double mass_e = 0.511;
     const double c_cent = 2.998e10;
 
-    // Fixed parameters in the Gaisser-Hillas profile - cgs.
-    const double x_0 = -70.0;
+    // Atmospheric parameters - cgs, K.
+    const double scale_h = 841300;
+    const double rho_sea = 0.001225;
+    const double ref_sea = 1.00029;
+    const double ref_lens = 1.52;
+    const double atm_temp = 273.0;
+
+    // Equipment inefficiencies.
+    const double mirror_eff = 0.80;
+    const double filter_eff = 1.0;
+    const double pmtube_eff = 0.15;
+
+    // Levels of night sky background noise - cgs, sr.
+    const double glob_sky_noise = 4.924e6;
+    const double glob_gnd_noise = 4.924e5;
+
+    // Gaisser-Hillas parameters - cgs.
     const double gh_lambda = 70.0;
-
-    // Used to calculate N_max from the energy - eV
+    const double x_0 = -70.0;
     const double n_max_ratio = 1.39e9;
-
-    // Parameters used when determining the depth of the shower maximum - cgs
     const double x_max_1 = 725.0;
     const double x_max_2 = 55.0;
     const double x_max_3 = 18.0;
 
-    // Atmospheric parameters - cgs
-    const double atm_h = 841300;
-    const double rho_sea = 0.001225;
-    const double refrac_sea = 1.00029;
-
-    // Levels of night sky background noise - cgs, sr
-    const double global_sky_noise = 4.924e6;
-    const double global_ground_noise = 4.924e5;
-
-    // Parameters in the Cherenkov yield - cgs
-    const double lambda_min = 3.0e-5;
-    const double lambda_max = 4.0e-5;
-
-    // Parameters in the electron energy spectrum - MeV
+    // Parameters in the electron energy spectrum - MeV.
     const double fe_a11 = 6.42522;
     const double fe_a12 = 1.53183;
     const double fe_a21 = 168.168;
@@ -53,33 +53,25 @@ namespace cherenkov_simulator
     const double fe_k1 = 6.20114;
     const double fe_k2 = -5.96851e-1;
 
-    // Miscellaneous parameters - K
-    const double atm_temp = 273.0;
-    const double refrac_lens = 1.52;
-
-    // Parameters in the fluorescence yield - MeV, cgs, K
+    // Parameters in the fluorescence yield - MeV, cgs, K.
     const double fluor_a1 = 890.0;
     const double fluor_a2 = 550.0;
     const double fluor_b1 = 1850.0;
     const double fluor_b2 = 6500.0;
-    const double dep_1_4 = 1.6;
+    const double edep_1_4 = 1.6;
 
-    // Parameters in the effective ionization loss rate - MeV, cgs
+    // Parameters in the effective ionization loss rate - MeV, cgs.
     const double ion_c1 = 3.90883;
     const double ion_c2 = 1.05301;
     const double ion_c3 = 9.91717;
     const double ion_c4 = 2.41715;
     const double ion_c5 = 0.13180;
 
-    // Parameters used when calculating theta_c in the Cherenkov angular distribution - MeV
-    const double ckv_k1 = 0.83;
-    const double ckv_k2 = -0.67;
-
-    // Parameters which describe inefficiencies in the equipment
-    const double mirror_reflect = 0.80; // 1.0; // 0.80
-    const double filter_transmit = 1.0;
-    const double quantum_eff = 0.15; // 1.0; // 0.15
-    
+    // Miscellaneous Cherenkov parameters - cgs.
+    const double lambda_min = 3.0e-5;
+    const double lambda_max = 4.0e-5;
+    const double chkv_k1 = 0.83;
+    const double chkv_k2 = -0.67;
     
     typedef std::vector<bool> Bool1D;
     typedef std::vector<std::vector<bool>> Bool2D;
@@ -163,6 +155,5 @@ namespace cherenkov_simulator
         static double ParseTo(std::string& s, char c);
     };
 }
-
 
 #endif

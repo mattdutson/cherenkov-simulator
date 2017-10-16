@@ -572,7 +572,7 @@ public:
     TEST_F(GeometricTest, LocalRho)
     {
         Shower shower = CopyShower();
-        double rho = rho_sea * Exp(-(shower.Position().Z() + 150000) / atm_h);
+        double rho = rho_sea * Exp(-(shower.Position().Z() + 150000) / scale_h);
         ASSERT_TRUE(Helper::ValuesEqual(rho, shower.LocalRho(), 1e-6));
     }
 
@@ -582,7 +582,7 @@ public:
     TEST_F(GeometricTest, LocalDelta)
     {
         Shower shower = CopyShower();
-        double delta = (refrac_sea - 1.0) * Exp(-(shower.Position().Z() + 150000) / atm_h);
+        double delta = (ref_sea - 1.0) * Exp(-(shower.Position().Z() + 150000) / scale_h);
         ASSERT_TRUE(Helper::ValuesEqual(delta, shower.LocalDelta(), 1e-6));
     }
 

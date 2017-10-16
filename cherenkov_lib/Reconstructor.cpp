@@ -43,8 +43,8 @@ namespace cherenkov_simulator
 
         // The amount of night sky background noise
         double stop_diameter = config.get<double>("detector.mirror_radius") / (2.0 * config.get<double>("detector.f_number"));
-        sky_noise = Sq(stop_diameter / 2.0) * Pi() * global_sky_noise;
-        ground_noise = Sq(stop_diameter / 2.0) * Pi() * global_ground_noise;
+        sky_noise = Sq(stop_diameter / 2.0) * Pi() * glob_sky_noise;
+        gnd_noise = Sq(stop_diameter / 2.0) * Pi() * glob_gnd_noise;
 
         // Parameters used when applying triggering logic and noise reduction
         trigger_thresh = config.get<double>("triggering.trigger_thresh");
@@ -82,7 +82,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
-            data.AddNoise(toward_ground ? ground_noise : sky_noise, iter);
+            data.AddNoise(toward_ground ? gnd_noise : sky_noise, iter);
         }
     }
 
@@ -220,7 +220,7 @@ namespace cherenkov_simulator
         Ray outward_ray = Ray(TVector3(), impact_direction, 0);
         outward_ray.PropagateToPlane(ground);
         impact = outward_ray.Position();
-        return highest_count > data.FindThreshold(ground_noise, trigger_thresh);
+        return highest_count > data.FindThreshold(gnd_noise, trigger_thresh);
     }
 
     TGraphErrors Reconstructor::GetFitGraph(const PhotonCount& data, TRotation to_sdp) const
@@ -257,7 +257,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
-            data.Subtract(toward_ground ? ground_noise : sky_noise, iter);
+            data.Subtract(toward_ground ? gnd_noise : sky_noise, iter);
         }
     }
 
@@ -356,14 +356,15 @@ namespace cherenkov_simulator
 
     void Reconstructor::VisitPush(size_t x, size_t y, size_t t, std::list<std::array<size_t, 3>>& front, Bool3D& not_visited)
     {
-        if (x > not_visited.size() - 1) return;
-        else if (y > not_visited.at(x).size() - 1) return;
-        else if (t > not_visited.at(x)[y].size() - 1) return;
+        if (x > not_visited.size() - 1)
+            return;
+        else if (y > not_visited.at(x).size() - 1)
+            return;
+        else if (t > not_visited.at(x)[y].size() - 1)
+            return;
         else if (not_visited.at(x)[y][t])
-        {
             front.push_back({x, y, t});
-            not_visited[x][y][t] = false;
-        }
+        not_visited[x][y][t] = false;
     }
 
     void Reconstructor::FindPlaneSubset(const PhotonCount& data, Bool3D& triggered) const
@@ -373,9 +374,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             if (!NearPlane(to_sd_plane, to_world * data.Direction(iter)))
-            {
                 triggered[iter.X()][iter.Y()] = Bool1D(data.NBins(), false);
-            }
         }
     }
 
@@ -394,7 +393,7 @@ namespace cherenkov_simulator
 
     Bool3D Reconstructor::GetThresholdMatrices(const PhotonCount& data, double sigma_mult, bool use_below_horiz) const
     {
-        int ground_thresh = data.FindThreshold(ground_noise, sigma_mult);
+        int gnd_thresh = data.FindThreshold(gnd_noise, sigma_mult);
         int sky_thresh = data.FindThreshold(sky_noise, sigma_mult);
         Bool3D pass = data.GetFalseMatrix();
         PhotonCount::Iterator iter = data.GetIterator();
@@ -402,7 +401,7 @@ namespace cherenkov_simulator
         {
             bool toward_ground = ground.InFrontOf(to_world * data.Direction(iter));
             if (toward_ground && !use_below_horiz) continue;
-            pass[iter.X()][iter.Y()] = data.AboveThreshold(iter, toward_ground ? ground_thresh : sky_thresh);
+            pass[iter.X()][iter.Y()] = data.AboveThreshold(iter, toward_ground ? gnd_thresh : sky_thresh);
         }
         return pass;
     }

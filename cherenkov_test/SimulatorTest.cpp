@@ -50,8 +50,8 @@ namespace cherenkov_simulator
 
         // Make some graphics and write them to a file.
         TFile file("StraightShowerSim.root", "RECREATE");
-        Analysis::MakeProfileGraph(data).Write("straight_shower_graph");
-        Analysis::MakeSumMap(data).Write("straight_shower_map");
+        Analysis::MakeTimeProfile(data).Write("straight_shower_graph");
+        Analysis::MakePixlProfile(data).Write("straight_shower_map");
     }
 
     /*
@@ -65,8 +65,8 @@ namespace cherenkov_simulator
 
         // Draw a map of impacts.
         TFile file("AngleShowerSim.root", "RECREATE");
-        Analysis::MakeProfileGraph(data).Write("angle_shower_graph");
-        Analysis::MakeSumMap(data).Write("angle_shower_map");
+        Analysis::MakeTimeProfile(data).Write("angle_shower_graph");
+        Analysis::MakePixlProfile(data).Write("angle_shower_map");
     }
 
     /*
@@ -80,8 +80,8 @@ namespace cherenkov_simulator
 
         // Draw a map of impacts.
         TFile file("TypicalShowerSim.root", "RECREATE");
-        Analysis::MakeProfileGraph(data).Write("typical_shower_graph");
-        Analysis::MakeSumMap(data).Write("typical_shower_map");
+        Analysis::MakeTimeProfile(data).Write("typical_shower_graph");
+        Analysis::MakePixlProfile(data).Write("typical_shower_map");
     }
 
     TEST_F(SimulatorTest, WholeProfile)
@@ -92,7 +92,7 @@ namespace cherenkov_simulator
 
         // Make some graphics and write them to a file.
         TFile file("WholeProfileSim.root", "RECREATE");
-        Analysis::MakeProfileGraph(data).Write("whole_shower_graph");
-        Analysis::MakeSumMap(data).Write("whole_shower_map");
+        Analysis::MakeTimeProfile(data).Write("whole_shower_graph");
+        Analysis::MakePixlProfile(data).Write("whole_shower_map");
     }
 }

@@ -54,7 +54,6 @@ namespace cherenkov_simulator
 
         friend class GeometricTest;
 
-        // The normal vector and equation coefficient.
         TVector3 normal;
         double coeff;
     };

@@ -105,16 +105,16 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 1, -3), 1e6, -0.1, 1e19);
         PhotonCount data = simulator->SimulateShower(shower);
 
-        Analysis::MakeProfileGraph(data).Write("before_noise_graph");
-        Analysis::MakeSumMap(data).Write("before_noise_map");
+        Analysis::MakeTimeProfile(data).Write("before_noise_graph");
+        Analysis::MakePixlProfile(data).Write("before_noise_map");
 
         reconstructor->AddNoise(data);
-        Analysis::MakeProfileGraph(data).Write("after_noise_graph");
-        Analysis::MakeSumMap(data).Write("after_noise_map");
+        Analysis::MakeTimeProfile(data).Write("after_noise_graph");
+        Analysis::MakePixlProfile(data).Write("after_noise_map");
 
         reconstructor->ClearNoise(data);
-        Analysis::MakeProfileGraph(data).Write("after_clear_graph");
-        Analysis::MakeSumMap(data).Write("after_clear_map");
+        Analysis::MakeTimeProfile(data).Write("after_clear_graph");
+        Analysis::MakePixlProfile(data).Write("after_clear_map");
 
 //        Reconstructor::Result result = reconstructor->Reconstruct(data);
 //        std::cout << "Actual Angle: " << shower.ImpactAngle() << "\tActual Impact: " << shower.ImpactParam() << std::endl;

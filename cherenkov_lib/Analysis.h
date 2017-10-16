@@ -26,12 +26,12 @@ namespace cherenkov_simulator
         /*
          * Makes a TGraph of the collapsed time profile for the simulation.
          */
-        static TGraph MakeProfileGraph(const PhotonCount& data);
+        static TGraph MakeTimeProfile(const PhotonCount& data);
 
         /*
          * Makes a 2D histogram with the sum of each bin
          */
-        static TH2I MakeSumMap(const PhotonCount& data, bool reverse_y = true);
+        static TH2I MakePixlProfile(const PhotonCount& data, bool reverse_y = true);
 
         /*
          * Creates a 2D histogram with a 1 for valid cells and a 0 for invalid cells.

@@ -184,12 +184,12 @@ namespace cherenkov_simulator
 
     double Shower::LocalRho() const
     {
-        return rho_sea * Exp(-(position.Z() + elevation) / atm_h);
+        return rho_sea * Exp(-(position.Z() + elevation) / scale_h);
     }
 
     double Shower::LocalDelta() const
     {
-        return (refrac_sea - 1.0) * Exp(-(position.Z() + elevation) / atm_h);
+        return (ref_sea - 1.0) * Exp(-(position.Z() + elevation) / scale_h);
     }
 
     double Shower::GaisserHillas() const
@@ -221,7 +221,7 @@ namespace cherenkov_simulator
 
     double Shower::X() const
     {
-        return atm_h * rho_sea / Abs(velocity.CosTheta()) * Exp(-(position.Z() + elevation) / atm_h);
+        return scale_h * rho_sea / Abs(velocity.CosTheta()) * Exp(-(position.Z() + elevation) / scale_h);
     }
 
     double Shower::XMax() const

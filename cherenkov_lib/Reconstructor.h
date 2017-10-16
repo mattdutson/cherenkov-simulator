@@ -44,7 +44,7 @@ namespace cherenkov_simulator
         /*
          * Constructs the Reconstructor from values in the configuration tree.
          */
-        Reconstructor(const boost::property_tree::ptree& config);
+        explicit Reconstructor(const boost::property_tree::ptree& config);
 
         /*
          * Performs both a monocular and Cherenkov reconstruction, storing output in a Result data structure. If the
@@ -74,7 +74,7 @@ namespace cherenkov_simulator
 
         // Detector-specific levels of night sky background noise - cgs, sr
         double sky_noise;
-        double ground_noise;
+        double gnd_noise;
 
         // Parameters used when applying triggering logic and noise reduction
         double trigger_thresh;

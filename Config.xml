@@ -17,16 +17,16 @@
         <ground_normal unit="(null, null, null)">(0, 0, 1)</ground_normal>
         <ground_point unit="(cm, cm, cm)">(0, 0, -20000)</ground_point>
         <elevation_angle unit="rad">0.045</elevation_angle>
-        <detect_elevation unit="cm">141400</detect_elevation>
+        <elevation unit="cm">141400</elevation>
     </surroundings>
 
     <monte_carlo note="Defines properties of randomly generated showers">
         <energy_pow unit="null">-1.0</energy_pow>
-        <e_min unit="eV">1.0e17</e_min>
-        <e_max unit="eV">1.0e21</e_max>
+        <energy_min unit="eV">1.0e17</energy_min>
+        <energy_max unit="eV">1.0e21</energy_max>
         <impact_min unit="cm">3.0e5</impact_min>
         <impact_max unit="cm">4.0e6</impact_max>
-        <start_tracking unit="g/cm^2" note="Must be positive">50.0</start_tracking>
+        <begn_depth unit="g/cm^2" note="Must be positive">50.0</begn_depth>
     </monte_carlo>
 
     <detector note="Properties of the optics and detector">

@@ -28,7 +28,7 @@ namespace cherenkov_simulator
         /*
          * Constructs the Simulator from values in the configuration tree.
          */
-        Simulator(const boost::property_tree::ptree& config);
+        explicit Simulator(const boost::property_tree::ptree& config);
 
         /*
          * Simulate the motion of the shower from its current point to the ground, emitting fluorescence and Cherenkov

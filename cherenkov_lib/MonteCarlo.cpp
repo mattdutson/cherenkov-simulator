@@ -11,54 +11,41 @@
 #include "MonteCarlo.h"
 #include "Analysis.h"
 
+using namespace std;
+using namespace boost::property_tree;
 using namespace TMath;
-
-using std::cout;
-using std::endl;
-using boost::property_tree::ptree;
 
 namespace cherenkov_simulator
 {
-    MonteCarlo::MonteCarlo(const boost::property_tree::ptree& config) : simulator(config), reconstructor(config)
+    MonteCarlo::MonteCarlo(const ptree& config) : simulator(config), reconstructor(config)
     {
-        // The distribution of shower energies
-        energy_pow = config.get<double>("monte_carlo.energy_pow");
-        e_min = config.get<double>("monte_carlo.e_min");
-        e_max = config.get<double>("monte_carlo.e_max");
+        n_showers = config.get<int>("simulation.n_showers");
+        elevation = config.get<double>("surroundings.elevation");
 
-        // The Monte Carlo distribution of impact parameters
+        energy_pow = config.get<double>("monte_carlo.energy_pow");
+        energy_min = config.get<double>("monte_carlo.energy_min");
+        energy_max = config.get<double>("monte_carlo.energy_max");
         impact_min = config.get<double>("monte_carlo.impact_min");
         impact_max = config.get<double>("monte_carlo.impact_max");
-
-        // First interaction depths follow an exponential distribution (See AbuZayyad 6.1)
-        start_tracking = config.get<double>("monte_carlo.start_tracking");
-
-        // Determine the local atmosphere based on the elevation
-        elevation = config.get<double>("surroundings.detect_elevation");
-
-        // The number of showers to simulate in PerformMonteCarlo
-        n_showers = config.get<int>("simulation.n_showers");
+        begn_depth = config.get<double>("monte_carlo.begn_depth");
     }
 
-    void MonteCarlo::PerformMonteCarlo(std::string out_file) const
+    void MonteCarlo::PerformMonteCarlo(string output_file) const
     {
-        // Open a ROOT file to store information about each shower
-        TFile file((out_file + ".root").c_str(), "RECREATE");
-        std::ofstream fout = std::ofstream(out_file + ".csv");
+        TFile file((output_file + ".root").c_str(), "RECREATE");
+        ofstream fout = ofstream(output_file + ".csv");
         unsigned int start_seed = gRandom->GetSeed();
         fout << "Seed, ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
-        // Simulate a user-defined number of showers
         for (int i = 0; i < n_showers;)
         {
-            // Simulate the shower and record photon counts before noise is added
             Shower shower = GenerateShower();
             PhotonCount data;
             try
             {
                 data = simulator.SimulateShower(shower);
             }
-            catch (std::out_of_range& err)
+            catch (out_of_range& err)
             {
                 cout << err.what() << endl;
                 cout << "Skipping this shower..." << endl;
@@ -66,22 +53,17 @@ namespace cherenkov_simulator
             }
             if (data.Empty()) continue;
             else i++;
+            Analysis::MakePixlProfile(data).Write((to_string(i) + "_before_noise_pixl").c_str());
+            Analysis::MakeTimeProfile(data).Write((to_string(i) + "_before_noise_time").c_str());
 
-            // Write a map of the initial shower track
-            Analysis::MakeSumMap(data).Write((std::to_string(i) + "_before_noise_map").c_str());
-            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_before_noise_graph").c_str());
-
-            // Add noise and record the new photon counts
             reconstructor.AddNoise(data);
-            Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_noise_map").c_str());
-            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_noise_graph").c_str());
+            Analysis::MakePixlProfile(data).Write((to_string(i) + "_after_noise_pixl").c_str());
+            Analysis::MakeTimeProfile(data).Write((to_string(i) + "_after_noise_time").c_str());
 
-            // Clear noise and record the new photon counts
             reconstructor.ClearNoise(data);
-            Analysis::MakeSumMap(data).Write((std::to_string(i) + "_after_clear_map").c_str());
-            Analysis::MakeProfileGraph(data).Write((std::to_string(i) + "_after_clear_graph").c_str());
+            Analysis::MakePixlProfile(data).Write((to_string(i) + "_after_clear_pixl").c_str());
+            Analysis::MakeTimeProfile(data).Write((to_string(i) + "_after_clear_time").c_str());
 
-            // Attempt both monocular and hybrid reconstruction of the shower
             Reconstructor::Result result = reconstructor.Reconstruct(data);
             cout << "Shower " << i << " finished" << endl;
             fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", "
@@ -91,57 +73,44 @@ namespace cherenkov_simulator
 
     Shower MonteCarlo::GenerateShower() const
     {
-        // Determine the direction of the shower and its position relative to the detector. The angle of the shower
-        // relative to the vertical goes as cos(theta) because shower have an isotropic flux in space.
-        double theta = Utility::RandCosine();
-        double phi_shower = gRandom->Uniform(TwoPi());
-        double energy = Utility::RandPower(e_min, e_max, energy_pow);
+        double zenith = Utility::RandCosine();
+        double azmuth = gRandom->Uniform(TwoPi());
+        TVector3 axis = TVector3(sin(zenith) * cos(azmuth), sin(zenith) * sin(azmuth), -cos(zenith));
 
-        // Determine the impact parameter.
-        double impact_param = Utility::RandLinear(impact_min, impact_max);
-
-        // Find the Cartesian shower axis vector. This vector is in the world frame (z is normal to the surface of the
-        // earth, with x and y parallel to the surface. Note that the surface of the earth may not be parallel to the
-        // local ground.
-        TVector3 shower_axis = TVector3(sin(theta) * cos(phi_shower), sin(theta) * sin(phi_shower), -cos(theta));
-        return GenerateShower(shower_axis, impact_param, gRandom->Uniform(TwoPi()), energy);
+        double im_par = Utility::RandLinear(impact_min, impact_max);
+        double im_ang = gRandom->Uniform(TwoPi());
+        double energy = Utility::RandPower(energy_min, energy_max, energy_pow);
+        return GenerateShower(axis, im_par, im_ang, energy);
     }
 
-    Shower MonteCarlo::GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy) const
+    Shower MonteCarlo::GenerateShower(TVector3 axis, double im_par, double im_ang, double energy) const
     {
-        // We define the origin of both the world and detector frames to be the detector's center of curvature for
-        // simplicity. We know that, at the impact point, the position vector of the shower is normal to its direction
-        // vector.
-        TVector3 impact_direction = TVector3(1, 0, 0).Cross(axis).Unit();
-        impact_direction.Rotate(impact_angle, axis);
-        TVector3 impact_point = impact_param * impact_direction;
+        // Start with an impact point directly in front of the detector, then rotate it by a random angle.
+        TVector3 impact_pos = TVector3(1, 0, 0).Cross(axis).Unit();
+        impact_pos.Rotate(im_ang, axis);
+        impact_pos *= im_par;
 
-        // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
-        // the first interaction. See notes from 1/25.
-        double cos_theta = Abs(axis.CosTheta());
-        double interaction_height = -atm_h * Log(start_tracking * cos_theta / (rho_sea * atm_h)) - elevation;
-        double param = (interaction_height - impact_point.Z()) / (axis.Z());
-        TVector3 starting_position = impact_point + param * axis;
-
-        // Create a new shower with all of the randomly determined parameters.
-        return Shower(energy, elevation, starting_position, axis);
+        double start_h = -scale_h * Log(begn_depth * Abs(axis.CosTheta()) / (rho_sea * scale_h)) - elevation;
+        double trace = (start_h - impact_pos.Z()) / (axis.Z());
+        TVector3 start_pos = impact_pos + trace * axis;
+        return Shower(energy, elevation, start_pos, axis);
     }
 
     int MonteCarlo::Run(int argc, const char* argv[])
     {
-        std::string out_file = "Output";
-        std::string config_file = "Config.xml";
-        if (argc > 1) out_file = std::string(argv[1]);
-        if (argc > 2) config_file = std::string(argv[2]);
+        string output_file = "Output";
+        string config_file = "Config.xml";
+        if (argc > 1) output_file = string(argv[1]);
+        if (argc > 2) config_file = string(argv[2]);
         try
         {
             ptree config = Utility::ParseXMLFile(config_file).get_child("config");
             if (config.get<bool>("simulation.time_seed")) gRandom->SetSeed();
-            if (argc > 3) gRandom->SetSeed(std::stoul(argv[3]));
-            MonteCarlo(config).PerformMonteCarlo(out_file);
+            if (argc > 3) gRandom->SetSeed(stoul(argv[3]));
+            MonteCarlo(config).PerformMonteCarlo(output_file);
             return 0;
         }
-        catch (std::runtime_error& err)
+        catch (runtime_error& err)
         {
             cout << err.what() << endl;
             return -1;

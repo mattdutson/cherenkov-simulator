@@ -119,7 +119,7 @@ namespace cherenkov_simulator
         double rho = shower.LocalRho();
         double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atm_temp));
         double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atm_temp));
-        double yield = IonizationLossRate(shower) / dep_1_4 * (term_1 + term_2);
+        double yield = IonizationLossRate(shower) / edep_1_4 * (term_1 + term_2);
 
         // Find the number produced and the fraction captured
         double total = yield * shower.GaisserHillas() * depth_step;
@@ -181,12 +181,12 @@ namespace cherenkov_simulator
         if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return photon.Direction().Z() < 0;
 
         // Find the normal to the corrector
-        double z_norm = (refrac_lens - 1) * Power(mirror_radius, 3) / (Sq(x) + Sq(y));
+        double z_norm = (ref_lens - 1) * Power(mirror_radius, 3) / (Sq(x) + Sq(y));
         TVector3 norm = TVector3(-x, -y, z_norm).Unit();
 
         // Perform the refraction
-        bool success = photon.Refract(norm, 1, refrac_lens);
-        return success && photon.Refract(TVector3(0, 0, 1), refrac_lens, 1);
+        bool success = photon.Refract(norm, 1, ref_lens);
+        return success && photon.Refract(TVector3(0, 0, 1), ref_lens, 1);
     }
 
     bool Simulator::MirrorImpactPoint(Ray ray, TVector3& point) const
@@ -223,7 +223,7 @@ namespace cherenkov_simulator
 
     double Simulator::DetectorEfficiency() const
     {
-        return quantum_eff * mirror_reflect * filter_transmit;
+        return pmtube_eff * mirror_eff * filter_eff;
     }
 
     Ray Simulator::GenerateCherenkovPhoton(Shower shower) const
@@ -236,7 +236,7 @@ namespace cherenkov_simulator
 
     double Simulator::ThetaC(Shower shower) const
     {
-        return ckv_k1 * Power(shower.EThresh(), ckv_k2);
+        return chkv_k1 * Power(shower.EThresh(), chkv_k2);
     }
 
     Ray Simulator::JitteredRay(Shower shower, TVector3 direction) const

@@ -742,7 +742,7 @@ namespace cherenkov_simulator
     TEST_F(DataStructuresTest, FindThreshold)
     {
         PhotonCount data = CopySample();
-        ASSERT_EQ(16, data.FindThreshold(1e4, 3));
+        ASSERT_EQ(15, data.FindThreshold(1e4, 3));
     }
 
     /*

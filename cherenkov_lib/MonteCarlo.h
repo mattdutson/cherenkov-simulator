@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Contains a class used to generate random showers for the Monte Carlo simulation.
+// Defines the MonteCarlo class.
 
 #ifndef MONTE_CARLO_H
 #define MONTE_CARLO_H
@@ -19,53 +19,58 @@
 
 namespace cherenkov_simulator
 {
+    /*
+     * A container for various user-defined XML parameters. Contains methods for performing the Monte Carlo simulation
+     * and for generating random showers. Has a Simulator and Reconstructor as members, which are used during the Monte
+     * Carlo.
+     */
     class MonteCarlo
     {
     public:
 
         /*
-         * Constructs the MonteCarlo from values in the configuration tree.
+         * Constructs the MonteCarlo by copying user-specified parameters from the parsed XML file.
+         * TODO: Method should throw exceptions if parameters are out of range
          */
-        MonteCarlo(const boost::property_tree::ptree& config_file);
+        explicit MonteCarlo(const boost::property_tree::ptree& config_file);
 
         /*
-         * Performs the overall Monte Carlo simulation and writes results to the console.
+         * Performs the overall Monte Carlo simulation and writes results to a CSV file. A ROOT file is also written
+         * which, for each shower, contains plots of the initial shower track, the post noise shower track, and the post
+         * noise removal shower track.
          */
-        void PerformMonteCarlo(std::string out_file) const;
+        void PerformMonteCarlo(std::string output_file) const;
 
         /*
-         * Generates a random shower with a random direction, energy, and intensity profile. Allowed values and
-         * distribution parameters are set in the configuration file.
+         * Generates a Shower with a random position, direction, and energy. Allowed ranges of these parameters are
+         * defined in the configuration file.
          */
         Shower GenerateShower() const;
 
         /*
-         * Constructs a shower object given a user-defined direction, impact parameter, impact angle (the angle of the
-         * point of closest approach), energy, and depth of first interaction.
+         * Constructs a Shower given an axis direction, impact parameter, impact angle (angle of the point of closest
+         * approach), and energy.
          */
-        Shower GenerateShower(TVector3 axis, double impact_param, double impact_angle, double energy) const;
+        Shower GenerateShower(TVector3 axis, double im_par, double im_ang, double energy) const;
 
         /*
          * Parses the output file and configuration file from command line arguments, instantiates the MonteCarlo
-         * object, and runs PerformMonteCarlo method.
+         * object, and runs the PerformMonteCarlo method.
          */
         static int Run(int argc, const char* argv[]);
 
     private:
 
-        // Parameters used to generate random showers in the Monte Carlo simulation - eV, cgs
+        int n_showers;
         double elevation;
+
         double energy_pow;
-        double e_min;
-        double e_max;
+        double energy_min;
+        double energy_max;
         double impact_min;
         double impact_max;
-        double start_tracking;
+        double begn_depth;
 
-        // The number of showers to simulate when PerformMonteCarlo is called
-        int n_showers;
-
-        // The Simulator and Reconstructor objects used when PerformMonteCarlo is called
         Simulator simulator;
         Reconstructor reconstructor;
     };

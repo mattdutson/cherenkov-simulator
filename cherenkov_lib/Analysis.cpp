@@ -10,7 +10,7 @@ using std::vector;
 
 namespace cherenkov_simulator
 {
-    TGraph Analysis::MakeProfileGraph(const PhotonCount& data)
+    TGraph Analysis::MakeTimeProfile(const PhotonCount& data)
     {
         Double1D times, counts;
         SuperimposeTimes(data, times, counts);
@@ -21,7 +21,7 @@ namespace cherenkov_simulator
         return output;
     }
 
-    TH2I Analysis::MakeSumMap(const PhotonCount& data, bool reverse_y)
+    TH2I Analysis::MakePixlProfile(const PhotonCount& data, bool reverse_y)
     {
         auto size = (int) data.Size();
         TH2I histo = TH2I("sum_map", "Bin Signal Sums", size, 0, size, size, 0, size);
