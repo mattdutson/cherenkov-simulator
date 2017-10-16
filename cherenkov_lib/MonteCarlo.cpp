@@ -34,9 +34,7 @@ namespace cherenkov_simulator
         start_tracking = config.get<double>("monte_carlo.start_tracking");
 
         // Determine the local atmosphere based on the elevation
-        auto detect_elevation = config.get<double>("surroundings.detect_elevation");
-        rho_0 = rho_sea * Exp(-detect_elevation / atm_h);
-        del_0 = (refrac_sea - 1) * Exp(-detect_elevation / atm_h);
+        elevation = config.get<double>("surroundings.detect_elevation");
 
         // The number of showers to simulate in PerformMonteCarlo
         n_showers = config.get<int>("simulation.n_showers");
@@ -118,27 +116,15 @@ namespace cherenkov_simulator
         impact_direction.Rotate(impact_angle, axis);
         TVector3 impact_point = impact_param * impact_direction;
 
-        // Find the depth of the first interaction, the depth of the maximum, and the size of the shower maximum (See
-        // AbuZayyad 6.1-6.4). We assume a proton primary.
-        double x_max = x_max_1 + x_max_2 * (Log10(energy) - x_max_3);
-        double n_max = energy / n_max_ratio;
-
         // Trace the path of the shower back to the location of the first interaction. Start by finding the elevation of
         // the first interaction. See notes from 1/25.
         double cos_theta = Abs(axis.CosTheta());
-        double interaction_height = -atm_h * Log(start_tracking * cos_theta / (rho_0 * atm_h));
+        double interaction_height = -atm_h * Log(start_tracking * cos_theta / (rho_sea * atm_h)) - elevation;
         double param = (interaction_height - impact_point.Z()) / (axis.Z());
         TVector3 starting_position = impact_point + param * axis;
 
         // Create a new shower with all of the randomly determined parameters.
-        Shower::Params params = Shower::Params();
-        params.energ = energy;
-        params.x_max = x_max;
-        params.n_max = n_max;
-        params.rho_0 = rho_0;
-        params.atm_h = atm_h;
-        params.del_0 = del_0;
-        return Shower(params, starting_position, axis);
+        return Shower(energy, elevation, starting_position, axis);
     }
 
     int MonteCarlo::Run(int argc, const char* argv[])

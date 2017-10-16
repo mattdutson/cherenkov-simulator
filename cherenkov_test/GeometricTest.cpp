@@ -25,23 +25,13 @@ private:
 
     Ray test_ray_1;
     Ray test_ray_2;
-    Shower::Params test_params;
     Shower test_shower;
 
     virtual void SetUp()
     {
         test_ray_1 = Ray(TVector3(7, 2, 3), TVector3(8, 8, 8), 1.7);
         test_ray_2 = Ray(TVector3(0, 0, 0), TVector3(-1, 2, -1), -0.8);
-
-        test_params = Shower::Params();
-        test_params.energ = 2.7e19;
-        test_params.x_max = 800;
-        test_params.n_max = 2.1e10;
-        test_params.rho_0 = 0.0012;
-        test_params.atm_h = 841300;
-        test_params.del_0 = 0.00029;
-
-        test_shower = Shower(test_params, TVector3(0, 0, 2000000), TVector3(1, -1, -3));
+        test_shower = Shower(2.7e19, 150000, TVector3(0, 0, 2000000), TVector3(1, -1, -3));
     }
 
     virtual void TearDown()
@@ -59,12 +49,7 @@ public:
     {
         return test_ray_2;
     }
-
-    Shower::Params CopyParams()
-    {
-        return test_params;
-    }
-
+    
     Shower CopyShower()
     {
         return test_shower;
@@ -198,13 +183,13 @@ public:
     TEST_F(GeometricTest, TestVelocity)
     {
         Ray ray = CopyRay1();
-        ASSERT_EQ(TVector3(1, 1, 1).Unit() * Utility::c_cent, ray.Velocity());
+        ASSERT_EQ(TVector3(1, 1, 1).Unit() * c_cent, ray.Velocity());
 
         ray.Reflect(TVector3(-1, 0, 0));
-        ASSERT_EQ(TVector3(-1, 1, 1).Unit() * Utility::c_cent, ray.Velocity());
+        ASSERT_EQ(TVector3(-1, 1, 1).Unit() * c_cent, ray.Velocity());
 
         ray.SetDirection(TVector3(-1, 2, 0));
-        ASSERT_EQ(TVector3(-1, 2, 0).Unit() * Utility::c_cent, ray.Velocity());
+        ASSERT_EQ(TVector3(-1, 2, 0).Unit() * c_cent, ray.Velocity());
     }
 
     /*
@@ -249,11 +234,11 @@ public:
 
         Plane plane = Plane(TVector3(1, 0, 0), TVector3(10, 0, 0));
         ray1.PropagateToPlane(plane);
-        ASSERT_EQ(1.7 + TVector3(3, 3, 3).Mag() / Utility::c_cent, ray1.Time());
+        ASSERT_EQ(1.7 + TVector3(3, 3, 3).Mag() / c_cent, ray1.Time());
 
         Ray ray2 = CopyRay1();
         ray2.PropagateToPoint(TVector3(-1, 7, 8));
-        ASSERT_EQ(1.7 + TVector3(-8, 5, 5).Mag() / Utility::c_cent, ray2.Time());
+        ASSERT_EQ(1.7 + TVector3(-8, 5, 5).Mag() / c_cent, ray2.Time());
     }
 
     /*
@@ -266,7 +251,7 @@ public:
         ray.PropagateToPoint(TVector3(20, 15, 16));
         ASSERT_EQ(TVector3(20, 15, 16), ray.Position());
         ASSERT_EQ(dir_init, ray.Direction());
-        ASSERT_EQ(1.7 + TVector3(13, 13, 13).Mag() / Utility::c_cent, ray.Time());
+        ASSERT_EQ(1.7 + TVector3(13, 13, 13).Mag() / c_cent, ray.Time());
     }
 
     /*
@@ -279,7 +264,7 @@ public:
         ray.PropagateToPoint(TVector3(-8, 97, 4));
         ASSERT_TRUE(Helper::VectorsEqual(TVector3(-8, 97, 4), ray.Position(), 1e-6));
         ASSERT_TRUE(Helper::VectorsEqual(TVector3(-15, 95, 1).Unit(), ray.Direction(), 1e-6));
-        ASSERT_EQ(1.7 + TVector3(-15, 95, 1).Mag() / Utility::c_cent, ray.Time());
+        ASSERT_EQ(1.7 + TVector3(-15, 95, 1).Mag() / c_cent, ray.Time());
     }
 
     /*
@@ -354,11 +339,11 @@ public:
     {
         Ray ray1 = CopyRay1();
         Plane plane1 = Plane(TVector3(1, 0, 0), TVector3(10, 0, 0));
-        ASSERT_EQ(TVector3(3, 3, 3).Mag() / Utility::c_cent, ray1.TimeToPlane(plane1));
+        ASSERT_EQ(TVector3(3, 3, 3).Mag() / c_cent, ray1.TimeToPlane(plane1));
 
         Ray ray2 = CopyRay2();
         Plane plane2 = Plane(TVector3(0, 0, 1), TVector3(0, 0, 2));
-        ASSERT_EQ(- TVector3(2, -4, 2).Mag() / Utility::c_cent, ray2.TimeToPlane(plane2));
+        ASSERT_EQ(- TVector3(2, -4, 2).Mag() / c_cent, ray2.TimeToPlane(plane2));
     }
 
     /*
@@ -508,9 +493,8 @@ public:
      */
     TEST_F(GeometricTest, UserShower)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        ASSERT_EQ(params.energ, shower.EnergyeV());
+        ASSERT_EQ(2.7e19, shower.EnergyeV());
         ASSERT_EQ(TVector3(0, 0, 2000000), shower.Position());
         ASSERT_TRUE(Helper::VectorsEqual(TVector3(1, -1, -3).Unit(), shower.Direction(), 1e-6));
     }
@@ -520,11 +504,9 @@ public:
      */
     TEST_F(GeometricTest, NonPositiveEnergy)
     {
-        Shower::Params params = CopyParams();
-        params.energ = -1.2e18;
         try
         {
-            Shower(params, TVector3(), TVector3(1, 0, 0));
+            Shower(-1.2e18, 150000, TVector3(), TVector3(1, 0, 0));
             FAIL() << "Exception not thrown";
         }
         catch(invalid_argument& err)
@@ -534,107 +516,16 @@ public:
     }
 
     /*
-     * An invalid_argument exception should be thrown if a non-positive x_max is passed to the Shower constructor.
-     */
-    TEST_F(GeometricTest, NonPositiveXMax)
-    {
-        Shower::Params params = CopyParams();
-        params.x_max = 0.0;
-        try
-        {
-            Shower(params, TVector3(), TVector3(1, 0, 0));
-            FAIL() << "Exception not thrown";
-        }
-        catch(invalid_argument& err)
-        {
-            ASSERT_EQ(string("Shower XMax must be positive"), err.what());
-        }
-    }
-
-    /*
-     * An invalid_argument exception should be thrown if a non-positive n_max is passed to the Shower constructor.
-     */
-    TEST_F(GeometricTest, NonPositiveNMax)
-    {
-        Shower::Params params = CopyParams();
-        params.n_max = -0.3;
-        try
-        {
-            Shower(params, TVector3(), TVector3(1, 0, 0));
-            FAIL() << "Exception not thrown";
-        }
-        catch(invalid_argument& err)
-        {
-            ASSERT_EQ(string("Shower NMax must be positive"), err.what());
-        }
-    }
-
-    /*
-     * An invalid_argument exception should be thrown if a non-positive rho_0 is passed to the Shower constructor.
-     */
-    TEST_F(GeometricTest, NonPositiveRho0)
-    {
-        Shower::Params params = CopyParams();
-        params.rho_0 = -0.0012;
-        try
-        {
-            Shower(params, TVector3(), TVector3(1, 0, 0));
-            FAIL() << "Exception not thrown";
-        }
-        catch(invalid_argument& err)
-        {
-            ASSERT_EQ(string("Atmospheric density must be positive"), err.what());
-        }
-    }
-
-    /*
-     * An invalid_argument exception should be thrown if a non-positive scale height is passed to the Shower
-     * constructor.
-     */
-    TEST_F(GeometricTest, NonPositiveScaleH)
-    {
-        Shower::Params params = CopyParams();
-        params.atm_h = -2.3e-19;
-        try
-        {
-            Shower(params, TVector3(), TVector3(1, 0, 0));
-            FAIL() << "Exception not thrown";
-        }
-        catch(invalid_argument& err)
-        {
-            ASSERT_EQ(string("Scale height must be positive"), err.what());
-        }
-    }
-
-    /*
-     * An invalid_argument exception should be thrown if a non-positive del_0 is passed to the Shower constructor.
-     */
-    TEST_F(GeometricTest, NonPositiveDelta0)
-    {
-        Shower::Params params = CopyParams();
-        params.del_0 = 0.0;
-        try
-        {
-            Shower(params, TVector3(), TVector3(1, 0, 0));
-            FAIL() << "Exception not thrown";
-        }
-        catch(invalid_argument& err)
-        {
-            ASSERT_EQ(string("Atmospheric delta0 must be positive"), err.what());
-        }
-    }
-
-    /*
      * Test the Age function. The depth was determined by independently integrating from shower.Position().Z() to
      * infinity.
      */
     TEST_F(GeometricTest, ShowerAge)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double depth = 93.6905;
+        double depth = 80.0235;
         double x = depth / Abs(shower.Direction().CosTheta());
-        ASSERT_TRUE(Helper::ValuesEqual(3.0 * x / (x + 2.0 * params.x_max), shower.Age(), 1e-6));
+        double x_max = x_max_1 + x_max_2 * (Log10(shower.EnergyeV()) - x_max_3);
+        ASSERT_TRUE(Helper::ValuesEqual(3.0 * x / (x + 2.0 * x_max), shower.Age(), 1e-6));
     }
 
     /*
@@ -642,9 +533,8 @@ public:
      */
     TEST_F(GeometricTest, EnergyMeV)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        ASSERT_EQ(params.energ / 10e6, shower.EnergyMeV());
+        ASSERT_EQ(2.7e19 / 10e6, shower.EnergyMeV());
     }
 
     /*
@@ -652,9 +542,8 @@ public:
      */
     TEST_F(GeometricTest, EnergyeV)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        ASSERT_EQ(params.energ, shower.EnergyeV());
+        ASSERT_EQ(2.7e19, shower.EnergyeV());
     }
 
     /*
@@ -682,9 +571,8 @@ public:
      */
     TEST_F(GeometricTest, LocalRho)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double rho = params.rho_0 * Exp(-shower.Position().Z() / params.atm_h);
+        double rho = rho_sea * Exp(-(shower.Position().Z() + 150000) / atm_h);
         ASSERT_TRUE(Helper::ValuesEqual(rho, shower.LocalRho(), 1e-6));
     }
 
@@ -693,9 +581,8 @@ public:
      */
     TEST_F(GeometricTest, LocalDelta)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double delta = params.del_0 * Exp(-shower.Position().Z() / params.atm_h);
+        double delta = (refrac_sea - 1.0) * Exp(-(shower.Position().Z() + 150000) / atm_h);
         ASSERT_TRUE(Helper::ValuesEqual(delta, shower.LocalDelta(), 1e-6));
     }
 
@@ -705,13 +592,14 @@ public:
      */
     TEST_F(GeometricTest, GaisserHillas)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double depth = 93.6905;
+        double depth = 80.0235;
         double x = depth / Abs(shower.Direction().CosTheta());
-        double term_1 = Power((x + 70.0)/(params.x_max + 70.0), (params.x_max + 70.0) / 70.0);
-        double term_2 = Exp((params.x_max - x) / 70.0);
-        ASSERT_TRUE(Helper::ValuesEqual(params.n_max * term_1 * term_2, shower.GaisserHillas(), 1e-4));
+        double x_max = x_max_1 + x_max_2 * (Log10(shower.EnergyeV()) - x_max_3);
+        double n_max = shower.EnergyeV() / n_max_ratio;
+        double term_1 = Power((x + 70.0)/(x_max + 70.0), (x_max + 70.0) / 70.0);
+        double term_2 = Exp((x_max - x) / 70.0);
+        ASSERT_TRUE(Helper::ValuesEqual(n_max * term_1 * term_2, shower.GaisserHillas(), 1e-4));
     }
 
     /*
@@ -720,7 +608,7 @@ public:
     TEST_F(GeometricTest, EThresh)
     {
         Shower shower = CopyShower();
-        ASSERT_EQ(Utility::mass_e / Sqrt(2.0 * shower.LocalDelta()), shower.EThresh());
+        ASSERT_EQ(mass_e / Sqrt(2.0 * shower.LocalDelta()), shower.EThresh());
     }
 
     /*
@@ -729,11 +617,11 @@ public:
      */
     TEST_F(GeometricTest, IncrementDepth)
     {
-        Shower::Params params = CopyParams();
         Shower shower = CopyShower();
-        double depth = 93.6905;
+        double depth = 80.0235;
         double x = depth / Abs(shower.Direction().CosTheta()) + 1.8;
+        double x_max = x_max_1 + x_max_2 * (Log10(shower.EnergyeV()) - x_max_3);
         shower.IncrementDepth(1.8);
-        ASSERT_TRUE(Helper::ValuesEqual(3.0 * x / (x + 2.0 * params.x_max), shower.Age(), 1e-3));
+        ASSERT_TRUE(Helper::ValuesEqual(3.0 * x / (x + 2.0 * x_max), shower.Age(), 1e-3));
     }
 }

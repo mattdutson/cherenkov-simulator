@@ -171,32 +171,12 @@ namespace cherenkov_simulator
     };
 
     /*
-     * Represents an atmospheric cosmic ray shower. Contains various Gaisser-Hillas parameters. Also contains
-     * information about the density of the atmosphere. These atmospheric parameters are used to calculate and update
-     * the shower's depth.
+     * Represents an atmospheric cosmic ray shower. Knows its own energy and the elevation of the detector (in order to
+     * correctly calculate atmospheric densities).
      */
     class Shower : public Ray
     {
     public:
-
-        /*
-         * A container for Shower constructor parameters.
-         */
-        struct Params
-        {
-            /*
-             * Define the default Params constructor to prevent exceptions when an empty one is passed to the Shower
-             * constructor.
-             */
-            Params();
-
-            double energ;
-            double x_max;
-            double n_max;
-            double rho_0;
-            double atm_h;
-            double del_0;
-        };
 
         /*
          * The default constructor. Objects constructed with this should only be used as placeholders.
@@ -204,11 +184,11 @@ namespace cherenkov_simulator
         Shower();
 
         /*
-         * The main constructor. Takes the energy of the shower, various Gaisser-Hillas parameters, and the values
-         * defining the exponential atmosphere. Also takes a position, direction, and optional time, which are passed to
-         * the parent Ray constructor. An invalid_argument exception is thrown if any parameters are out of range.
+         * The main constructor. Takes the energy of the shower and the elevation of the detector. Also takes a
+         * position, direction, and optional time, which are passed to the parent Ray constructor. An invalid_argument
+         * exception is thrown if the energy is not positive.
          */
-        Shower(Params params, TVector3 position, TVector3 direction, double time = 0);
+        Shower(double energy, double elevation, TVector3 position, TVector3 direction, double time = 0);
 
         /*
          * Finds the age of the shower, defined as 3 * X / (X + 2 * XMax).
@@ -290,20 +270,23 @@ namespace cherenkov_simulator
 
         friend class GeometricTest;
 
-        // Variable parameters in the Gaisser-Hillas profile - eV, cgs.
-        double energ;
-        double x_max;
-        double n_max;
-
-        // Properties of the atmosphere - cgs.
-        double rho_0;
-        double atm_h;
-        double del_0;
+        double energy;
+        double elevation;
 
         /*
          * Calculates the shower's current slant depth.
          */
         double X() const;
+
+        /*
+         * Calculates the depth of the shower maximum.
+         */
+        double XMax() const;
+
+        /*
+         * Calculates the maximum number of particles in the shower.
+         */
+        double NMax() const;
     };
 }
 

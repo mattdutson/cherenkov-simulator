@@ -53,11 +53,8 @@ namespace cherenkov_simulator
 
     private:
 
-        // Non-constant atmospheric parameters (depend on the elevation) - cgs
-        double rho_0;
-        double del_0;
-
         // Parameters used to generate random showers in the Monte Carlo simulation - eV, cgs
+        double elevation;
         double energy_pow;
         double e_min;
         double e_max;

@@ -414,6 +414,6 @@ namespace cherenkov_simulator
         if (shower_direction.Z() > 0.0) shower_direction = -shower_direction;
         TVector3 plane_normal = to_sd_plane.Inverse() * TVector3(0, 0, 1);
         TVector3 impact_direction = plane_normal.Cross(shower_direction);
-        return Shower(Shower::Params(), r_p * impact_direction, shower_direction, t_0);
+        return Shower(1.0, 1.0, r_p * impact_direction, shower_direction, t_0);
     }
 }

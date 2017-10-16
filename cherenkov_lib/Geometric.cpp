@@ -146,54 +146,30 @@ namespace cherenkov_simulator
         position += time_step * velocity;
     }
 
-    Shower::Params::Params()
-    {
-        energ = 1.0;
-        x_max = 1.0;
-        n_max = 1.0;
-        rho_0 = 1.0;
-        atm_h = 1.0;
-        del_0 = 1.0;
-    }
-
     Shower::Shower() : Ray() {}
 
-    Shower::Shower(Params params, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
+    Shower::Shower(double energy, double elevation, TVector3 position, TVector3 direction, double time) : Ray(position, direction, time)
     {
-        energ = params.energ;
-        x_max = params.x_max;
-        n_max = params.n_max;
-        rho_0 = params.rho_0;
-        atm_h = params.atm_h;
-        del_0 = params.del_0;
+        this->energy = energy;
+        this->elevation = elevation;
 
-        if (energ <= 0.0)
+        if (energy <= 0.0)
             throw invalid_argument("Shower energy must be positive");
-        if (x_max <= 0.0)
-            throw invalid_argument("Shower XMax must be positive");
-        if (n_max <= 0.0)
-            throw invalid_argument("Shower NMax must be positive");
-        if (rho_0 <= 0.0)
-            throw invalid_argument("Atmospheric density must be positive");
-        if (atm_h <= 0.0)
-            throw invalid_argument("Scale height must be positive");
-        if (del_0 <= 0.0)
-            throw invalid_argument("Atmospheric delta0 must be positive");
     }
 
     double Shower::Age() const
     {
-        return 3.0 * X() / (X() + 2.0 * x_max);
+        return 3.0 * X() / (X() + 2.0 * XMax());
     }
 
     double Shower::EnergyMeV() const
     {
-        return energ / (10.0e6);
+        return energy / (10.0e6);
     }
 
     double Shower::EnergyeV() const
     {
-        return energ;
+        return energy;
     }
 
     double Shower::ImpactParam() const
@@ -208,19 +184,19 @@ namespace cherenkov_simulator
 
     double Shower::LocalRho() const
     {
-        return rho_0 * Exp(-position.Z() / atm_h);
+        return rho_sea * Exp(-(position.Z() + elevation) / atm_h);
     }
 
     double Shower::LocalDelta() const
     {
-        return del_0 * Exp(-position.Z() / atm_h);
+        return (refrac_sea - 1.0) * Exp(-(position.Z() + elevation) / atm_h);
     }
 
     double Shower::GaisserHillas() const
     {
-        double pow = Power((X() - x_0) / (x_max - x_0), (x_max - x_0) / gh_lambda);
-        double exp = Exp((x_max - X()) / gh_lambda);
-        return n_max * pow * exp;
+        double pow = Power((X() - x_0) / (XMax() - x_0), (XMax() - x_0) / gh_lambda);
+        double exp = Exp((XMax() - X()) / gh_lambda);
+        return NMax() * pow * exp;
     }
 
     double Shower::EThresh() const
@@ -245,6 +221,17 @@ namespace cherenkov_simulator
 
     double Shower::X() const
     {
-        return atm_h * rho_0 / Abs(velocity.CosTheta()) * Exp(-position.Z() / atm_h);
+        return atm_h * rho_sea / Abs(velocity.CosTheta()) * Exp(-(position.Z() + elevation) / atm_h);
+    }
+
+    double Shower::XMax() const
+    {
+        return x_max_1 + x_max_2 * (Log10(energy) - x_max_3);
+
+    }
+
+    double Shower::NMax() const
+    {
+        return energy / n_max_ratio;
     }
 }
