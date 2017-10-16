@@ -53,49 +53,7 @@ namespace cherenkov_simulator
              * p[0] = age, p[1] = rho, p[2] = delta
              */
             double operator()(double* x, double* p);
-
-        private:
-
-            // Parameters in the Cherenkov yield - cgs
-            constexpr static double lambda_min = 3.0e-5;
-            constexpr static double lambda_max = 4.0e-5;
-
-            // Parameters in the electron energy spectrum - MeV
-            constexpr static double fe_a11 = 6.42522;
-            constexpr static double fe_a12 = 1.53183;
-            constexpr static double fe_a21 = 168.168;
-            constexpr static double fe_a22 = 42.1368;
-            constexpr static double fe_k0 = 1.45098e-1;
-            constexpr static double fe_k1 = 6.20114;
-            constexpr static double fe_k2 = -5.96851e-1;
         };
-
-        // Miscellaneous parameters - K
-        constexpr static double atm_temp = 273.0;
-        constexpr static double refrac_lens = 1.52;
-
-        // Parameters in the fluorescence yield - MeV, cgs, K
-        constexpr static double fluor_a1 = 890.0;
-        constexpr static double fluor_a2 = 550.0;
-        constexpr static double fluor_b1 = 1850.0;
-        constexpr static double fluor_b2 = 6500.0;
-        constexpr static double dep_1_4 = 1.6;
-
-        // Parameters in the effective ionization loss rate - MeV, cgs
-        constexpr static double ion_c1 = 3.90883;
-        constexpr static double ion_c2 = 1.05301;
-        constexpr static double ion_c3 = 9.91717;
-        constexpr static double ion_c4 = 2.41715;
-        constexpr static double ion_c5 = 0.13180;
-
-        // Parameters used when calculating theta_c in the Cherenkov angular distribution - MeV
-        constexpr static double ckv_k1 = 0.83;
-        constexpr static double ckv_k2 = -0.67;
-
-        // Parameters which describe inefficiencies in the equipment
-        constexpr static double mirror_reflect = 0.80; // 1.0; // 0.80
-        constexpr static double filter_transmit = 1.0;
-        constexpr static double quantum_eff = 0.15; // 1.0; // 0.15
 
         // Parameters related to the behavior of the simulation - cgs
         double depth_step;

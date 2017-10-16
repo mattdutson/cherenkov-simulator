@@ -67,7 +67,7 @@ namespace cherenkov_simulator
     {
         if (direction.Mag2() == 0)
             throw invalid_argument("Ray direction must be nonzero");
-        velocity = direction.Unit() * Utility::c_cent;
+        velocity = direction.Unit() * c_cent;
     }
 
     double Ray::Time() const
@@ -137,7 +137,7 @@ namespace cherenkov_simulator
 
     void Ray::IncrementPosition(double distance)
     {
-        IncrementTime(distance / Utility::c_cent);
+        IncrementTime(distance / c_cent);
     }
 
     void Ray::IncrementTime(double time_step)
@@ -225,7 +225,7 @@ namespace cherenkov_simulator
 
     double Shower::EThresh() const
     {
-        return Utility::mass_e / Sqrt(2 * LocalDelta());
+        return mass_e / Sqrt(2 * LocalDelta());
     }
 
     void Shower::IncrementDepth(double depth)

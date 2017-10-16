@@ -290,10 +290,6 @@ namespace cherenkov_simulator
 
         friend class GeometricTest;
 
-        // Fixed parameters in the Gaisser-Hillas profile - cgs.
-        constexpr static double x_0 = -70.0;
-        constexpr static double gh_lambda = 70.0;
-
         // Variable parameters in the Gaisser-Hillas profile - eV, cgs.
         double energ;
         double x_max;

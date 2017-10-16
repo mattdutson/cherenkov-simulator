@@ -53,19 +53,6 @@ namespace cherenkov_simulator
 
     private:
 
-        // Used to calculate N_max from the energy - eV
-        constexpr static double n_max_ratio = 1.39e9;
-
-        // Parameters used when determining the depth of the shower maximum - cgs
-        constexpr static double x_max_1 = 725.0;
-        constexpr static double x_max_2 = 55.0;
-        constexpr static double x_max_3 = 18.0;
-
-        // Atmospheric parameters - cgs
-        constexpr static double atm_h = 841300;
-        constexpr static double rho_sea = 0.001225;
-        constexpr static double refrac_sea = 1.00029;
-
         // Non-constant atmospheric parameters (depend on the elevation) - cgs
         double rho_0;
         double del_0;

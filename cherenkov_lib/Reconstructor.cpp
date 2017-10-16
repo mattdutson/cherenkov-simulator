@@ -90,7 +90,7 @@ namespace cherenkov_simulator
     {
         // The functional form of the time profile
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] + [1] / (" << Utility::c_cent << ") * tan((pi - [2] - x) / 2)";
+        func_string << "[0] + [1] / (" << c_cent << ") * tan((pi - [2] - x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 
         // Set names and initial guesses for parameters
@@ -122,7 +122,7 @@ namespace cherenkov_simulator
 
         // The functional form of the time profile
         std::stringstream func_string = std::stringstream();
-        func_string << "[0] +" << impact_distance << " * sin([1] + " << theta << ") / (" << Utility::c_cent
+        func_string << "[0] +" << impact_distance << " * sin([1] + " << theta << ") / (" << c_cent
                     << ") * tan((pi - [1] - x) / 2)";
         TF1 func = TF1("profile_fit", func_string.str().c_str(), -Pi(), Pi());
 

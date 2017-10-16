@@ -75,9 +75,9 @@ namespace cherenkov_simulator
         double delta = p[2];
 
         // Parameters in Cherenkov yield
-        double k_out = 2 * Pi() * Utility::fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
+        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
         double k_1 = k_out * 2 * delta;
-        double k_2 = k_out * Sq(Utility::mass_e);
+        double k_2 = k_out * Sq(mass_e);
 
         // Parameters in energy distribution
         double a1 = fe_a11 - fe_a12 * age;
@@ -241,7 +241,7 @@ namespace cherenkov_simulator
 
     Ray Simulator::JitteredRay(Shower shower, TVector3 direction) const
     {
-        double step_time = depth_step / shower.LocalRho() / Utility::c_cent;
+        double step_time = depth_step / shower.LocalRho() / c_cent;
         double offset = gRandom->Uniform(-0.5 * step_time, 0.5 * step_time);
         double time = shower.Time() + offset;
         TVector3 position = shower.Position() + shower.Velocity() * offset;
@@ -276,7 +276,7 @@ namespace cherenkov_simulator
     double Simulator::MinTime(Shower shower) const
     {
         double time = shower.Time();
-        time += shower.Position().Mag() / Utility::c_cent;
+        time += shower.Position().Mag() / c_cent;
         return time;
     }
 
@@ -284,7 +284,7 @@ namespace cherenkov_simulator
     {
         double time = shower.Time();
         time += shower.TimeToPlane(ground_plane);
-        time += shower.PlaneImpact(ground_plane).Mag() * back_toler / Utility::c_cent;
+        time += shower.PlaneImpact(ground_plane).Mag() * back_toler / c_cent;
         return time;
     }
 }

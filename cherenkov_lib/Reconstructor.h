@@ -68,10 +68,6 @@ namespace cherenkov_simulator
 
         friend class ReconstructorTest;
 
-        // Levels of night sky background noise - cgs, sr
-        constexpr static double global_sky_noise = 4.924e6;
-        constexpr static double global_ground_noise = 4.924e5;
-
         // Parameters relating to the position and orientation of the detector relative to its surroundings - cgs
         Plane ground;
         TRotation to_world;
