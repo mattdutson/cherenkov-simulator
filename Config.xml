@@ -4,7 +4,7 @@
 
     <simulation note="Defines computational behavior of the simulation">
         <max_bytes  unit="null"   note="Maximum size of the data buffer">8000000000</max_bytes>
-        <n_showers  unit="null"   note="Number of Monte Carlo iterations">1000</n_showers>
+        <n_showers  unit="null"   note="Number of Monte Carlo iterations">2000</n_showers>
         <depth_step unit="g/cm^2" note="Size of discrete shower steps">1.0</depth_step>
         <time_bin   unit="s"      note="Size of the time signal bins">100e-9</time_bin>
         <fluor_thin unit="null"   note="Fluorescence computational thinning rate">1</fluor_thin>

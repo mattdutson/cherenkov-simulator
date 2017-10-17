@@ -18,28 +18,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d33216d-c2b0-40e7-8a74-b14cf93ccffe" name="Default" comment="Moving things around to prepare for more data generation">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/cherenkov_test/SimulatorTest.cpp" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/cherenkov_test/MiscellaneousTest.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/cherenkov_test/ReconstructorTest.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" />
+    <list default="true" id="7d33216d-c2b0-40e7-8a74-b14cf93ccffe" name="Default" comment="Adding results from increased resolution run to repository">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/run_output/up_resolution/Results.root" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/run_output/up_resolution/Out1.csv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/run_output/up_resolution/Out2.csv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/run_output/up_resolution/Out3.csv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/run_output/up_resolution/Out4.csv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/run_output/up_resolution/OutAll.csv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Config.xml" afterPath="$PROJECT_DIR$/Config.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" afterPath="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Geometric.h" afterPath="$PROJECT_DIR$/cherenkov_lib/Geometric.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h" afterPath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.h" afterPath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Simulator.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Simulator.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Simulator.h" afterPath="$PROJECT_DIR$/cherenkov_lib/Simulator.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Utility.h" afterPath="$PROJECT_DIR$/cherenkov_lib/Utility.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/CMakeLists.txt" afterPath="$PROJECT_DIR$/cherenkov_test/CMakeLists.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/GeometricTest.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/Helper.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/Helper.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/Helper.h" afterPath="$PROJECT_DIR$/cherenkov_test/Helper.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run_output/PlotResults.cpp" afterPath="$PROJECT_DIR$/run_output/PlotResults.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/cmake-build-release/" />
@@ -52,18 +38,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MonteCarlo.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="33" lean-forward="false" selection-start-line="4" selection-start-column="33" selection-end-line="4" selection-end-column="33" />
-              <folding>
-                <element signature="e#128#168#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="SampleEvents.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp">
           <provider selected="true" editor-type-id="text-editor">
@@ -76,7 +50,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UtilityTest.cpp" pinned="false" current-in-tab="true">
+      <file leaf-file-name="UtilityTest.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="225">
@@ -92,18 +66,6 @@
             <state relative-caret-position="270">
               <caret line="22" column="1" lean-forward="false" selection-start-line="22" selection-start-column="1" selection-end-line="22" selection-end-column="1" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Reconstructor.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="36" lean-forward="false" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
-              <folding>
-                <element signature="e#138#178#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -156,6 +118,16 @@
               <folding>
                 <element signature="e#250#290#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Config.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Config.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" column="75" lean-forward="false" selection-start-line="6" selection-start-column="75" selection-end-line="6" selection-end-column="75" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -236,7 +208,6 @@
         <option value="$PROJECT_DIR$/cherenkov_test/ReconstructorTest.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
-        <option value="$PROJECT_DIR$/Config.xml" />
         <option value="$PROJECT_DIR$/cherenkov_test/Helper.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_test/Helper.h" />
@@ -249,6 +220,8 @@
         <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Simulator.h" />
         <option value="$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp" />
+        <option value="$PROJECT_DIR$/run_output/initial_run/OutAll.csv" />
+        <option value="$PROJECT_DIR$/Config.xml" />
       </list>
     </option>
   </component>
@@ -304,6 +277,12 @@
               <item name="cherenkov_simulator" type="462c0819:PsiDirectoryNode" />
               <item name="run_output" type="462c0819:PsiDirectoryNode" />
               <item name="initial_run" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="cherenkov_simulator" type="dad4c3:CidrFilesViewHelper$MyProjectTreeStructure$1" />
+              <item name="cherenkov_simulator" type="462c0819:PsiDirectoryNode" />
+              <item name="run_output" type="462c0819:PsiDirectoryNode" />
+              <item name="up_resolution" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -559,7 +538,7 @@
       <workItem from="1508112800457" duration="8213000" />
       <workItem from="1508134114714" duration="236000" />
       <workItem from="1508193519045" duration="4033000" />
-      <workItem from="1508198620469" duration="2798000" />
+      <workItem from="1508198620469" duration="3393000" />
     </task>
     <task id="LOCAL-00001" summary="Reversed y-direction in sum maps so ground is at the bottom">
       <created>1492142150458</created>
@@ -862,7 +841,14 @@
       <option name="project" value="LOCAL" />
       <updated>1508134253223</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Cleaned up unit testing and improved parameter documentation&#10;&#10;Major changes:&#10; - Defined the new MonteCarlo::RunSingleShower method to help clean up testing framework&#10; - The PerformMonteCarlo method will not increment its counter unless the detector is triggered. Previously, the counter was incremented whenever a shower passed through the field of view.">
+      <created>1508215762521</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1508215762521</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -898,7 +884,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="138645000" />
+    <option name="totallyTimeSpent" value="139240000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -988,7 +974,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="Changed vector counters to short and performed optimizations on GetTriggeringState" />
     <MESSAGE value="Switched queue for list and size_t (unsigned int) for unsigned short" />
     <MESSAGE value="Switched queue for list and size_t (unsigned int) for unsigned short, optimization of GetTriggeringState" />
     <MESSAGE value="Fixed some warnings, switched back to using size_t in traversal algorithms" />
@@ -1013,7 +998,8 @@
     <MESSAGE value="Refactoring Shower class after moving hard-coded parameters to Utility" />
     <MESSAGE value="Cleanup of MonteCarlo and general refactoring" />
     <MESSAGE value="Moving things around to prepare for more data generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moving things around to prepare for more data generation" />
+    <MESSAGE value="Cleaned up unit testing and improved parameter documentation&#10;&#10;Major changes:&#10; - Defined the new MonteCarlo::RunSingleShower method to help clean up testing framework&#10; - The PerformMonteCarlo method will not increment its counter unless the detector is triggered. Previously, the counter was incremented whenever a shower passed through the field of view." />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up unit testing and improved parameter documentation&#10;&#10;Major changes:&#10; - Defined the new MonteCarlo::RunSingleShower method to help clean up testing framework&#10; - The PerformMonteCarlo method will not increment its counter unless the detector is triggered. Previously, the counter was incremented whenever a shower passed through the field of view." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1022,13 +1008,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Analysis.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="56" lean-forward="false" selection-start-line="29" selection-start-column="56" selection-end-line="29" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_test/DataStructuresTest.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -1214,14 +1193,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/run_output/PlotTree.cpp" />
     <entry file="file://$PROJECT_DIR$/cherenkov_test/SimulatorTest.cpp" />
-    <entry file="file://$PROJECT_DIR$/Config.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="51" lean-forward="true" selection-start-line="12" selection-start-column="51" selection-end-line="12" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_test/Helper.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1392,6 +1363,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="21" column="10" lean-forward="true" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run_output/initial_run/OutAll.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Config.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="75" lean-forward="false" selection-start-line="6" selection-start-column="75" selection-end-line="6" selection-end-column="75" />
           <folding />
         </state>
       </provider>
