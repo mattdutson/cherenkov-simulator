@@ -15,7 +15,7 @@
 
     <surroundings note="The orientation of the surroundings">
         <ground_normal   unit="null" note="Normal vector to the ground plane">(0, 0, 1)</ground_normal>
-        <ground_point    unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_point>
+        <ground_point    unit="cm"   note="A fixed point on the ground plane">(0, 0, -40000)</ground_point>
         <elevation_angle unit="rad"  note="Angle of the detector above horizon">0.045</elevation_angle>
         <elevation       unit="cm"   note="Detector elevation above sea level">141400</elevation>
     </surroundings>
