@@ -34,6 +34,11 @@ namespace cherenkov_simulator
         {
             delete monte_carlo;
         }
+
+        Plane FriendGroundPlane()
+        {
+            return monte_carlo->simulator.GroundPlane();
+        }
     };
 
     /*
@@ -45,7 +50,8 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 1e6, 0, 1e19);
         Reconstructor::Result result = monte_carlo->RunSingleShower(shower, "straight_shower");
         cout << "Energy, " << shower.Header() << ", " << result.Header() << endl;
-        cout << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
+        cout << shower.EnergyeV() << ", " << shower.ToString(FriendGroundPlane()) << ", "
+             << result.ToString(FriendGroundPlane()) << endl;
     }
 
     /*
@@ -57,7 +63,8 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(1, 1, -3), 1e6, -0.1, 1e19);
         Reconstructor::Result result = monte_carlo->RunSingleShower(shower, "typical_shower");
         cout << "Energy, " << shower.Header() << ", " << result.Header() << endl;
-        cout << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
+        cout << shower.EnergyeV() << ", " << shower.ToString(FriendGroundPlane()) << ", "
+             << result.ToString(FriendGroundPlane()) << endl;
     }
 
     /*
@@ -69,6 +76,7 @@ namespace cherenkov_simulator
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 3e6, 0, 1e19);
         Reconstructor::Result result = monte_carlo->RunSingleShower(shower, "distant_shower");
         cout << "Energy, " << shower.Header() << ", " << result.Header() << endl;
-        cout << shower.EnergyeV() << ", " << shower.ToString() << ", " << result.ToString() << endl;
+        cout << shower.EnergyeV() << ", " << shower.ToString(FriendGroundPlane()) << ", "
+             << result.ToString(FriendGroundPlane()) << endl;
     }
 }

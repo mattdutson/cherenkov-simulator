@@ -45,8 +45,6 @@ namespace cherenkov_simulator
 
     private:
 
-        friend class SimulatorTest;
-
         /*
          * Represents the integrand of the Cherenkov yield.
          */

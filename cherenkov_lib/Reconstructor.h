@@ -66,8 +66,6 @@ namespace cherenkov_simulator
 
     private:
 
-        friend class SampleEvents;
-
         // Parameters relating to the position and orientation of the detector relative to its surroundings - cgs
         Plane ground;
         TRotation to_world;

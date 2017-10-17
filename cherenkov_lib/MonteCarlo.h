@@ -68,6 +68,8 @@ namespace cherenkov_simulator
 
     private:
 
+        friend class SampleEvents;
+
         int n_showers;
         double elevation;
 
