@@ -37,6 +37,7 @@ namespace cherenkov_simulator
         unsigned int start_seed = gRandom->GetSeed();
         fout << "Seed, ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
+        Plane ground_plane = simulator.GroundPlane();
         for (int i = 0; i < n_showers;)
         {
             Shower shower = GenerateShower();
@@ -44,8 +45,8 @@ namespace cherenkov_simulator
             if (!result.triggered) continue;
             else i++;
             cout << "Shower " << i << " finished" << endl;
-            fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", "
-                 << result.ToString() << endl;
+            fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString(ground_plane)
+                 << ", " << result.ToString(ground_plane) << endl;
         }
     }
 
@@ -69,25 +70,32 @@ namespace cherenkov_simulator
             return result;
         }
 
-        Analysis::MakePixlProfile(data).Write((ident + "_before_noise_pixl").c_str());
-        Analysis::MakeTimeProfile(data).Write((ident + "_before_noise_time").c_str());
-
+        TH2I befor_noise_pixl = Analysis::MakePixlProfile(data, ident + "_befor_noise_pixl");
+        TGraph befor_noise_time = Analysis::MakeTimeProfile(data);
         reconstructor.AddNoise(data);
-        Analysis::MakePixlProfile(data).Write((ident + "_after_noise_pixl").c_str());
-        Analysis::MakeTimeProfile(data).Write((ident + "_after_noise_time").c_str());
-
+        TH2I after_noise_pixl = Analysis::MakePixlProfile(data, ident + "_after_noise_pixl");
+        TGraph after_noise_time = Analysis::MakeTimeProfile(data);
         reconstructor.ClearNoise(data);
-        Analysis::MakePixlProfile(data).Write((ident + "_after_clear_pixl").c_str());
-        Analysis::MakeTimeProfile(data).Write((ident + "_after_clear_time").c_str());
+        TH2I after_clear_pixl = Analysis::MakePixlProfile(data, ident + "_after_clear_pixl");
+        TGraph after_clear_time = Analysis::MakeTimeProfile(data);
 
         Reconstructor::Result result = reconstructor.Reconstruct(data);
+        if (!result.triggered) return result;
+
+        befor_noise_pixl.Write();
+        befor_noise_time.Write((ident + "_befor_noise_time").c_str());
+        after_noise_pixl.Write();
+        after_noise_time.Write((ident + "_after_noise_time").c_str());
+        after_clear_pixl.Write();
+        after_clear_time.Write((ident + "_after_clear_time").c_str());
+
+        Plane ground_plane = simulator.GroundPlane();
         shower.Direction().Write((ident + "_orig_direction").c_str());
-        shower.Position().Write((ident + "_orig_position").c_str());
-        result.gnd_impact.Write((ident + "_ground_impact").c_str());
+        shower.PlaneImpact(ground_plane).Write((ident + "_orig_gnd_impact").c_str());
         result.mono_recon.Direction().Write((ident + "_mono_direction").c_str());
-        result.mono_recon.Position().Write((ident + "_mono_position").c_str());
+        result.mono_recon.PlaneImpact(ground_plane).Write((ident + "_mono_gnd_impact").c_str());
         result.chkv_recon.Direction().Write((ident + "_chkv_direction").c_str());
-        result.chkv_recon.Position().Write((ident + "_chkv_position").c_str());
+        result.chkv_recon.PlaneImpact(ground_plane).Write((ident + "_chkv_gnd_impact").c_str());
         return result;
     }
 

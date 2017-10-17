@@ -6,7 +6,7 @@
 
 #include "Analysis.h"
 
-using std::vector;
+using namespace std;
 
 namespace cherenkov_simulator
 {
@@ -21,10 +21,10 @@ namespace cherenkov_simulator
         return output;
     }
 
-    TH2I Analysis::MakePixlProfile(const PhotonCount& data, bool reverse_y)
+    TH2I Analysis::MakePixlProfile(const PhotonCount& data, string name, bool reverse_y)
     {
         auto size = (int) data.Size();
-        TH2I histo = TH2I("sum_map", "Bin Signal Sums", size, 0, size, size, 0, size);
+        TH2I histo = TH2I(name.c_str(), "Bin Signal Sums", size, 0, size, size, 0, size);
         histo.SetXTitle("x Bin");
         histo.SetYTitle("y Bin");
         PhotonCount::Iterator iter = data.GetIterator();

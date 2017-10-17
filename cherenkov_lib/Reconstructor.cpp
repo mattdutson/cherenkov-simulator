@@ -15,9 +15,8 @@
 
 using namespace TMath;
 
-using std::string;
-using std::vector;
-using boost::property_tree::ptree;
+using namespace boost::property_tree;
+using namespace std;
 
 namespace cherenkov_simulator
 {
@@ -26,9 +25,14 @@ namespace cherenkov_simulator
         return "Triggered, " + Shower::Header() + ", Cherenkov, " + Shower::Header();
     }
 
-    string Reconstructor::Result::ToString() const
+    string Reconstructor::Result::ToString(Plane ground_plane) const
     {
-        return std::to_string(triggered) + ", " + mono_recon.ToString() + ", " + std::to_string(chkv_tried) + ", " + chkv_recon.ToString();
+        string result;
+        if (triggered) result += "1, " + mono_recon.ToString(ground_plane) + ", ";
+        else result += "0, 0, 0, 0,";
+        if (chkv_tried) result += "1, " + chkv_recon.ToString(ground_plane);
+        else result += "0, 0, 0, 0";
+        return result;
     }
 
     Reconstructor::Reconstructor(const ptree& config)
@@ -70,7 +74,6 @@ namespace cherenkov_simulator
                 {
                     result.chkv_recon = HybridFit(data, impact, to_sdp);
                     result.chkv_tried = true;
-                    result.gnd_impact = impact;
                 }
             }
         }

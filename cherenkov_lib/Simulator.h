@@ -37,6 +37,12 @@ namespace cherenkov_simulator
          */
         PhotonCount SimulateShower(Shower shower) const;
 
+        /*
+         * Returns a copy of the ground plane.
+         */
+        Plane GroundPlane() const;
+
+
     private:
 
         friend class SimulatorTest;

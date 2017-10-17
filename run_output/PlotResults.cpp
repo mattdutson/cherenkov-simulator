@@ -14,7 +14,7 @@ struct Params
     const char* mon_titl;
     const char* ckv_titl;
     const char* can_name;
-    const char* filter = "chkv";
+    const char* filter = "chkv > 0";
     int n_bins;
     double min;
     double max;
@@ -39,7 +39,7 @@ void MakeDoubleHisto(TTree& tree, Params par)
     c_hist.Write();
 }
 
-void MakeDoubleProfile(TTree& tree, Params par, const char* x_lab, const char* y_lab)
+void MakeDoubleProfile(TTree& tree, Params par, const char* x_lab, const char* y_lab, double min_y, double max_y)
 {
     tree.Draw(CreationString(par.mon_strn, par.mon_name, par.n_bins, par.min, par.max).c_str(), par.filter, "prof");
     tree.Draw(CreationString(par.ckv_strn, par.ckv_name, par.n_bins, par.min, par.max).c_str(), par.filter, "prof");
@@ -52,14 +52,19 @@ void MakeDoubleProfile(TTree& tree, Params par, const char* x_lab, const char* y
     prof_1->SetTitle(par.mon_titl);
     prof_1->SetXTitle(x_lab);
     prof_1->SetYTitle(y_lab);
+    prof_1->SetMinimum(min_y);
+    prof_1->SetMaximum(max_y);
     prof_2->SetTitle(par.ckv_titl);
     prof_2->SetXTitle(x_lab);
     prof_2->SetYTitle(y_lab);
+    prof_2->SetMinimum(min_y);
+    prof_2->SetMaximum(max_y);
     c_prof.cd(1);
     prof_1->Draw();
     c_prof.cd(2);
     prof_2->Draw();
     c_prof.Write();
+
 }
 
 void PlotResults(const char* csv_file)
@@ -104,7 +109,7 @@ void PlotResults(const char* csv_file)
     par.n_bins = 40;
     par.min = 0;
     par.max = 3.14;
-    MakeDoubleProfile(tree, par, "Shower Angle", "Impact Error");
+    MakeDoubleProfile(tree, par, "Shower Angle", "Impact Error", -1, 1);
 
     par.mon_name = "mon_im_im";
     par.ckv_name = "ckv_im_im";
@@ -116,7 +121,7 @@ void PlotResults(const char* csv_file)
     par.n_bins = 40;
     par.min = 0;
     par.max = 40;
-    MakeDoubleProfile(tree, par, "Impact Parameter", "Impact Error");
+    MakeDoubleProfile(tree, par, "Impact Parameter", "Impact Error", -1, 1);
 
     par.mon_name = "mon_im_en";
     par.ckv_name = "ckv_im_en";
@@ -128,7 +133,7 @@ void PlotResults(const char* csv_file)
     par.n_bins = 40;
     par.min = 17;
     par.max = 21;
-    MakeDoubleProfile(tree, par, "Log(Energy)", "Impact Error");
+    MakeDoubleProfile(tree, par, "Log(Energy)", "Impact Error", -1, 1);
 
     // We would have to make plots against angle, but as this profile shows, but impact and angle errors are highly
     // correlated.
@@ -142,5 +147,5 @@ void PlotResults(const char* csv_file)
     par.n_bins = 40;
     par.min = -3.14;
     par.max = 3.14;
-    MakeDoubleProfile(tree, par, "Angular Error", "Impact Error");
+    MakeDoubleProfile(tree, par, "Angular Error", "Impact Error", -1, 1);
 }

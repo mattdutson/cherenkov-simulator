@@ -252,10 +252,10 @@ namespace cherenkov_simulator
         static std::string Header();
 
         /*
-         * Creates a string with a comma-separated impact parameter, impact angle, and shower direction. Used when
+         * Creates a string with a comma-separated impact angle, impact parameter, and ground impact distance. Used when
          * writing CSV files.
          */
-        std::string ToString() const;
+        std::string ToString(Plane ground_plane) const;
 
     private:
 

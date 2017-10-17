@@ -4,7 +4,7 @@
 
     <simulation note="Defines computational behavior of the simulation">
         <max_bytes  unit="null"   note="Maximum size of the data buffer">8000000000</max_bytes>
-        <n_showers  unit="null"   note="Number of Monte Carlo iterations">2000</n_showers>
+        <n_showers  unit="null"   note="Number of Monte Carlo iterations">1000</n_showers>
         <depth_step unit="g/cm^2" note="Size of discrete shower steps">1.0</depth_step>
         <time_bin   unit="s"      note="Size of the time signal bins">100e-9</time_bin>
         <fluor_thin unit="null"   note="Fluorescence computational thinning rate">1</fluor_thin>
@@ -15,7 +15,7 @@
 
     <surroundings note="The orientation of the surroundings">
         <ground_normal   unit="null" note="Normal vector to the ground plane">(0, 0, 1)</ground_normal>
-        <ground_point    unit="cm"   note="A fixed point on the ground plane">(0, 0, -40000)</ground_point>
+        <ground_point    unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_point>
         <elevation_angle unit="rad"  note="Angle of the detector above horizon">0.045</elevation_angle>
         <elevation       unit="cm"   note="Detector elevation above sea level">141400</elevation>
     </surroundings>

@@ -26,9 +26,8 @@ namespace cherenkov_simulator
         struct Result
         {
             bool triggered;
-            Shower mono_recon;
             bool chkv_tried;
-            TVector3 gnd_impact;
+            Shower mono_recon;
             Shower chkv_recon;
 
             /*
@@ -39,7 +38,7 @@ namespace cherenkov_simulator
             /*
              * Creates a string with comma separated fields, with Shower represented by Shower.ToString().
              */
-            std::string ToString() const;
+            std::string ToString(Plane ground_plane) const;
         };
 
         /*

@@ -66,6 +66,11 @@ namespace cherenkov_simulator
         return photon_count;
     }
 
+    Plane Simulator::GroundPlane() const
+    {
+        return ground_plane;
+    }
+
     double Simulator::CherenkovFunc::operator()(double* x, double* p)
     {
         // See Simulator constructor for definition of parameters
@@ -248,6 +253,21 @@ namespace cherenkov_simulator
         return Ray(position, direction, time);
     }
 
+    double Simulator::MinTime(Shower shower) const
+    {
+        double time = shower.Time();
+        time += shower.Position().Mag() / c_cent;
+        return time;
+    }
+
+    double Simulator::MaxTime(Shower shower) const
+    {
+        double time = shower.Time();
+        time += shower.TimeToPlane(ground_plane);
+        time += shower.PlaneImpact(ground_plane).Mag() * back_toler / c_cent;
+        return time;
+    }
+
     bool Simulator::NegSphereImpact(Ray ray, TVector3& point, double radius)
     {
         // Find roots of the constraining polynomial
@@ -271,20 +291,5 @@ namespace cherenkov_simulator
             point = point1.Z() < point2.Z() ? point1 : point2;
             return true;
         }
-    }
-
-    double Simulator::MinTime(Shower shower) const
-    {
-        double time = shower.Time();
-        time += shower.Position().Mag() / c_cent;
-        return time;
-    }
-
-    double Simulator::MaxTime(Shower shower) const
-    {
-        double time = shower.Time();
-        time += shower.TimeToPlane(ground_plane);
-        time += shower.PlaneImpact(ground_plane).Mag() * back_toler / c_cent;
-        return time;
     }
 }
