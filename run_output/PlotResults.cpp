@@ -62,12 +62,12 @@ void MakeDoubleProfile(TTree& tree, Params par, const char* x_lab, const char* y
     c_prof.Write();
 }
 
-void PlotTree(const char* csv_file)
+void PlotResults(const char* csv_file)
 {
     TTree tree;
     const char* branch_desc = "seed:id:energy:psi:im:trig:mono_psi:mono_im:chkv:chkv_psi:chkv_im";
     tree.ReadFile(csv_file, branch_desc, ',');
-    TFile file("PlotTreeOut.root", "RECREATE");
+    TFile file("Results.root", "RECREATE");
     Params par;
 
     par.mon_name = "mono_im_err";

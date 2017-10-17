@@ -15,36 +15,31 @@
 
 namespace cherenkov_simulator
 {
-    // Physics constants - MeV, cgs.
-    const double fine_struct = 0.007297;
-    const double mass_e = 0.511;
-    const double c_cent = 2.998e10;
+    const double fine_s = 0.007297; // Fine structure constant
+    const double mass_e = 0.511;    // Mass of the electron (MeV/c^2)
+    const double c_cent = 2.998e10; // Speed of light (cm/s)
 
-    // Atmospheric parameters - cgs, K.
-    const double scale_h = 841300;
-    const double rho_sea = 0.001225;
-    const double ref_sea = 1.00029;
-    const double ref_lens = 1.52;
-    const double atm_temp = 273.0;
+    const double scale_h = 841300;   // Scale height of the atmosphere (cm)
+    const double rho_sea = 0.001225; // Density of the atmosphere at sea level (g/cm^3)
+    const double ref_sea = 1.00029;  // Atmospheric index of refraction at sea level
+    const double ref_lens = 1.52;    // Corrector plate index of refraction
+    const double atm_temp = 273.0;   // Constant temperature of the atmosphere (K)
 
-    // Equipment inefficiencies.
-    const double mirror_eff = 0.80;
-    const double filter_eff = 1.0;
-    const double pmtube_eff = 0.15;
+    const double mirror_eff = 0.80; // Mirror reflectance ratio
+    const double filter_eff = 1.0;  // Filter transmittance ratio
+    const double pmtube_eff = 0.15; // Photomultiplier quantum efficiency
 
-    // Levels of night sky background noise - cgs, sr.
-    const double glob_sky_noise = 4.924e6;
-    const double glob_gnd_noise = 4.924e5;
+    const double glob_sky_noise = 4.924e6; // Night sky background (1/cm^2 sr s)
+    const double glob_gnd_noise = 4.924e5; // Night ground background (1/cm^2 sr s)
 
-    // Gaisser-Hillas parameters - cgs.
-    const double gh_lambda = 70.0;
-    const double x_0 = -70.0;
-    const double n_max_ratio = 1.39e9;
-    const double x_max_1 = 725.0;
-    const double x_max_2 = 55.0;
-    const double x_max_3 = 18.0;
+    const double gh_lambda = 70.0; // lambda in the Gaisser-Hillas profile
+    const double x_0 = -70.0;      // X0 in the Gaisser-Hillas profile
+    const double n_ratio = 1.39e9; // Ratio of energy NMax to energy
+    const double x_max_1 = 725.0;  // First parameter for determining XMax from energy
+    const double x_max_2 = 55.0;   // Second parameter for determining XMax from energy
+    const double x_max_3 = 18.0;   // Third parameter for determining XMax from energy
 
-    // Parameters in the electron energy spectrum - MeV.
+    // Parameters in Nerling's electron energy spectrum (MeV)
     const double fe_a11 = 6.42522;
     const double fe_a12 = 1.53183;
     const double fe_a21 = 168.168;
@@ -53,25 +48,24 @@ namespace cherenkov_simulator
     const double fe_k1 = 6.20114;
     const double fe_k2 = -5.96851e-1;
 
-    // Parameters in the fluorescence yield - MeV, cgs, K.
+    // Parameters in Kakimoto's fluorescence yield (MeV, cgs, K)
     const double fluor_a1 = 890.0;
     const double fluor_a2 = 550.0;
     const double fluor_b1 = 1850.0;
     const double fluor_b2 = 6500.0;
     const double edep_1_4 = 1.6;
 
-    // Parameters in the effective ionization loss rate - MeV, cgs.
+    // Parameters in Nerling's effective ionization loss rate (MeV, cgs)
     const double ion_c1 = 3.90883;
     const double ion_c2 = 1.05301;
     const double ion_c3 = 9.91717;
     const double ion_c4 = 2.41715;
     const double ion_c5 = 0.13180;
 
-    // Miscellaneous Cherenkov parameters - cgs.
-    const double lambda_min = 3.0e-5;
-    const double lambda_max = 4.0e-5;
-    const double chkv_k1 = 0.83;
-    const double chkv_k2 = -0.67;
+    const double lambda_min = 3.0e-5; // Minimum Cherenkov wavelength
+    const double lambda_max = 4.0e-5; // Maximum Cherenkov wavelength
+    const double chkv_k1 = 0.83;      // Parameter in Cherenkov angular distribution
+    const double chkv_k2 = -0.67;     // Parameter in Cherenkov angular distribution
     
     typedef std::vector<bool> Bool1D;
     typedef std::vector<std::vector<bool>> Bool2D;

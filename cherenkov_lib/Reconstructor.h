@@ -2,14 +2,14 @@
 //
 // Author: Matthew Dutson
 //
-// Contains a class used to reconstruct showers from photon arrival time data.
+// Definition of Reconstructor class
 
 #ifndef RECONSTRUCTOR_H
 #define RECONSTRUCTOR_H
 
+#include <boost/property_tree/ptree.hpp>
 #include <queue>
 #include <array>
-#include <boost/property_tree/ptree.hpp>
 #include <TRotation.h>
 #include <TGraphErrors.h>
 #include <TMatrixDSym.h>
@@ -25,10 +25,11 @@ namespace cherenkov_simulator
     public:
         struct Result
         {
-            bool trigger;
-            bool impact;
-            Shower mono;
-            Shower ckv;
+            bool triggered;
+            Shower mono_recon;
+            bool chkv_tried;
+            TVector3 gnd_impact;
+            Shower chkv_recon;
 
             /*
              * Creates a header for rows of data created with ToString().
@@ -66,7 +67,7 @@ namespace cherenkov_simulator
 
     private:
 
-        friend class ReconstructorTest;
+        friend class SampleEvents;
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings - cgs
         Plane ground;
@@ -77,7 +78,7 @@ namespace cherenkov_simulator
         double gnd_noise;
 
         // Parameters used when applying triggering logic and noise reduction
-        double trigger_thresh;
+        double trig_thresh;
         double noise_thresh;
         int trigger_clust;
         double impact_buffer;

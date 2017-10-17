@@ -75,7 +75,7 @@ namespace cherenkov_simulator
         double delta = p[2];
 
         // Parameters in Cherenkov yield
-        double k_out = 2 * Pi() * fine_struct / rho * (1 / lambda_min - 1 / lambda_max);
+        double k_out = 2 * Pi() * fine_s / rho * (1 / lambda_min - 1 / lambda_max);
         double k_1 = k_out * 2 * delta;
         double k_2 = k_out * Sq(mass_e);
 

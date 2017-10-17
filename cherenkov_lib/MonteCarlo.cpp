@@ -40,35 +40,55 @@ namespace cherenkov_simulator
         for (int i = 0; i < n_showers;)
         {
             Shower shower = GenerateShower();
-            PhotonCount data;
-            try
-            {
-                data = simulator.SimulateShower(shower);
-            }
-            catch (out_of_range& err)
-            {
-                cout << err.what() << endl;
-                cout << "Skipping this shower..." << endl;
-                continue;
-            }
-            if (data.Empty()) continue;
+            Reconstructor::Result result = RunSingleShower(shower, to_string(i));
+            if (!result.triggered) continue;
             else i++;
-            Analysis::MakePixlProfile(data).Write((to_string(i) + "_before_noise_pixl").c_str());
-            Analysis::MakeTimeProfile(data).Write((to_string(i) + "_before_noise_time").c_str());
-
-            reconstructor.AddNoise(data);
-            Analysis::MakePixlProfile(data).Write((to_string(i) + "_after_noise_pixl").c_str());
-            Analysis::MakeTimeProfile(data).Write((to_string(i) + "_after_noise_time").c_str());
-
-            reconstructor.ClearNoise(data);
-            Analysis::MakePixlProfile(data).Write((to_string(i) + "_after_clear_pixl").c_str());
-            Analysis::MakeTimeProfile(data).Write((to_string(i) + "_after_clear_time").c_str());
-
-            Reconstructor::Result result = reconstructor.Reconstruct(data);
             cout << "Shower " << i << " finished" << endl;
             fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString() << ", "
                  << result.ToString() << endl;
         }
+    }
+
+    Reconstructor::Result MonteCarlo::RunSingleShower(Shower shower, string ident) const
+    {
+        PhotonCount data;
+        try
+        {
+            data = simulator.SimulateShower(shower);
+        }
+        catch (out_of_range& err)
+        {
+            cout << err.what() << endl;
+            cout << "Skipping this shower..." << endl;
+            return Reconstructor::Result();
+        }
+        if (data.Empty())
+        {
+            Reconstructor::Result result = Reconstructor::Result();
+            result.triggered = false;
+            return result;
+        }
+
+        Analysis::MakePixlProfile(data).Write((ident + "_before_noise_pixl").c_str());
+        Analysis::MakeTimeProfile(data).Write((ident + "_before_noise_time").c_str());
+
+        reconstructor.AddNoise(data);
+        Analysis::MakePixlProfile(data).Write((ident + "_after_noise_pixl").c_str());
+        Analysis::MakeTimeProfile(data).Write((ident + "_after_noise_time").c_str());
+
+        reconstructor.ClearNoise(data);
+        Analysis::MakePixlProfile(data).Write((ident + "_after_clear_pixl").c_str());
+        Analysis::MakeTimeProfile(data).Write((ident + "_after_clear_time").c_str());
+
+        Reconstructor::Result result = reconstructor.Reconstruct(data);
+        shower.Direction().Write((ident + "_orig_direction").c_str());
+        shower.Position().Write((ident + "_orig_position").c_str());
+        result.gnd_impact.Write((ident + "_ground_impact").c_str());
+        result.mono_recon.Direction().Write((ident + "_mono_direction").c_str());
+        result.mono_recon.Position().Write((ident + "_mono_position").c_str());
+        result.chkv_recon.Direction().Write((ident + "_chkv_direction").c_str());
+        result.chkv_recon.Position().Write((ident + "_chkv_position").c_str());
+        return result;
     }
 
     Shower MonteCarlo::GenerateShower() const

@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Contains unit testing helper methods.
+// Definition of unit testing Helper class.
 
 #ifndef HELPER_H
 #define HELPER_H
@@ -11,13 +11,16 @@
 
 namespace cherenkov_simulator
 {
+    /*
+     * Static class which contains unit testing helper methods.
+     */
     class Helper
     {
     public:
 
         /*
          * A function which will check whether two vectors are equal within acceptable error. The allowable fractional
-         * between each component is specified.
+         * difference between each component is specified.
          */
         static bool VectorsEqual(TVector3 actual, TVector3 expected, double fractional_err);
 

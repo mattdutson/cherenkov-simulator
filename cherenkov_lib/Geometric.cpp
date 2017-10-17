@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Implementation of Geometric.h.
+// Implementation of Geometric.h
 
 #include <TMath.h>
 
@@ -232,6 +232,6 @@ namespace cherenkov_simulator
 
     double Shower::NMax() const
     {
-        return energy / n_max_ratio;
+        return energy / n_ratio;
     }
 }

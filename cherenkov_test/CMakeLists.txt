@@ -7,9 +7,9 @@ set(SOURCE_FILES
         GeometricTest.cpp
         Helper.h
         Helper.cpp
-        MiscellaneousTest.cpp
-        ReconstructorTest.cpp
-        SimulatorTest.cpp)
+        UtilityTest.cpp
+        SampleEvents.cpp
+        )
 add_executable(cherenkov_test ${SOURCE_FILES})
 
 # Link to cherenkov_lib and its dependencies.

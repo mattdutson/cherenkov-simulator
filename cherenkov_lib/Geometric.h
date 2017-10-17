@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Defines the Plane, Shower, and Ray classes.
+// Defines Plane, Shower, and Ray classes
 
 #ifndef GEOMETRIC_H
 #define GEOMETRIC_H

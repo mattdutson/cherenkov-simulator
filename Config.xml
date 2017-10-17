@@ -3,45 +3,45 @@
 <config>
 
     <simulation note="Defines computational behavior of the simulation">
-        <max_bytes unit="null" note="Maximum size of the data buffer">8000000000</max_bytes>
-        <n_showers unit="null">4000</n_showers>
-        <depth_step unit="g/cm^2">1.0</depth_step>
-        <time_bin unit="s">100e-9</time_bin>
-        <fluor_thin unit="null">1</fluor_thin>
-        <ckv_thin unit="null">1</ckv_thin>
-        <time_seed unit="null" note="Whether the seed should be set randomly by the current time">false</time_seed>
-        <back_toler unit="null">1.15</back_toler>
+        <max_bytes  unit="null"   note="Maximum size of the data buffer">8000000000</max_bytes>
+        <n_showers  unit="null"   note="Number of Monte Carlo iterations">1000</n_showers>
+        <depth_step unit="g/cm^2" note="Size of discrete shower steps">1.0</depth_step>
+        <time_bin   unit="s"      note="Size of the time signal bins">100e-9</time_bin>
+        <fluor_thin unit="null"   note="Fluorescence computational thinning rate">1</fluor_thin>
+        <ckv_thin   unit="null"   note="Cherenkov computational thinning rate">1</ckv_thin>
+        <time_seed  unit="null"   note="Whether the RNG seed should be randomly set">false</time_seed>
+        <back_toler unit="null"   note="Determines maximum allowed photon time">1.15</back_toler>
     </simulation>
 
     <surroundings note="The orientation of the surroundings">
-        <ground_normal unit="(null, null, null)">(0, 0, 1)</ground_normal>
-        <ground_point unit="(cm, cm, cm)">(0, 0, -20000)</ground_point>
-        <elevation_angle unit="rad">0.045</elevation_angle>
-        <elevation unit="cm">141400</elevation>
+        <ground_normal   unit="null" note="Normal vector to the ground plane">(0, 0, 1)</ground_normal>
+        <ground_point    unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_point>
+        <elevation_angle unit="rad"  note="Angle of the detector above horizon">0.045</elevation_angle>
+        <elevation       unit="cm"   note="Detector elevation above sea level">141400</elevation>
     </surroundings>
 
     <monte_carlo note="Defines properties of randomly generated showers">
-        <energy_pow unit="null">-1.0</energy_pow>
-        <energy_min unit="eV">1.0e17</energy_min>
-        <energy_max unit="eV">1.0e21</energy_max>
-        <impact_min unit="cm">3.0e5</impact_min>
-        <impact_max unit="cm">4.0e6</impact_max>
-        <begn_depth unit="g/cm^2" note="Must be positive">50.0</begn_depth>
+        <energy_pow unit="null"   note="Slope of the energy power distribution">-1.0</energy_pow>
+        <energy_min unit="eV"     note="Minimum simulated energy">1.0e17</energy_min>
+        <energy_max unit="eV"     note="Maximum simulated energy">1.0e21</energy_max>
+        <impact_min unit="cm"     note="Minimum simulated impact parameter">3.0e5</impact_min>
+        <impact_max unit="cm"     note="Maximum simulated impact parameter">4.0e6</impact_max>
+        <begn_depth unit="g/cm^2" note="Simulation starting depth, must be positive">50.0</begn_depth>
     </monte_carlo>
 
     <detector note="Properties of the optics and detector">
-        <mirror_radius unit="cm">400.0</mirror_radius>
-        <f_number unit="null">1.0</f_number>
-        <field_of_view unit="rad">0.45</field_of_view>
-        <n_pmt_across unit="null" note="Must be even">300</n_pmt_across>
+        <mirror_radius unit="cm"   note="Radius of the spherical mirror">400.0</mirror_radius>
+        <f_number      unit="null" note="F number of the detector">1.0</f_number>
+        <field_of_view unit="rad"  note="Field of view (twice the detector-axis angle)">0.45</field_of_view>
+        <n_pmt_across  unit="null" note="Diameter of pixel array, must be even">300</n_pmt_across>
     </detector>
 
     <triggering note="Thresholds in filtering and triggering">
-        <trigger_thresh unit="null">6.0</trigger_thresh>
-        <noise_thresh unit="null">3.0</noise_thresh>
-        <trigger_clust unit="null">5</trigger_clust>
-        <impact_buffer unit="rad">0.02</impact_buffer>
-        <plane_dev unit="rad">0.03</plane_dev>
+        <trig_thresh   unit="null" note="Sigma multiple for triggering threshold">6.0</trig_thresh>
+        <noise_thresh  unit="null" note="Sigma multiple for non-noise threshold">3.0</noise_thresh>
+        <trigger_clust unit="null" note="Minimum size of cluster for detector to be triggered">5</trigger_clust>
+        <impact_buffer unit="rad"  note="Size of the ring around of the edge of the FOV">0.02</impact_buffer>
+        <plane_dev     unit="rad"  note="Maximum deviation from first-guess SDP">0.03</plane_dev>
     </triggering>
 
 </config>

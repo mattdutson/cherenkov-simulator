@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Implementation of DataStructures.h.
+// Implementation of DataStructures.h
 
 #include <TMath.h>
 #include <TRandom3.h>

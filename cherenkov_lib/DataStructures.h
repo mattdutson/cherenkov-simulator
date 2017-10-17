@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Defines PhotonCount and related classes.
+// Defines PhotonCount and related classes
 
 #ifndef DATA_STRUCTURES_H
 #define DATA_STRUCTURES_H

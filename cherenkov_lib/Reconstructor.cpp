@@ -28,7 +28,7 @@ namespace cherenkov_simulator
 
     string Reconstructor::Result::ToString() const
     {
-        return std::to_string(trigger) + ", " + mono.ToString() + ", " + std::to_string(impact) + ", " + ckv.ToString();
+        return std::to_string(triggered) + ", " + mono_recon.ToString() + ", " + std::to_string(chkv_tried) + ", " + chkv_recon.ToString();
     }
 
     Reconstructor::Reconstructor(const ptree& config)
@@ -47,7 +47,7 @@ namespace cherenkov_simulator
         gnd_noise = Sq(stop_diameter / 2.0) * Pi() * glob_gnd_noise;
 
         // Parameters used when applying triggering logic and noise reduction
-        trigger_thresh = config.get<double>("triggering.trigger_thresh");
+        trig_thresh = config.get<double>("triggering.trig_thresh");
         noise_thresh = config.get<double>("triggering.noise_thresh");
         trigger_clust = config.get<int>("triggering.trigger_clust");
         impact_buffer = config.get<double>("triggering.impact_buffer");
@@ -57,19 +57,20 @@ namespace cherenkov_simulator
     Reconstructor::Result Reconstructor::Reconstruct(const PhotonCount& data) const
     {
         Result result = Result();
-        result.trigger = DetectorTriggered(GetTriggeringState(data));
-        if (result.trigger)
+        result.triggered = DetectorTriggered(GetTriggeringState(data));
+        if (result.triggered)
         {
             TRotation to_sdp = FitSDPlane(data);
-            result.mono = MonocularFit(data, to_sdp);
-            TVector3 direction = to_world.Inverse() * result.mono.PlaneImpact(ground);
+            result.mono_recon = MonocularFit(data, to_sdp);
+            TVector3 direction = to_world.Inverse() * result.mono_recon.PlaneImpact(ground);
             if (direction.Theta() < data.DetectorAxisAngle() - impact_buffer)
             {
                 TVector3 impact;
                 if (FindGroundImpact(data, impact))
                 {
-                    result.ckv = HybridFit(data, impact, to_sdp);
-                    result.impact = true;
+                    result.chkv_recon = HybridFit(data, impact, to_sdp);
+                    result.chkv_tried = true;
+                    result.gnd_impact = impact;
                 }
             }
         }
@@ -220,7 +221,7 @@ namespace cherenkov_simulator
         Ray outward_ray = Ray(TVector3(), impact_direction, 0);
         outward_ray.PropagateToPlane(ground);
         impact = outward_ray.Position();
-        return highest_count > data.FindThreshold(gnd_noise, trigger_thresh);
+        return highest_count > data.FindThreshold(gnd_noise, trig_thresh);
     }
 
     TGraphErrors Reconstructor::GetFitGraph(const PhotonCount& data, TRotation to_sdp) const
@@ -263,7 +264,7 @@ namespace cherenkov_simulator
 
     Bool1D Reconstructor::GetTriggeringState(const PhotonCount& data) const
     {
-        Bool3D trig_matrices = GetThresholdMatrices(data, trigger_thresh, false);
+        Bool3D trig_matrices = GetThresholdMatrices(data, trig_thresh, false);
         Bool1D good_frames = Bool1D(data.NBins(), false);
 
         std::list<std::array<size_t, 3>> frontier = std::list<std::array<size_t, 3>>();
@@ -304,7 +305,7 @@ namespace cherenkov_simulator
     {
         SubtractAverageNoise(data);
         Bool3D not_visited = GetThresholdMatrices(data, noise_thresh);
-        Bool3D triggered = GetThresholdMatrices(data, trigger_thresh);
+        Bool3D triggered = GetThresholdMatrices(data, trig_thresh);
         Bool3D good_pixels = data.GetFalseMatrix();
         FindPlaneSubset(data, triggered);
         Bool1D trig_state = GetTriggeringState(data);

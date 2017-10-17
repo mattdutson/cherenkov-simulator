@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Implementation of Helper.h
+// Implementation of Helper.h.
 
 #include "Helper.h"
 #include "Utility.h"

@@ -596,7 +596,7 @@ public:
         double depth = 80.0235;
         double x = depth / Abs(shower.Direction().CosTheta());
         double x_max = x_max_1 + x_max_2 * (Log10(shower.EnergyeV()) - x_max_3);
-        double n_max = shower.EnergyeV() / n_max_ratio;
+        double n_max = shower.EnergyeV() / n_ratio;
         double term_1 = Power((x + 70.0)/(x_max + 70.0), (x_max + 70.0) / 70.0);
         double term_2 = Exp((x_max - x) / 70.0);
         ASSERT_TRUE(Helper::ValuesEqual(n_max * term_1 * term_2, shower.GaisserHillas(), 1e-4));

@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Contains the definition of the Simulator class, which performs shower simulation and ray tracing.
+// Definition of Simulator class
 
 #ifndef SIMULATOR_H
 #define SIMULATOR_H

@@ -2,7 +2,7 @@
 //
 // Author: Matthew Dutson
 //
-// Defines the MonteCarlo class.
+// Definition of MonteCarlo class
 
 #ifndef MONTE_CARLO_H
 #define MONTE_CARLO_H
@@ -40,6 +40,13 @@ namespace cherenkov_simulator
          * noise removal shower track.
          */
         void PerformMonteCarlo(std::string output_file) const;
+
+        /*
+         * Simulates and attempts reconstruction on a single shower, passed as a parameter. Writes various plots to the
+         * current open file handle, and returns a Reconstructor::Result with reconstructed parameters. It is assumed
+         * that a ROOT file will have been opened before calling this method.
+         */
+        Reconstructor::Result RunSingleShower(Shower shower, std::string ident) const;
 
         /*
          * Generates a Shower with a random position, direction, and energy. Allowed ranges of these parameters are
