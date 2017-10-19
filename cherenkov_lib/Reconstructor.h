@@ -31,6 +31,11 @@ namespace cherenkov_simulator
             Shower chkv_recon;
 
             /*
+             * The default constructor.
+             */
+            Result();
+
+            /*
              * Creates a header for rows of data created with ToString().
              */
             static std::string Header();

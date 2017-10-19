@@ -20,6 +20,12 @@ using namespace std;
 
 namespace cherenkov_simulator
 {
+    Reconstructor::Result::Result()
+    {
+        triggered = false;
+        chkv_tried = false;
+    }
+
     string Reconstructor::Result::Header()
     {
         return "Triggered, " + Shower::Header() + ", Cherenkov, " + Shower::Header();

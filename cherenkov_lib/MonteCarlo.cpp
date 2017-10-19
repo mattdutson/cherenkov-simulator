@@ -63,12 +63,7 @@ namespace cherenkov_simulator
             cout << "Skipping this shower..." << endl;
             return Reconstructor::Result();
         }
-        if (data.Empty())
-        {
-            Reconstructor::Result result = Reconstructor::Result();
-            result.triggered = false;
-            return result;
-        }
+        if (data.Empty()) return Reconstructor::Result();
 
         TH2I befor_noise_pixl = Analysis::MakePixlProfile(data, ident + "_befor_noise_pixl");
         TGraph befor_noise_time = Analysis::MakeTimeProfile(data);
@@ -80,7 +75,7 @@ namespace cherenkov_simulator
         TGraph after_clear_time = Analysis::MakeTimeProfile(data);
 
         Reconstructor::Result result = reconstructor.Reconstruct(data);
-        if (!result.triggered) return result;
+        if (!result.triggered) return Reconstructor::Result();
 
         befor_noise_pixl.Write();
         befor_noise_time.Write((ident + "_befor_noise_time").c_str());
