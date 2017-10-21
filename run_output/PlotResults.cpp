@@ -103,10 +103,9 @@ void PlotResults(const char* csv_file)
     par.chkv_name = "chkv_im_psi";
     par.mono_strn = "(mono_im - im) / im : psi";
     par.chkv_strn = "(chkv_im - im) / im : psi";
-    par.mono_titl = "Monocular Impact Error vs Angle when Reflectance within 30 km";
-    par.chkv_titl = "Cherenkov Impact Error vs Angle when Reflectance within 30 km";
+    par.mono_titl = "Monocular Impact Error vs Angle";
+    par.chkv_titl = "Cherenkov Impact Error vs Angle";
     par.canv_name = "im_err_psi";
-    par.filter = "chkv > 0 && gnd < 30";
     par.n_bins = 40;
     par.min = 0;
     par.max = 180;
@@ -116,15 +115,14 @@ void PlotResults(const char* csv_file)
     par.chkv_name = "ckv_im_im";
     par.mono_strn = "(mono_im - im) / im : im";
     par.chkv_strn = "(chkv_im - im) / im : im";
-    par.mono_titl = "Monocular Impact Error vs Impact when Reflectance within 30 km";
-    par.chkv_titl = "Cherenkov Impact Error vs Impact when Reflectance within 30 km";
+    par.mono_titl = "Monocular Impact Error vs Impact";
+    par.chkv_titl = "Cherenkov Impact Error vs Impact";
     par.canv_name = "im_err_im";
-    par.filter = "chkv > 0 && gnd < 30";
     par.n_bins = 40;
     par.min = 0;
     par.max = 40;
     MakeDoubleProfile(tree, par, "Impact Parameter", "Impact Error", -1, 1);
-    
+
     par.mono_name = "mon_im_gnd";
     par.chkv_name = "ckv_im_gnd";
     par.mono_strn = "(mono_im - im) / im : gnd";
