@@ -211,13 +211,13 @@ namespace cherenkov_simulator
 
     string Shower::Header()
     {
-        return "Angle (deg), Impact (km), Ground (km)";
+        return "Angle (deg),Impact (km),Ground (km)";
     }
 
     string Shower::ToString(Plane ground_plane) const
     {
-        return to_string(ImpactAngle() * 180.0 / Pi()) + ", " + Utility::KmString(ImpactParam())
-               + ", " + Utility::KmString(PlaneImpact(ground_plane).Mag());
+        return to_string(ImpactAngle() * 180.0 / Pi()) + "," + Utility::KmString(ImpactParam())
+               + "," + Utility::KmString(PlaneImpact(ground_plane).Mag());
     }
 
     double Shower::X() const

@@ -28,16 +28,16 @@ namespace cherenkov_simulator
 
     string Reconstructor::Result::Header()
     {
-        return "Triggered, " + Shower::Header() + ", Cherenkov, " + Shower::Header();
+        return "Triggered," + Shower::Header() + ",Cherenkov," + Shower::Header();
     }
 
     string Reconstructor::Result::ToString(Plane ground_plane) const
     {
         string result;
-        if (triggered) result += "1, " + mono_recon.ToString(ground_plane) + ", ";
-        else result += "0, 0, 0, 0,";
-        if (chkv_tried) result += "1, " + chkv_recon.ToString(ground_plane);
-        else result += "0, 0, 0, 0";
+        if (triggered) result += "1," + mono_recon.ToString(ground_plane) + ",";
+        else result += "0,0,0,0,";
+        if (chkv_tried) result += "1," + chkv_recon.ToString(ground_plane);
+        else result += "0,0,0,0";
         return result;
     }
 

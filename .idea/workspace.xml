@@ -18,9 +18,30 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d33216d-c2b0-40e7-8a74-b14cf93ccffe" name="Default" comment="">
+    <list default="true" id="7d33216d-c2b0-40e7-8a74-b14cf93ccffe" name="Default" comment="Spaces are bad, mkay?">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_height/Out1.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_height/Out2.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_height/Out3.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_height/Out4.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_height/OutAll.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_height/Results.root" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_resolution/Out1.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_resolution/Out2.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_resolution/Out3.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_resolution/Out4.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_resolution/OutAll.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/double_resolution/Results.root" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/initial_run/Out1.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/initial_run/Out2.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/initial_run/Out3.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/initial_run/Out4.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/initial_run/OutAll.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/initial_run/Results.root" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Config.xml" afterPath="$PROJECT_DIR$/Config.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/cmake-build-release/" />
@@ -56,8 +77,18 @@
       <file leaf-file-name="MonteCarlo.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="602">
-              <caret line="72" column="39" lean-forward="true" selection-start-line="72" selection-start-column="39" selection-end-line="72" selection-end-column="39" />
+            <state relative-caret-position="-243">
+              <caret line="37" column="32" lean-forward="false" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Geometric.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="525">
+              <caret line="213" column="40" lean-forward="true" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -66,8 +97,8 @@
       <file leaf-file-name="Config.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Config.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="6" column="76" lean-forward="false" selection-start-line="6" selection-start-column="76" selection-end-line="6" selection-end-column="76" />
+            <state relative-caret-position="405">
+              <caret line="27" column="77" lean-forward="false" selection-start-line="27" selection-start-column="77" selection-end-line="27" selection-end-column="77" />
               <folding />
             </state>
           </provider>
@@ -76,8 +107,8 @@
       <file leaf-file-name="Reconstructor.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-95">
-              <caret line="18" column="20" lean-forward="false" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+            <state relative-caret-position="450">
+              <caret line="36" column="78" lean-forward="false" selection-start-line="36" selection-start-column="78" selection-end-line="36" selection-end-column="78" />
               <folding />
             </state>
           </provider>
@@ -166,11 +197,11 @@
         <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Analysis.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Analysis.h" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Simulator.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h" />
         <option value="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.h" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
         <option value="$PROJECT_DIR$/Config.xml" />
@@ -178,8 +209,8 @@
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="false" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="73" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="53" />
     <option name="y" value="23" />
     <option name="width" value="1387" />
     <option name="height" value="877" />
@@ -249,7 +280,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.cherenkov_simulator_release">
+  <component name="RunManager" selected="Google Test.GeometricTest">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
       <envs />
     </configuration>
@@ -482,14 +513,11 @@
       <workItem from="1508275878280" duration="105000" />
       <workItem from="1508279607543" duration="3603000" />
       <workItem from="1508366496601" duration="3193000" />
-      <workItem from="1508386348429" duration="348000" />
-    </task>
-    <task id="LOCAL-00002" summary="Fixed indexing problem arising when casting signed values to unsigned">
-      <created>1492624572489</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1492624572489</updated>
+      <workItem from="1508386348429" duration="522000" />
+      <workItem from="1508397539557" duration="292000" />
+      <workItem from="1508452393405" duration="48000" />
+      <workItem from="1508607867722" duration="73000" />
+      <workItem from="1508608395602" duration="146000" />
     </task>
     <task id="LOCAL-00003" summary="Added test of Utility::RandPower&#10;&#10;Seems to be working correctly, but more extensive runs of the test method needed.">
       <created>1492626514845</created>
@@ -827,7 +855,14 @@
       <option name="project" value="LOCAL" />
       <updated>1508371203191</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Discovered indexing error in PerformMonteCarlo&#10;&#10;Also noticed that some showers have their Cherenkov peaks removed by noise filtration, but the fluorescence track still crosses the horizon. Cherenkov reconstruction does very poorly on these. Will note this in write-up and perform some kind of data trimming to keep histograms from being skewed.">
+      <created>1508387001012</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1508387001013</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -863,7 +898,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="146999000" />
+    <option name="totallyTimeSpent" value="147732000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -875,10 +910,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="55" y="23" width="1385" height="877" extended-state="6" />
+    <frame x="53" y="23" width="1387" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31571108" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3345725" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32889965" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39897698" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
@@ -953,7 +988,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="Started work on unit test suite&#10;&#10;Wrote or outlined a number of tests for the PhotonCount class. As part of this process, some method specifications were pinned down more specifically in their comments." />
     <MESSAGE value="More work on unit tests, still not finished" />
     <MESSAGE value="More unit test definitions" />
     <MESSAGE value="More unit tests, bleh" />
@@ -978,7 +1012,8 @@
     <MESSAGE value="Changes to improve simulation output&#10;&#10;Changes:&#10; - Fixed a problem where multiple ROOT objects with the same name were being written&#10; - Angles are converted to degrees before being written to CSV file&#10; - Shower ground impact distances are written to CSV file" />
     <MESSAGE value="Fixed cherenkov_test compiler errors" />
     <MESSAGE value="Trying to isolate a weird Cherenkov reconstruction bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="Trying to isolate a weird Cherenkov reconstruction bug" />
+    <MESSAGE value="Discovered indexing error in PerformMonteCarlo&#10;&#10;Also noticed that some showers have their Cherenkov peaks removed by noise filtration, but the fluorescence track still crosses the horizon. Cherenkov reconstruction does very poorly on these. Will note this in write-up and perform some kind of data trimming to keep histograms from being skewed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Discovered indexing error in PerformMonteCarlo&#10;&#10;Also noticed that some showers have their Cherenkov peaks removed by noise filtration, but the fluorescence track still crosses the horizon. Cherenkov reconstruction does very poorly on these. Will note this in write-up and perform some kind of data trimming to keep histograms from being skewed." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1214,13 +1249,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/run_output/initial_run/OutAll.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/run_output/initial_run/OutAll.csv" />
     <entry file="file://$PROJECT_DIR$/run_output/PlotResults.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="795">
@@ -1239,7 +1268,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="419">
           <caret line="260" column="0" lean-forward="false" selection-start-line="260" selection-start-column="0" selection-end-line="260" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1262,7 +1290,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
           <caret line="45" column="12" lean-forward="false" selection-start-line="45" selection-start-column="12" selection-end-line="45" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1284,7 +1311,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1140">
           <caret line="76" column="26" lean-forward="false" selection-start-line="76" selection-start-column="26" selection-end-line="76" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1292,13 +1318,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="664">
           <caret line="81" column="1" lean-forward="false" selection-start-line="81" selection-start-column="1" selection-end-line="81" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39">
-          <caret line="45" column="32" lean-forward="true" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -1312,24 +1331,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-95">
-          <caret line="18" column="20" lean-forward="false" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+        <state relative-caret-position="450">
+          <caret line="36" column="78" lean-forward="false" selection-start-line="36" selection-start-column="78" selection-end-line="36" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="213" column="40" lean-forward="true" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="602">
-          <caret line="72" column="39" lean-forward="true" selection-start-line="72" selection-start-column="39" selection-end-line="72" selection-end-column="39" />
+        <state relative-caret-position="-243">
+          <caret line="37" column="32" lean-forward="false" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Config.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="6" column="76" lean-forward="false" selection-start-line="6" selection-start-column="76" selection-end-line="6" selection-end-column="76" />
+        <state relative-caret-position="405">
+          <caret line="27" column="77" lean-forward="false" selection-start-line="27" selection-start-column="77" selection-end-line="27" selection-end-column="77" />
           <folding />
         </state>
       </provider>

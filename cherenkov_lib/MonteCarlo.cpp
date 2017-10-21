@@ -35,7 +35,7 @@ namespace cherenkov_simulator
         TFile file((output_file + ".root").c_str(), "RECREATE");
         ofstream fout = ofstream(output_file + ".csv");
         unsigned int start_seed = gRandom->GetSeed();
-        fout << "Seed, ID, Energy, " << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
+        fout << "Seed,ID,Energy," << Shower::Header() << ", " << Reconstructor::Result::Header() << endl;
 
         Plane ground_plane = simulator.GroundPlane();
         for (int i = 1; i <= n_showers;)
@@ -44,8 +44,8 @@ namespace cherenkov_simulator
             Reconstructor::Result result = RunSingleShower(shower, to_string(i));
             if (!result.triggered) continue;
             cout << "Shower " << i << " finished" << endl;
-            fout << start_seed << ", " << i << ", " << shower.EnergyeV() << ", " << shower.ToString(ground_plane)
-                 << ", " << result.ToString(ground_plane) << endl;
+            fout << start_seed << "," << i << "," << shower.EnergyeV() << "," << shower.ToString(ground_plane)
+                 << "," << result.ToString(ground_plane) << endl;
             i++;
         }
     }
