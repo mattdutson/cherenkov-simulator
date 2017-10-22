@@ -75,8 +75,8 @@ namespace cherenkov_simulator
         TFile file("DistantShower.root", "RECREATE");
         Shower shower = monte_carlo->GenerateShower(TVector3(0, 0, -1), 3e6, 0, 1e19);
         Reconstructor::Result result = monte_carlo->RunSingleShower(shower, "distant_shower");
-        cout << "Energy, " << shower.Header() << ", " << result.Header() << endl;
-        cout << shower.EnergyeV() << ", " << shower.ToString(FriendGroundPlane()) << ", "
+        cout <<  endl << "Energy," << shower.Header() << "," << result.Header() << endl;
+        cout << shower.EnergyeV() << "," << shower.ToString(FriendGroundPlane()) << ","
              << result.ToString(FriendGroundPlane()) << endl;
     }
 }

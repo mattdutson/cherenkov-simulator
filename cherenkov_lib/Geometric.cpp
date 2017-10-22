@@ -211,7 +211,7 @@ namespace cherenkov_simulator
 
     string Shower::Header()
     {
-        return "Angle (deg),Impact (km),Ground (km)";
+        return "Angle(deg),Impact(km),Ground(km)";
     }
 
     string Shower::ToString(Plane ground_plane) const

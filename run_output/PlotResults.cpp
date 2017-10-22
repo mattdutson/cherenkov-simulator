@@ -11,8 +11,6 @@ struct Params
     const char* chkv_name;
     const char* mono_strn;
     const char* chkv_strn;
-    const char* mono_titl;
-    const char* chkv_titl;
     const char* canv_name;
     const char* filter = "chkv > 0";
     int n_bins;
@@ -30,8 +28,8 @@ void MakeDoubleHisto(TTree& tree, Params par)
     chkv_im->Write();
     TCanvas c_hist(par.canv_name, "Histogram Canvas", 432, 500);
     c_hist.Divide(1, 2);
-    mono_im->SetTitle(par.mono_titl);
-    chkv_im->SetTitle(par.chkv_titl);
+    mono_im->SetTitle("Monocular");
+    chkv_im->SetTitle("Cherenkov");
     c_hist.cd(1);
     mono_im->Draw();
     c_hist.cd(2);
@@ -49,16 +47,26 @@ void MakeDoubleProfile(TTree& tree, Params par, const char* x_lab, const char* y
     prof_2->Write();
     TCanvas c_prof(par.canv_name, "Profile Canvas", 432, 500);
     c_prof.Divide(1, 2);
-    prof_1->SetTitle(par.mono_titl);
+    prof_1->SetTitle("Monocular");
     prof_1->SetXTitle(x_lab);
+    prof_1->GetXaxis()->CenterTitle(true);
+    prof_1->GetXaxis()->SetTitleOffset(1.25);
     prof_1->SetYTitle(y_lab);
+    prof_1->GetYaxis()->CenterTitle(true);
+    prof_1->GetYaxis()->SetTitleOffset(1.0);
     prof_1->SetMinimum(min_y);
     prof_1->SetMaximum(max_y);
-    prof_2->SetTitle(par.chkv_titl);
+    prof_1->SetStats(false);
+    prof_2->SetTitle("Cherenkov");
     prof_2->SetXTitle(x_lab);
+    prof_2->GetXaxis()->CenterTitle(true);
+    prof_2->GetXaxis()->SetTitleOffset(1.25);
     prof_2->SetYTitle(y_lab);
+    prof_2->GetYaxis()->CenterTitle(true);
+    prof_2->GetYaxis()->SetTitleOffset(1.0);
     prof_2->SetMinimum(min_y);
     prof_2->SetMaximum(max_y);
+    prof_2->SetStats(false);
     c_prof.cd(1);
     prof_1->Draw();
     c_prof.cd(2);
@@ -79,8 +87,6 @@ void PlotResults(const char* csv_file)
     par.chkv_name = "chkv_im_err";
     par.mono_strn = "(mono_im - im) / im";
     par.chkv_strn = "(chkv_im - im) / im";
-    par.mono_titl = "Monocular Impact Errors";
-    par.chkv_titl = "Cherenkov Impact Errors";
     par.canv_name = "impact_err";
     par.n_bins = 80;
     par.min = -1;
@@ -91,8 +97,6 @@ void PlotResults(const char* csv_file)
     par.chkv_name = "chkv_psi_err";
     par.mono_strn = "mono_psi - psi";
     par.chkv_strn = "chkv_psi - psi";
-    par.mono_titl = "Monocular Angular Errors";
-    par.chkv_titl = "Cherenkov Angular Errors";
     par.canv_name = "psi_err";
     par.n_bins = 80;
     par.min = -90;
@@ -103,49 +107,41 @@ void PlotResults(const char* csv_file)
     par.chkv_name = "chkv_im_psi";
     par.mono_strn = "(mono_im - im) / im : psi";
     par.chkv_strn = "(chkv_im - im) / im : psi";
-    par.mono_titl = "Monocular Impact Error vs Angle";
-    par.chkv_titl = "Cherenkov Impact Error vs Angle";
     par.canv_name = "im_err_psi";
     par.n_bins = 40;
     par.min = 0;
     par.max = 180;
-    MakeDoubleProfile(tree, par, "Shower Angle", "Impact Error", -1, 1);
+    MakeDoubleProfile(tree, par, "Shower Angle (degrees)", "Fractional Impact Error", -1, 1);
 
     par.mono_name = "mon_im_im";
     par.chkv_name = "ckv_im_im";
     par.mono_strn = "(mono_im - im) / im : im";
     par.chkv_strn = "(chkv_im - im) / im : im";
-    par.mono_titl = "Monocular Impact Error vs Impact";
-    par.chkv_titl = "Cherenkov Impact Error vs Impact";
     par.canv_name = "im_err_im";
     par.n_bins = 40;
     par.min = 0;
     par.max = 40;
-    MakeDoubleProfile(tree, par, "Impact Parameter", "Impact Error", -1, 1);
+    MakeDoubleProfile(tree, par, "Impact Parameter (km)", "Fractional Impact Error", -1, 1);
 
     par.mono_name = "mon_im_gnd";
     par.chkv_name = "ckv_im_gnd";
     par.mono_strn = "(mono_im - im) / im : gnd";
     par.chkv_strn = "(chkv_im - im) / im : gnd";
-    par.mono_titl = "Monocular Impact Error vs Ground Distance";
-    par.chkv_titl = "Cherenkov Impact Error vs Ground Distance";
     par.canv_name = "im_err_gnd";
     par.n_bins = 40;
     par.min = 0;
     par.max = 60;
-    MakeDoubleProfile(tree, par, "Ground Distance", "Impact Error", -1, 1);
+    MakeDoubleProfile(tree, par, "Ground Distance (km)", "Fractional Impact Error", -1, 1);
 
     par.mono_name = "mon_im_en";
     par.chkv_name = "ckv_im_en";
     par.mono_strn = "(mono_im - im) / im : log(energy) / log(10)";
     par.chkv_strn = "(chkv_im - im) / im : log(energy) / log(10)";
-    par.mono_titl = "Monocular Impact Error vs Log(Energy)";
-    par.chkv_titl = "Cherenkov Impact Error vs Log(Energy)";
     par.canv_name = "im_err_en";
     par.n_bins = 40;
     par.min = 17;
     par.max = 21;
-    MakeDoubleProfile(tree, par, "Log(Energy)", "Impact Error", -1, 1);
+    MakeDoubleProfile(tree, par, "Log(Energy)", "Fractional Impact Error", -1, 1);
 
     // We would have to make plots against angle, but as this profile shows, but impact and angle errors are highly
     // correlated.
@@ -153,11 +149,9 @@ void PlotResults(const char* csv_file)
     par.chkv_name = "ckv_imerr_psierr";
     par.mono_strn = "(mono_im - im) / im : mono_psi - psi";
     par.chkv_strn = "(chkv_im - im) / im : chkv_psi - psi";
-    par.mono_titl = "Monocular Impact Error vs Angular Error";
-    par.chkv_titl = "Cherenkov Impact Error vs Angular Error";
     par.canv_name = "im_err_psi_err";
     par.n_bins = 40;
     par.min = -90;
     par.max =  90;
-    MakeDoubleProfile(tree, par, "Angular Error", "Impact Error", -1, 1);
+    MakeDoubleProfile(tree, par, "Angular Error (degrees)", "Fractional Impact Error", -1, 1);
 }

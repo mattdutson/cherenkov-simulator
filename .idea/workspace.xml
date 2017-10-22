@@ -19,8 +19,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d33216d-c2b0-40e7-8a74-b14cf93ccffe" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/default_setup/NoCut.root" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run_output/increase_height/NoCut.root" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" afterPath="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" afterPath="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run_output/PlotResults.cpp" afterPath="$PROJECT_DIR$/run_output/PlotResults.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run_output/increase_height/OutAll.csv" afterPath="$PROJECT_DIR$/run_output/increase_height/OutAll.csv" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/cmake-build-release/" />
@@ -56,8 +64,8 @@
       <file leaf-file-name="MonteCarlo.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="37" column="32" lean-forward="false" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
+            <state relative-caret-position="146">
+              <caret line="121" column="48" lean-forward="false" selection-start-line="121" selection-start-column="47" selection-end-line="121" selection-end-column="48" />
               <folding />
             </state>
           </provider>
@@ -67,27 +75,59 @@
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="3195">
-              <caret line="213" column="40" lean-forward="false" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
+              <caret line="213" column="44" lean-forward="false" selection-start-line="213" selection-start-column="44" selection-end-line="213" selection-end-column="44" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Config.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Config.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Config.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
+            <state relative-caret-position="400">
               <caret line="27" column="77" lean-forward="false" selection-start-line="27" selection-start-column="77" selection-end-line="27" selection-end-column="77" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Reconstructor.cpp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="UtilityTest.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="21" column="10" lean-forward="false" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SampleEvents.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1125">
+              <caret line="81" column="1" lean-forward="false" selection-start-line="81" selection-start-column="1" selection-end-line="81" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DataStructures.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-344">
+              <caret line="100" column="0" lean-forward="true" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
+              <folding>
+                <element signature="e#93#111#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Reconstructor.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="36" column="78" lean-forward="false" selection-start-line="36" selection-start-column="78" selection-end-line="36" selection-end-column="78" />
+            <state relative-caret-position="161">
+              <caret line="95" column="71" lean-forward="true" selection-start-line="95" selection-start-column="71" selection-end-line="95" selection-end-column="71" />
               <folding />
             </state>
           </provider>
@@ -97,7 +137,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>TF1</find>
       <find>for</find>
       <find>TMath</find>
       <find>TMath::</find>
@@ -125,8 +164,9 @@
       <find>depth</find>
       <find>x_max</find>
       <find>boost::property_tree::</find>
-      <find>noise</find>
       <find>FindThreshold</find>
+      <find>in front</find>
+      <find>noise</find>
     </findStrings>
     <replaceStrings>
       <replace>std::move</replace>
@@ -167,7 +207,6 @@
         <option value="$PROJECT_DIR$/cherenkov_test/Helper.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_test/Helper.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Utility.h" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/DataStructures.h" />
         <option value="$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp" />
         <option value="$PROJECT_DIR$/run_output/initial_run/OutAll.csv" />
@@ -178,12 +217,13 @@
         <option value="$PROJECT_DIR$/cherenkov_lib/Analysis.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Simulator.h" />
         <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.h" />
-        <option value="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" />
         <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.h" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
-        <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
         <option value="$PROJECT_DIR$/Config.xml" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/Geometric.cpp" />
+        <option value="$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp" />
+        <option value="$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp" />
       </list>
     </option>
   </component>
@@ -229,6 +269,11 @@
               <item name="cherenkov_simulator" type="462c0819:PsiDirectoryNode" />
               <item name="cherenkov_test" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="cherenkov_simulator" type="dad4c3:CidrFilesViewHelper$MyProjectTreeStructure$1" />
+              <item name="cherenkov_simulator" type="462c0819:PsiDirectoryNode" />
+              <item name="run_output" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -259,7 +304,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Google Test.GeometricTest">
+  <component name="RunManager" selected="Google Test.SampleEvents.TypicalShower">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
       <envs />
     </configuration>
@@ -497,14 +542,9 @@
       <workItem from="1508452393405" duration="48000" />
       <workItem from="1508607867722" duration="73000" />
       <workItem from="1508608395602" duration="167000" />
-      <workItem from="1508614237766" duration="165000" />
-    </task>
-    <task id="LOCAL-00004" summary="Improved formatting of output CSV file">
-      <created>1492744413516</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1492744413516</updated>
+      <workItem from="1508614237766" duration="327000" />
+      <workItem from="1508648167692" duration="711000" />
+      <workItem from="1508707839965" duration="1155000" />
     </task>
     <task id="LOCAL-00005" summary="Added a column in the output file for the initial value of the rng seed">
       <created>1492798766075</created>
@@ -842,31 +882,17 @@
       <option name="project" value="LOCAL" />
       <updated>1508608552465</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="Adding final data to repository">
+      <created>1508614562830</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1508614562830</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="DataStrucuresTest - 2017.10.16 at 00h 01m 38s.xml">
-      <configuration name="DataStrucuresTest" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
-    <history-entry file="GeometricTest - 2017.10.15 at 22h 41m 44s.xml">
-      <configuration name="GeometricTest" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
-    <history-entry file="GeometricTest - 2017.10.15 at 22h 43m 42s.xml">
-      <configuration name="GeometricTest" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
-    <history-entry file="GeometricTest - 2017.10.15 at 22h 44m 19s.xml">
-      <configuration name="GeometricTest" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
-    <history-entry file="GeometricTest - 2017.10.15 at 22h 44m 48s.xml">
-      <configuration name="GeometricTest" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
-    <history-entry file="GeometricTest - 2017.10.16 at 00h 01m 48s.xml">
-      <configuration name="GeometricTest" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
-    <history-entry file="SampleEvents_TypicalShower - 2017.10.16 at 17h 50m 52s.xml">
-      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
-    </history-entry>
     <history-entry file="SampleEvents_TypicalShower - 2017.10.16 at 17h 53m 03s.xml">
       <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
     </history-entry>
@@ -876,9 +902,30 @@
     <history-entry file="SampleEvents_TypicalShower - 2017.10.16 at 17h 55m 15s.xml">
       <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
     </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.21 at 22h 56m 55s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.21 at 22h 58m 45s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.22 at 15h 32m 49s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.22 at 15h 37m 51s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.22 at 15h 43m 27s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.22 at 15h 44m 52s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
+    <history-entry file="SampleEvents_TypicalShower - 2017.10.22 at 15h 46m 58s.xml">
+      <configuration name="SampleEvents.TypicalShower" configurationId="CMakeGoogleTestRunConfigurationType" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="147918000" />
+    <option name="totallyTimeSpent" value="149946000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -890,14 +937,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="53" y="23" width="1387" height="877" extended-state="0" />
+    <frame x="53" y="23" width="1387" height="877" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33977696" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27063197" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32889965" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44373402" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39897698" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3675937" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36700767" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41048592" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37084398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -905,7 +953,6 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44373402" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -968,7 +1015,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
-    <MESSAGE value="More unit test definitions" />
     <MESSAGE value="More unit tests, bleh" />
     <MESSAGE value="Small unit test changes" />
     <MESSAGE value="IMPORTANT: Correction to math&#10;&#10;Found an issue with math when calculating the number of Cherenkov photons reflected. Changed a factor of 4 to a factor of 2, which will alter the output of future simulations." />
@@ -993,7 +1039,8 @@
     <MESSAGE value="Trying to isolate a weird Cherenkov reconstruction bug" />
     <MESSAGE value="Discovered indexing error in PerformMonteCarlo&#10;&#10;Also noticed that some showers have their Cherenkov peaks removed by noise filtration, but the fluorescence track still crosses the horizon. Cherenkov reconstruction does very poorly on these. Will note this in write-up and perform some kind of data trimming to keep histograms from being skewed." />
     <MESSAGE value="Spaces are bad, mkay?" />
-    <option name="LAST_COMMIT_MESSAGE" value="Spaces are bad, mkay?" />
+    <MESSAGE value="Adding final data to repository" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding final data to repository" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1194,13 +1241,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="37" lean-forward="true" selection-start-line="4" selection-start-column="37" selection-end-line="4" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1219,13 +1259,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11160">
           <caret line="744" column="46" lean-forward="false" selection-start-line="744" selection-start-column="46" selection-end-line="744" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="10" lean-forward="false" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
         </state>
       </provider>
     </entry>
@@ -1294,13 +1327,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="664">
-          <caret line="81" column="1" lean-forward="false" selection-start-line="81" selection-start-column="1" selection-end-line="81" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -1309,34 +1335,60 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="36" column="78" lean-forward="false" selection-start-line="36" selection-start-column="78" selection-end-line="36" selection-end-column="78" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/cherenkov_lib/Geometric.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3195">
-          <caret line="213" column="40" lean-forward="false" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="37" column="32" lean-forward="false" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
+          <caret line="213" column="44" lean-forward="false" selection-start-line="213" selection-start-column="44" selection-end-line="213" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Config.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
+        <state relative-caret-position="400">
           <caret line="27" column="77" lean-forward="false" selection-start-line="27" selection-start-column="77" selection-end-line="27" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_test/UtilityTest.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="10" lean-forward="false" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_test/SampleEvents.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1125">
+          <caret line="81" column="1" lean-forward="false" selection-start-line="81" selection-start-column="1" selection-end-line="81" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/DataStructures.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-344">
+          <caret line="100" column="0" lean-forward="true" selection-start-line="100" selection-start-column="0" selection-end-line="100" selection-end-column="0" />
+          <folding>
+            <element signature="e#93#111#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/MonteCarlo.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="121" column="48" lean-forward="false" selection-start-line="121" selection-start-column="47" selection-end-line="121" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cherenkov_lib/Reconstructor.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="95" column="71" lean-forward="true" selection-start-line="95" selection-start-column="71" selection-end-line="95" selection-end-column="71" />
           <folding />
         </state>
       </provider>
