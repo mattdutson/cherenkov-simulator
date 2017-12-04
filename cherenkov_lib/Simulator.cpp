@@ -32,9 +32,9 @@ namespace cherenkov_simulator
         mainmirr_size = stop_diameter + 2.0 * mirror_radius * Tan(view_rad / 2.0);
         pmtclust_size = mirror_radius * Sin(view_rad / 2.0);
 
-        count_params.bin_size = config.get<double>("simulation.time_bin");
-        count_params.max_byte = config.get<size_t>("simulation.max_bytes");
-        count_params.n_pixels = config.get<size_t>("detector.n_pmt_across");
+        count_params.bin_size = config.get<double>("simulation.bin_size");
+        count_params.max_byte = config.get<size_t>("simulation.max_byte");
+        count_params.n_pixels = config.get<size_t>("detector.n_pixels");
         count_params.lin_size = pmtclust_size / count_params.n_pixels;
         count_params.ang_size = count_params.lin_size / (mirror_radius / 2.0);
 

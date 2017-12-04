@@ -3,10 +3,10 @@
 <config>
 
     <simulation note="Defines computational behavior of the simulation">
-        <max_bytes  unit="null"   note="Maximum size of the data buffer">8000000000</max_bytes>
+        <max_byte   unit="null"   note="Maximum size of the data buffer">8000000000</max_byte>
         <n_showers  unit="null"   note="Number of Monte Carlo iterations">1000</n_showers>
         <depth_step unit="g/cm^2" note="Size of discrete shower steps">1.0</depth_step>
-        <time_bin   unit="s"      note="Size of the time signal bins">100e-9</time_bin>
+        <bin_size   unit="s"      note="Size of the time signal bins">100e-9</bin_size>
         <flor_thin  unit="null"   note="Fluorescence computational thinning rate">1</flor_thin>
         <chkv_thin  unit="null"   note="Cherenkov computational thinning rate">1</chkv_thin>
         <time_seed  unit="null"   note="Whether the RNG seed should be randomly set">false</time_seed>
@@ -15,7 +15,7 @@
 
     <surroundings note="The orientation of the surroundings">
         <ground_norm     unit="null" note="Normal vector to the ground plane">(0, 0, 1)</ground_norm>
-        <ground_fixd    unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_fixd>
+        <ground_fixd     unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_fixd>
         <elevation_angle unit="rad"  note="Angle of the detector above horizon">0.045</elevation_angle>
         <elevation       unit="cm"   note="Detector elevation above sea level">141400</elevation>
     </surroundings>
@@ -33,7 +33,7 @@
         <mirror_radius unit="cm"   note="Radius of the spherical mirror">400.0</mirror_radius>
         <f_number      unit="null" note="F number of the detector">1.0</f_number>
         <view_rad      unit="rad"  note="Field of view (twice the detector-axis angle)">0.45</view_rad>
-        <n_pmt_across  unit="null" note="Diameter of pixel array, must be even">300</n_pmt_across>
+        <n_pixels      unit="null" note="Diameter of pixel array, must be even">300</n_pixels>
     </detector>
 
     <triggering note="Thresholds in filtering and triggering">
