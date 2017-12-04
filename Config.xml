@@ -7,15 +7,15 @@
         <n_showers  unit="null"   note="Number of Monte Carlo iterations">1000</n_showers>
         <depth_step unit="g/cm^2" note="Size of discrete shower steps">1.0</depth_step>
         <time_bin   unit="s"      note="Size of the time signal bins">100e-9</time_bin>
-        <fluor_thin unit="null"   note="Fluorescence computational thinning rate">1</fluor_thin>
-        <ckv_thin   unit="null"   note="Cherenkov computational thinning rate">1</ckv_thin>
+        <flor_thin  unit="null"   note="Fluorescence computational thinning rate">1</flor_thin>
+        <chkv_thin  unit="null"   note="Cherenkov computational thinning rate">1</chkv_thin>
         <time_seed  unit="null"   note="Whether the RNG seed should be randomly set">false</time_seed>
         <back_toler unit="null"   note="Determines maximum allowed photon time">1.15</back_toler>
     </simulation>
 
     <surroundings note="The orientation of the surroundings">
-        <ground_normal   unit="null" note="Normal vector to the ground plane">(0, 0, 1)</ground_normal>
-        <ground_point    unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_point>
+        <ground_norm     unit="null" note="Normal vector to the ground plane">(0, 0, 1)</ground_norm>
+        <ground_fixd    unit="cm"   note="A fixed point on the ground plane">(0, 0, -20000)</ground_fixd>
         <elevation_angle unit="rad"  note="Angle of the detector above horizon">0.045</elevation_angle>
         <elevation       unit="cm"   note="Detector elevation above sea level">141400</elevation>
     </surroundings>
@@ -32,16 +32,16 @@
     <detector note="Properties of the optics and detector">
         <mirror_radius unit="cm"   note="Radius of the spherical mirror">400.0</mirror_radius>
         <f_number      unit="null" note="F number of the detector">1.0</f_number>
-        <field_of_view unit="rad"  note="Field of view (twice the detector-axis angle)">0.45</field_of_view>
+        <view_rad      unit="rad"  note="Field of view (twice the detector-axis angle)">0.45</view_rad>
         <n_pmt_across  unit="null" note="Diameter of pixel array, must be even">300</n_pmt_across>
     </detector>
 
     <triggering note="Thresholds in filtering and triggering">
-        <trig_thresh   unit="null" note="Sigma multiple for triggering threshold">6.0</trig_thresh>
-        <noise_thresh  unit="null" note="Sigma multiple for non-noise threshold">3.0</noise_thresh>
-        <trigger_clust unit="null" note="Minimum size of cluster for detector to be triggered">5</trigger_clust>
-        <impact_buffer unit="rad"  note="Size of the ring around of the edge of the FOV">0.02</impact_buffer>
-        <plane_dev     unit="rad"  note="Maximum deviation from first-guess SDP">0.03</plane_dev>
+        <trigr_thresh unit="null" note="Sigma multiple for triggering threshold">6.0</trigr_thresh>
+        <noise_thresh unit="null" note="Sigma multiple for non-noise threshold">3.0</noise_thresh>
+        <trigr_clustr unit="null" note="Minimum size of cluster for detector to be triggered">5</trigr_clustr>
+        <impact_buffr unit="rad"  note="Size of the ring around of the edge of the FOV">0.02</impact_buffr>
+        <plane_thresh unit="rad"  note="Maximum deviation from first-guess SDP">0.03</plane_thresh>
     </triggering>
 
 </config>

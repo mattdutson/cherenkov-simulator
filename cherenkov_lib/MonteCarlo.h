@@ -11,10 +11,9 @@
 #include <TF1.h>
 #include <TRandom3.h>
 
-#include "Utility.h"
 #include "Geometric.h"
-#include "Simulator.h"
 #include "Reconstructor.h"
+#include "Simulator.h"
 #include "Utility.h"
 
 namespace cherenkov_simulator

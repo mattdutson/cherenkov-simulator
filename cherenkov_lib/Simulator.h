@@ -26,7 +26,7 @@ namespace cherenkov_simulator
     public:
 
         /*
-         * Constructs the Simulator from values in the configuration tree.
+         * Constructs the MonteCarlo by copying user-specified parameters from the parsed XML file.
          */
         explicit Simulator(const boost::property_tree::ptree& config);
 
@@ -53,30 +53,31 @@ namespace cherenkov_simulator
         public:
 
             /*
-             * Defined as required by TF1.Integral(). Returns the value of the integrand.
+             * Defined as required by TF1.Integral(). Returns the value of the integrand. Allows for a computation of
+             * the integral over the electron energy spectrum (see Nerling).
              * p[0] = age, p[1] = rho, p[2] = delta
              */
             double operator()(double* x, double* p);
         };
 
-        // Parameters related to the behavior of the simulation - cgs
-        double depth_step;
-        int fluor_thin;
-        int ckv_thin;
+        // Parameters related to the behavior of the simulation (cgs)
+        int flor_thin;
+        int chkv_thin;
         double back_toler;
+        double depth_step;
 
         // Miscellaneous non-constant parameters
         Plane ground_plane;
-        TRotation rotate_to_world;
+        TRotation rot_to_world;
         CherenkovFunc ckv_func;
         TF1 ckv_integrator;
         PhotonCount::Params count_params;
 
-        // Setup of the detector - cgs
+        // Setup of the detector (cgs)
         double mirror_radius;
         double stop_diameter;
-        double mirror_size;
-        double cluster_diameter;
+        double mainmirr_size;
+        double pmtclust_size;
 
         /*
          * Simulate the production and detection of the fluorescence photons.
@@ -90,9 +91,7 @@ namespace cherenkov_simulator
         void ViewCherenkovPhotons(Shower shower, Plane ground_plane, PhotonCount& photon_count, TF1 integrator) const;
 
         /*
-         * Determines the total number of Fluorescence photons produced by the shower at a particular point. Takes the
-         * distance traveled by the shower due to the fact that the form for fluorescence yield (Stratton 4.2) gives the
-         * number of photons per electron per unit length.
+         * Determines the total number of Fluorescence photons produced by the shower at a particular point.
          */
         int NumberFluorescenceLoops(Shower shower) const;
 
@@ -189,7 +188,8 @@ namespace cherenkov_simulator
         /*
          * Finds the points where a ray will or has intersected with a sphere centered at the origin. If the ray does
          * not intersect with the sphere, "point" is set to (0, 0, 0) and false is returned. Otherwise, "point" is set
-         * to the intersection with the smallest (negative) z-coordinate and "true" is returned.
+         * to the intersection with the smallest (negative) z-coordinate and "true" is returned. The intersection is
+         * found by solving for the roots of a quadratic polynomial.
          */
         static bool NegSphereImpact(Ray ray, TVector3& point, double radius);
     };

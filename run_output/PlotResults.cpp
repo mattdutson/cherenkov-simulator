@@ -113,8 +113,8 @@ void PlotResults(const char* csv_file)
     par.max = 180;
     MakeDoubleProfile(tree, par, "Shower Angle (degrees)", "Fractional Impact Error", -1, 1);
 
-    par.mono_name = "mon_im_im";
-    par.chkv_name = "ckv_im_im";
+    par.mono_name = "mono_im_im";
+    par.chkv_name = "chkv_im_im";
     par.mono_strn = "(mono_im - im) / im : im";
     par.chkv_strn = "(chkv_im - im) / im : im";
     par.canv_name = "im_err_im";
@@ -123,8 +123,8 @@ void PlotResults(const char* csv_file)
     par.max = 40;
     MakeDoubleProfile(tree, par, "Impact Parameter (km)", "Fractional Impact Error", -1, 1);
 
-    par.mono_name = "mon_im_gnd";
-    par.chkv_name = "ckv_im_gnd";
+    par.mono_name = "mono_im_gnd";
+    par.chkv_name = "chkv_im_gnd";
     par.mono_strn = "(mono_im - im) / im : gnd";
     par.chkv_strn = "(chkv_im - im) / im : gnd";
     par.canv_name = "im_err_gnd";
@@ -133,8 +133,8 @@ void PlotResults(const char* csv_file)
     par.max = 60;
     MakeDoubleProfile(tree, par, "Ground Distance (km)", "Fractional Impact Error", -1, 1);
 
-    par.mono_name = "mon_im_en";
-    par.chkv_name = "ckv_im_en";
+    par.mono_name = "mono_im_en";
+    par.chkv_name = "chkv_im_en";
     par.mono_strn = "(mono_im - im) / im : log(energy) / log(10)";
     par.chkv_strn = "(chkv_im - im) / im : log(energy) / log(10)";
     par.canv_name = "im_err_en";
@@ -143,10 +143,9 @@ void PlotResults(const char* csv_file)
     par.max = 21;
     MakeDoubleProfile(tree, par, "Log(Energy)", "Fractional Impact Error", -1, 1);
 
-    // We would have to make plots against angle, but as this profile shows, but impact and angle errors are highly
-    // correlated.
-    par.mono_name = "mon_imerr_psierr";
-    par.chkv_name = "ckv_imerr_psierr";
+    // This profile shows that impact and angle errors are highly correlated.
+    par.mono_name = "mono_imerr_psierr";
+    par.chkv_name = "chkv_imerr_psierr";
     par.mono_strn = "(mono_im - im) / im : mono_psi - psi";
     par.chkv_strn = "(chkv_im - im) / im : chkv_psi - psi";
     par.canv_name = "im_err_psi_err";

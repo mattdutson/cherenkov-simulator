@@ -9,16 +9,18 @@
 #define ANALYSIS_H
 
 #include <vector>
-#include <TH2.h>
 #include <TGraph.h>
+#include <TH2.h>
 
-#include "Utility.h"
 #include "DataStructures.h"
 #include "Geometric.h"
 #include "Utility.h"
 
 namespace cherenkov_simulator
 {
+    /*
+     * Defines miscellaneous static methods for visualizing the results of a simulation.
+     */
     class Analysis
     {
     public:

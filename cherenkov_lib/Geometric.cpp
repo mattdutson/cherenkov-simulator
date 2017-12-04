@@ -217,7 +217,7 @@ namespace cherenkov_simulator
     string Shower::ToString(Plane ground_plane) const
     {
         return to_string(ImpactAngle() * 180.0 / Pi()) + "," + Utility::KmString(ImpactParam())
-               + "," + Utility::KmString(PlaneImpact(ground_plane).Mag());
+               + "," + Utility::KmString(PlaneImpact(move(ground_plane)).Mag());
     }
 
     double Shower::X() const

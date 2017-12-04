@@ -7,12 +7,12 @@
 #ifndef RECONSTRUCTOR_H
 #define RECONSTRUCTOR_H
 
-#include <boost/property_tree/ptree.hpp>
-#include <queue>
 #include <array>
-#include <TRotation.h>
+#include <queue>
+#include <boost/property_tree/ptree.hpp>
 #include <TGraphErrors.h>
 #include <TMatrixDSym.h>
+#include <TRotation.h>
 
 #include "DataStructures.h"
 #include "Geometric.h"
@@ -20,9 +20,17 @@
 
 namespace cherenkov_simulator
 {
+    /*
+     * A class which defines methods for noise removal, triggering, monocular reconstruction, and Cherenkov (hybrid)
+     * reconstruction.
+     */
     class Reconstructor
     {
     public:
+
+        /*
+         * A convenience wrapper which summarizes the results of the reconstruction.
+         */
         struct Result
         {
             bool triggered;
@@ -72,19 +80,19 @@ namespace cherenkov_simulator
     private:
 
         // Parameters relating to the position and orientation of the detector relative to its surroundings - cgs
-        Plane ground;
-        TRotation to_world;
+        Plane ground_plane;
+        TRotation rot_to_world;
 
         // Detector-specific levels of night sky background noise - cgs, sr
         double sky_noise;
         double gnd_noise;
 
         // Parameters used when applying triggering logic and noise reduction
-        double trig_thresh;
+        double trigr_thresh;
         double noise_thresh;
-        int trigger_clust;
-        double impact_buffer;
-        double plane_dev;
+        double impact_buffr;
+        double plane_thresh;
+        int trigr_clustr;
 
         /*
          * Performs an ordinary monocular time profile reconstruction of the shower geometry. A ground impact point is
@@ -110,15 +118,14 @@ namespace cherenkov_simulator
         TVector3 MinValVec(TMatrixDSym matrix) const;
 
         /*
-         * Attempts to find the impact point of the shower. If this attempt fails, false is returned. Otherwise, true is
-         * returned. We assume at this point that filters and triggering have been applied. Our condition is that some
-         * pixel below the horizon must have seen a total number of photons which is more than three sigma from what we
-         * would expect during that time frame.
+         * Attempts to find the reflection point of the shower. If this attempt fails, false is returned. Otherwise,
+         * true is returned. We assume at this point that filters and triggering have been applied. The condition is
+         * that some pixel below the horizon must have seen a total number of photons above the triggering threshold.
          */
         bool FindGroundImpact(const PhotonCount& data, TVector3& impact) const;
 
         /*
-         * Constructs the fit graph from data points.
+         * Constructs a TGraphErrors from fitting using the data contained in the PhotonCount object.
          */
         TGraphErrors GetFitGraph(const PhotonCount& data, TRotation to_sdp) const;
 
@@ -179,7 +186,7 @@ namespace cherenkov_simulator
         /*
          * Constructs a shower based on the results of the time profile reconstruction.
          */
-        static Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sd_plane);
+        static Shower MakeShower(double t_0, double r_p, double psi, TRotation to_sdp);
     };
 }
 

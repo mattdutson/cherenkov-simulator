@@ -8,9 +8,9 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include <boost/property_tree/ptree.hpp>
 #include <string>
 #include <vector>
+#include <boost/property_tree/ptree.hpp>
 #include <TVector3.h>
 
 namespace cherenkov_simulator
@@ -77,6 +77,10 @@ namespace cherenkov_simulator
 
     typedef std::vector<double> Double1D;
 
+    /*
+     * Defines miscellaneous static methods which are globally accessible throughout the cherenkov_lib project (Utility
+     * has no dependencies within the project).
+     */
     class Utility
     {
     public:

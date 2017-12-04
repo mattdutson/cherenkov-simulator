@@ -259,7 +259,7 @@ namespace cherenkov_simulator
 
     private:
 
-        // Mask unneeded Ray methods to keep them from being public.
+        // Mask unneeded Ray methods from public access.
         using Ray::IncrementTime;
         using Ray::IncrementPosition;
         using Ray::SetDirection;

@@ -6,25 +6,22 @@
 
 #include <fstream>
 #include <boost/property_tree/xml_parser.hpp>
-#include <TRotation.h>
 #include <TRandom3.h>
+#include <TRotation.h>
 
 #include "Utility.h"
 
 using namespace std;
+using namespace boost::property_tree;
 using namespace TMath;
-
-using boost::property_tree::ptree;
 
 namespace cherenkov_simulator
 {
     TVector3 Utility::ToVector(string s)
     {
-        // Clear out everything before the first parenthesis.
         size_t current = s.find('(');
         s.erase(0, current + 1);
 
-        // Pull double values from the vector.
         TVector3 output = TVector3();
         output.SetX(ParseTo(s, ','));
         output.SetY(ParseTo(s, ','));
@@ -34,24 +31,22 @@ namespace cherenkov_simulator
 
     ptree Utility::ParseXMLFile(string filename)
     {
-        // Try opening the specified file
         ifstream config_file = ifstream(filename);
         if (config_file.fail())
         {
-            std::string message = "The file " + filename + " could not be opened. Check the path.";
-            throw std::runtime_error(message);
+            string message = "The file " + filename + " could not be opened. Check the path.";
+            throw runtime_error(message);
         }
 
-        // Parse the file to XML.
         try
         {
             ptree xml_file = ptree();
             read_xml(config_file, xml_file);
             return xml_file;
         }
-        catch (boost::property_tree::xml_parser_error)
+        catch (xml_parser_error&)
         {
-            throw std::runtime_error("There was a problem parsing the file to XML. Check for syntax errors.");
+            throw runtime_error("There was a problem parsing the file to XML. Check for syntax errors.");
         }
     }
 
@@ -84,8 +79,10 @@ namespace cherenkov_simulator
 
     double Utility::RandLinear(double min, double max)
     {
-        if (min < 0 || max < 0) throw std::runtime_error("The bounds must be non-negative");
-        if (min >= max) throw std::runtime_error("The min bound must be less than the max bound");
+        if (min < 0 || max < 0)
+            throw runtime_error("The bounds must be non-negative");
+        if (min >= max)
+            throw runtime_error("The min bound must be less than the max bound");
         return Sqrt((Sq(max) - Sq(min)) * gRandom->Rndm() + Sq(min));
     }
 
@@ -96,8 +93,11 @@ namespace cherenkov_simulator
 
     double Utility::RandPower(double min, double max, double pow)
     {
-        if (min <= 0 || max <= 0) throw std::runtime_error("The bounds must be positive");
-        if (min >= max) throw std::runtime_error("The min bound must be less than the max bound");
+        if (min <= 0 || max <= 0)
+            throw runtime_error("The bounds must be positive");
+        if (min >= max)
+            throw runtime_error("The min bound must be less than the max bound");
+
         if (pow == -1)
         {
             return min * Power(max / min, gRandom->Rndm());
@@ -113,7 +113,7 @@ namespace cherenkov_simulator
     int Utility::RandomRound(double value)
     {
         double decimal = value - Floor(value);
-        int base = (int) (value - decimal);
+        auto base = (int) (value - decimal);
         if (gRandom->Rndm() < decimal) return base + 1;
         else return base;
     }

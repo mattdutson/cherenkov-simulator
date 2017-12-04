@@ -31,7 +31,7 @@ namespace cherenkov_simulator
         while (iter.Next())
         {
             int y = iter.Y();
-            if (reverse_y) y = size - 1 - y;
+            if (reverse_y) y = size - y - 1;
             histo.Fill(iter.X(), y, data.SumBins(iter));
         }
         return histo;
@@ -44,24 +44,19 @@ namespace cherenkov_simulator
 
     TH2C Analysis::GetBooleanMap(const Bool2D& valid)
     {
-        TH2C histo = TH2C("valid_map", "Valid Pixels", (int) valid.size(), 0, valid.size(), (int) valid[0].size(), 0,
-                          valid[0].size());
+        TH2C histo = TH2C("valid_map", "Valid Pixels", (int) valid.size(), 0, valid.size(), (int) valid[0].size(), 0, valid[0].size());
         histo.SetXTitle("x Bin");
         histo.SetYTitle("y Bin");
+
+        // The zeroth bin is the underflow, so start at 1.
         for (int i = 0; i < valid.size(); i++)
-        {
             for (int j = 0; j < valid[i].size(); j++)
-            {
-                // The zeroth bin is the underflow, so start at 1.
                 histo.SetBinContent(i + 1, j + 1, valid[i][j] ? 1.0 : 0.0);
-            }
-        }
         return histo;
     }
 
     void Analysis::SuperimposeTimes(const PhotonCount& data, Double1D& times, Double1D& counts)
     {
-        // Initialize the structure and find x-axis labels (times).
         times = Double1D();
         counts = Double1D();
         for (int i = 0; i < data.NBins(); i++)
@@ -70,15 +65,12 @@ namespace cherenkov_simulator
             counts.push_back(0.0);
         }
 
-        // Iterate over all pixels and add their time signals.
         PhotonCount::Iterator iter = data.GetIterator();
         while (iter.Next())
         {
             Short1D signal = data.Signal(iter);
             for (size_t i = 0; i < signal.size(); i++)
-            {
                 counts.at(i) += signal[i];
-            }
         }
     }
 }

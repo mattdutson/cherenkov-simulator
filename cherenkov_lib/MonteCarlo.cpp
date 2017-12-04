@@ -5,8 +5,8 @@
 // Implementation of MonteCarlo.h
 
 #include <fstream>
-#include <TMath.h>
 #include <TFile.h>
+#include <TMath.h>
 
 #include "MonteCarlo.h"
 #include "Analysis.h"
@@ -19,8 +19,8 @@ namespace cherenkov_simulator
 {
     MonteCarlo::MonteCarlo(const ptree& config) : simulator(config), reconstructor(config)
     {
-        n_showers = config.get<int>("simulation.n_showers");
         elevation = config.get<double>("surroundings.elevation");
+        n_showers = config.get<int>("simulation.n_showers");
 
         energy_pow = config.get<double>("monte_carlo.energy_pow");
         energy_min = config.get<double>("monte_carlo.energy_min");
@@ -44,8 +44,8 @@ namespace cherenkov_simulator
             Reconstructor::Result result = RunSingleShower(shower, to_string(i));
             if (!result.triggered) continue;
             cout << "Shower " << i << " finished" << endl;
-            fout << start_seed << "," << i << "," << shower.EnergyeV() << "," << shower.ToString(ground_plane)
-                 << "," << result.ToString(ground_plane) << endl;
+            fout << start_seed << "," << i << "," << shower.EnergyeV() << "," << shower.ToString(ground_plane) << ","
+                 << result.ToString(ground_plane) << endl;
             i++;
         }
     }

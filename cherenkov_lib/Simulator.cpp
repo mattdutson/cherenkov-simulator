@@ -4,58 +4,49 @@
 //
 // Implementation of Simulator.h
 
-#include <boost/property_tree/ptree.hpp>
 #include <TMath.h>
 
 #include "Simulator.h"
 
+using namespace std;
+using namespace boost::property_tree;
 using namespace TMath;
-
-using std::string;
-using boost::property_tree::ptree;
 
 namespace cherenkov_simulator
 {
     Simulator::Simulator(const ptree& config)
     {
-        // Behavior of the simulation
         depth_step = config.get<double>("simulation.depth_step");
-        fluor_thin = config.get<int>("simulation.fluor_thin");
-        ckv_thin = config.get<int>("simulation.ckv_thin");
         back_toler = config.get<double>("simulation.back_toler");
+        flor_thin = config.get<int>("simulation.flor_thin");
+        chkv_thin = config.get<int>("simulation.chkv_thin");
 
-        // Surrounding setup and orientation
-        TVector3 ground_normal = Utility::ToVector(config.get<string>("surroundings.ground_normal"));
-        TVector3 ground_point = Utility::ToVector(config.get<string>("surroundings.ground_point"));
-        ground_plane = Plane(ground_normal, ground_point);
-        rotate_to_world = Utility::MakeRotation(config.get<double>("surroundings.elevation_angle"));
+        TVector3 ground_norm = Utility::ToVector(config.get<string>("surroundings.ground_norm"));
+        TVector3 ground_fixd = Utility::ToVector(config.get<string>("surroundings.ground_fixd"));
+        ground_plane = Plane(ground_norm, ground_fixd);
+        rot_to_world = Utility::MakeRotation(config.get<double>("surroundings.elevation_angle"));
 
-        // Properties of the detector
+        auto view_rad = config.get<double>("detector.view_rad");
         mirror_radius = config.get<double>("detector.mirror_radius");
         stop_diameter = mirror_radius / (2.0 * config.get<double>("detector.f_number"));
-        auto field_of_view = config.get<double>("detector.field_of_view");
-        mirror_size = stop_diameter + 2.0 * mirror_radius * Tan(field_of_view / 2.0);
-        cluster_diameter = mirror_radius * Sin(field_of_view / 2.0);
+        mainmirr_size = stop_diameter + 2.0 * mirror_radius * Tan(view_rad / 2.0);
+        pmtclust_size = mirror_radius * Sin(view_rad / 2.0);
 
-        // PhotonCount parameters
         count_params.bin_size = config.get<double>("simulation.time_bin");
         count_params.max_byte = config.get<size_t>("simulation.max_bytes");
         count_params.n_pixels = config.get<size_t>("detector.n_pmt_across");
-        count_params.lin_size = cluster_diameter / count_params.n_pixels;
+        count_params.lin_size = pmtclust_size / count_params.n_pixels;
         count_params.ang_size = count_params.lin_size / (mirror_radius / 2.0);
 
-        // Miscellaneous member variables
         ckv_integrator = TF1("ckv_integrator", ckv_func, 0.0, Infinity(), 3);
-        ckv_integrator.SetParNames("age", "rho", "delta");
+        ckv_integrator.SetParNames("age", "rho", "del");
     }
 
     PhotonCount Simulator::SimulateShower(Shower shower) const
     {
-        // A lower bound on the time the first photon will reach the detector
-        PhotonCount photon_count = PhotonCount(count_params, MinTime(shower), MaxTime(shower));
         TF1 integrator = TF1(ckv_integrator);
 
-        // Step the shower along its path
+        PhotonCount photon_count = PhotonCount(count_params, MinTime(shower), MaxTime(shower));
         while (shower.TimeToPlane(ground_plane) > 0)
         {
             shower.IncrementDepth(depth_step);
@@ -73,35 +64,31 @@ namespace cherenkov_simulator
 
     double Simulator::CherenkovFunc::operator()(double* x, double* p)
     {
-        // See Simulator constructor for definition of parameters
+        // Parameters are named in the simulator constructor.
         double dep = x[0];
         double age = p[0];
         double rho = p[1];
-        double delta = p[2];
+        double del = p[2];
 
-        // Parameters in Cherenkov yield
         double k_out = 2 * Pi() * fine_s / rho * (1 / lambda_min - 1 / lambda_max);
-        double k_1 = k_out * 2 * delta;
+        double k_1 = k_out * 2 * del;
         double k_2 = k_out * Sq(mass_e);
-
-        // Parameters in energy distribution
         double a1 = fe_a11 - fe_a12 * age;
         double a2 = fe_a21 - fe_a22 * age;
         double a0 = fe_k0 * Exp(fe_k1 * age + fe_k2 * Sq(age));
 
-        // Product of the yield and energy distribution, integrating over lnE
         return a0 * Exp(dep) / ((a1 + Exp(dep)) * Power(a2 + Exp(dep), age)) * (k_1 - k_2 * Exp(-2.0 * dep));
     }
 
     void Simulator::ViewFluorescencePhotons(Shower shower, PhotonCount& photon_count) const
     {
         int n_loops = NumberFluorescenceLoops(shower);
-        for (int i = 0; i < n_loops / fluor_thin; i++)
+        for (int i = 0; i < n_loops / flor_thin; i++)
         {
-            TVector3 lens_impact = rotate_to_world * RandomStopImpact();
+            TVector3 lens_impact = rot_to_world * RandomStopImpact();
             Ray photon = JitteredRay(shower, lens_impact - shower.Position());
             photon.PropagateToPoint(lens_impact);
-            SimulateOptics(photon, photon_count, fluor_thin);
+            SimulateOptics(photon, photon_count, flor_thin);
         }
     }
 
@@ -112,59 +99,51 @@ namespace cherenkov_simulator
         {
             Ray photon = GenerateCherenkovPhoton(shower);
             photon.PropagateToPlane(ground_plane);
-            TVector3 stop_impact = rotate_to_world * RandomStopImpact();
+            TVector3 stop_impact = rot_to_world * RandomStopImpact();
             photon.PropagateToPoint(stop_impact);
-            SimulateOptics(photon, photon_count, ckv_thin);
+            SimulateOptics(photon, photon_count, chkv_thin);
         }
     }
 
     int Simulator::NumberFluorescenceLoops(Shower shower) const
     {
-        // Find the yield via formula from Kakimoto
         double rho = shower.LocalRho();
         double term_1 = fluor_a1 / (1 + fluor_b1 * rho * Sqrt(atm_temp));
         double term_2 = fluor_a2 / (1 + fluor_b2 * rho * Sqrt(atm_temp));
         double yield = IonizationLossRate(shower) / edep_1_4 * (term_1 + term_2);
 
-        // Find the number produced and the fraction captured
         double total = yield * shower.GaisserHillas() * depth_step;
         double fraction = SphereFraction(shower.Position()) * DetectorEfficiency();
-        return Utility::RandomRound(total * fraction / (double) fluor_thin);
+        return Utility::RandomRound(total * fraction / (double) flor_thin);
     }
 
     int Simulator::NumberCherenkovLoops(Shower shower, TF1 integrator) const
     {
-        // Perform the integration, ignoring portion above the shower energy
         integrator.SetParameter("age", shower.Age());
         integrator.SetParameter("rho", shower.LocalRho());
-        integrator.SetParameter("delta", shower.LocalDelta());
+        integrator.SetParameter("del", shower.LocalDelta());
         double yield = integrator.Integral(Log(shower.EThresh()), Log(shower.EnergyMeV()));
 
-        // Find the number produced, and use a Lambertian reflectance model to find the fraction captured
         double total = yield * shower.GaisserHillas() * depth_step;
         TVector3 ground_impact = shower.PlaneImpact(ground_plane);
         double cos_theta = Abs(Cos(ground_impact.Angle(ground_plane.Normal())));
         double fraction = 4.0 * SphereFraction(ground_impact) * cos_theta * DetectorEfficiency();
-        return Utility::RandomRound(total * fraction / (double) ckv_thin);
+        return Utility::RandomRound(total * fraction / (double) chkv_thin);
     }
 
     void Simulator::SimulateOptics(Ray photon, PhotonCount& photon_count, int thinning) const
     {
-        // Refract across the corrector plate
-        photon.Transform(rotate_to_world.Inverse());
+        photon.Transform(rot_to_world.Inverse());
         if (!DeflectFromLens(photon)) return;
 
-        // Check for collision with the back of the pmt array
         TVector3 camera_impact;
         if (CameraImpactPoint(photon, camera_impact)) return;
 
-        // Reflect the photon from the mirror
         TVector3 reflect_point;
         if (!MirrorImpactPoint(photon, reflect_point)) return;
         photon.PropagateToPoint(reflect_point);
         photon.Reflect(MirrorNormal(reflect_point));
 
-        // Detection by the cluster
         if (!CameraImpactPoint(photon, camera_impact)) return;
         photon.PropagateToPoint(camera_impact);
         photon_count.AddPhoton(photon.Time(), camera_impact, thinning);
@@ -179,25 +158,22 @@ namespace cherenkov_simulator
 
     bool Simulator::DeflectFromLens(Ray& photon) const
     {
-        // Cut out the inner portion of the corrector
         double x = photon.Position().X();
         double y = photon.Position().Y();
         double photon_axis_dist = Sqrt(Sq(x) + Sq(y));
-        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2))) return photon.Direction().Z() < 0;
+        if (photon_axis_dist < stop_diameter / (2.0 * Sqrt(2)))
+            return photon.Direction().Z() < 0;
 
-        // Find the normal to the corrector
         double z_norm = (ref_lens - 1) * Power(mirror_radius, 3) / (Sq(x) + Sq(y));
         TVector3 norm = TVector3(-x, -y, z_norm).Unit();
-
-        // Perform the refraction
         bool success = photon.Refract(norm, 1, ref_lens);
         return success && photon.Refract(TVector3(0, 0, 1), ref_lens, 1);
     }
 
     bool Simulator::MirrorImpactPoint(Ray ray, TVector3& point) const
     {
-        NegSphereImpact(std::move(ray), point, mirror_radius);
-        return Utility::WithinXYDisk(point, mirror_size / 2.0) && point.Z() < 0.0;
+        NegSphereImpact(move(ray), point, mirror_radius);
+        return Utility::WithinXYDisk(point, mainmirr_size / 2.0) && point.Z() < 0.0;
     }
 
     TVector3 Simulator::MirrorNormal(TVector3 point) const
@@ -207,8 +183,8 @@ namespace cherenkov_simulator
 
     bool Simulator::CameraImpactPoint(Ray ray, TVector3& point) const
     {
-        NegSphereImpact(std::move(ray), point, mirror_radius / 2.0);
-        return Utility::WithinXYDisk(point, cluster_diameter / 2.0) && point.Z() < 0;
+        NegSphereImpact(move(ray), point, mirror_radius / 2.0);
+        return Utility::WithinXYDisk(point, pmtclust_size / 2.0) && point.Z() < 0;
     }
 
     double Simulator::IonizationLossRate(Shower shower) const
@@ -219,7 +195,7 @@ namespace cherenkov_simulator
 
     double Simulator::SphereFraction(TVector3 view_point) const
     {
-        TVector3 detector_axis = rotate_to_world * TVector3(0, 0, 1);
+        TVector3 detector_axis = rot_to_world * TVector3(0, 0, 1);
         double cosine = Cos(detector_axis.Angle(view_point));
         cosine = cosine < 0.0 ? 0.0 : cosine;
         double area_fraction = Sq(stop_diameter / 2.0) / (4.0 * view_point.Mag2());
@@ -270,12 +246,10 @@ namespace cherenkov_simulator
 
     bool Simulator::NegSphereImpact(Ray ray, TVector3& point, double radius)
     {
-        // Find roots of the constraining polynomial
         double a = ray.Velocity().Mag2();
         double b = 2 * ray.Position().Dot(ray.Velocity());
         double c = ray.Position().Mag2() - Sq(radius);
 
-        // If there are no real roots there is no impact, otherwise find the rearmost impact
         double b4ac = Sq(b) - 4 * a * c;
         if (b4ac < 0)
         {
