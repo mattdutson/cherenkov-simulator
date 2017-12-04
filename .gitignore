@@ -1,0 +1,7 @@
+/external_lib/boost/*
+/external_lib/root/*
+/cherenkov_test/gtest/*
+/cmake-build-debug/*
+/cmake-build-release/*
+/.idea/*
+*.root
