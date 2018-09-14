@@ -5,3 +5,15 @@
 /cmake-build-release/*
 /.idea/*
 *.root
+
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+settings.json
+.DS_Store
