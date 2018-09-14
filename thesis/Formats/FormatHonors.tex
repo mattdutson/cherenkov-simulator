@@ -1,0 +1,68 @@
+% spellchecker: disable
+\usepackage{mathptmx}
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage[nottoc]{tocbibind}
+\usepackage[top=1in, bottom=1in, left=1.5in, right=1in, headheight=15pt]{geometry}
+
+\setlength\parindent{2.5em}
+
+\newcommand{\introduction}{
+    \chapter{INTRODUCTION}
+    \thispagestyle{fancy}
+    \input{Chapters/Introduction}}
+\newcommand{\methods}{
+    \chapter{METHODS}
+    \thispagestyle{fancy}
+    \input{Chapters/Methods}}
+\newcommand{\results}{
+    \chapter{RESULTS}
+    \thispagestyle{fancy}
+    \input{Chapters/Results}}
+\newcommand{\discussion}{
+    \chapter{DISCUSSION}
+    \thispagestyle{fancy}
+    \input{Chapters/Discussion}}
+
+\pagestyle{fancy}
+    \lhead{}
+    \chead{}
+    \rhead{\thepage}	
+    \lfoot{}
+    \cfoot{}
+    \rfoot{}
+\renewcommand{\headrulewidth}{0.0pt}
+
+\titleformat{\chapter}[block]
+    {\centering}
+    {\thechapter}
+    {6pt}{}
+\titleformat{\section}[block]
+    {\normalfont}
+    {\thesection}
+    {6pt}{}
+\titleformat{\subsection}[block]
+    {\normalfont}
+    {\thesubsection}
+    {6pt}{}
+\titlespacing{\chapter}{0pt}{-1.5em}{1em}
+
+\setlength{\cftbeforetoctitleskip}{-2em}
+\setlength{\cftaftertoctitleskip}{0em}
+\renewcommand{\contentsname}
+    {\normalsize{\textnormal{\centerline{TABLE OF CONTENTS}}}}
+
+\setcounter{tocdepth}{1}
+\renewcommand{\cftchapfont}
+    {\normalfont}
+\renewcommand{\cftsecfont}
+    {\normalfont}
+\renewcommand{\cftchappagefont}
+    {\normalfont}
+\renewcommand{\cftsecpagefont}
+    {\normalfont}
+
+\renewcommand{\bibname}{REFERENCES}

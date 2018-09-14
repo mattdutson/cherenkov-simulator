@@ -1,0 +1,33 @@
+% spellchecker: disable
+\usepackage{titling}
+\usepackage{titlesec}
+
+\newcommand{\subtitle}[1]{
+    \posttitle{
+        \par\end{center}
+        \begin{center}\large#1\end{center}
+        \vskip0.5em}}
+
+\newcommand{\introduction}{
+    \chapter{Introduction}
+    \input{Chapters/Introduction}}
+\newcommand{\methods}{
+    \chapter{Methods}
+    \input{Chapters/Methods}}
+\newcommand{\results}{
+    \chapter{Results}
+    \input{Chapters/Results}}
+\newcommand{\discussion}{
+    \chapter{Discussion}
+    \input{Chapters/Discussion}}
+
+\titleformat{\chapter}
+    {\huge\bfseries}
+    {\thechapter}
+    {1em}{}
+\titlespacing{\chapter}
+    {0pt}
+    {-3em}
+    {1em}
+
+\renewcommand{\bibname}{References}

@@ -1,0 +1,31 @@
+% spellchecker: disable
+\documentclass[12pt]{report}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{esdiff}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\graphicspath{{Figures/}}
+
+% Change between FormatNormal and FormatHonors
+\input{Formats/FormatHonors}
+
+\begin{document}
+
+% Change between BeginNormal and BeginHonors
+\input{Formats/BeginHonors}
+
+\introduction
+\methods \label{sec:methods}
+\results \label{sec:results}
+\discussion \label{sec:discussion}
+
+\bibliographystyle{unsrt}
+\bibliography{Miscellaneous/References}
+
+\input{Formats/EndHonors}
+
+\end{document}
